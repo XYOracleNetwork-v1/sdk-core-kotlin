@@ -1,0 +1,89 @@
+package network.xyo.sdkcorekotlin.data.array
+
+import network.xyo.sdkcorekotlin.data.XyoObject
+import network.xyo.sdkcorekotlin.data.XyoObjectCreator
+import network.xyo.sdkcorekotlin.data.XyoByteArraySetter
+import java.nio.ByteBuffer
+
+class XyoArrayUnpacker (data : ByteArray, typed: Boolean, sizeOfSize: Int, sizeOfElementSize: Int) {
+    private val mData = data
+    private val mTyped = typed
+    private val mSizeOfSize = sizeOfSize
+    private val mSizeOfElementSize = sizeOfElementSize
+    private var mCurrentPosition = 2
+    var majorType: Byte? = null
+    var minorType: Byte? = null
+    val array : ArrayList<XyoObject>
+        get() = unpack()
+
+    private fun getMajorMinor () : ByteArray {
+        val major = mData[mCurrentPosition]
+        val minor = mData[mCurrentPosition + 1]
+        mCurrentPosition += 2
+        return byteArrayOf(major, minor)
+    }
+
+    private fun readCurrentSize (major: Byte, minor: Byte) : Int? {
+        val sizeOfSizeElement = XyoObjectCreator.getCreator(major, minor)?.sizeOfSize
+
+        if (sizeOfSizeElement == null) {
+            return XyoObjectCreator.getCreator(major, minor)?.defaultSize
+        }
+        return getSize(sizeOfSizeElement)
+    }
+
+    private fun unpack () : ArrayList<XyoObject> {
+        val expectedSize = getSize(mSizeOfSize) - mSizeOfSize
+        val items = ArrayList<XyoObject>()
+        var arrayType : ByteArray = byteArrayOf()
+        if (mTyped) {
+            arrayType = getMajorMinor()
+            majorType = arrayType[0]
+            minorType = arrayType[1]
+        }
+        val numberOfElements = getSize(mSizeOfElementSize)
+
+
+        while (mCurrentPosition < mData.size) {
+            if (!mTyped) {
+                 arrayType = getMajorMinor()
+            }
+
+            val sizeOfElement = readCurrentSize(arrayType[0], arrayType[1])
+            if (sizeOfElement != null) {
+                val field = ByteArray(sizeOfElement)
+                var position = 0
+
+                for (i in mCurrentPosition..mCurrentPosition + (sizeOfElement - 1)) {
+                    val byte = mData[i]
+                    field[position] = byte
+                    position++
+                }
+
+                mCurrentPosition += sizeOfElement
+
+                val merger = XyoByteArraySetter(3)
+                merger.add(byteArrayOf(arrayType[0]), 0)
+                merger.add(byteArrayOf(arrayType[1]), 1)
+                merger.add(field, 2)
+
+                items.add(XyoObjectCreator.create(merger.merge())!!)
+            }
+        }
+
+        return items
+    }
+
+    private fun getSize (sizeSize : Int) : Int {
+        var tempSizePosition = 0
+        val size = ByteArray(sizeSize)
+
+        for (i in mCurrentPosition..mCurrentPosition + (sizeSize - 1)) {
+            size[tempSizePosition] = mData[i]
+            tempSizePosition++
+            mCurrentPosition++
+        }
+
+        return ByteBuffer.wrap(size).int
+    }
+}

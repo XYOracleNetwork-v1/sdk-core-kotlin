@@ -1,0 +1,15 @@
+/build
+.gradle
+/local.properties
+/.idea
+*.iml
+/captures
+/proguardTools
+/com_crashlytics_export_strings.xml
+.signing/
+.DS_Store
+.DS_Store?
+*.apk
+google-services.json
+core-android-sample/local.properties
+gradle/
