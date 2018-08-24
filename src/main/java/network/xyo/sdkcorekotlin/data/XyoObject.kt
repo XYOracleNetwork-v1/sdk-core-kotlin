@@ -22,7 +22,7 @@ abstract class XyoObject {
                 when (sizeIdentifierSize) {
                     1 -> return ByteBuffer.allocate(1).put((totalSize + 1).toByte()).array()
                     2 -> return ByteBuffer.allocate(2).putShort((totalSize + 2).toShort()).array()
-                    4 -> return ByteBuffer.allocate(4).putInt(totalSize + 2).array()
+                    4 -> return ByteBuffer.allocate(4).putInt(totalSize + 4).array()
                 }
 
             }

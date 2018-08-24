@@ -5,16 +5,14 @@ import network.xyo.sdkcorekotlin.data.XyoObjectCreator
 import network.xyo.sdkcorekotlin.data.XyoByteArraySetter
 import java.nio.ByteBuffer
 
-class XyoArrayUnpacker (data : ByteArray, typed: Boolean, sizeOfSize: Int, sizeOfElementSize: Int) {
+class XyoArrayUnpacker (data : ByteArray, typed: Boolean, sizeOfSize: Int) {
     private val mData = data
     private val mTyped = typed
     private val mSizeOfSize = sizeOfSize
-    private val mSizeOfElementSize = sizeOfElementSize
     private var mCurrentPosition = 2
     var majorType: Byte? = null
     var minorType: Byte? = null
-    val array : ArrayList<XyoObject>
-        get() = unpack()
+    val array : ArrayList<XyoObject> = unpack()
 
     private fun getMajorMinor () : ByteArray {
         val major = mData[mCurrentPosition]
@@ -41,7 +39,6 @@ class XyoArrayUnpacker (data : ByteArray, typed: Boolean, sizeOfSize: Int, sizeO
             majorType = arrayType[0]
             minorType = arrayType[1]
         }
-        val numberOfElements = getSize(mSizeOfElementSize)
 
 
         while (mCurrentPosition < mData.size) {
@@ -82,6 +79,12 @@ class XyoArrayUnpacker (data : ByteArray, typed: Boolean, sizeOfSize: Int, sizeO
             size[tempSizePosition] = mData[i]
             tempSizePosition++
             mCurrentPosition++
+        }
+
+        when (sizeSize) {
+            1 -> return ByteBuffer.wrap(size).get().toInt()
+            2 -> return ByteBuffer.wrap(size).short.toInt()
+            4 -> return ByteBuffer.wrap(size).int
         }
 
         return ByteBuffer.wrap(size).int

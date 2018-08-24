@@ -1,5 +1,8 @@
 package network.xyo.sdkcorekotlin
 
+import network.xyo.sdkcorekotlin.data.XyoObject
+import org.junit.Assert
+
 open class XyoTestBase {
     fun String.hexStringToByteArray() : ByteArray {
         val hexChars = "0123456789ABCDEF"
@@ -21,9 +24,28 @@ open class XyoTestBase {
         val it = bytes!!.iterator()
         sb.append("0x")
         while (it.hasNext()) {
-            sb.append(String.format("%02X", it.next()))
+            sb.append(String.format("%02X ", it.next()))
         }
 
         return sb.toString()
+    }
+
+    fun assertArrayOfXyoObjects(expected: Array<XyoObject>, actual:  Array<XyoObject>) {
+        for (i in 0..expected.size - 1) {
+            assertXyoObject(expected[i], actual[i])
+        }
+    }
+
+    fun assertArrayOfXyoObjects(expected: ArrayList<XyoObject>, actual:  ArrayList<XyoObject>) {
+        for (i in 0..expected.size - 1) {
+            assertXyoObject(expected[i], actual[i])
+        }
+    }
+
+    fun assertXyoObject(expected: XyoObject, actual : XyoObject) {
+        Assert.assertArrayEquals(expected.data, actual.data)
+        Assert.assertArrayEquals(expected.id, actual.id)
+        Assert.assertArrayEquals(expected.typed, actual.typed)
+        Assert.assertArrayEquals(expected.untyped, actual.untyped)
     }
 }

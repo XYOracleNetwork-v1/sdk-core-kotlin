@@ -12,6 +12,7 @@ class XyoBulkTestHashes : XyoTestBase() {
     @kotlin.test.Test
     fun bulkTestHashes () {
         runBlocking {
+            println("worked")
             testHash(XyoMd2, "30BD026F5B88B4719B563BDDB68917BE".hexStringToByteArray())
             testHash(XyoMd5, "5289DF737DF57326FCDD22597AFB1FAC".hexStringToByteArray())
             testHash(XyoSha1, "7037807198C22A7D2B0807371D763779A84FDFCF".hexStringToByteArray())

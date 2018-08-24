@@ -2,10 +2,11 @@ package network.xyo.sdkcorekotlin.data.array
 
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.XyoByteArraySetter
+import network.xyo.sdkcorekotlin.data.XyoObjectCreator
+import network.xyo.sdkcorekotlin.data.array.single.XyoSingleTypeArrayInt
 
 abstract class XyoArrayBase : XyoObject() {
     abstract val typedId : ByteArray?
-    abstract val arraySize : ByteArray
     var array = ArrayList<XyoObject>()
 
     val size : Int
@@ -40,20 +41,26 @@ abstract class XyoArrayBase : XyoObject() {
 
     private fun makeArray () : ByteArray {
         if (typedId == null) {
-            val merger = XyoByteArraySetter(array.size + 1)
-            merger.add(arraySize, 0)
+            val merger = XyoByteArraySetter(array.size)
             for (i in 0..array.size - 1) {
-                merger.add(array[i].typed, i + 1)
+                merger.add(array[i].typed, i)
             }
             return merger.merge()
         } else {
-            val merger = XyoByteArraySetter(array.size + 2)
+            val merger = XyoByteArraySetter(array.size + 1)
             merger.add(typedId!!, 0)
-            merger.add(arraySize, 1)
             for (i in 0..array.size - 1) {
-                merger.add(array[i].untyped, i + 2)
+                merger.add(array[i].untyped, i + 1)
             }
             return merger.merge()
         }
+    }
+
+    abstract class XyoArrayCreator : XyoObjectCreator() {
+        override val major: Byte
+            get() = 0x01
+
+        override val defaultSize: Int?
+            get() = null
     }
 }
