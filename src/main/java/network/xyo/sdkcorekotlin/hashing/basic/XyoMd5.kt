@@ -1,6 +1,6 @@
-package network.xyo.sdkcorekotlin.hashing
+package network.xyo.sdkcorekotlin.hashing.basic
 
-class Md2 (pastHash : ByteArray): XyoBasicHashBase(pastHash) {
+class XyoMd5 (pastHash : ByteArray): XyoBasicHashBase(pastHash) {
     override val id: ByteArray
         get() = byteArrayOf(major, minor)
 
@@ -9,9 +9,9 @@ class Md2 (pastHash : ByteArray): XyoBasicHashBase(pastHash) {
             get() = 16
 
         override val minor: Byte
-            get() = 0x01
+            get() = 0x02
 
         override val standardDigestKey: String
-            get() = "MD2"
+            get() = "MD5"
     }
 }

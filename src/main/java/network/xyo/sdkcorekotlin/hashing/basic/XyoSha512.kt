@@ -1,6 +1,6 @@
-package network.xyo.sdkcorekotlin.hashing
+package network.xyo.sdkcorekotlin.hashing.basic
 
-class Sha512 (pastHash : ByteArray): XyoBasicHashBase(pastHash) {
+class XyoSha512 (pastHash : ByteArray): XyoBasicHashBase(pastHash) {
     override val id: ByteArray
         get() = byteArrayOf(major, minor)
 

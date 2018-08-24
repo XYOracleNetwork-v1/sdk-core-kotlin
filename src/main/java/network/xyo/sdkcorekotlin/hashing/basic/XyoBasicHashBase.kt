@@ -1,6 +1,11 @@
-package network.xyo.sdkcorekotlin.hashing
+package network.xyo.sdkcorekotlin.hashing.basic
 
+import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.launch
+import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.data.XyoByteArrayReader
+import network.xyo.sdkcorekotlin.hashing.XyoHash
 import java.security.MessageDigest
 
 abstract class XyoBasicHashBase (pastHash : ByteArray): XyoHash() {
@@ -18,20 +23,22 @@ abstract class XyoBasicHashBase (pastHash : ByteArray): XyoHash() {
         override val sizeOfSize: Int?
             get() = null
 
-        override fun createHash(data: ByteArray): XyoHash {
-            return object : XyoBasicHashBase (hash(data)) {
-                override val id: ByteArray
-                get() = byteArrayOf(major, minor)
+        override fun createHash (data: ByteArray) : Deferred<XyoResult<XyoHash>> {
+            return async {
+                return@async XyoResult<XyoHash>(object : XyoBasicHashBase(hash(data)) {
+                    override val id: ByteArray
+                        get() = byteArrayOf(major, minor)
+                })
             }
         }
 
-        override fun hash(data: ByteArray): ByteArray {
+        private fun hash(data: ByteArray): ByteArray {
             return MessageDigest.getInstance(standardDigestKey).digest(data)
         }
 
         override fun createFromPacked(byteArray: ByteArray): XyoHash {
             val hash = XyoByteArrayReader(byteArray).read(2, byteArray.size - 2)
-            return object : XyoBasicHashBase (hash) {
+            return object : XyoBasicHashBase(hash) {
                 override val id: ByteArray
                     get() = byteArrayOf(byteArray[0], byteArray[1])
             }

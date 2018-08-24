@@ -3,7 +3,7 @@ package network.xyo.sdkcorekotlin.data.array
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.XyoObjectCreator
 import network.xyo.sdkcorekotlin.data.heuristics.number.signed.XyoRssi
-import network.xyo.sdkcorekotlin.exceptions.TypeExeception
+
 import java.nio.ByteBuffer
 
 class XyoStrongArray(major : Byte, minor : Byte) : XyoArrayBase() {
@@ -26,7 +26,7 @@ class XyoStrongArray(major : Byte, minor : Byte) : XyoArrayBase() {
         if (element.id[0] == mMajorType && element.id[1] == mMinorType) {
             super.addElement(element)
         } else {
-            throw TypeExeception(mMajorType, mMinorType, element.id[0], element.id[1])
+            // throw TypeExeception(mMajorType, mMinorType, element.id[0], element.id[1])
         }
     }
 
@@ -34,7 +34,7 @@ class XyoStrongArray(major : Byte, minor : Byte) : XyoArrayBase() {
         if (element.id[0] == mMajorType && element.id[1] == mMinorType) {
             super.addElement(element, index)
         } else {
-            throw TypeExeception(mMajorType, mMinorType, element.id[0], element.id[1])
+            // throw TypeExeception(mMajorType, mMinorType, element.id[0], element.id[1])
         }
     }
 

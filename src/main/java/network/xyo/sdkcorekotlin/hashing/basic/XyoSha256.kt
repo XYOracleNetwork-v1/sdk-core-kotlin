@@ -1,17 +1,17 @@
-package network.xyo.sdkcorekotlin.hashing
+package network.xyo.sdkcorekotlin.hashing.basic
 
-class Sha384 (pastHash : ByteArray): XyoBasicHashBase(pastHash) {
+class XyoSha256 (pastHash : ByteArray): XyoBasicHashBase(pastHash) {
     override val id: ByteArray
         get() = byteArrayOf(major, minor)
 
     companion object : XyoBasicHashBaseCreator() {
         override val defaultSize: Int?
-            get() = 48
+            get() = 32
 
         override val minor: Byte
-            get() = 0x06
+            get() = 0x05
 
         override val standardDigestKey: String
-            get() = "SHA-384"
+            get() = "SHA-256"
     }
 }
