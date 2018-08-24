@@ -57,7 +57,7 @@ class XyoMultiTypeArrayTest : XyoTestBase() {
             0x89.toByte(), 0x17, 0xBE.toByte()
     )
 
-    private val elements = arrayOf<XyoObject>(
+    private val elements = arrayOf(
             XyoRssi(0),
             XyoRssi(1),
             getTestHash()
