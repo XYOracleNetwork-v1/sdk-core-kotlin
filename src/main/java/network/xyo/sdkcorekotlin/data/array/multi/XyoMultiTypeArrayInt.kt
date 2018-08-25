@@ -18,9 +18,9 @@ class XyoMultiTypeArrayInt : XyoMultiTypeArrayBase() {
         override val sizeOfSize: Int?
             get() = 4
 
-        override fun createFromPacked(byteArray: ByteArray): XyoArrayBase {
+        override fun createFromPacked(byteArray: ByteArray): XyoMultiTypeArrayInt {
             val unpackedArray = XyoArrayUnpacker(byteArray, false, 4)
-            val unpackedArrayObject = XyoMultiTypeArrayByte()
+            val unpackedArrayObject = XyoMultiTypeArrayInt()
             unpackedArrayObject.array = unpackedArray.array
             return unpackedArrayObject
         }

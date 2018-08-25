@@ -29,7 +29,7 @@ abstract class XyoObjectCreator : XyoType() {
         fun create(data : ByteArray) : XyoObject? {
             val majorMap = creators[data[0]]
             if (majorMap != null) {
-                return majorMap[data[1]]?.createFromPacked(data)
+                return majorMap[data[1]]?.createFromPacked(XyoByteArrayReader(data).read(2, data.size - 2))
             }
             return null
         }

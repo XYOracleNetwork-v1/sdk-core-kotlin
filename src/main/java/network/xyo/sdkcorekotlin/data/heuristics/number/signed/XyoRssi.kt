@@ -29,9 +29,7 @@ class XyoRssi (rssi : Int) : XyoNumberSigned() {
             get() = null
 
         override fun createFromPacked(byteArray: ByteArray): XyoObject {
-            if (byteArray.size != 3)
-                throw Exception()
-            return XyoRssi(byteArray[2].toInt())
+            return XyoRssi(byteArray[0].toInt())
         }
     }
 }

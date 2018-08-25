@@ -9,7 +9,7 @@ class XyoArrayUnpacker (data : ByteArray, typed: Boolean, sizeOfSize: Int) {
     private val mData = data
     private val mTyped = typed
     private val mSizeOfSize = sizeOfSize
-    private var mCurrentPosition = 2
+    private var mCurrentPosition = 0
     var majorType: Byte? = null
     var minorType: Byte? = null
     val array : ArrayList<XyoObject> = unpack()

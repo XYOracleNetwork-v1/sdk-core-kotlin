@@ -60,8 +60,8 @@ class XyoRsaPublicKey(modulus : BigInteger) : RSAPublicKey, XyoObject() {
 
         override fun createFromPacked(byteArray: ByteArray): XyoRsaPublicKey {
             val reader = XyoByteArrayReader(byteArray)
-            val modulusSize = ByteBuffer.allocate(2).put(reader.read(2, 2)).getShort().toInt() - 2
-            val modulus = reader.read(2, modulusSize)
+            val modulusSize = ByteBuffer.allocate(2).put(reader.read(0, 2)).getShort().toInt() - 2
+            val modulus = reader.read(0, modulusSize)
 
             return  XyoRsaPublicKey(BigInteger(modulus))
         }

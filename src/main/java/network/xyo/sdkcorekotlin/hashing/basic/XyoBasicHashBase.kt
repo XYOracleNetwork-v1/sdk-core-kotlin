@@ -37,10 +37,10 @@ abstract class XyoBasicHashBase (pastHash : ByteArray): XyoHash() {
         }
 
         override fun createFromPacked(byteArray: ByteArray): XyoHash {
-            val hash = XyoByteArrayReader(byteArray).read(2, byteArray.size - 2)
+            val hash = XyoByteArrayReader(byteArray).read(0, byteArray.size)
             return object : XyoBasicHashBase(hash) {
                 override val id: ByteArray
-                    get() = byteArrayOf(byteArray[0], byteArray[1])
+                    get() = byteArrayOf(major, minor)
             }
         }
     }

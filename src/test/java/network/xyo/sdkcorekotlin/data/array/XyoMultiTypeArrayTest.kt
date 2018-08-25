@@ -73,7 +73,7 @@ class XyoMultiTypeArrayTest : XyoTestBase() {
         intArray.addElement(elements[2])
         Assert.assertArrayEquals(expectedIntSize, intArray.untyped)
 
-        val intArrayCreatedFromBytes = XyoMultiTypeArrayInt.createFromPacked(intArray.typed)
+        val intArrayCreatedFromBytes = XyoMultiTypeArrayInt.createFromPacked(intArray.untyped)
         assertArrayOfXyoObjects(intArray.array, intArrayCreatedFromBytes.array)
     }
 
@@ -87,7 +87,7 @@ class XyoMultiTypeArrayTest : XyoTestBase() {
         shortArray.addElement(elements[2])
         Assert.assertArrayEquals(expectedShortSize, shortArray.untyped)
 
-        val intArrayCreatedFromBytes= XyoMultiTypeArrayShort.createFromPacked(shortArray.typed)
+        val intArrayCreatedFromBytes= XyoMultiTypeArrayShort.createFromPacked(shortArray.untyped)
         assertArrayOfXyoObjects(shortArray.array, intArrayCreatedFromBytes.array)
     }
 
@@ -101,7 +101,7 @@ class XyoMultiTypeArrayTest : XyoTestBase() {
         byteArray.addElement(elements[2])
         Assert.assertArrayEquals(expectedByteSize, byteArray.untyped)
 
-        val intArrayCreatedFromBytes = XyoMultiTypeArrayByte.createFromPacked(byteArray.typed)
+        val intArrayCreatedFromBytes = XyoMultiTypeArrayByte.createFromPacked(byteArray.untyped)
         assertArrayOfXyoObjects(byteArray.array, intArrayCreatedFromBytes.array)
     }
 

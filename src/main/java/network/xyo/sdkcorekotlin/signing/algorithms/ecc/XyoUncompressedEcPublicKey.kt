@@ -56,8 +56,8 @@ abstract class XyoUncompressedEcPublicKey : ECPublicKey, XyoObject() {
 
         override fun createFromPacked(byteArray: ByteArray): XyoUncompressedEcPublicKey {
             val reader = XyoByteArrayReader(byteArray)
-            val xPoint = BigInteger(reader.read(2, 32))
-            val yPoint = BigInteger(reader.read(34, 32))
+            val xPoint = BigInteger(reader.read(0, 32))
+            val yPoint = BigInteger(reader.read(32, 32))
 
             return object : XyoUncompressedEcPublicKey() {
                 override val ecSpec: ECParameterSpec
@@ -70,7 +70,7 @@ abstract class XyoUncompressedEcPublicKey : ECPublicKey, XyoObject() {
                     get() = yPoint
 
                 override val id: ByteArray
-                    get() = byteArrayOf(byteArray[0], byteArray[1])
+                    get() = byteArrayOf(major, minor)
             }
         }
     }
