@@ -6,8 +6,9 @@ class XyoSha224 (pastHash : ByteArray): XyoBasicHashBase(pastHash) {
         get() = byteArrayOf(major, minor)
 
     companion object : XyoBasicHashBaseCreator() {
-        override val defaultSize: Int?
-            get() = 20
+        override fun readSize(byteArray: ByteArray): Int {
+            return 20
+        }
 
         override val minor: Byte
             get() = 0x04

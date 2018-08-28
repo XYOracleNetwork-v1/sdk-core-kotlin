@@ -20,8 +20,8 @@ abstract class XyoBasicHashBase (pastHash : ByteArray): XyoHash() {
     abstract class XyoBasicHashBaseCreator : XyoHashCreator() {
         abstract val standardDigestKey : String
 
-        override val sizeOfSize: Int?
-            get() = null
+        override val sizeOfBytesToGetSize: Int
+            get() = 0
 
         override fun createHash (data: ByteArray) : Deferred<XyoResult<XyoHash>> {
             return async {

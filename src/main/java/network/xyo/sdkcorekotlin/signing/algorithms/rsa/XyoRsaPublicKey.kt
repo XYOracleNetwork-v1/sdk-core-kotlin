@@ -26,7 +26,7 @@ class XyoRsaPublicKey(modulus : BigInteger) : RSAPublicKey, XyoObject() {
         val setter = XyoByteArraySetter(1)
         val byteModulus = mModulus.toByteArray()
         val reader = XyoByteArrayReader(byteModulus)
-        setter.add(reader.read(1, byteModulus.size), 0)
+        setter.add(reader.read(0, byteModulus.size), 0)
         return setter.merge()
     }
 
@@ -52,11 +52,12 @@ class XyoRsaPublicKey(modulus : BigInteger) : RSAPublicKey, XyoObject() {
         override val minor: Byte
             get() = 0x03
 
-        override val sizeOfSize: Int?
+        override val sizeOfBytesToGetSize: Int
             get() = 2
 
-        override val defaultSize: Int?
-            get() = null
+        override fun readSize(byteArray: ByteArray): Int {
+            return ByteBuffer.wrap(byteArray).short.toInt()
+        }
 
         override fun createFromPacked(byteArray: ByteArray): XyoRsaPublicKey {
             val reader = XyoByteArrayReader(byteArray)

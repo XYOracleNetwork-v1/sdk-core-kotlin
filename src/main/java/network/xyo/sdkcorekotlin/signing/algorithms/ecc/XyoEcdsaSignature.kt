@@ -18,14 +18,15 @@ abstract class XyoEcdsaSignature(rawSignature : ByteArray) : XyoSignature() {
         get() = signature
 
     abstract class XyoEcdsaSignatureCreator : XyoObjectCreator() {
-        override val defaultSize: Int?
-            get() = null
-
         override val major: Byte
             get() = 0x05
 
-        override val sizeOfSize: Int?
+        override val sizeOfBytesToGetSize: Int
             get() = 1
+
+        override fun readSize(byteArray: ByteArray): Int {
+            return byteArray[0].toInt()
+        }
 
         override fun createFromPacked(byteArray: ByteArray): XyoObject {
             val size = byteArray[2].toInt()

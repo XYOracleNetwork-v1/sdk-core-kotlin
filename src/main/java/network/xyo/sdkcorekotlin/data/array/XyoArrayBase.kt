@@ -7,7 +7,7 @@ import network.xyo.sdkcorekotlin.data.array.single.XyoSingleTypeArrayInt
 
 abstract class XyoArrayBase : XyoObject() {
     abstract val typedId : ByteArray?
-    var array = ArrayList<XyoObject>()
+    abstract var array : Array<XyoObject>
 
     val size : Int
         get() = array.size
@@ -17,23 +17,7 @@ abstract class XyoArrayBase : XyoObject() {
     }
 
     open fun addElement (element : XyoObject, index: Int) {
-        array.add(index, element)
-    }
-
-    open fun addElement (element: XyoObject) {
-        array.add(element)
-    }
-
-    open fun removeElement(element: XyoObject) {
-        array.remove(element)
-    }
-
-    open fun removeElementAtIndex(index : Int) {
-        array.removeAt(index)
-    }
-
-    open fun removeAll() {
-        array.clear()
+        array[index] = element
     }
 
     override val data: ByteArray
@@ -59,8 +43,5 @@ abstract class XyoArrayBase : XyoObject() {
     abstract class XyoArrayCreator : XyoObjectCreator() {
         override val major: Byte
             get() = 0x01
-
-        override val defaultSize: Int?
-            get() = null
     }
 }

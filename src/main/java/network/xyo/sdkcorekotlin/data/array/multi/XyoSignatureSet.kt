@@ -1,20 +1,29 @@
 package network.xyo.sdkcorekotlin.data.array.multi
 
 import network.xyo.sdkcorekotlin.data.XyoObject
-import network.xyo.sdkcorekotlin.data.array.XyoArrayBase
 import network.xyo.sdkcorekotlin.data.array.XyoArrayUnpacker
 import java.nio.ByteBuffer
 
-open class XyoMultiTypeArrayShort(override var array: Array<XyoObject>) : XyoMultiTypeArrayBase() {
+open class XyoSignatureSet(override var array: Array<XyoObject>) : XyoMultiTypeArrayBase() {
     override val id: ByteArray
         get() = byteArrayOf(major, minor)
 
     override val sizeIdentifierSize: Int?
         get() = sizeOfBytesToGetSize
 
+
+    override fun addElement(element: XyoObject, index: Int) {
+        if (element.id[0] == 0x05.toByte()) {
+            super.addElement(element, index)
+        }
+    }
+
     companion object : XyoArrayCreator() {
+        override val major: Byte
+            get() = 0x02
+
         override val minor: Byte
-            get() = 0x05
+            get() = 0x03
 
         override val sizeOfBytesToGetSize: Int
             get() = 2
@@ -23,9 +32,9 @@ open class XyoMultiTypeArrayShort(override var array: Array<XyoObject>) : XyoMul
             return ByteBuffer.wrap(byteArray).short.toInt()
         }
 
-        override fun createFromPacked(byteArray: ByteArray): XyoArrayBase {
+        override fun createFromPacked(byteArray: ByteArray): XyoSignatureSet {
             val unpackedArray = XyoArrayUnpacker(byteArray, false, 2)
-            val unpackedArrayObject = XyoMultiTypeArrayByte(unpackedArray.array.toTypedArray())
+            val unpackedArrayObject = XyoSignatureSet(unpackedArray.array.toTypedArray())
             return unpackedArrayObject
         }
     }

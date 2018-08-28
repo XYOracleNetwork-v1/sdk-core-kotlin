@@ -20,14 +20,15 @@ abstract class XyoRsaSignature (rawSignature: ByteArray) : XyoSignature() {
         get() = mSignature
 
     abstract class XyoRsaSignatureCreator : XyoObjectCreator () {
-        override val defaultSize: Int?
-            get() = null
-
         override val major: Byte
-            get() = 0x06
+            get() = 0x05
 
-        override val sizeOfSize: Int?
+        override val sizeOfBytesToGetSize: Int
             get() = 2
+
+        override fun readSize(byteArray: ByteArray): Int {
+            return ByteBuffer.wrap(byteArray).short.toInt()
+        }
 
         override fun createFromPacked(byteArray: ByteArray): XyoObject {
             val size = ByteBuffer.wrap(byteArray).getShort(0).toInt()

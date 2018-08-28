@@ -1,10 +1,11 @@
 package network.xyo.sdkcorekotlin.data.array.single
 
-import network.xyo.sdkcorekotlin.data.XyoObjectCreator
+import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.array.XyoArrayUnpacker
 
-class XyoSingleTypeArrayByte(override val elementMajor : Byte,
-                             override val elementMinor : Byte) : XyoSingleTypeArrayBase() {
+open class XyoSingleTypeArrayByte(override val elementMajor : Byte,
+                                  override val elementMinor : Byte,
+                                  override var array: Array<XyoObject>) : XyoSingleTypeArrayBase() {
 
     override val typedId: ByteArray?
         get() = byteArrayOf(elementMajor, elementMinor)
@@ -13,19 +14,22 @@ class XyoSingleTypeArrayByte(override val elementMajor : Byte,
         get() = byteArrayOf(major, minor)
 
     override val sizeIdentifierSize: Int?
-        get() = sizeOfSize
+        get() = sizeOfBytesToGetSize
 
     companion object : XyoArrayCreator() {
         override val minor: Byte
             get() = 0x01
 
-        override val sizeOfSize: Int?
+        override val sizeOfBytesToGetSize: Int
             get() = 1
 
-        override fun createFromPacked(byteArray: ByteArray): XyoSingleTypeArrayInt {
+        override fun readSize(byteArray: ByteArray): Int {
+            return byteArray[0].toInt()
+        }
+
+        override fun createFromPacked(byteArray: ByteArray): XyoSingleTypeArrayByte {
             val unpackedArray = XyoArrayUnpacker(byteArray, true, 1)
-            val unpackedArrayObject = XyoSingleTypeArrayInt(unpackedArray.majorType!!, unpackedArray.minorType!!)
-            unpackedArrayObject.array = unpackedArray.array
+            val unpackedArrayObject = XyoSingleTypeArrayByte(unpackedArray.majorType!!, unpackedArray.minorType!!, unpackedArray.array.toTypedArray())
             return unpackedArrayObject
         }
     }

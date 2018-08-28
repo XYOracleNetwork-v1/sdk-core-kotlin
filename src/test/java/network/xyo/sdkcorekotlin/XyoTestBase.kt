@@ -1,6 +1,10 @@
 package network.xyo.sdkcorekotlin
 
+import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
 import network.xyo.sdkcorekotlin.data.XyoObject
+import network.xyo.sdkcorekotlin.data.XyoPayload
+import network.xyo.sdkcorekotlin.data.array.multi.XyoKeySet
+import network.xyo.sdkcorekotlin.signing.XyoSignatureSet
 import org.junit.Assert
 
 open class XyoTestBase {
@@ -47,5 +51,38 @@ open class XyoTestBase {
         Assert.assertArrayEquals(expected.id, actual.id)
         Assert.assertArrayEquals(expected.typed, actual.typed)
         Assert.assertArrayEquals(expected.untyped, actual.untyped)
+    }
+
+    fun printBoundWitness(boundWitness : XyoBoundWitness) {
+        println("-------------------")
+        println("Public Keys")
+        for (publicKeySet in boundWitness.publicKeys) {
+            println("--Key Set")
+            val castedPublicKeySet = publicKeySet as XyoKeySet
+            for (publicKey in castedPublicKeySet.array) {
+                println("----" + bytesToString(publicKey.typed))
+            }
+        }
+
+        println("Payloads")
+        for (payload in boundWitness.payloads) {
+            val castedPayload = payload as XyoPayload
+            println("--Payload")
+            println("----Signed: " + bytesToString(castedPayload.signedPayload.typed))
+            println("----Unsigned: " + bytesToString(castedPayload.unsignedPayload.typed))
+        }
+
+        println("Signatures")
+        for (signaturesSet in boundWitness.signatures) {
+            println("--Signatures Set")
+            val castedSignaturesSet = signaturesSet as XyoSignatureSet
+            for (signature in castedSignaturesSet.array) {
+                println("----" + bytesToString(signature.typed))
+            }
+        }
+    }
+
+    fun assertBoundWitness (boundWitnessOne : XyoBoundWitness, boundWitnessTwo : XyoBoundWitness){
+        Assert.assertArrayEquals(boundWitnessOne.typed, boundWitnessTwo.typed)
     }
 }

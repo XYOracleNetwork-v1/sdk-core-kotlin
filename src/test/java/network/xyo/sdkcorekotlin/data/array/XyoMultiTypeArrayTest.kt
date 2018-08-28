@@ -67,10 +67,7 @@ class XyoMultiTypeArrayTest : XyoTestBase() {
     fun testIntMultiArray () {
         XyoMd2.enable()
         XyoRssi.enable()
-        val intArray = XyoMultiTypeArrayInt()
-        intArray.addElement(elements[0])
-        intArray.addElement(elements[1])
-        intArray.addElement(elements[2])
+        val intArray = XyoMultiTypeArrayInt(elements)
         Assert.assertArrayEquals(expectedIntSize, intArray.untyped)
 
         val intArrayCreatedFromBytes = XyoMultiTypeArrayInt.createFromPacked(intArray.untyped)
@@ -81,10 +78,7 @@ class XyoMultiTypeArrayTest : XyoTestBase() {
     fun testShortMultiArray () {
         XyoMd2.enable()
         XyoRssi.enable()
-        val shortArray = XyoMultiTypeArrayShort()
-        shortArray.addElement(elements[0])
-        shortArray.addElement(elements[1])
-        shortArray.addElement(elements[2])
+        val shortArray = XyoMultiTypeArrayShort(elements)
         Assert.assertArrayEquals(expectedShortSize, shortArray.untyped)
 
         val intArrayCreatedFromBytes= XyoMultiTypeArrayShort.createFromPacked(shortArray.untyped)
@@ -95,10 +89,7 @@ class XyoMultiTypeArrayTest : XyoTestBase() {
     fun testByteMultiArray () {
         XyoMd2.enable()
         XyoRssi.enable()
-        val byteArray = XyoMultiTypeArrayByte()
-        byteArray.addElement(elements[0])
-        byteArray.addElement(elements[1])
-        byteArray.addElement(elements[2])
+        val byteArray = XyoMultiTypeArrayByte(elements)
         Assert.assertArrayEquals(expectedByteSize, byteArray.untyped)
 
         val intArrayCreatedFromBytes = XyoMultiTypeArrayByte.createFromPacked(byteArray.untyped)

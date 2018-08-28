@@ -1,8 +1,8 @@
 package network.xyo.sdkcorekotlin.data
 
 abstract class XyoObjectCreator : XyoType() {
-    abstract val defaultSize : Int?
-    abstract val sizeOfSize : Int?
+    abstract val sizeOfBytesToGetSize : Int
+    abstract fun readSize (byteArray: ByteArray) : Int
     abstract fun createFromPacked (byteArray: ByteArray) : XyoObject
 
     fun enable () {
@@ -40,26 +40,6 @@ abstract class XyoObjectCreator : XyoType() {
                 return majorMap[minor]
             }
             return null
-        }
-
-        fun getObjectContents (byteArray: ByteArray, includeSize: Boolean) : ByteArray {
-            val reader = XyoByteArrayReader(byteArray)
-
-            if (includeSize) {
-                return reader.read(2, byteArray.size - 2)
-            } else {
-                var sizeOfSizeElement = XyoObjectCreator.getCreator(byteArray[0], byteArray[1])?.sizeOfSize
-
-                if (sizeOfSizeElement == null) {
-                    sizeOfSizeElement = XyoObjectCreator.getCreator(byteArray[0], byteArray[1])?.defaultSize
-                }
-
-                if (sizeOfSizeElement != null) {
-                    return reader.read(sizeOfSizeElement, byteArray.size - 2)
-                }
-            }
-
-            throw Exception()
         }
     }
 }

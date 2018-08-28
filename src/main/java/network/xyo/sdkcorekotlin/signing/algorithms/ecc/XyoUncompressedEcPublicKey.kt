@@ -5,6 +5,7 @@ import network.xyo.sdkcorekotlin.data.XyoByteArraySetter
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.XyoObjectCreator
 import java.math.BigInteger
+import java.nio.ByteBuffer
 import java.security.interfaces.ECPublicKey
 import java.security.spec.ECParameterSpec
 import java.security.spec.ECPoint
@@ -45,14 +46,16 @@ abstract class XyoUncompressedEcPublicKey : ECPublicKey, XyoObject() {
 
     abstract class XyoUncompressedEcPublicKeyCreator : XyoObjectCreator () {
         abstract val ecPramSpec : ECParameterSpec
-        override val defaultSize: Int?
-            get() = 64
 
         override val major: Byte
             get() = 0x04
 
-        override val sizeOfSize: Int?
-            get() = null
+        override val sizeOfBytesToGetSize: Int
+            get() = 0
+
+        override fun readSize(byteArray: ByteArray): Int {
+            return 64
+        }
 
         override fun createFromPacked(byteArray: ByteArray): XyoUncompressedEcPublicKey {
             val reader = XyoByteArrayReader(byteArray)

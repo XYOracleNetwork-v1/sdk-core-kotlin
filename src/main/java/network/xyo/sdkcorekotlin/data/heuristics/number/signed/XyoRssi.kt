@@ -22,11 +22,12 @@ class XyoRssi (rssi : Int) : XyoNumberSigned() {
         override val minor: Byte
             get() = 0x01
 
-        override val defaultSize: Int?
-            get() = 1
+        override fun readSize(byteArray: ByteArray): Int {
+            return 1
+        }
 
-        override val sizeOfSize: Int?
-            get() = null
+        override val sizeOfBytesToGetSize: Int
+            get() = 0
 
         override fun createFromPacked(byteArray: ByteArray): XyoObject {
             return XyoRssi(byteArray[0].toInt())

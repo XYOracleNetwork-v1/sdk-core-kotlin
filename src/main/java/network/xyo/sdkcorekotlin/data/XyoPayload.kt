@@ -23,17 +23,18 @@ class XyoPayload(val signedPayload : XyoMultiTypeArrayInt,
     }
 
     companion object : XyoObjectCreator() {
-        override val defaultSize: Int?
-            get() = null
-
         override val major: Byte
             get() = 0x02
 
         override val minor: Byte
             get() = 0x04
 
-        override val sizeOfSize: Int?
+        override val sizeOfBytesToGetSize: Int
             get() = 4
+
+        override fun readSize(byteArray: ByteArray): Int {
+            return ByteBuffer.wrap(byteArray).int
+        }
 
         override fun createFromPacked(byteArray: ByteArray): XyoObject {
             val reader = XyoByteArrayReader(byteArray)

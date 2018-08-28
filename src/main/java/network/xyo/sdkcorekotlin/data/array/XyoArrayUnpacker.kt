@@ -22,12 +22,12 @@ class XyoArrayUnpacker (data : ByteArray, typed: Boolean, sizeOfSize: Int) {
     }
 
     private fun readCurrentSize (major: Byte, minor: Byte) : Int? {
-        val sizeOfSizeElement = XyoObjectCreator.getCreator(major, minor)?.sizeOfSize
-
-        if (sizeOfSizeElement == null) {
-            return XyoObjectCreator.getCreator(major, minor)?.defaultSize
+        val typeObject = XyoObjectCreator.getCreator(major, minor)
+        if (typeObject != null) {
+            val sizeOfBytesToRead = typeObject.sizeOfBytesToGetSize
+            return typeObject.readSize(readBytes(sizeOfBytesToRead))
         }
-        return getSize(sizeOfSizeElement)
+        throw Exception()
     }
 
     private fun unpack () : ArrayList<XyoObject> {
@@ -88,5 +88,17 @@ class XyoArrayUnpacker (data : ByteArray, typed: Boolean, sizeOfSize: Int) {
         }
 
         return ByteBuffer.wrap(size).int
+    }
+
+    private fun readBytes (size : Int) : ByteArray {
+        var currentPosition = 0
+        val readBytes = ByteArray(size)
+
+        for (i in currentPosition until currentPosition + size) {
+            readBytes[currentPosition] = mData[i]
+            currentPosition++
+        }
+
+        return readBytes
     }
 }
