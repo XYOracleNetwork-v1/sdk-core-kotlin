@@ -1,5 +1,6 @@
 package network.xyo.sdkcorekotlin.signing
 
+import network.xyo.sdkcorekotlin.data.XyoByteArrayReader
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.array.XyoArrayUnpacker
 import network.xyo.sdkcorekotlin.data.array.multi.XyoMultiTypeArrayBase

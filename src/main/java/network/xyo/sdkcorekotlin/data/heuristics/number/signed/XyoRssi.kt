@@ -1,5 +1,6 @@
 package network.xyo.sdkcorekotlin.data.heuristics.number.signed
 
+import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.XyoObjectCreator
 import network.xyo.sdkcorekotlin.data.heuristics.number.XyoNumberTypes
@@ -10,10 +11,10 @@ class XyoRssi (rssi : Int) : XyoNumberSigned() {
 
     override val size: XyoNumberTypes = XyoNumberTypes.BYTE
 
-    override val sizeIdentifierSize: Int? = null
+    override val sizeIdentifierSize: XyoResult<Int?> = XyoResult<Int?>(null)
 
-    override val id: ByteArray
-        get() = byteArrayOf(major, minor)
+    override val id: XyoResult<ByteArray>
+        get() = XyoResult(byteArrayOf(major, minor))
 
     companion object : XyoObjectCreator() {
         override val major: Byte
@@ -22,15 +23,15 @@ class XyoRssi (rssi : Int) : XyoNumberSigned() {
         override val minor: Byte
             get() = 0x01
 
-        override fun readSize(byteArray: ByteArray): Int {
-            return 1
+        override fun readSize(byteArray: ByteArray): XyoResult<Int> {
+            return XyoResult(1)
         }
 
-        override val sizeOfBytesToGetSize: Int
-            get() = 0
+        override val sizeOfBytesToGetSize: XyoResult<Int?>
+            get() = XyoResult(0)
 
-        override fun createFromPacked(byteArray: ByteArray): XyoObject {
-            return XyoRssi(byteArray[0].toInt())
+        override fun createFromPacked(byteArray: ByteArray): XyoResult<XyoObject> {
+            return XyoResult(XyoRssi(byteArray[0].toInt()))
         }
     }
 }

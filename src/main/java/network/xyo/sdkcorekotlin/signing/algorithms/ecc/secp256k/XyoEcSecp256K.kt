@@ -1,5 +1,7 @@
 package network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k
 
+import network.xyo.sdkcorekotlin.XyoError
+import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.XyoGeneralEc
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.XyoEcPrivateKey
@@ -12,8 +14,14 @@ import java.security.interfaces.ECPublicKey
 
 abstract class XyoEcSecp256K : XyoGeneralEc() {
     open val keyPair: KeyPair = generateKeyPair()
-    override val publicKey: XyoObject
-        get() = keyPair.public as XyoSecp256K1CompressedPublicKey
+    override val publicKey: XyoResult<XyoObject>
+        get() {
+            val ecPublicKey = keyPair.public as? XyoSecp256K1CompressedPublicKey
+            if (ecPublicKey != null) {
+                return XyoResult(ecPublicKey)
+            }
+            return XyoResult(XyoError(""))
+        }
 
     private fun generateKeyPair(): KeyPair {
         keyGenerator.initialize(XyoSecp256K1CompressedPublicKey.ecPramSpec)

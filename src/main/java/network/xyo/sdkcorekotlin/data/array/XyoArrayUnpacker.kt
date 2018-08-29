@@ -22,10 +22,10 @@ class XyoArrayUnpacker (data : ByteArray, typed: Boolean, sizeOfSize: Int) {
     }
 
     private fun readCurrentSize (major: Byte, minor: Byte) : Int? {
-        val typeObject = XyoObjectCreator.getCreator(major, minor)
+        val typeObject = XyoObjectCreator.getCreator(major, minor).value
         if (typeObject != null) {
             val sizeOfBytesToRead = typeObject.sizeOfBytesToGetSize
-            return typeObject.readSize(readBytes(sizeOfBytesToRead))
+            return typeObject.readSize(readBytes(sizeOfBytesToRead.value!!)).value
         }
         throw Exception()
     }
@@ -43,7 +43,7 @@ class XyoArrayUnpacker (data : ByteArray, typed: Boolean, sizeOfSize: Int) {
 
         while (mCurrentPosition < mData.size) {
             if (!mTyped) {
-                 arrayType = getMajorMinor()
+                arrayType = getMajorMinor()
             }
 
             val sizeOfElement = readCurrentSize(arrayType[0], arrayType[1])
@@ -64,7 +64,7 @@ class XyoArrayUnpacker (data : ByteArray, typed: Boolean, sizeOfSize: Int) {
                 merger.add(byteArrayOf(arrayType[1]), 1)
                 merger.add(field, 2)
 
-                items.add(XyoObjectCreator.create(merger.merge())!!)
+                items.add(XyoObjectCreator.create(merger.merge()).value!!)
             }
         }
 
@@ -82,7 +82,7 @@ class XyoArrayUnpacker (data : ByteArray, typed: Boolean, sizeOfSize: Int) {
         }
 
         when (sizeSize) {
-            1 -> return ByteBuffer.wrap(size).get().toInt()
+            1 -> return size[0].toInt()
             2 -> return ByteBuffer.wrap(size).short.toInt()
             4 -> return ByteBuffer.wrap(size).int
         }
@@ -95,7 +95,7 @@ class XyoArrayUnpacker (data : ByteArray, typed: Boolean, sizeOfSize: Int) {
         val readBytes = ByteArray(size)
 
         for (i in currentPosition until currentPosition + size) {
-            readBytes[currentPosition] = mData[i]
+            readBytes[currentPosition] = mData[i + mCurrentPosition]
             currentPosition++
         }
 

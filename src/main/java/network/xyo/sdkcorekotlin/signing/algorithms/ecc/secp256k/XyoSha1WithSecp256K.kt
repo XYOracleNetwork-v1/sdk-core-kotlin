@@ -23,8 +23,8 @@ class XyoSha1WithSecp256K : XyoEcSecp256K() {
     companion object : XyoSigningObjectCreatorVerify() {
         override val signatureInstance: Signature = Signature.getInstance("SHA1withECDSA")
 
-        override fun newInstance(): XyoSigningObject {
-            return XyoSha256WithSecp256K()
+        override fun newInstance(): XyoResult<XyoSigningObject> {
+            return XyoResult(XyoSha256WithSecp256K())
         }
 
         override val key: Byte

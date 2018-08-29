@@ -1,8 +1,7 @@
-package network.xyo.sdkcorekotlin
+package network.xyo.sdkcorekotlin.boundWitness
 
 import kotlinx.coroutines.experimental.runBlocking
-import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
-import network.xyo.sdkcorekotlin.boundWitness.XyoZigZagBoundWitness
+import network.xyo.sdkcorekotlin.XyoTestBase
 import network.xyo.sdkcorekotlin.data.XyoPayload
 import network.xyo.sdkcorekotlin.data.array.multi.XyoMultiTypeArrayInt
 import network.xyo.sdkcorekotlin.data.heuristics.number.signed.XyoRssi

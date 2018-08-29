@@ -1,5 +1,7 @@
 package network.xyo.sdkcorekotlin.signing.algorithms.rsa
 
+import network.xyo.sdkcorekotlin.XyoError
+import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.signing.XyoSigningObject
 import java.security.*
@@ -11,8 +13,14 @@ abstract class XyoGeneralRsa(keySize : Int) : XyoSigningObject() {
     private val mKeySize : Int = keySize
     abstract val signature : Signature
 
-    override val publicKey: XyoObject
-        get() = keyPair.public as XyoRsaPublicKey
+    override val publicKey: XyoResult<XyoObject>
+        get() {
+            val rsaKeyPair = keyPair.public as? XyoRsaPublicKey
+            if (rsaKeyPair != null) {
+                return XyoResult(rsaKeyPair)
+            }
+            return XyoResult(XyoError(""))
+        }
 
     open val keyPair: KeyPair = generateKeyPair()
 

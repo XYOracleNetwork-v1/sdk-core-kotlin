@@ -21,8 +21,8 @@ abstract class XyoUncompressedEcPublicKey : ECPublicKey, XyoObject() {
 
     override fun getEncoded(): ByteArray {
         val uncompressedEcPublicKey = XyoByteArraySetter(2)
-        uncompressedEcPublicKey.add(x.toByteArray(), 0)
-        uncompressedEcPublicKey.add(y.toByteArray(), 1)
+        uncompressedEcPublicKey.add(get32ByteEcPoint(x), 0)
+        uncompressedEcPublicKey.add(get32ByteEcPoint(y), 1)
         return uncompressedEcPublicKey.merge()
     }
 
@@ -43,6 +43,25 @@ abstract class XyoUncompressedEcPublicKey : ECPublicKey, XyoObject() {
 
     override val sizeIdentifierSize: Int?
         get() = null
+
+    fun get32ByteEcPoint(point : BigInteger) : ByteArray {
+        val encodedPoint = point.toByteArray()
+        if (encodedPoint.size == 32) {
+            return encodedPoint
+        }
+        return encodedPoint.copyOfRange(1, 33)
+    }
+
+    fun bytesToString(bytes: ByteArray?): String {
+        val sb = StringBuilder()
+        val it = bytes!!.iterator()
+        sb.append("0x")
+        while (it.hasNext()) {
+            sb.append(String.format("%02X ", it.next()))
+        }
+
+        return sb.toString()
+    }
 
     abstract class XyoUncompressedEcPublicKeyCreator : XyoObjectCreator () {
         abstract val ecPramSpec : ECParameterSpec

@@ -5,11 +5,11 @@ import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.data.XyoObject
 
 abstract class XyoSigningObject {
-    abstract val publicKey : XyoObject
+    abstract val publicKey : XyoResult<XyoObject>
     abstract fun signData (byteArray: ByteArray) : Deferred<XyoResult<XyoObject>>
 
     abstract class XYOSigningCreator {
-        abstract fun newInstance () : XyoSigningObject
+        abstract fun newInstance () : XyoResult<XyoSigningObject>
         abstract fun verifySign (signature: XyoObject, byteArray: ByteArray, publicKey : XyoObject) : Deferred<XyoResult<Boolean>>
         abstract val key : Byte
 

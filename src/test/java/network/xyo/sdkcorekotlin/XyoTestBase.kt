@@ -28,7 +28,7 @@ open class XyoTestBase {
         val it = bytes!!.iterator()
         sb.append("0x")
         while (it.hasNext()) {
-            sb.append(String.format("%02X ", it.next())) 
+            sb.append(String.format("%02X ", it.next()))
         }
 
         return sb.toString()

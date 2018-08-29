@@ -1,9 +1,12 @@
 package network.xyo.sdkcorekotlin.data
 
+import network.xyo.sdkcorekotlin.XyoError
+import network.xyo.sdkcorekotlin.XyoResult
+
 abstract class XyoObjectCreator : XyoType() {
-    abstract val sizeOfBytesToGetSize : Int
-    abstract fun readSize (byteArray: ByteArray) : Int
-    abstract fun createFromPacked (byteArray: ByteArray) : XyoObject
+    abstract val sizeOfBytesToGetSize : XyoResult<Int?>
+    abstract fun readSize (byteArray: ByteArray) : XyoResult<Int>
+    abstract fun createFromPacked (byteArray: ByteArray) : XyoResult<XyoObject>
 
     fun enable () {
         val minorMap = creators[major]
@@ -26,20 +29,24 @@ abstract class XyoObjectCreator : XyoType() {
     companion object {
         private val creators = HashMap<Byte, HashMap<Byte, XyoObjectCreator>>()
 
-        fun create(data : ByteArray) : XyoObject? {
+        fun create(data : ByteArray) : XyoResult<XyoObject> {
             val majorMap = creators[data[0]]
             if (majorMap != null) {
-                return majorMap[data[1]]?.createFromPacked(XyoByteArrayReader(data).read(2, data.size - 2))
+                val creator = majorMap[data[1]]?.createFromPacked(XyoByteArrayReader(data).read(2, data.size - 2))
+                if (creator != null) {
+                    return creator
+                }
+                return XyoResult(XyoError(""))
             }
-            return null
+            return XyoResult(XyoError(""))
         }
 
-        fun getCreator (major: Byte, minor: Byte) : XyoObjectCreator? {
+        fun getCreator (major: Byte, minor: Byte) : XyoResult<XyoObjectCreator?> {
             val majorMap = creators[major]
             if (majorMap != null) {
-                return majorMap[minor]
+                return XyoResult(majorMap[minor])
             }
-            return null
+            return XyoResult(XyoError(""))
         }
     }
 }

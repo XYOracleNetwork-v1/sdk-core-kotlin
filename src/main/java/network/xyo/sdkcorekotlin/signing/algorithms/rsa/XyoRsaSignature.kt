@@ -31,9 +31,9 @@ abstract class XyoRsaSignature (rawSignature: ByteArray) : XyoSignature() {
         }
 
         override fun createFromPacked(byteArray: ByteArray): XyoObject {
-            val size = ByteBuffer.wrap(byteArray).getShort(0).toInt()
+            val size = ByteBuffer.wrap(byteArray).short.toInt()
 
-            return object : XyoEcdsaSignature(XyoByteArrayReader(byteArray).read(0, size)) {
+            return object : XyoRsaSignature(XyoByteArrayReader(byteArray).read(2, size - 2)) {
                 override val id: ByteArray
                     get() = byteArrayOf(major, minor)
             }

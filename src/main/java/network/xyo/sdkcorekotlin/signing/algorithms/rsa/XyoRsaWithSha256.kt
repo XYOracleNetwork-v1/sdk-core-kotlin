@@ -26,8 +26,8 @@ class XyoRsaWithSha256 : XyoGeneralRsa (512) {
         override val key: Byte
             get() = 0x08
 
-        override fun newInstance(): XyoSigningObject {
-            return XyoRsaWithSha256()
+        override fun newInstance(): XyoResult<XyoSigningObject> {
+            return XyoResult(XyoRsaWithSha256())
         }
     }
 }
