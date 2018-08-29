@@ -28,7 +28,7 @@ abstract class XyoBoundWitness : XyoObject() {
 
     fun getHash (hashCreator : XyoHash.XyoHashCreator) = async {
         val dataToHash = getSigningData()
-        val dataToHashValue = dataToHash.value ?: return@async XyoResult<XyoHash>(XyoError(""))
+        val dataToHashValue = dataToHash.value ?: return@async XyoResult<XyoHash>(dataToHash.error!!)
         return@async hashCreator.createHash(dataToHashValue).await()
     }
 
@@ -82,10 +82,12 @@ abstract class XyoBoundWitness : XyoObject() {
                     val payloadValue = payload.signedPayload.untyped.value
                     if (payloadValue != null) {
                         setter.add(payloadValue, i + 1)
+                    } else {
+                        return XyoResult<ByteArray>(XyoError("1"))
                     }
+                } else {
                     return XyoResult<ByteArray>(XyoError("2"))
                 }
-                return XyoResult<ByteArray>(XyoError("2"))
             }
             return XyoResult(setter.merge())
         }
