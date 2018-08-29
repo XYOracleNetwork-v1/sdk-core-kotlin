@@ -49,12 +49,12 @@ class XyoOriginChainStateTest : XyoTestBase() {
                 val unsignedPayload = XyoMultiTypeArrayInt(elementsInUnsignedPayload)
                 val alicePayload = XyoPayload(signedPayload, unsignedPayload)
                 val aliceBoundWitness = XyoZigZagBoundWitness(originChainState.getSigners(), alicePayload)
+
                 aliceBoundWitness.incomingData(null, true).await()
                 originChainState.newOriginBlock(aliceBoundWitness.getHash(hashCreator).await().value!!)
                 originBlocks.add(aliceBoundWitness)
 
                 originChainState.addSigner(XyoSigningObject.getCreator(0x02)!!.newInstance().value!!)
-
                 lastHash = aliceBoundWitness.getHash(hashCreator).await().value!!
 
                 if (i != 0) {

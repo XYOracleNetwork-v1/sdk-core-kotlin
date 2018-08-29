@@ -24,11 +24,7 @@ class XyoRsaPublicKey(modulus : BigInteger) : RSAPublicKey, XyoObject() {
     }
 
     override fun getEncoded(): ByteArray {
-        val setter = XyoByteArraySetter(1)
-        val byteModulus = mModulus.toByteArray()
-        val reader = XyoByteArrayReader(byteModulus)
-        setter.add(reader.read(0, byteModulus.size), 0)
-        return setter.merge()
+        return mModulus.toByteArray()
     }
 
     override fun getFormat(): String {
@@ -62,7 +58,7 @@ class XyoRsaPublicKey(modulus : BigInteger) : RSAPublicKey, XyoObject() {
 
         override fun createFromPacked(byteArray: ByteArray): XyoResult<XyoObject> {
             val reader = XyoByteArrayReader(byteArray)
-            val modulusSize = ByteBuffer.allocate(2).put(reader.read(0, 2)).getShort().toInt() - 2
+            val modulusSize = ByteBuffer.allocate(4).put(reader.read(0, 4)).short.toInt() - 4
             val modulus = reader.read(0, modulusSize)
 
             return  XyoResult(XyoRsaPublicKey(BigInteger(modulus)))

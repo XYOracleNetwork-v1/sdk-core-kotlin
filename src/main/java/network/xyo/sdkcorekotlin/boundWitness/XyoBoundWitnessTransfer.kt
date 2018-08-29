@@ -4,9 +4,9 @@ import network.xyo.sdkcorekotlin.XyoError
 import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.data.*
 import network.xyo.sdkcorekotlin.data.array.multi.XyoKeySet
-import network.xyo.sdkcorekotlin.data.array.multi.XyoSignatureSet
 import network.xyo.sdkcorekotlin.data.array.single.XyoSingleTypeArrayInt
 import network.xyo.sdkcorekotlin.data.array.single.XyoSingleTypeArrayShort
+import network.xyo.sdkcorekotlin.signing.XyoSignatureSet
 import java.nio.ByteBuffer
 
 class XyoBoundWitnessTransfer(val keysToSend : Array<XyoObject>,

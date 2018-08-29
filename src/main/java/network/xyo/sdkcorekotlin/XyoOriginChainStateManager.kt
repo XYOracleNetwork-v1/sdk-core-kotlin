@@ -9,11 +9,13 @@ import network.xyo.sdkcorekotlin.signing.XyoSigningObject
 
 class XyoOriginChainStateManager {
     private val currentSigners = ArrayList<XyoSigningObject>()
-    private val allPublicKeys = ArrayList<XyoObject>()
     private val waitingSigners = ArrayList<XyoSigningObject>()
-    private val allHashes = ArrayList<XyoHash>()
-    private var count = 0
     private var latestHash : XyoHash? = null
+
+    var count = 0
+    val allHashes = ArrayList<XyoHash>()
+    val allPublicKeys = ArrayList<XyoObject>()
+    var nextPublicKey : XyoNextPublicKey? = null
 
     val index : XyoIndex
         get() = XyoIndex(count)
@@ -25,8 +27,6 @@ class XyoOriginChainStateManager {
             }
             return null
         }
-
-    var nextPublicKey : XyoNextPublicKey? = null
 
     fun getSigners () : Array<XyoSigningObject>{
         return currentSigners.toTypedArray()
@@ -49,7 +49,10 @@ class XyoOriginChainStateManager {
         allHashes.add(hash)
         latestHash = hash
         count++
+        addWaitingSigner()
+    }
 
+    private fun addWaitingSigner () {
         if (waitingSigners.size > 0) {
             currentSigners.add(waitingSigners.first())
             waitingSigners.removeAt(0)
