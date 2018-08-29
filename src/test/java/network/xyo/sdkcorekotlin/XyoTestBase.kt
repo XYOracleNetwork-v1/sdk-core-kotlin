@@ -83,6 +83,6 @@ open class XyoTestBase {
     }
 
     fun assertBoundWitness (boundWitnessOne : XyoBoundWitness, boundWitnessTwo : XyoBoundWitness){
-        Assert.assertArrayEquals(boundWitnessOne.typed.value!!, boundWitnessTwo.typed.value!!)
+        Assert.assertArrayEquals(boundWitnessOne.data.value!!, boundWitnessTwo.data.value!!)
     }
 }

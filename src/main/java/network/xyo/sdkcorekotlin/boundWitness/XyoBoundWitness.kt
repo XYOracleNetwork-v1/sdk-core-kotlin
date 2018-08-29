@@ -31,9 +31,9 @@ abstract class XyoBoundWitness : XyoObject() {
         val makeSignaturesUntyped = makeSignatures().untyped
         val makePayloadsUntyped = makePayloads().untyped
 
-        if (makePublicKeysUntyped.error != null && makePublicKeysUntyped.value != null) {
-            if (makeSignaturesUntyped.error != null && makeSignaturesUntyped.value != null) {
-                if (makePayloadsUntyped.error != null && makePayloadsUntyped.value != null) {
+        if (makePublicKeysUntyped.error == null && makePublicKeysUntyped.value != null) {
+            if (makeSignaturesUntyped.error == null && makeSignaturesUntyped.value != null) {
+                if (makePayloadsUntyped.error == null && makePayloadsUntyped.value != null) {
                     setter.add(makePublicKeysUntyped.value!!, 0)
                     setter.add(makePayloadsUntyped.value!!, 1)
                     setter.add(makeSignaturesUntyped.value!!, 2)
@@ -70,13 +70,13 @@ abstract class XyoBoundWitness : XyoObject() {
                     if (payloadValue != null) {
                         setter.add(payloadValue, i + 1)
                     }
-                    return@async XyoResult<XyoObject>(XyoError(""))
+                    return@async XyoResult<XyoObject>(payload)
                 }
-                return@async XyoResult<XyoObject>(XyoError(""))
+                return@async XyoResult<XyoObject>(XyoError("2"))
             }
             return@async signer.signData(setter.merge()).await()
         }
-        return@async XyoResult<XyoObject>(XyoError(""))
+        return@async XyoResult<XyoObject>(XyoError("3"))
     }
 
     companion object : XyoObjectCreator() {

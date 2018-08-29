@@ -151,7 +151,7 @@ class XyoZigZagBoundWitness(private val signers : Array<XyoSigningObject>,
             dynamicSignatureSets.add(signatureSet.value!!)
             return@async true
         }
-
+        println(signatureSet.error!!.message.toString())
         return@async false
     }
 }
