@@ -17,6 +17,20 @@ class XyoPayload(val signedPayload : XyoMultiTypeArrayInt,
     override val sizeIdentifierSize: XyoResult<Int?>
         get() = XyoResult(4)
 
+    val signedPayloadMapping :  XyoResult<HashMap<Int, XyoObject>>
+        get() = getMappingOfElements(signedPayload.array)
+
+    val unsignedPayloadMapping : XyoResult<HashMap<Int, XyoObject>>
+        get() = getMappingOfElements(signedPayload.array)
+
+    private fun getMappingOfElements (objects : Array<XyoObject>) : XyoResult<HashMap<Int, XyoObject>> {
+        val mapping = HashMap<Int, XyoObject>()
+        for (element in objects) {
+            mapping[element.id.value?.contentHashCode() ?: return XyoResult(XyoError("No element id!"))] = element
+        }
+        return XyoResult(mapping)
+    }
+
     private fun makeEncoded () : XyoResult<ByteArray> {
         val merger = XyoByteArraySetter(2)
         val signedPayloadUntyped = signedPayload.untyped
