@@ -129,7 +129,7 @@ class XyoZigZagBoundWitness(private val signers : Array<XyoSigningObject>,
 
     private fun makeSelfKeySet() : XyoKeySet {
         return XyoKeySet(Array(signers.size, {i ->
-            signers[i].publicKey
+            signers[i].publicKey.value!!
         }))
     }
 

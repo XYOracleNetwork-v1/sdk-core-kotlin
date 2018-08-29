@@ -58,7 +58,7 @@ class XyoPayload(val signedPayload : XyoMultiTypeArrayInt,
             val signedPayloadCreated = XyoMultiTypeArrayInt.createFromPacked(signedPayload)
             val unsignedPayloadCreated = XyoMultiTypeArrayInt.createFromPacked(unsignedPayload)
 
-            return XyoResult(XyoPayload(signedPayloadCreated, unsignedPayloadCreated))
+            return XyoResult(XyoPayload(signedPayloadCreated.value as XyoMultiTypeArrayInt, unsignedPayloadCreated.value as XyoMultiTypeArrayInt))
         }
     }
 }

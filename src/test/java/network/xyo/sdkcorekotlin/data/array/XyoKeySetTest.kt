@@ -18,12 +18,12 @@ class XyoKeySetTest : XyoTestBase() {
         XyoRsaPublicKey.enable()
 
         val keySetExpected = XyoKeySet(arrayOf(
-                XyoSigningObject.getCreator(0x02)!!.newInstance().publicKey
+                XyoSigningObject.getCreator(0x02)!!.newInstance().value!!.publicKey.value!!
         ))
 
-        val keySetCreated = XyoKeySet.createFromPacked(keySetExpected.untyped)
+        val keySetCreated = XyoKeySet.createFromPacked(keySetExpected.untyped.value!!)
 
-        assertXyoObject(keySetExpected, keySetCreated)
+        assertXyoObject(keySetExpected, keySetCreated.value!!)
     }
 
 }

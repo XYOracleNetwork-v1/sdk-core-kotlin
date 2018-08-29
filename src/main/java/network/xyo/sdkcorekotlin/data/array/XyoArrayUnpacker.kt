@@ -27,7 +27,7 @@ class XyoArrayUnpacker (data : ByteArray, typed: Boolean, sizeOfSize: Int) {
             val sizeOfBytesToRead = typeObject.sizeOfBytesToGetSize
             return typeObject.readSize(readBytes(sizeOfBytesToRead.value!!)).value
         }
-        throw Exception()
+        throw Exception("Can not find $major, $minor")
     }
 
     private fun unpack () : ArrayList<XyoObject> {

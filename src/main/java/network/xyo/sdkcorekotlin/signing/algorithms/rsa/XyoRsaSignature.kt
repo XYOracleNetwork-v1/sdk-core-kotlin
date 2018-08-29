@@ -1,5 +1,6 @@
 package network.xyo.sdkcorekotlin.signing.algorithms.rsa
 
+import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.data.XyoByteArrayReader
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.XyoObjectCreator
@@ -10,11 +11,11 @@ import java.nio.ByteBuffer
 abstract class XyoRsaSignature (rawSignature: ByteArray) : XyoSignature() {
     private val mSignature = rawSignature
 
-    override val data: ByteArray
-        get() = mSignature
+    override val data: XyoResult<ByteArray>
+        get() = XyoResult(mSignature)
 
-    override val sizeIdentifierSize: Int?
-        get() = 2
+    override val sizeIdentifierSize: XyoResult<Int?>
+        get() = XyoResult(2)
 
     override val encodedSignature: ByteArray
         get() = mSignature
@@ -23,20 +24,20 @@ abstract class XyoRsaSignature (rawSignature: ByteArray) : XyoSignature() {
         override val major: Byte
             get() = 0x05
 
-        override val sizeOfBytesToGetSize: Int
-            get() = 2
+        override val sizeOfBytesToGetSize: XyoResult<Int?>
+            get() = XyoResult(2)
 
-        override fun readSize(byteArray: ByteArray): Int {
-            return ByteBuffer.wrap(byteArray).short.toInt()
+        override fun readSize(byteArray: ByteArray): XyoResult<Int> {
+            return XyoResult(ByteBuffer.wrap(byteArray).short.toInt())
         }
 
-        override fun createFromPacked(byteArray: ByteArray): XyoObject {
+        override fun createFromPacked(byteArray: ByteArray): XyoResult<XyoObject> {
             val size = ByteBuffer.wrap(byteArray).short.toInt()
 
-            return object : XyoRsaSignature(XyoByteArrayReader(byteArray).read(2, size - 2)) {
-                override val id: ByteArray
-                    get() = byteArrayOf(major, minor)
-            }
+            return XyoResult(object : XyoRsaSignature(XyoByteArrayReader(byteArray).read(2, size - 2)) {
+                override val id: XyoResult<ByteArray>
+                    get() = XyoResult(byteArrayOf(major, minor))
+            })
         }
     }
 }

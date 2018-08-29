@@ -47,10 +47,10 @@ open class XyoTestBase {
     }
 
     fun assertXyoObject(expected: XyoObject, actual : XyoObject) {
-        Assert.assertArrayEquals(expected.data, actual.data)
-        Assert.assertArrayEquals(expected.id, actual.id)
-        Assert.assertArrayEquals(expected.typed, actual.typed)
-        Assert.assertArrayEquals(expected.untyped, actual.untyped)
+        Assert.assertArrayEquals(expected.data.value!!, actual.data.value!!)
+        Assert.assertArrayEquals(expected.id.value!!, actual.id.value!!)
+        Assert.assertArrayEquals(expected.typed.value!!, actual.typed.value!!)
+        Assert.assertArrayEquals(expected.untyped.value!!, actual.untyped.value!!)
     }
 
     fun printBoundWitness(boundWitness : XyoBoundWitness) {
@@ -60,7 +60,7 @@ open class XyoTestBase {
             println("--Key Set")
             val castedPublicKeySet = publicKeySet as XyoKeySet
             for (publicKey in castedPublicKeySet.array) {
-                println("----" + bytesToString(publicKey.typed))
+                println("----" + bytesToString(publicKey.typed.value!!))
             }
         }
 
@@ -68,8 +68,8 @@ open class XyoTestBase {
         for (payload in boundWitness.payloads) {
             val castedPayload = payload as XyoPayload
             println("--Payload")
-            println("----Signed: " + bytesToString(castedPayload.signedPayload.typed))
-            println("----Unsigned: " + bytesToString(castedPayload.unsignedPayload.typed))
+            println("----Signed: " + bytesToString(castedPayload.signedPayload.typed.value!!))
+            println("----Unsigned: " + bytesToString(castedPayload.unsignedPayload.typed.value!!))
         }
 
         println("Signatures")
@@ -77,12 +77,12 @@ open class XyoTestBase {
             println("--Signatures Set")
             val castedSignaturesSet = signaturesSet as XyoSignatureSet
             for (signature in castedSignaturesSet.array) {
-                println("----" + bytesToString(signature.typed))
+                println("----" + bytesToString(signature.typed.value!!))
             }
         }
     }
 
     fun assertBoundWitness (boundWitnessOne : XyoBoundWitness, boundWitnessTwo : XyoBoundWitness){
-        Assert.assertArrayEquals(boundWitnessOne.typed, boundWitnessTwo.typed)
+        Assert.assertArrayEquals(boundWitnessOne.typed.value!!, boundWitnessTwo.typed.value!!)
     }
 }

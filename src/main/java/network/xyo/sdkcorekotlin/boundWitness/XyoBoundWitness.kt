@@ -104,38 +104,26 @@ abstract class XyoBoundWitness : XyoObject() {
 
         private fun unpackIntoEncodedArrays(byteArray: ByteArray, shortArrayReadSize: Int, intArrayReadSize: Int): XyoResult<XyoObject> {
             val byteReader = XyoByteArrayReader(byteArray)
+
             val keySetArraySize = XyoSingleTypeArrayShort.readSize(byteReader.read(0, shortArrayReadSize))
-            if (keySetArraySize.error == null && keySetArraySize.value != null) {
-                val keySetArraySizeValue = keySetArraySize.value
-                if (keySetArraySizeValue != null) {
-                    val keySets = getKeySetsArray(byteReader.read(0, keySetArraySizeValue))
-                    val payloadArraySize = XyoSingleTypeArrayInt.readSize(byteReader.read(keySetArraySizeValue, intArrayReadSize))
-                    if (payloadArraySize.error == null && payloadArraySize.value != null) {
-                        val payloadArraySizeValue = payloadArraySize.value
-                        if (payloadArraySizeValue != null) {
-                            val payloads = getPayloadsArray(byteReader.read(keySetArraySizeValue, payloadArraySizeValue))
-                            if (payloadArraySize.error == null && keySetArraySize.value != null) {
-                                val signatureArraySize = XyoSingleTypeArrayShort.readSize(byteReader.read(keySetArraySizeValue + payloadArraySizeValue, shortArrayReadSize))
-                                if (signatureArraySize.error == null && keySetArraySize.value != null) {
-                                    val signatureArraySizeValue = signatureArraySize.value
-                                    if (signatureArraySizeValue != null) {
-                                        val signatures = getSignatureArray(byteReader.read(keySetArraySizeValue + payloadArraySizeValue, signatureArraySizeValue))
-                                        return unpackFromArrays(keySets.value!!, payloads.value!!, signatures.value!!)
-                                    }
-                                    return XyoResult(XyoError(""))
-                                }
-                                return XyoResult(XyoError(""))
-                            }
-                            return XyoResult(XyoError(""))
-                        }
-                        return XyoResult(XyoError(""))
-                    }
-                    return XyoResult(XyoError(""))
-                }
-                return XyoResult(XyoError(""))
-            }
-            return XyoResult(XyoError(""))
+            if (keySetArraySize.error != null)  return XyoResult(XyoError(""))
+            val keySetArraySizeValue = keySetArraySize.value ?: return XyoResult(XyoError(""))
+            val keySets = getKeySetsArray(byteReader.read(0, keySetArraySizeValue))
+
+            val payloadArraySize = XyoSingleTypeArrayInt.readSize(byteReader.read(keySetArraySizeValue, intArrayReadSize))
+            if (payloadArraySize.error != null)  return XyoResult(XyoError(""))
+            val payloadArraySizeValue = payloadArraySize.value ?: return XyoResult(XyoError(""))
+            val payloads = getPayloadsArray(byteReader.read(keySetArraySizeValue, payloadArraySizeValue))
+
+            val signatureArraySize = XyoSingleTypeArrayShort.readSize(byteReader.read(keySetArraySizeValue + payloadArraySizeValue, shortArrayReadSize))
+            if (signatureArraySize.error != null)  return XyoResult(XyoError(""))
+            val signatureArraySizeValue = signatureArraySize.value ?: return XyoResult(XyoError(""))
+            val signatures = getSignatureArray(byteReader.read(keySetArraySizeValue + payloadArraySizeValue, signatureArraySizeValue))
+
+            return unpackFromArrays(keySets.value!!, payloads.value!!, signatures.value!!)
         }
+
+
 
         private fun getKeySetsArray(bytes: ByteArray): XyoResult<Array<XyoKeySet>> {
             val keySetArray = XyoSingleTypeArrayShort.createFromPacked(bytes)

@@ -28,12 +28,12 @@ class XyoBoundWitnessTransferTest : XyoTestBase() {
                 XyoSha1WithSecp256K.enable()
                 return arrayOf(
                 XyoKeySet(arrayOf(
-                            XyoSigningObject.getCreator(0x02)!!.newInstance().publicKey,
-                            XyoSigningObject.getCreator(0x02)!!.newInstance().publicKey
+                            XyoSigningObject.getCreator(0x02)!!.newInstance().value!!.publicKey.value!!,
+                            XyoSigningObject.getCreator(0x02)!!.newInstance().value!!.publicKey.value!!
                     )),
                             XyoKeySet(arrayOf(
-                            XyoSigningObject.getCreator(0x01)!!.newInstance().publicKey,
-                            XyoSigningObject.getCreator(0x02)!!.newInstance().publicKey
+                            XyoSigningObject.getCreator(0x01)!!.newInstance().value!!.publicKey.value!!,
+                            XyoSigningObject.getCreator(0x02)!!.newInstance().value!!.publicKey.value!!
                     ))
                 )
             }
@@ -63,8 +63,8 @@ class XyoBoundWitnessTransferTest : XyoTestBase() {
 
         val expectedTransfer = XyoBoundWitnessTransfer(expectedKeys, expectedPayloads, expectedSignatures)
         val expectedTransferPacked = expectedTransfer.untyped
-        val recreated = XyoBoundWitnessTransfer.createFromPacked(expectedTransferPacked)
+        val recreated = XyoBoundWitnessTransfer.createFromPacked(expectedTransferPacked.value!!)
 
-        assertXyoObject(expectedTransfer, recreated)
+        assertXyoObject(expectedTransfer, recreated.value!!)
     }
 }

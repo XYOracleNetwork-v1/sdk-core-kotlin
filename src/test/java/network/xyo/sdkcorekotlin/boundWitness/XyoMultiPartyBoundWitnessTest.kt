@@ -14,7 +14,7 @@ class XyoMultiPartyBoundWitnessTest : XyoTestBase() {
     fun testMultiPartyBoundWitness () {
         runBlocking {
             var currentCacheData : XyoBoundWitnessTransfer? = null
-            val boundWitnesses = Array(numberOfSigners, {i -> XyoZigZagBoundWitness(arrayOf(XyoRsaWithSha256.newInstance()), payload) })
+            val boundWitnesses = Array(numberOfSigners, {i -> XyoZigZagBoundWitness(arrayOf(XyoRsaWithSha256.newInstance().value!!), payload) })
 
             for (i in 0..numberOfSigners - 2) {
                 currentCacheData = boundWitnesses[i].incomingData(currentCacheData, false).await().value

@@ -1,5 +1,7 @@
 package network.xyo.sdkcorekotlin.boundWitness
 
+import network.xyo.sdkcorekotlin.XyoError
+import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.data.*
 import network.xyo.sdkcorekotlin.data.array.multi.XyoKeySet
 import network.xyo.sdkcorekotlin.data.array.multi.XyoSignatureSet
@@ -11,14 +13,14 @@ class XyoBoundWitnessTransfer(val keysToSend : Array<XyoObject>,
                               val payloadsToSend : Array<XyoObject>,
                               val signatureToSend : Array<XyoObject>) : XyoObject() {
 
-    override val data: ByteArray
+    override val data: XyoResult<ByteArray>
         get() = makeEncoded()
 
-    override val id: ByteArray
-        get() = byteArrayOf(major, minor)
+    override val id: XyoResult<ByteArray>
+        get() = XyoResult(byteArrayOf(major, minor))
 
-    override val sizeIdentifierSize: Int?
-        get() = 4
+    override val sizeIdentifierSize: XyoResult<Int?>
+        get() = XyoResult(4)
 
     private val stage : Byte
         get() {
@@ -28,38 +30,68 @@ class XyoBoundWitnessTransfer(val keysToSend : Array<XyoObject>,
                 return 0x02
             } else if (keysToSend.isEmpty() && payloadsToSend.isEmpty() && signatureToSend.isNotEmpty()) {
                 return 0x03
-            } else {
-                throw Exception()
             }
+            return 0x01
         }
 
-    private fun makeEncoded () : ByteArray {
-        if (stage == 0x01.toByte()) {
+    private fun makeWithKeysAndPayload () : XyoResult<ByteArray> {
+        val setter = XyoByteArraySetter(3)
+        setter.add(byteArrayOf(stage), 0)
 
-            val setter = XyoByteArraySetter(3)
-            setter.add(byteArrayOf(stage), 0)
-            setter.add(XyoSingleTypeArrayShort(XyoKeySet.major, XyoKeySet.minor, keysToSend).untyped, 1)
-            setter.add(XyoSingleTypeArrayInt(XyoPayload.major, XyoPayload.minor, payloadsToSend).untyped, 2)
-            return setter.merge()
+        val encodedKeySets = XyoSingleTypeArrayShort(XyoKeySet.major, XyoKeySet.minor, keysToSend).untyped
+        val encodedKeySetsValue = encodedKeySets.value ?: return XyoResult(XyoError(""))
+        if (encodedKeySets.error != null) return XyoResult(XyoError(""))
+        setter.add(encodedKeySetsValue, 1)
 
-        } else if (stage == 0x02.toByte()) {
+        val encodedPayloads = XyoSingleTypeArrayInt(XyoPayload.major, XyoPayload.minor, payloadsToSend).untyped
+        val encodedPayloadsValue = encodedPayloads.value ?: return XyoResult(XyoError(""))
+        if (encodedPayloads.error != null) return XyoResult(XyoError(""))
+        setter.add(encodedPayloadsValue, 2)
 
-            val setter = XyoByteArraySetter(4)
-            setter.add(byteArrayOf(stage), 0)
-            setter.add(XyoSingleTypeArrayShort(XyoKeySet.major, XyoKeySet.minor, keysToSend).untyped, 1)
-            setter.add(XyoSingleTypeArrayInt(XyoPayload.major, XyoPayload.minor, payloadsToSend).untyped, 2)
-            setter.add(XyoSingleTypeArrayShort(XyoSignatureSet.major, XyoSignatureSet.minor, signatureToSend).untyped, 3)
-            return setter.merge()
+        return XyoResult(setter.merge())
+    }
 
-        } else if (stage == 0x03.toByte()) {
+    private fun makeWithEverything() : XyoResult<ByteArray> {
+        val setter = XyoByteArraySetter(4)
+        setter.add(byteArrayOf(stage), 0)
 
-            val setter = XyoByteArraySetter(2)
-            setter.add(byteArrayOf(stage), 0)
-            setter.add(XyoSingleTypeArrayShort(XyoSignatureSet.major, XyoSignatureSet.minor, signatureToSend).untyped, 1)
-            return setter.merge()
+        val encodedKeySets = XyoSingleTypeArrayShort(XyoKeySet.major, XyoKeySet.minor, keysToSend).untyped
+        val encodedKeySetsValue = encodedKeySets.value ?: return XyoResult(XyoError(""))
+        if (encodedKeySets.error != null) return XyoResult(XyoError(""))
+        setter.add(encodedKeySetsValue, 1)
 
+        val encodedPayloads = XyoSingleTypeArrayInt(XyoPayload.major, XyoPayload.minor, payloadsToSend).untyped
+        val encodedPayloadsValue = encodedPayloads.value ?: return XyoResult(XyoError(""))
+        if (encodedPayloads.error != null) return XyoResult(XyoError(""))
+        setter.add(encodedPayloadsValue, 2)
+
+        val encodedSignatures = XyoSingleTypeArrayShort(XyoSignatureSet.major, XyoSignatureSet.minor, signatureToSend).untyped
+        val encodedSignaturesValue = encodedSignatures.value ?: return XyoResult(XyoError(""))
+        if (encodedSignatures.error != null) return XyoResult(XyoError(""))
+        setter.add(encodedSignaturesValue, 3)
+
+        return XyoResult(setter.merge())
+    }
+
+    private fun makeWithSignatures() : XyoResult<ByteArray> {
+        val setter = XyoByteArraySetter(2)
+        setter.add(byteArrayOf(stage), 0)
+
+        val encodedSignatures = XyoSingleTypeArrayShort(XyoSignatureSet.major, XyoSignatureSet.minor, signatureToSend).untyped
+        val encodedSignaturesValue = encodedSignatures.value ?:  return XyoResult(XyoError(""))
+        if (encodedSignatures.error != null) return XyoResult(XyoError(""))
+        setter.add(encodedSignaturesValue, 3)
+
+        return XyoResult(setter.merge())
+    }
+
+    private fun makeEncoded () : XyoResult<ByteArray> {
+        when (stage) {
+            0x01.toByte() -> return makeWithKeysAndPayload()
+            0x02.toByte() -> return makeWithEverything()
+            0x03.toByte() -> return makeWithSignatures()
         }
-        throw Exception()
+        return XyoResult(XyoError(""))
     }
 
     companion object : XyoObjectCreator() {
@@ -69,46 +101,78 @@ class XyoBoundWitnessTransfer(val keysToSend : Array<XyoObject>,
         override val minor: Byte
             get() = 0x08
 
-        override val sizeOfBytesToGetSize: Int
-            get() = 4
+        override val sizeOfBytesToGetSize: XyoResult<Int?>
+            get() = XyoResult(4)
 
-        override fun createFromPacked(byteArray: ByteArray): XyoBoundWitnessTransfer {
+        override fun createFromPacked(byteArray: ByteArray): XyoResult<XyoObject> {
             val stage = byteArray[4]
-            val byteReader = XyoByteArrayReader(byteArray)
-            val shortArrayReadSize = XyoSingleTypeArrayShort.sizeOfBytesToGetSize
-            val intArrayReadSize = XyoSingleTypeArrayInt.sizeOfBytesToGetSize
-
-            if (stage == 0x01.toByte()) {
-
-                val keySetArraySize  = XyoSingleTypeArrayShort.readSize(byteReader.read(sizeOfBytesToGetSize + 1, shortArrayReadSize))
-                val keySetArray = XyoSingleTypeArrayShort.createFromPacked(byteReader.read(sizeOfBytesToGetSize + 1, keySetArraySize))
-
-                val payloadArraySize = XyoSingleTypeArrayInt.readSize(byteReader.read(keySetArraySize + 1 + sizeOfBytesToGetSize, intArrayReadSize))
-                val payloadArray = XyoSingleTypeArrayInt.createFromPacked(byteReader.read(keySetArraySize + 1 + sizeOfBytesToGetSize, payloadArraySize))
-                return XyoBoundWitnessTransfer(keySetArray.array, payloadArray.array, arrayOf())
-
-            } else if (stage == 0x02.toByte()) {
-                val keySetArraySize  = XyoSingleTypeArrayShort.readSize(byteReader.read(1 + sizeOfBytesToGetSize, shortArrayReadSize))
-                val keySetArray = XyoSingleTypeArrayShort.createFromPacked(byteReader.read(1 + sizeOfBytesToGetSize, keySetArraySize))
-
-                val payloadArraySize = XyoSingleTypeArrayInt.readSize(byteReader.read(keySetArraySize + 1 + sizeOfBytesToGetSize, intArrayReadSize))
-                val payloadArray = XyoSingleTypeArrayInt.createFromPacked(byteReader.read(keySetArraySize + 1 + sizeOfBytesToGetSize, payloadArraySize))
-
-                val signatureArraySize = XyoSingleTypeArrayShort.readSize(byteReader.read(keySetArraySize + payloadArraySize + 1 + sizeOfBytesToGetSize, shortArrayReadSize))
-                val signatureArray = XyoSingleTypeArrayShort.createFromPacked(byteReader.read(keySetArraySize + payloadArraySize + 1 + sizeOfBytesToGetSize, signatureArraySize))
-                return XyoBoundWitnessTransfer(keySetArray.array, payloadArray.array, signatureArray.array)
-
-            } else if (stage == 0x03.toByte()) {
-                val signatureArraySize = XyoSingleTypeArrayShort.readSize(byteReader.read(1 + sizeOfBytesToGetSize, shortArrayReadSize))
-                val signatureArray = XyoSingleTypeArrayShort.createFromPacked(byteReader.read(1 + sizeOfBytesToGetSize, signatureArraySize))
-                return XyoBoundWitnessTransfer(arrayOf(), arrayOf(), signatureArray.array)
-
-            }
-            throw Exception()
+            return unpackEverything(byteArray, 5, stage)
         }
 
-        override fun readSize(byteArray: ByteArray): Int {
-            return ByteBuffer.wrap(byteArray).int
+        private fun unpackEverything(bytes: ByteArray, globalOffset : Int, type: Byte) : XyoResult<XyoObject> {
+            val byteReader = XyoByteArrayReader(bytes)
+            var currentOffset = globalOffset
+
+            var keySetArray : XyoSingleTypeArrayShort? = null
+            var payloadArray : XyoSingleTypeArrayInt? = null
+            var signatureArray :  XyoSingleTypeArrayShort? = null
+
+            val shortArrayReadSize = XyoSingleTypeArrayShort.sizeOfBytesToGetSize
+            if (shortArrayReadSize.error != null) return XyoResult(XyoError(""))
+            val shortArrayReadSizeValue = shortArrayReadSize.value ?: return XyoResult(XyoError(""))
+
+            val intArrayReadSize = XyoSingleTypeArrayInt.sizeOfBytesToGetSize
+            if (intArrayReadSize.error != null) return XyoResult(XyoError(""))
+            val intArrayReadSizeValue = intArrayReadSize.value ?: return XyoResult(XyoError(""))
+
+            if (type == 0x01.toByte() || type == 0x02.toByte()) {
+                val keySetArraySize  = XyoSingleTypeArrayShort.readSize(byteReader.read(currentOffset, shortArrayReadSizeValue))
+                if (keySetArraySize.error != null) return XyoResult(XyoError(""))
+                val keySetArraySizeValue = keySetArraySize.value ?: return XyoResult(XyoError(""))
+                val keySetArrayResult = XyoSingleTypeArrayShort.createFromPacked(byteReader.read(currentOffset, keySetArraySizeValue))
+                if (keySetArrayResult.error != null) return XyoResult(XyoError(""))
+                keySetArray = keySetArrayResult.value as? XyoSingleTypeArrayShort
+                currentOffset += keySetArraySizeValue
+
+                val payloadArraySize  = XyoSingleTypeArrayInt.readSize(byteReader.read(currentOffset, intArrayReadSizeValue))
+                if (payloadArraySize.error != null) return XyoResult(XyoError(""))
+                val payloadArraySizeValue = payloadArraySize.value ?: return XyoResult(XyoError(""))
+                val payloadArrayResult = XyoSingleTypeArrayInt.createFromPacked(byteReader.read(currentOffset, payloadArraySizeValue))
+                if (payloadArrayResult.error != null) return XyoResult(XyoError(""))
+                payloadArray = payloadArrayResult.value as?  XyoSingleTypeArrayInt
+                currentOffset += payloadArraySizeValue
+            }
+
+            if (type == 0x02.toByte() || type == 0x03.toByte()) {
+                val signatureArraySize  = XyoSingleTypeArrayShort.readSize(byteReader.read(currentOffset, shortArrayReadSizeValue))
+                if (signatureArraySize.error != null) return XyoResult(XyoError(""))
+                val signatureArraySizeValue = signatureArraySize.value ?: return XyoResult(XyoError(""))
+                val signatureArrayResult = XyoSingleTypeArrayShort.createFromPacked(byteReader.read(currentOffset, signatureArraySizeValue))
+                if (signatureArrayResult.error != null) return XyoResult(XyoError(""))
+                signatureArray = signatureArrayResult.value as? XyoSingleTypeArrayShort
+                currentOffset += signatureArraySizeValue
+            }
+
+            val keySetArrayValue = keySetArray?.array ?: arrayOf()
+            val payloadArrayValue = payloadArray?.array ?: arrayOf()
+            val signatureArrayValue = signatureArray?.array ?: arrayOf()
+
+            return XyoResult(XyoBoundWitnessTransfer(keySetArrayValue, payloadArrayValue, signatureArrayValue))
+        }
+
+        override fun readSize(byteArray: ByteArray): XyoResult<Int> {
+            return XyoResult(ByteBuffer.wrap(byteArray).int)
+        }
+
+        fun bytesToString(bytes: ByteArray?): String {
+            val sb = StringBuilder()
+            val it = bytes!!.iterator()
+            sb.append("0x")
+            while (it.hasNext()) {
+                sb.append(String.format("%02X ", it.next()))
+            }
+
+            return sb.toString()
         }
     }
 }

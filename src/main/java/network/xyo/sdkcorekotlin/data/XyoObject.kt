@@ -26,9 +26,8 @@ abstract class XyoObject {
                     2 -> return XyoResult(ByteBuffer.allocate(2).putShort((totalSize + 2).toShort()).array())
                     4 -> return XyoResult(ByteBuffer.allocate(4).putInt(totalSize + 4).array())
                 }
-
             }
-            return XyoResult(XyoError(""))
+            return XyoResult(byteArrayOf())
         }
 
     private fun makeTyped () : XyoResult<ByteArray> {
@@ -41,11 +40,12 @@ abstract class XyoObject {
                         buffer.put(data.value)
                         return XyoResult(buffer.array())
                     }
-                    return XyoResult(XyoError(""))
+                    return XyoResult(XyoError("1"))
                 }
-                return XyoResult(XyoError(""))
+                return XyoResult(XyoError("2"))
+        } else {
+            return encodedSize
         }
-        return XyoResult(XyoError(""))
     }
 
     private fun makeUntyped () : XyoResult<ByteArray> {

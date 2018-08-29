@@ -1,5 +1,6 @@
 package network.xyo.sdkcorekotlin.signing.algorithms.ecc
 
+import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.data.XyoByteArrayReader
 import network.xyo.sdkcorekotlin.data.XyoByteArraySetter
 import network.xyo.sdkcorekotlin.data.XyoObject
@@ -38,11 +39,11 @@ abstract class XyoUncompressedEcPublicKey : ECPublicKey, XyoObject() {
         return ECPoint(x, y)
     }
 
-    override val data: ByteArray
-        get() = encoded
+    override val data: XyoResult<ByteArray>
+        get() = XyoResult(encoded)
 
-    override val sizeIdentifierSize: Int?
-        get() = null
+    override val sizeIdentifierSize: XyoResult<Int?>
+        get() = XyoResult<Int?>(null)
 
     fun get32ByteEcPoint(point : BigInteger) : ByteArray {
         val encodedPoint = point.toByteArray()
@@ -52,36 +53,25 @@ abstract class XyoUncompressedEcPublicKey : ECPublicKey, XyoObject() {
         return encodedPoint.copyOfRange(1, 33)
     }
 
-    fun bytesToString(bytes: ByteArray?): String {
-        val sb = StringBuilder()
-        val it = bytes!!.iterator()
-        sb.append("0x")
-        while (it.hasNext()) {
-            sb.append(String.format("%02X ", it.next()))
-        }
-
-        return sb.toString()
-    }
-
     abstract class XyoUncompressedEcPublicKeyCreator : XyoObjectCreator () {
         abstract val ecPramSpec : ECParameterSpec
 
         override val major: Byte
             get() = 0x04
 
-        override val sizeOfBytesToGetSize: Int
-            get() = 0
+        override val sizeOfBytesToGetSize: XyoResult<Int?>
+            get() = XyoResult(0)
 
-        override fun readSize(byteArray: ByteArray): Int {
-            return 64
+        override fun readSize(byteArray: ByteArray): XyoResult<Int> {
+            return XyoResult(64)
         }
 
-        override fun createFromPacked(byteArray: ByteArray): XyoUncompressedEcPublicKey {
+        override fun createFromPacked(byteArray: ByteArray): XyoResult<XyoObject> {
             val reader = XyoByteArrayReader(byteArray)
             val xPoint = BigInteger(reader.read(0, 32))
             val yPoint = BigInteger(reader.read(32, 32))
 
-            return object : XyoUncompressedEcPublicKey() {
+            return XyoResult(object : XyoUncompressedEcPublicKey() {
                 override val ecSpec: ECParameterSpec
                     get() = ecPramSpec
 
@@ -91,9 +81,9 @@ abstract class XyoUncompressedEcPublicKey : ECPublicKey, XyoObject() {
                 override val y: BigInteger
                     get() = yPoint
 
-                override val id: ByteArray
-                    get() = byteArrayOf(major, minor)
-            }
+                override val id: XyoResult<ByteArray>
+                    get() = XyoResult(byteArrayOf(major, minor))
+            })
         }
     }
 }

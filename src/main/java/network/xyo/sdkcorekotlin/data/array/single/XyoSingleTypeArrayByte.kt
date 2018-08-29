@@ -27,11 +27,11 @@ open class XyoSingleTypeArrayByte(override val elementMajor : Byte,
         }
 
         override val sizeOfBytesToGetSize: XyoResult<Int?>
-            get() = XyoResult(4)
+            get() = XyoResult(1)
 
         override fun createFromPacked(byteArray: ByteArray): XyoResult<XyoObject> {
-            val unpackedArray = XyoArrayUnpacker(byteArray, true, 4)
-            val unpackedArrayObject = XyoSingleTypeArrayInt(unpackedArray.majorType!!, unpackedArray.minorType!!, unpackedArray.array.toTypedArray())
+            val unpackedArray = XyoArrayUnpacker(byteArray, true, 1)
+            val unpackedArrayObject = XyoSingleTypeArrayByte(unpackedArray.majorType!!, unpackedArray.minorType!!, unpackedArray.array.toTypedArray())
             return XyoResult(unpackedArrayObject)
         }
     }

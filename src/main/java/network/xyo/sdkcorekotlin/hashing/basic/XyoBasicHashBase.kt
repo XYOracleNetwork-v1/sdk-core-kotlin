@@ -5,6 +5,7 @@ import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
 import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.data.XyoByteArrayReader
+import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import java.security.MessageDigest
 
@@ -14,20 +15,20 @@ abstract class XyoBasicHashBase (pastHash : ByteArray): XyoHash() {
     override val hash: ByteArray
         get() = mHash
 
-    override val sizeIdentifierSize: Int?
-        get() = null
+    override val sizeIdentifierSize: XyoResult<Int?>
+        get() = XyoResult<Int?>(null)
 
     abstract class XyoBasicHashBaseCreator : XyoHashCreator() {
         abstract val standardDigestKey : String
 
-        override val sizeOfBytesToGetSize: Int
-            get() = 0
+        override val sizeOfBytesToGetSize: XyoResult<Int?>
+            get() = XyoResult(0)
 
         override fun createHash (data: ByteArray) : Deferred<XyoResult<XyoHash>> {
             return async {
                 return@async XyoResult<XyoHash>(object : XyoBasicHashBase(hash(data)) {
-                    override val id: ByteArray
-                        get() = byteArrayOf(major, minor)
+                    override val id: XyoResult<ByteArray>
+                        get() = XyoResult(byteArrayOf(major, minor))
                 })
             }
         }
@@ -36,12 +37,12 @@ abstract class XyoBasicHashBase (pastHash : ByteArray): XyoHash() {
             return MessageDigest.getInstance(standardDigestKey).digest(data)
         }
 
-        override fun createFromPacked(byteArray: ByteArray): XyoHash {
+        override fun createFromPacked(byteArray: ByteArray): XyoResult<XyoObject> {
             val hash = XyoByteArrayReader(byteArray).read(0, byteArray.size)
-            return object : XyoBasicHashBase(hash) {
-                override val id: ByteArray
-                    get() = byteArrayOf(major, minor)
-            }
+            return XyoResult(object : XyoBasicHashBase(hash) {
+                override val id: XyoResult<ByteArray>
+                    get() = XyoResult(byteArrayOf(major, minor))
+            })
         }
     }
 }

@@ -31,7 +31,7 @@ open class XyoSingleTypeArrayShort(override val elementMajor : Byte,
 
         override fun createFromPacked(byteArray: ByteArray): XyoResult<XyoObject> {
             val unpackedArray = XyoArrayUnpacker(byteArray, true, 2)
-            val unpackedArrayObject = XyoSingleTypeArrayInt(unpackedArray.majorType!!, unpackedArray.minorType!!, unpackedArray.array.toTypedArray())
+            val unpackedArrayObject = XyoSingleTypeArrayShort(unpackedArray.majorType!!, unpackedArray.minorType!!, unpackedArray.array.toTypedArray())
             return XyoResult(unpackedArrayObject)
         }
     }

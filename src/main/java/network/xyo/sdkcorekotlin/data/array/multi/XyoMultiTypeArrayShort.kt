@@ -26,7 +26,7 @@ open class XyoMultiTypeArrayShort(override var array: Array<XyoObject>) : XyoMul
 
         override fun createFromPacked(byteArray: ByteArray): XyoResult<XyoObject> {
             val unpackedArray = XyoArrayUnpacker(byteArray, false, 2)
-            val unpackedArrayObject = XyoMultiTypeArrayByte(unpackedArray.array.toTypedArray())
+            val unpackedArrayObject = XyoMultiTypeArrayShort(unpackedArray.array.toTypedArray())
             return XyoResult(unpackedArrayObject)
         }
     }
