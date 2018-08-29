@@ -25,7 +25,7 @@ class XyoPayload(val signedPayload : XyoMultiTypeArrayInt,
         if (unsignedPayloadUntyped.error == null && unsignedPayloadUntyped.value != null) {
             if (signedPayloadUntyped.error == null && signedPayloadUntyped.value != null) {
                 merger.add(signedPayloadUntyped.value!!, 0)
-                merger.add(unsignedPayload.untyped.value!!, 1)
+                merger.add(unsignedPayloadUntyped.value!!, 1)
                 return XyoResult(merger.merge())
             }
             return XyoResult(XyoError(""))

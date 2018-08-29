@@ -3,7 +3,6 @@ package network.xyo.sdkcorekotlin.boundWitness
 import kotlinx.coroutines.experimental.async
 import network.xyo.sdkcorekotlin.XyoError
 import network.xyo.sdkcorekotlin.XyoResult
-import network.xyo.sdkcorekotlin.data.XyoByteArraySetter
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.XyoPayload
 import network.xyo.sdkcorekotlin.data.array.multi.XyoKeySet

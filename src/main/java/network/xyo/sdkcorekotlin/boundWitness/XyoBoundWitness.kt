@@ -7,6 +7,7 @@ import network.xyo.sdkcorekotlin.data.*
 import network.xyo.sdkcorekotlin.data.array.multi.XyoKeySet
 import network.xyo.sdkcorekotlin.data.array.single.XyoSingleTypeArrayInt
 import network.xyo.sdkcorekotlin.data.array.single.XyoSingleTypeArrayShort
+import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.signing.XyoSignatureSet
 import network.xyo.sdkcorekotlin.signing.XyoSigningObject
 import java.nio.ByteBuffer
@@ -24,6 +25,12 @@ abstract class XyoBoundWitness : XyoObject() {
 
     override val sizeIdentifierSize: XyoResult<Int?>
         get() = XyoResult(4)
+
+    fun getHash (hashCreator : XyoHash.XyoHashCreator) = async {
+        val dataToHash = getSigningData()
+        val dataToHashValue = dataToHash.value ?: return@async XyoResult<XyoHash>(XyoError(""))
+        return@async hashCreator.createHash(dataToHashValue).await()
+    }
 
     private fun makeBoundWitness() : XyoResult<ByteArray> {
         val setter = XyoByteArraySetter(3)
@@ -58,7 +65,13 @@ abstract class XyoBoundWitness : XyoObject() {
         return XyoSingleTypeArrayInt(XyoPayload.major, XyoPayload.minor, Array(payloads.size, { i -> payloads[i] as XyoObject }))
     }
 
-    fun signCurrent (signer : XyoSigningObject) = async {
+    fun signCurrent (signer: XyoSigningObject) = async {
+        val dataToSign = getSigningData()
+        val dataToSignValue = dataToSign.value ?: return@async XyoResult<XyoObject>(XyoError(""))
+        return@async signer.signData(dataToSignValue).await()
+    }
+
+    private fun getSigningData () : XyoResult<ByteArray> {
         val setter = XyoByteArraySetter(payloads.size + 1)
         val makePublicKeysUntyped = makePublicKeys().untyped
         if (makePublicKeysUntyped.error == null && makePublicKeysUntyped.value != null) {
@@ -70,13 +83,13 @@ abstract class XyoBoundWitness : XyoObject() {
                     if (payloadValue != null) {
                         setter.add(payloadValue, i + 1)
                     }
-                    return@async XyoResult<XyoObject>(payload)
+                    return XyoResult<ByteArray>(XyoError("2"))
                 }
-                return@async XyoResult<XyoObject>(XyoError("2"))
+                return XyoResult<ByteArray>(XyoError("2"))
             }
-            return@async signer.signData(setter.merge()).await()
+            return XyoResult(setter.merge())
         }
-        return@async XyoResult<XyoObject>(XyoError("3"))
+        return XyoResult<ByteArray>(XyoError("3"))
     }
 
     companion object : XyoObjectCreator() {
