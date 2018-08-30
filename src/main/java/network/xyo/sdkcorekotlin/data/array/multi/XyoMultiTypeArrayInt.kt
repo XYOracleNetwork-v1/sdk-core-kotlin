@@ -1,5 +1,6 @@
 package network.xyo.sdkcorekotlin.data.array.multi
 
+import network.xyo.sdkcorekotlin.XyoError
 import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.array.XyoArrayDecoder
@@ -19,7 +20,17 @@ open class XyoMultiTypeArrayInt(override var array : Array<XyoObject>) : XyoMult
 
         override fun createFromPacked(byteArray: ByteArray): XyoResult<XyoObject> {
             val unpackedArray = XyoArrayDecoder(byteArray, false, 4)
-            val unpackedArrayObject = XyoMultiTypeArrayInt(unpackedArray.array.toTypedArray())
+            if (unpackedArray.array.error != null) return XyoResult(
+                    unpackedArray.array.error ?: XyoError(
+                            this.toString(),
+                            "Unknown array unpacking error!"
+                    )
+            )
+            val unpackedArrayValue = unpackedArray.array.value ?: return XyoResult(XyoError(
+                    this.toString(),
+                    "Array value is null!"
+            ))
+            val unpackedArrayObject = XyoMultiTypeArrayInt(unpackedArrayValue.toTypedArray())
             return XyoResult(unpackedArrayObject)
         }
     }

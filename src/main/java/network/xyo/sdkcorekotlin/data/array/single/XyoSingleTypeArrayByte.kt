@@ -31,7 +31,17 @@ open class XyoSingleTypeArrayByte(override val elementMajor : Byte,
             val minorTypeValue = unpackedArray.minorType ?: return XyoResult(XyoError(
                     this.toString(), "Cant find minor!")
             )
-            val unpackedArrayObject = XyoSingleTypeArrayByte(majorTypeValue, minorTypeValue, unpackedArray.array.toTypedArray())
+            if (unpackedArray.array.error != null) return XyoResult(
+                    unpackedArray.array.error ?: XyoError(
+                            this.toString(),
+                            "Unknown array unpacking error!"
+                    )
+            )
+            val unpackedArrayValue = unpackedArray.array.value ?: return XyoResult(XyoError(
+                    this.toString(),
+                    "Array value is null!"
+            ))
+            val unpackedArrayObject = XyoSingleTypeArrayByte(majorTypeValue, minorTypeValue, unpackedArrayValue.toTypedArray())
             return XyoResult(unpackedArrayObject)
         }
     }
