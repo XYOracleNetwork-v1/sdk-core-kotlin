@@ -4,7 +4,7 @@ import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.async
 import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.data.XyoObject
-import network.xyo.sdkcorekotlin.signing.XyoSigningObject
+import network.xyo.sdkcorekotlin.signing.XyoSigner
 import network.xyo.sdkcorekotlin.signing.XyoSigningObjectCreatorVerify
 import network.xyo.sdkcorekotlin.signing.algorithms.rsa.signatures.XyoRsaWithSha256Singature
 import java.security.Signature
@@ -22,11 +22,9 @@ class XyoRsaWithSha256 : XyoGeneralRsa (512) {
 
     companion object : XyoSigningObjectCreatorVerify() {
         override val signatureInstance: Signature = Signature.getInstance("SHA256withRSA")
+        override val key: Byte = 0x08
 
-        override val key: Byte
-            get() = 0x08
-
-        override fun newInstance(): XyoResult<XyoSigningObject> {
+        override fun newInstance(): XyoResult<XyoSigner> {
             return XyoResult(XyoRsaWithSha256())
         }
     }

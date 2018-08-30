@@ -5,11 +5,11 @@ import network.xyo.sdkcorekotlin.data.heuristics.number.unsigned.XyoIndex
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.hashing.XyoPreviousHash
 import network.xyo.sdkcorekotlin.signing.XyoNextPublicKey
-import network.xyo.sdkcorekotlin.signing.XyoSigningObject
+import network.xyo.sdkcorekotlin.signing.XyoSigner
 
-class XyoOriginChainStateManager {
-    private val currentSigners = ArrayList<XyoSigningObject>()
-    private val waitingSigners = ArrayList<XyoSigningObject>()
+class XyoOriginChainStateManager (private val indexOffset : Int) {
+    private val currentSigners = ArrayList<XyoSigner>()
+    private val waitingSigners = ArrayList<XyoSigner>()
     private var latestHash : XyoHash? = null
 
     var count = 0
@@ -18,7 +18,7 @@ class XyoOriginChainStateManager {
     var nextPublicKey : XyoNextPublicKey? = null
 
     val index : XyoIndex
-        get() = XyoIndex(count)
+        get() = XyoIndex(count + indexOffset)
 
     val previousHash : XyoPreviousHash?
         get() {
@@ -29,11 +29,11 @@ class XyoOriginChainStateManager {
             return null
         }
 
-    fun getSigners () : Array<XyoSigningObject>{
+    fun getSigners () : Array<XyoSigner>{
         return currentSigners.toTypedArray()
     }
 
-    fun addSigner (signer : XyoSigningObject) {
+    fun addSigner (signer : XyoSigner) {
         val publicKeyValue = signer.publicKey.value ?: return
         if (signer.publicKey.error != null) return
         nextPublicKey = XyoNextPublicKey(publicKeyValue)

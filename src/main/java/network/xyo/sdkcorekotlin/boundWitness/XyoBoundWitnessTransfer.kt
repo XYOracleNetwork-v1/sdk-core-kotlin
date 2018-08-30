@@ -13,14 +13,9 @@ class XyoBoundWitnessTransfer(val keysToSend : Array<XyoObject>,
                               val payloadsToSend : Array<XyoObject>,
                               val signatureToSend : Array<XyoObject>) : XyoObject() {
 
-    override val data: XyoResult<ByteArray>
-        get() = makeEncoded()
-
-    override val id: XyoResult<ByteArray>
-        get() = XyoResult(byteArrayOf(major, minor))
-
-    override val sizeIdentifierSize: XyoResult<Int?>
-        get() = XyoResult(4)
+    override val data: XyoResult<ByteArray> = makeEncoded()
+    override val id: XyoResult<ByteArray> = XyoResult(byteArrayOf(major, minor))
+    override val sizeIdentifierSize: XyoResult<Int?> = XyoResult(4)
 
     private val stage : Byte
         get() {
@@ -94,15 +89,10 @@ class XyoBoundWitnessTransfer(val keysToSend : Array<XyoObject>,
         return XyoResult(XyoError(""))
     }
 
-    companion object : XyoObjectCreator() {
-        override val major: Byte
-            get() = 0x02
-
-        override val minor: Byte
-            get() = 0x08
-
-        override val sizeOfBytesToGetSize: XyoResult<Int?>
-            get() = XyoResult(4)
+    companion object : XyoObjectProvider() {
+        override val major: Byte = 0x02
+        override val minor: Byte = 0x08
+        override val sizeOfBytesToGetSize: XyoResult<Int?> = XyoResult(4)
 
         override fun createFromPacked(byteArray: ByteArray): XyoResult<XyoObject> {
             val stage = byteArray[4]

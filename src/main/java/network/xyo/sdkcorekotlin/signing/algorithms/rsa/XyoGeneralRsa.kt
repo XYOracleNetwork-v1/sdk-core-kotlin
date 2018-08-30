@@ -3,12 +3,12 @@ package network.xyo.sdkcorekotlin.signing.algorithms.rsa
 import network.xyo.sdkcorekotlin.XyoError
 import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.data.XyoObject
-import network.xyo.sdkcorekotlin.signing.XyoSigningObject
+import network.xyo.sdkcorekotlin.signing.XyoSigner
 import java.security.*
 import java.security.interfaces.RSAPublicKey
 
 
-abstract class XyoGeneralRsa(keySize : Int) : XyoSigningObject() {
+abstract class XyoGeneralRsa(keySize : Int) : XyoSigner() {
     private val mKeyGenerator: KeyPairGenerator = KeyPairGenerator.getInstance("RSA")
     private val mKeySize : Int = keySize
     abstract val signature : Signature

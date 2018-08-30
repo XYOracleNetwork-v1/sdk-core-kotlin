@@ -11,17 +11,10 @@ class XyoPayload(val signedPayload : XyoMultiTypeArrayInt,
     override val data: XyoResult<ByteArray>
         get() = makeEncoded()
 
-    override val id: XyoResult<ByteArray>
-        get() = XyoResult(byteArrayOf(major, minor))
-
-    override val sizeIdentifierSize: XyoResult<Int?>
-        get() = XyoResult(4)
-
-    val signedPayloadMapping :  XyoResult<HashMap<Int, XyoObject>>
-        get() = getMappingOfElements(signedPayload.array)
-
-    val unsignedPayloadMapping : XyoResult<HashMap<Int, XyoObject>>
-        get() = getMappingOfElements(signedPayload.array)
+    override val id: XyoResult<ByteArray> = XyoResult(byteArrayOf(major, minor))
+    override val sizeIdentifierSize: XyoResult<Int?> = XyoResult(4)
+    val signedPayloadMapping :  XyoResult<HashMap<Int, XyoObject>> = getMappingOfElements(signedPayload.array)
+    val unsignedPayloadMapping : XyoResult<HashMap<Int, XyoObject>> = getMappingOfElements(signedPayload.array)
 
     private fun getMappingOfElements (objects : Array<XyoObject>) : XyoResult<HashMap<Int, XyoObject>> {
         val mapping = HashMap<Int, XyoObject>()
@@ -50,15 +43,10 @@ class XyoPayload(val signedPayload : XyoMultiTypeArrayInt,
         return XyoResult(XyoError(""))
     }
 
-    companion object : XyoObjectCreator() {
-        override val major: Byte
-            get() = 0x02
-
-        override val minor: Byte
-            get() = 0x04
-
-        override val sizeOfBytesToGetSize: XyoResult<Int?>
-            get() = XyoResult(4)
+    companion object : XyoObjectProvider() {
+        override val major: Byte = 0x02
+        override val minor: Byte = 0x04
+        override val sizeOfBytesToGetSize: XyoResult<Int?> = XyoResult(4)
 
         override fun readSize(byteArray: ByteArray): XyoResult<Int> {
             return XyoResult(ByteBuffer.wrap(byteArray).int)

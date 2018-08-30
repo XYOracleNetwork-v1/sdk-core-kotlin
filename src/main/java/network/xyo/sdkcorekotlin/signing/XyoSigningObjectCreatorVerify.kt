@@ -9,7 +9,7 @@ import network.xyo.sdkcorekotlin.signing.algorithms.rsa.XyoRsaWithSha256
 import java.security.PublicKey
 import java.security.Signature
 
-abstract class XyoSigningObjectCreatorVerify : XyoSigningObject.XYOSigningCreator() {
+abstract class XyoSigningObjectCreatorVerify : XyoSigner.XyoSignerProvider() {
     abstract val signatureInstance : Signature
 
     override fun verifySign(signature: XyoObject, byteArray: ByteArray, publicKey: XyoObject): Deferred<XyoResult<Boolean>> {

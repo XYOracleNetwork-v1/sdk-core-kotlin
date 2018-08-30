@@ -21,13 +21,13 @@ import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.XyoSha1WithSecp
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.XyoSha256WithSecp256K
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.keys.XyoSecp256K1CompressedPublicKey
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.signatures.XyoSha256WithEcdsaSignature
-import network.xyo.sdkcorekotlin.storage.XyoInMemoryStorage
+import network.xyo.sdkcorekotlin.storage.XyoInMemoryStorageProvider
 import org.junit.Assert
 
 class XyoOriginChainNavigatorTest : XyoTestBase() {
     private val numberOfBlocks = 10
     private val hashCreator = XyoSha256
-    private val originNavigator = XyoOriginChainNavigator(XyoInMemoryStorage(), hashCreator)
+    private val originNavigator = XyoOriginChainNavigator(XyoInMemoryStorageProvider(), hashCreator)
     private val originChainState = XyoOriginChainStateManager()
     private var lastHash : XyoHash? = null
     private var nextKey : XyoObject? = null

@@ -1,9 +1,9 @@
 package network.xyo.sdkcorekotlin.signing.algorithms.ecc
 
-import network.xyo.sdkcorekotlin.signing.XyoSigningObject
+import network.xyo.sdkcorekotlin.signing.XyoSigner
 import java.security.*
 
-abstract class XyoGeneralEc : XyoSigningObject() {
+abstract class XyoGeneralEc : XyoSigner() {
     val keyGenerator : KeyPairGenerator = KeyPairGenerator.getInstance("EC")
 }
 

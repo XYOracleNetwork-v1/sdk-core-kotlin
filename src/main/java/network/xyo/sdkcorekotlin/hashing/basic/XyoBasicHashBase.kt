@@ -2,7 +2,6 @@ package network.xyo.sdkcorekotlin.hashing.basic
 
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.launch
 import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.data.XyoByteArrayReader
 import network.xyo.sdkcorekotlin.data.XyoObject
@@ -10,19 +9,12 @@ import network.xyo.sdkcorekotlin.hashing.XyoHash
 import java.security.MessageDigest
 
 abstract class XyoBasicHashBase (pastHash : ByteArray): XyoHash() {
-    private val mHash = pastHash
+    override val hash: ByteArray = pastHash
+    override val sizeIdentifierSize: XyoResult<Int?> = XyoResult<Int?>(null)
 
-    override val hash: ByteArray
-        get() = mHash
-
-    override val sizeIdentifierSize: XyoResult<Int?>
-        get() = XyoResult<Int?>(null)
-
-    abstract class XyoBasicHashBaseCreator : XyoHashCreator() {
+    abstract class XyoBasicHashBaseProvider : XyoHashProvider() {
         abstract val standardDigestKey : String
-
-        override val sizeOfBytesToGetSize: XyoResult<Int?>
-            get() = XyoResult(0)
+        override val sizeOfBytesToGetSize: XyoResult<Int?> = XyoResult(0)
 
         override fun createHash (data: ByteArray) : Deferred<XyoResult<XyoHash>> {
             return async {

@@ -20,7 +20,7 @@ abstract class XyoEcSecp256K : XyoGeneralEc() {
             if (ecPublicKey != null) {
                 return XyoResult(ecPublicKey)
             }
-            return XyoResult(XyoError(""))
+            return XyoResult(XyoError("Can not cast keypair to XyoSecp256K1CompressedPublicKey!"))
         }
 
     private fun generateKeyPair(): KeyPair {
@@ -41,6 +41,6 @@ abstract class XyoEcSecp256K : XyoGeneralEc() {
                     },
                     XyoEcPrivateKey(ecPrivate.s, XyoSecp256K1CompressedPublicKey.ecPramSpec))
         }
-        throw Exception()
+        throw Exception("No public and private keys!")
     }
 }

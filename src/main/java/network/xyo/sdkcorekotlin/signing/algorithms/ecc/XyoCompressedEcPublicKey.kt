@@ -6,10 +6,9 @@ import java.security.interfaces.ECPublicKey
 import java.security.spec.ECParameterSpec
 import java.security.spec.ECPoint
 
-class XyoCompressedEcPublicKey (x : BigInteger, y : BigInteger, ecSpec : ECParameterSpec) : ECPublicKey {
-    private val mX = x
-    private val mY = y
-    private val mEcSpec = ecSpec
+class XyoCompressedEcPublicKey (private val x : BigInteger,
+                                private val y : BigInteger,
+                                private val ecSpec : ECParameterSpec) : ECPublicKey {
 
     override fun getAlgorithm(): String {
         return "EC"
@@ -17,8 +16,8 @@ class XyoCompressedEcPublicKey (x : BigInteger, y : BigInteger, ecSpec : ECParam
 
     override fun getEncoded(): ByteArray {
         val uncompressedEcPublicKey = XyoByteArraySetter(2)
-        uncompressedEcPublicKey.add(mY.toByteArray(), 0)
-        uncompressedEcPublicKey.add(mX.toByteArray(), 1)
+        uncompressedEcPublicKey.add(y.toByteArray(), 0)
+        uncompressedEcPublicKey.add(x.toByteArray(), 1)
         return uncompressedEcPublicKey.merge()
     }
 
@@ -27,10 +26,10 @@ class XyoCompressedEcPublicKey (x : BigInteger, y : BigInteger, ecSpec : ECParam
     }
 
     override fun getParams(): ECParameterSpec {
-        return mEcSpec
+        return ecSpec
     }
 
     override fun getW(): ECPoint {
-        return ECPoint(mX, mY)
+        return ECPoint(x, y)
     }
 }

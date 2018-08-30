@@ -4,7 +4,7 @@ import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.async
 import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.data.XyoObject
-import network.xyo.sdkcorekotlin.signing.XyoSigningObject
+import network.xyo.sdkcorekotlin.signing.XyoSigner
 import network.xyo.sdkcorekotlin.signing.XyoSigningObjectCreatorVerify
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.signatures.XyoSha1WithEcdsaSignature
 import java.security.Signature
@@ -22,12 +22,10 @@ class XyoSha1WithSecp256K : XyoEcSecp256K() {
 
     companion object : XyoSigningObjectCreatorVerify() {
         override val signatureInstance: Signature = Signature.getInstance("SHA1withECDSA")
+        override val key: Byte = 0x02
 
-        override fun newInstance(): XyoResult<XyoSigningObject> {
+        override fun newInstance(): XyoResult<XyoSigner> {
             return XyoResult(XyoSha256WithSecp256K())
         }
-
-        override val key: Byte
-            get() = 0x02
     }
 }

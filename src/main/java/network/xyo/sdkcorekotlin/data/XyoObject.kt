@@ -32,24 +32,25 @@ abstract class XyoObject {
 
     private fun makeTyped () : XyoResult<ByteArray> {
         val buffer = ByteBuffer.allocate(totalSize + encodedSize.size + 2)
-        if (id.error == null && id.value != null) {
-                if (data.error == null && data.value != null) {
-                    buffer.put(id.value)
-                    buffer.put(encodedSize)
-                    buffer.put(data.value)
-                    return XyoResult(buffer.array())
-                }
-                return XyoResult(XyoError("1"))
-            }
-        return XyoResult(XyoError("2"))
+        if (id.error != null)
+            return XyoResult(id.error ?: XyoError("Id has a unknown error!"))
+        if (data.error != null)
+            return XyoResult(data.error ?: XyoError("Data has a unknown error!"))
+
+        buffer.put(id.value)
+        buffer.put(encodedSize)
+        buffer.put(data.value)
+        return XyoResult(buffer.array())
     }
 
     private fun makeUntyped () : XyoResult<ByteArray> {
         val buffer = ByteBuffer.allocate(totalSize + encodedSize.size)
-        if (data.error == null && data.value != null) {
-            buffer.put(encodedSize)
-            buffer.put(data.value)
-        }
+
+        if (data.error != null)
+            return XyoResult(data.error ?: XyoError("Data has a unknown error!"))
+
+        buffer.put(encodedSize)
+        buffer.put(data.value)
         return XyoResult(buffer.array())
     }
 }

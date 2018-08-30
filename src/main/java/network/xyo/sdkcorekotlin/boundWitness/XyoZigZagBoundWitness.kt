@@ -7,9 +7,9 @@ import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.XyoPayload
 import network.xyo.sdkcorekotlin.data.array.multi.XyoKeySet
 import network.xyo.sdkcorekotlin.signing.XyoSignatureSet
-import network.xyo.sdkcorekotlin.signing.XyoSigningObject
+import network.xyo.sdkcorekotlin.signing.XyoSigner
 
-class XyoZigZagBoundWitness(private val signers : Array<XyoSigningObject>,
+class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
                             private val payload : XyoPayload) : XyoBoundWitness() {
 
     private val dynamicPayloads = ArrayList<XyoPayload>()

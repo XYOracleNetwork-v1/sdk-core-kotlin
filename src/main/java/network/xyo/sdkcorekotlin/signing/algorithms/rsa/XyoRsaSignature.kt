@@ -3,29 +3,19 @@ package network.xyo.sdkcorekotlin.signing.algorithms.rsa
 import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.data.XyoByteArrayReader
 import network.xyo.sdkcorekotlin.data.XyoObject
-import network.xyo.sdkcorekotlin.data.XyoObjectCreator
+import network.xyo.sdkcorekotlin.data.XyoObjectProvider
 import network.xyo.sdkcorekotlin.signing.XyoSignature
-import network.xyo.sdkcorekotlin.signing.algorithms.ecc.XyoEcdsaSignature
 import java.nio.ByteBuffer
 
-abstract class XyoRsaSignature (rawSignature: ByteArray) : XyoSignature() {
-    private val mSignature = rawSignature
+abstract class XyoRsaSignature (private val signature: ByteArray) : XyoSignature() {
+    override val data: XyoResult<ByteArray> = XyoResult(signature)
+    override val sizeIdentifierSize: XyoResult<Int?> = XyoResult(2)
+    override val encodedSignature: ByteArray = signature
 
-    override val data: XyoResult<ByteArray>
-        get() = XyoResult(mSignature)
+    abstract class XyoRsaSignatureProvider : XyoObjectProvider () {
+        override val major: Byte = 0x05
 
-    override val sizeIdentifierSize: XyoResult<Int?>
-        get() = XyoResult(2)
-
-    override val encodedSignature: ByteArray
-        get() = mSignature
-
-    abstract class XyoRsaSignatureCreator : XyoObjectCreator () {
-        override val major: Byte
-            get() = 0x05
-
-        override val sizeOfBytesToGetSize: XyoResult<Int?>
-            get() = XyoResult(2)
+        override val sizeOfBytesToGetSize: XyoResult<Int?> = XyoResult(2)
 
         override fun readSize(byteArray: ByteArray): XyoResult<Int> {
             return XyoResult(ByteBuffer.wrap(byteArray).short.toInt())

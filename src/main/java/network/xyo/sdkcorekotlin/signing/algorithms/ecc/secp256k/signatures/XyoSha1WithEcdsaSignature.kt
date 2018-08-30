@@ -4,11 +4,9 @@ import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.XyoEcdsaSignature
 
 class XyoSha1WithEcdsaSignature(rawSignature : ByteArray) : XyoEcdsaSignature(rawSignature) {
-    override val id: XyoResult<ByteArray>
-        get() = XyoResult(byteArrayOf(major, minor))
+    override val id: XyoResult<ByteArray> = XyoResult(byteArrayOf(major, minor))
 
-    companion object : XyoEcdsaSignatureCreator() {
-        override val minor: Byte
-            get() = 0x02
+    companion object : XyoEcdsaSignatureProvider() {
+        override val minor: Byte = 0x02
     }
 }

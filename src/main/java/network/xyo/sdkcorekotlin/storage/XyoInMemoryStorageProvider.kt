@@ -1,12 +1,9 @@
 package network.xyo.sdkcorekotlin.storage
 
-import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.withTimeout
-import network.xyo.sdkcorekotlin.XyoError
 import network.xyo.sdkcorekotlin.XyoResult
 
-class XyoInMemoryStorage : XyoStorageInterface {
+class XyoInMemoryStorageProvider : XyoStorageProviderInterface {
     private val keys = ArrayList<ByteArray>()
     private val storageHashMap = HashMap<Int, ByteArray>()
 

@@ -3,7 +3,7 @@ package network.xyo.sdkcorekotlin.data
 import network.xyo.sdkcorekotlin.XyoError
 import network.xyo.sdkcorekotlin.XyoResult
 
-abstract class XyoObjectCreator : XyoType() {
+abstract class XyoObjectProvider : XyoType() {
     abstract val sizeOfBytesToGetSize : XyoResult<Int?>
     abstract fun readSize (byteArray: ByteArray) : XyoResult<Int>
     abstract fun createFromPacked (byteArray: ByteArray) : XyoResult<XyoObject>
@@ -27,7 +27,7 @@ abstract class XyoObjectCreator : XyoType() {
     }
 
     companion object {
-        private val creators = HashMap<Byte, HashMap<Byte, XyoObjectCreator>>()
+        private val creators = HashMap<Byte, HashMap<Byte, XyoObjectProvider>>()
 
         fun create(data : ByteArray) : XyoResult<XyoObject> {
             val majorMap = creators[data[0]]
@@ -36,17 +36,16 @@ abstract class XyoObjectCreator : XyoType() {
                 if (creator != null) {
                     return creator
                 }
-                return XyoResult(XyoError(""))
             }
-            return XyoResult(XyoError(""))
+            return XyoResult(XyoError("Cant find element!"))
         }
 
-        fun getCreator (major: Byte, minor: Byte) : XyoResult<XyoObjectCreator?> {
+        fun getCreator (major: Byte, minor: Byte) : XyoResult<XyoObjectProvider?> {
             val majorMap = creators[major]
             if (majorMap != null) {
                 return XyoResult(majorMap[minor])
             }
-            return XyoResult(XyoError(""))
+            return XyoResult(XyoError("Cant get creator!"))
         }
     }
 }

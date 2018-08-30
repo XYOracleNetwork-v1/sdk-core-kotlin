@@ -11,9 +11,8 @@ import network.xyo.sdkcorekotlin.data.array.multi.XyoMultiTypeArrayInt
 import network.xyo.sdkcorekotlin.data.heuristics.number.signed.XyoRssi
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.hashing.basic.XyoSha256
-import network.xyo.sdkcorekotlin.signing.XyoSigningObject
+import network.xyo.sdkcorekotlin.signing.XyoSigner
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.XyoSha1WithSecp256K
-import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.XyoSha256WithSecp256K
 import org.junit.Assert
 
 class XyoOriginChainStateTest : XyoTestBase() {
@@ -26,7 +25,7 @@ class XyoOriginChainStateTest : XyoTestBase() {
     @kotlin.test.Test
     fun testOriginChainTest () {
         XyoSha1WithSecp256K.enable()
-        val startingSigner = XyoSigningObject.getCreator(0x02)!!.newInstance().value!!
+        val startingSigner = XyoSigner.getCreator(0x02)!!.newInstance().value!!
         runBlocking {
             val originBlocks = ArrayList<XyoBoundWitness>()
             originChainState.addSigner(startingSigner)
@@ -54,7 +53,7 @@ class XyoOriginChainStateTest : XyoTestBase() {
                 originChainState.newOriginBlock(aliceBoundWitness.getHash(hashCreator).await().value!!)
                 originBlocks.add(aliceBoundWitness)
 
-                originChainState.addSigner(XyoSigningObject.getCreator(0x02)!!.newInstance().value!!)
+                originChainState.addSigner(XyoSigner.getCreator(0x02)!!.newInstance().value!!)
                 lastHash = aliceBoundWitness.getHash(hashCreator).await().value!!
 
                 if (i != 0) {

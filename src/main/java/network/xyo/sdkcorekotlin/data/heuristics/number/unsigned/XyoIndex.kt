@@ -2,33 +2,23 @@ package network.xyo.sdkcorekotlin.data.heuristics.number.unsigned
 
 import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.data.XyoObject
-import network.xyo.sdkcorekotlin.data.XyoObjectCreator
+import network.xyo.sdkcorekotlin.data.XyoObjectProvider
 import network.xyo.sdkcorekotlin.data.heuristics.number.XyoNumberTypes
 import java.nio.ByteBuffer
 
 class XyoIndex(override val number: Int) : XyoNumberUnsigned() {
-    override val size: XyoNumberTypes
-        get() = XyoNumberTypes.BYTE
+    override val size: XyoNumberTypes = XyoNumberTypes.BYTE
+    override val id: XyoResult<ByteArray> = XyoResult(byteArrayOf(major, minor))
+    override val sizeIdentifierSize: XyoResult<Int?> = XyoResult<Int?>(null)
 
-    override val id: XyoResult<ByteArray>
-        get() = XyoResult(byteArrayOf(major, minor))
+    companion object : XyoObjectProvider() {
+        override val major: Byte = 0x02
+        override val minor: Byte = 0x05
+        override val sizeOfBytesToGetSize: XyoResult<Int?> = XyoResult(0)
 
-    override val sizeIdentifierSize: XyoResult<Int?>
-        get() = XyoResult<Int?>(null)
-
-    companion object : XyoObjectCreator() {
         override fun readSize(byteArray: ByteArray): XyoResult<Int> {
             return XyoResult(1)
         }
-
-        override val major: Byte
-            get() = 0x02
-
-        override val minor: Byte
-            get() = 0x05
-
-        override val sizeOfBytesToGetSize: XyoResult<Int?>
-            get() = XyoResult(0)
 
         override fun createFromPacked(byteArray: ByteArray): XyoResult<XyoObject> {
             return XyoResult(XyoIndex(ByteBuffer.wrap(byteArray)[0].toInt()))

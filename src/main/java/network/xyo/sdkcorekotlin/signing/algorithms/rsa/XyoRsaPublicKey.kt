@@ -2,29 +2,26 @@ package network.xyo.sdkcorekotlin.signing.algorithms.rsa
 
 import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.data.XyoByteArrayReader
-import network.xyo.sdkcorekotlin.data.XyoByteArraySetter
 import network.xyo.sdkcorekotlin.data.XyoObject
-import network.xyo.sdkcorekotlin.data.XyoObjectCreator
+import network.xyo.sdkcorekotlin.data.XyoObjectProvider
 import java.math.BigInteger
 import java.nio.ByteBuffer
 import java.security.interfaces.RSAPublicKey
 
-class XyoRsaPublicKey(modulus : BigInteger) : RSAPublicKey, XyoObject() {
-    private val mModulus : BigInteger = modulus
-    private val mPublicExponent : BigInteger = BigInteger(byteArrayOf(0x01, 0x00, 0x01))
+class XyoRsaPublicKey(private val modulus : BigInteger) : RSAPublicKey, XyoObject() {
+    private val publicExponent : BigInteger = BigInteger(byteArrayOf(0x01, 0x00, 0x01))
 
     override val data: XyoResult<ByteArray>
         get() = XyoResult(encoded)
 
-    override val sizeIdentifierSize: XyoResult<Int?>
-        get() = XyoResult<Int?>(null)
+    override val sizeIdentifierSize: XyoResult<Int?> = XyoResult<Int?>(null)
 
     override fun getAlgorithm(): String {
         return "RSA"
     }
 
     override fun getEncoded(): ByteArray {
-        return mModulus.toByteArray()
+        return modulus.toByteArray()
     }
 
     override fun getFormat(): String {
@@ -32,25 +29,20 @@ class XyoRsaPublicKey(modulus : BigInteger) : RSAPublicKey, XyoObject() {
     }
 
     override fun getModulus(): BigInteger {
-        return mModulus
+        return modulus
     }
 
     override fun getPublicExponent(): BigInteger {
-        return mPublicExponent
+        return publicExponent
     }
 
     override val id: XyoResult<ByteArray>
         get() = XyoResult(byteArrayOf(major, minor))
 
-    companion object : XyoObjectCreator() {
-        override val major: Byte
-            get() = 0x04
-
-        override val minor: Byte
-            get() = 0x03
-
-        override val sizeOfBytesToGetSize: XyoResult<Int?>
-            get() = XyoResult(2)
+    companion object : XyoObjectProvider() {
+        override val major: Byte = 0x04
+        override val minor: Byte = 0x03
+        override val sizeOfBytesToGetSize: XyoResult<Int?> = XyoResult(2)
 
         override fun readSize(byteArray: ByteArray): XyoResult<Int> {
             return XyoResult(ByteBuffer.wrap(byteArray).short.toInt())

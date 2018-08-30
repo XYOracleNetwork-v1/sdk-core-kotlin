@@ -4,8 +4,7 @@ import network.xyo.sdkcorekotlin.XyoError
 import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.XyoByteArraySetter
-import network.xyo.sdkcorekotlin.data.XyoObjectCreator
-import network.xyo.sdkcorekotlin.data.array.single.XyoSingleTypeArrayInt
+import network.xyo.sdkcorekotlin.data.XyoObjectProvider
 
 abstract class XyoArrayBase : XyoObject() {
     abstract val typedId : ByteArray?
@@ -49,8 +48,7 @@ abstract class XyoArrayBase : XyoObject() {
         }
     }
 
-    abstract class XyoArrayCreator : XyoObjectCreator() {
-        override val major: Byte
-            get() = 0x01
+    abstract class XyoArrayProvider : XyoObjectProvider() {
+        override val major: Byte = 0x01
     }
 }

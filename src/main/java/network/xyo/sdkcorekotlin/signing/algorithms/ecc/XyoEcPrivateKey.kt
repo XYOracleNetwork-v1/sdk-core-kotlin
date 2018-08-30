@@ -4,10 +4,8 @@ import java.math.BigInteger
 import java.security.interfaces.ECPrivateKey
 import java.security.spec.ECParameterSpec
 
-class XyoEcPrivateKey(s : BigInteger, ecSpec: ECParameterSpec) : ECPrivateKey {
-    private val mS = s
-    private val mEcSpec = ecSpec
-
+class XyoEcPrivateKey(private val s : BigInteger,
+                      private val ecSpec: ECParameterSpec) : ECPrivateKey {
     override fun getAlgorithm(): String {
         return "EC"
     }
@@ -21,10 +19,10 @@ class XyoEcPrivateKey(s : BigInteger, ecSpec: ECParameterSpec) : ECPrivateKey {
     }
 
     override fun getParams(): ECParameterSpec {
-        return  mEcSpec
+        return  ecSpec
     }
 
     override fun getS(): BigInteger {
-        return mS
+        return s
     }
 }

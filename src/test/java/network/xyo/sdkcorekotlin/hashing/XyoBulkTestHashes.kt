@@ -21,7 +21,7 @@ class XyoBulkTestHashes : XyoTestBase() {
         }
     }
 
-    private suspend fun testHash (hashCreator : XyoHash.XyoHashCreator, expected : ByteArray) {
+    private suspend fun testHash (hashCreator : XyoHash.XyoHashProvider, expected : ByteArray) {
         val hashResult = hashCreator.createHash(calibrationSeed).await()
         Assert.assertEquals(hashResult.error, null)
         Assert.assertArrayEquals(expected, hashResult.value!!.hash)

@@ -5,17 +5,15 @@ import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.XyoPayload
 import network.xyo.sdkcorekotlin.data.array.multi.XyoKeySet
 import network.xyo.sdkcorekotlin.data.array.multi.XyoMultiTypeArrayInt
-import network.xyo.sdkcorekotlin.data.array.single.XyoSingleTypeArrayShort
 import network.xyo.sdkcorekotlin.data.heuristics.number.signed.XyoRssi
 import network.xyo.sdkcorekotlin.signing.XyoSignatureSet
-import network.xyo.sdkcorekotlin.signing.XyoSigningObject
+import network.xyo.sdkcorekotlin.signing.XyoSigner
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.XyoSha1WithSecp256K
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.XyoSha256WithSecp256K
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.keys.XyoSecp256K1CompressedPublicKey
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.signatures.XyoSha256WithEcdsaSignature
 import network.xyo.sdkcorekotlin.signing.algorithms.rsa.XyoRsaPublicKey
 import network.xyo.sdkcorekotlin.signing.algorithms.rsa.signatures.XyoRsaWithSha256Singature
-import java.math.BigInteger
 
 class XyoBoundWitnessTransferTest : XyoTestBase() {
     private val expectedPayloads = arrayOf<XyoObject>(
@@ -28,12 +26,12 @@ class XyoBoundWitnessTransferTest : XyoTestBase() {
                 XyoSha1WithSecp256K.enable()
                 return arrayOf(
                 XyoKeySet(arrayOf(
-                            XyoSigningObject.getCreator(0x02)!!.newInstance().value!!.publicKey.value!!,
-                            XyoSigningObject.getCreator(0x02)!!.newInstance().value!!.publicKey.value!!
+                            XyoSigner.getCreator(0x02)!!.newInstance().value!!.publicKey.value!!,
+                            XyoSigner.getCreator(0x02)!!.newInstance().value!!.publicKey.value!!
                     )),
                             XyoKeySet(arrayOf(
-                            XyoSigningObject.getCreator(0x01)!!.newInstance().value!!.publicKey.value!!,
-                            XyoSigningObject.getCreator(0x02)!!.newInstance().value!!.publicKey.value!!
+                            XyoSigner.getCreator(0x01)!!.newInstance().value!!.publicKey.value!!,
+                            XyoSigner.getCreator(0x02)!!.newInstance().value!!.publicKey.value!!
                     ))
                 )
             }

@@ -13,14 +13,6 @@ class XyoByteArraySetter (size: Int) {
         totalSize += item.size
     }
 
-    fun remove (itemIndex : Int) {
-        byteArrays[itemIndex] = defaultValue
-    }
-
-    fun getByteArrays () : Array<ByteArray> {
-        return byteArrays
-    }
-
     fun merge () : ByteArray {
         var position = 0
         val merged =  ByteArray(totalSize)
@@ -31,20 +23,6 @@ class XyoByteArraySetter (size: Int) {
             }
         }
         return merged
-    }
-
-    fun clear () {
-        byteArrays = Array(numberOfByteArrays, { defaultValue })
-        totalSize = defaultValue.size * numberOfByteArrays
-    }
-
-    private fun getAvoidTotalSize (avoid : Array<Int>) : Int {
-        var size = totalSize
-        for (byteArray in avoid){
-            size -= byteArrays[byteArray * 2].size
-            size -= byteArrays[(byteArray * 2) + 1].size
-        }
-        return size
     }
 
     companion object {

@@ -2,7 +2,7 @@ package network.xyo.sdkcorekotlin.data.array
 
 import network.xyo.sdkcorekotlin.XyoTestBase
 import network.xyo.sdkcorekotlin.data.array.multi.XyoKeySet
-import network.xyo.sdkcorekotlin.signing.XyoSigningObject
+import network.xyo.sdkcorekotlin.signing.XyoSigner
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.XyoSha1WithSecp256K
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.XyoSha256WithSecp256K
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.keys.XyoSecp256K1CompressedPublicKey
@@ -18,7 +18,7 @@ class XyoKeySetTest : XyoTestBase() {
         XyoRsaPublicKey.enable()
 
         val keySetExpected = XyoKeySet(arrayOf(
-                XyoSigningObject.getCreator(0x02)!!.newInstance().value!!.publicKey.value!!
+                XyoSigner.getCreator(0x02)!!.newInstance().value!!.publicKey.value!!
         ))
 
         val keySetCreated = XyoKeySet.createFromPacked(keySetExpected.untyped.value!!)
