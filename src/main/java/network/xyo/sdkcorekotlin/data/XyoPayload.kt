@@ -19,7 +19,10 @@ class XyoPayload(val signedPayload : XyoMultiTypeArrayInt,
     private fun getMappingOfElements (objects : Array<XyoObject>) : XyoResult<HashMap<Int, XyoObject>> {
         val mapping = HashMap<Int, XyoObject>()
         for (element in objects) {
-            mapping[element.id.value?.contentHashCode() ?: return XyoResult(XyoError("No element id!"))] = element
+            mapping[element.id.value?.contentHashCode() ?: return XyoResult(XyoError(
+                    this.toString(),
+                    "No element id!")
+            )] = element
         }
         return XyoResult(mapping)
     }
@@ -31,16 +34,29 @@ class XyoPayload(val signedPayload : XyoMultiTypeArrayInt,
 
         if (unsignedPayloadUntyped.error == null) {
             if (signedPayloadUntyped.error == null) {
-                val signedPayloadUntypedValue = signedPayloadUntyped.value ?: return XyoResult(XyoError("signedPayloadUntypedValue is null!"))
-                val unsignedPayloadUntypedValue = unsignedPayloadUntyped.value ?: return XyoResult(XyoError("unsignedPayloadUntypedValue is null!"))
+                val signedPayloadUntypedValue = signedPayloadUntyped.value ?: return XyoResult(XyoError(
+                        this.toString(),
+                        "Unsigned Payload Value is null!"
+                        )
+                )
+                val unsignedPayloadUntypedValue = unsignedPayloadUntyped.value ?: return XyoResult(XyoError(
+                        this.toString(),
+                        "Unsigned Payload Value is null!")
+                )
 
                 merger.add(signedPayloadUntypedValue, 0)
                 merger.add(unsignedPayloadUntypedValue, 1)
                 return XyoResult(merger.merge())
             }
-            return XyoResult(XyoError(""))
+            return XyoResult(signedPayloadUntyped.error ?:XyoError(
+                    this.toString(),
+                    "Unknown signed payload error!")
+            )
         }
-        return XyoResult(XyoError(""))
+        return XyoResult(unsignedPayloadUntyped.error ?:XyoError(
+                this.toString(),
+                "Unknown unsigned payload error!")
+        )
     }
 
     companion object : XyoObjectProvider() {

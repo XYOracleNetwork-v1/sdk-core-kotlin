@@ -96,7 +96,7 @@ class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
             if (incomingKeySet != null) {
                 dynamicPublicKeys.add(incomingKeySet)
             } else {
-                return XyoError("Error Unpacking KeySet!")
+                return XyoError(this.toString(),"Error Unpacking KeySet!")
             }
         }
         return null
@@ -108,7 +108,7 @@ class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
             if (incomingPayload != null) {
                 dynamicPayloads.add(incomingPayload)
             } else {
-                return XyoError("Error Unpacking Payload!")
+                return XyoError(this.toString(),"Error Unpacking Payload!")
             }
         }
         return null
@@ -120,7 +120,7 @@ class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
             if (incomingSignatureSet != null) {
                 dynamicSignatureSets.add(incomingSignatureSet)
             } else {
-                return XyoError("Error Unpacking SignatureSet!")
+                return XyoError(this.toString(),"Error Unpacking SignatureSet!")
             }
         }
         return null
@@ -142,9 +142,15 @@ class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
         val signatureSet = XyoSignatureSet(Array(signers.size, { i ->
             val signature = signCurrent(signers[i]).await()
             if (signature.error == null) {
-                signature.value ?: return@async XyoResult<XyoSignatureSet>((XyoError("signature.value is null")))
+                signature.value ?: return@async XyoResult<XyoSignatureSet>((XyoError(
+                                this.toString(),
+                                "Signature.value is null!")
+                        ))
             } else {
-                return@async XyoResult<XyoSignatureSet>(XyoError("Error: ${signature.error}, Value: ${signature.value}"))
+                return@async XyoResult<XyoSignatureSet>(signature.error ?: XyoError(
+                        this.toString(),
+                        "Unknown signature creation error!"
+                ))
             }
         }))
         return@async XyoResult(signatureSet)
@@ -153,7 +159,9 @@ class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
     private fun signForSelf () = async {
         val signatureSet = signBoundWitness().await()
         if (signatureSet.error == null) {
-            val signatureSetValue = signatureSet.value ?: return@async XyoError("signatureSet.value is null!")
+            val signatureSetValue = signatureSet.value ?: return@async XyoError(
+                    this.toString(),
+                    "signatureSet.value is null!")
             dynamicSignatureSets.add(signatureSetValue)
             return@async null
         }

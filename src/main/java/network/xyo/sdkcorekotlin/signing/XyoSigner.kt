@@ -10,7 +10,9 @@ abstract class XyoSigner {
 
     abstract class XyoSignerProvider {
         abstract fun newInstance () : XyoResult<XyoSigner>
-        abstract fun verifySign (signature: XyoObject, byteArray: ByteArray, publicKey : XyoObject) : Deferred<XyoResult<Boolean>>
+        abstract fun verifySign (signature: XyoObject,
+                                 byteArray: ByteArray,
+                                 publicKey : XyoObject) : Deferred<XyoResult<Boolean>>
         abstract val key : Byte
 
         fun enable () {

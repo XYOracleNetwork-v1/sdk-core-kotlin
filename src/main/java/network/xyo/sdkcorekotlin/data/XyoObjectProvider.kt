@@ -37,7 +37,7 @@ abstract class XyoObjectProvider : XyoType() {
                     return creator
                 }
             }
-            return XyoResult(XyoError("Cant find element!"))
+            return XyoResult(XyoError(this.toString(), "Cant find element!"))
         }
 
         fun getCreator (major: Byte, minor: Byte) : XyoResult<XyoObjectProvider?> {
@@ -45,7 +45,7 @@ abstract class XyoObjectProvider : XyoType() {
             if (majorMap != null) {
                 return XyoResult(majorMap[minor])
             }
-            return XyoResult(XyoError("Cant get creator!"))
+            return XyoResult(XyoError(this.toString(), "Cant find creator!"))
         }
     }
 }

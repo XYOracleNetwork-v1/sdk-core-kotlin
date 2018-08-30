@@ -19,7 +19,7 @@ abstract class XyoGeneralRsa(keySize : Int) : XyoSigner() {
             if (rsaKeyPair != null) {
                 return XyoResult(rsaKeyPair)
             }
-            return XyoResult(XyoError(""))
+            return XyoResult(XyoError(this.toString(), "Can not be casted to XyoRsaPublicKey!"))
         }
 
     open val keyPair: KeyPair = generateKeyPair()

@@ -28,7 +28,7 @@ abstract class XyoNumberSigned : XyoObject() {
                 XyoNumberTypes.FLOAT ->
                     return XyoResult(ByteBuffer.allocate(4).putFloat(number.toFloat()).array())
                 else -> {
-                    return XyoResult(XyoError(""))
+                    return XyoResult(XyoError(this.toString(), "Not a valid size!"))
                 }
             }
         }

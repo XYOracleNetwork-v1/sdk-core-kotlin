@@ -26,14 +26,23 @@ class XyoOriginChainNavigator (private val storageProviderProvider : XyoStorageP
     fun addBoundWitness (originBlock : XyoBoundWitness) = async {
         val blockData = originBlock.untyped
         if (blockData.error != null) return@async blockData.error
-        val blockDataValue = blockData.value ?: return@async XyoError("Block Data is null!")
+        val blockDataValue = blockData.value ?: return@async XyoError(
+                this.toString(),
+                "Block Data is null!"
+        )
 
         val blockHash = originBlock.getHash(hashingObject).await()
         if (blockHash.error != null) return@async blockHash.error
-        val blockHashValue = blockHash.value?.typed?.value ?: return@async XyoError("Block Hash is null!")
+        val blockHashValue = blockHash.value?.typed?.value ?: return@async XyoError(
+                this.toString(),
+                "Block Hash is null!"
+        )
 
         val previousHashes = XyoOriginBlock(originBlock).findPreviousBlocks().await()
-        val previousHashesValue = previousHashes.value ?: return@async XyoError("Cant find hash!")
+        val previousHashesValue = previousHashes.value ?: return@async XyoError(
+                this.toString(),
+                "Cant find hash!"
+        )
 
         for (hash in previousHashesValue) {
             if (hash != null) {
@@ -69,21 +78,56 @@ class XyoOriginChainNavigator (private val storageProviderProvider : XyoStorageP
         previousHashMerger.add(byteArrayOf(0xff.toByte()), 0)
         previousHashMerger.add(originBlockHash, 1)
 
-        val blockHash = storageProviderProvider.read(previousHashMerger.merge(), 60_000).await()
-        if (blockHash.error != null) return@async XyoResult<XyoOriginBlock>(XyoError(""))
-        val blockHashValue = blockHash.value ?: return@async XyoResult<XyoOriginBlock>(XyoError(""))
+        val blockHash = storageProviderProvider.read(
+                previousHashMerger.merge(),
+                60_000).await()
+
+        if (blockHash.error != null) return@async XyoResult<XyoOriginBlock>(
+                blockHash.error ?: XyoError(
+                        this.toString(),
+                        "Unknown Previous Hash Error!"
+                )
+        )
+        val blockHashValue = blockHash.value ?: return@async XyoResult<XyoOriginBlock>(
+                XyoError(
+                        this.toString(),
+                "Previous Hash is null!"
+                )
+        )
 
         return@async getOriginBlockByBlockHash(blockHashValue).await()
     }
 
     fun getOriginBlockByBlockHash (originBlockHash: ByteArray) = async {
         val packedOriginBlock = storageProviderProvider.read(originBlockHash, 60_000).await()
-        if (packedOriginBlock.error != null) return@async XyoResult<XyoOriginBlock>(XyoError(""))
-        val packedOriginBlockValue = packedOriginBlock.value ?: return@async XyoResult<XyoOriginBlock>(XyoError(""))
+        if (packedOriginBlock.error != null) return@async XyoResult<XyoOriginBlock>(
+                packedOriginBlock.error ?: XyoError(
+                        this.toString(),
+                        "Unknown Read Error!"
+                )
+        )
+
+        val packedOriginBlockValue = packedOriginBlock.value ?: return@async XyoResult<XyoOriginBlock>(
+                XyoError(
+                        this.toString(),
+                "Read Value is null!"
+                )
+        )
 
         val unpackedOriginBlock = XyoBoundWitness.createFromPacked(packedOriginBlockValue)
-        if (packedOriginBlock.error != null) return@async XyoResult<XyoOriginBlock>(XyoError(""))
-        val unpackedOriginBlockValue = unpackedOriginBlock.value as? XyoBoundWitness ?: return@async XyoResult<XyoOriginBlock>(XyoError(""))
+        if (packedOriginBlock.error != null) return@async XyoResult<XyoOriginBlock>(
+                packedOriginBlock.error ?: XyoError(
+                        this.toString(),
+                        "Unknown Origin Block Creation Error!"
+                )
+        )
+
+        val unpackedOriginBlockValue = unpackedOriginBlock.value as? XyoBoundWitness ?: return@async XyoResult<XyoOriginBlock>(
+                XyoError(
+                        this.toString(),
+                        "Origin Block is null!"
+                )
+        )
 
         return@async XyoResult(XyoOriginBlock(unpackedOriginBlockValue))
     }
@@ -93,7 +137,7 @@ class XyoOriginChainNavigator (private val storageProviderProvider : XyoStorageP
             val previousHashes = ArrayList<ByteArray?>()
             for (payload in boundWitness.payloads) {
                 val signedPayload = payload.signedPayloadMapping.value
-                val signedPayloadValue = signedPayload ?: return@async XyoResult<ArrayList<ByteArray?>>(XyoError("Mapping is null!"))
+                val signedPayloadValue = signedPayload ?: return@async XyoResult<ArrayList<ByteArray?>>(XyoError(this.toString(), "Mapping is null!"))
 
                 previousHashes.add(signedPayloadValue[XyoPreviousHash.id.contentHashCode()]?.untyped?.value)
             }

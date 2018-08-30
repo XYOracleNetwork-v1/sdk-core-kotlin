@@ -29,19 +29,36 @@ abstract class XyoArrayBase : XyoObject() {
             val merger = XyoByteArraySetter(array.size)
             for (i in 0..array.size - 1) {
                 val element = array[i].typed
-                if (element.error != null) return XyoResult(XyoError(""))
-                val elementValue = element.value ?: return XyoResult(XyoError(""))
+                if (element.error != null) return XyoResult(
+                        element.error ?: XyoError(
+                                this.toString(),
+                                "Unknown element packing error!"
+                        )
+                )
+                val elementValue = element.value ?: return XyoResult(
+                        XyoError(this.toString(), "Element payload is null!")
+                )
                 merger.add(elementValue, i)
             }
             return XyoResult(merger.merge())
         } else {
             val merger = XyoByteArraySetter(array.size + 1)
-            val typedIdValue = typedId ?: return XyoResult(XyoError("typedId not found"))
+            val typedIdValue = typedId ?: return XyoResult(XyoError(
+                    this.toString(),
+                    "Type not found!")
+            )
             merger.add(typedIdValue, 0)
             for (i in 0..array.size - 1) {
                 val element = array[i].untyped
-                if (element.error != null) return XyoResult(XyoError(""))
-                val elementValue = element.value ?: return XyoResult(XyoError(""))
+                if (element.error != null) return XyoResult(
+                        element.error ?: XyoError(
+                                this.toString(),
+                                "Unknown element packing error!"
+                        )
+                )
+                val elementValue = element.value ?: return XyoResult(
+                        XyoError(this.toString(), "Element payload is null!")
+                )
                 merger.add(elementValue, i + 1)
             }
             return XyoResult(merger.merge())

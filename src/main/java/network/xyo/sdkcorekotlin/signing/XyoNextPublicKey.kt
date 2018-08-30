@@ -18,22 +18,54 @@ class XyoNextPublicKey (private val publicKey: XyoObject): XyoObject() {
 
         override fun createFromPacked(byteArray: ByteArray): XyoResult<XyoObject> {
             val keyCreated = XyoObjectProvider.create(byteArray)
-            if (keyCreated.error != null) return XyoResult(XyoError(""))
-            val keyCreatedValue = keyCreated.value ?: return XyoResult(XyoError(""))
+            if (keyCreated.error != null) return XyoResult(
+                    keyCreated.error ?: XyoError(
+                            this.toString(),
+                            "Unknown key creation error!"
+                    )
+            )
+            val keyCreatedValue = keyCreated.value ?: return XyoResult(
+                    XyoError(this.toString(), "Key created value is null!")
+            )
 
             return XyoResult(XyoNextPublicKey(keyCreatedValue))
         }
 
         override fun readSize(byteArray: ByteArray): XyoResult<Int> {
             val publicKeyCreator = XyoObjectProvider.getCreator(byteArray[0], byteArray[1])
-            if (publicKeyCreator.error != null) return XyoResult(XyoError(""))
-            val publicKeyCreatorValue = publicKeyCreator.value ?: return XyoResult(XyoError(""))
+            if (publicKeyCreator.error != null) return XyoResult(
+                    publicKeyCreator.error ?: XyoError(
+                            this.toString(),
+                            "Unknown unpacking public key error!"
+                    )
+            )
+            val publicKeyCreatorValue = publicKeyCreator.value ?: return XyoResult(
+                    XyoError(this.toString(), "Unpacked public key is null!")
+            )
 
             val sizeToRead = publicKeyCreatorValue.sizeOfBytesToGetSize
-            if (sizeToRead.error != null) return XyoResult(XyoError(""))
-            val sizeToReadValue = sizeToRead.value ?: return XyoResult(XyoError(""))
-            val publicKeyCreatorSize = publicKeyCreatorValue.readSize(XyoByteArrayReader(byteArray).read(2, sizeToReadValue))
-            val publicKeyCreatorSizeValue = publicKeyCreatorSize.value ?: return XyoResult(XyoError(""))
+            if (sizeToRead.error != null) return XyoResult(
+                    sizeToRead.error ?: XyoError(
+                            this.toString(),
+                            "Unknown public key creator size."
+                    )
+            )
+            val sizeToReadValue = sizeToRead.value ?: return XyoResult(
+                    XyoError(this.toString(), "Public key size is null!")
+            )
+            val publicKeyCreatorSize = publicKeyCreatorValue.readSize(XyoByteArrayReader(byteArray).read(
+                    2,
+                    sizeToReadValue
+            ))
+            if (publicKeyCreatorSize.error != null) return XyoResult(
+                    publicKeyCreatorSize.error ?: XyoError(
+                            this.toString(),
+                            "Unknown public key creator size."
+                    )
+            )
+            val publicKeyCreatorSizeValue = publicKeyCreatorSize.value ?: return XyoResult(
+                    XyoError(this.toString(), "Creator public key size is null!")
+            )
             return XyoResult(publicKeyCreatorSizeValue + 2)
         }
     }

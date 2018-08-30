@@ -18,22 +18,57 @@ open class XyoPreviousHash(val hash: XyoHash) : XyoObject() {
 
         override fun readSize(byteArray: ByteArray): XyoResult<Int> {
             val hashCreator = XyoObjectProvider.getCreator(byteArray[0], byteArray[1])
-            if (hashCreator.error != null) return XyoResult(XyoError(""))
-            val hashCreatorValue = hashCreator.value ?: return XyoResult(XyoError(""))
+            if (hashCreator.error != null) return XyoResult(
+                    hashCreator.error ?: XyoError(
+                            this.toString(),
+                            "Unknown hash creator error!"
+                    )
+            )
+            val hashCreatorValue = hashCreator.value ?: return XyoResult(
+                    XyoError(this.toString(), "Hash creator is null!")
+            )
 
             val sizeToRead = hashCreatorValue.sizeOfBytesToGetSize
-            if (sizeToRead.error != null) return XyoResult(XyoError(""))
-            val sizeToReadValue = sizeToRead.value ?: return XyoResult(XyoError(""))
-            val hashCreatorSize = hashCreatorValue.readSize(XyoByteArrayReader(byteArray).read(2, sizeToReadValue))
-            val hashCreatorSizeValue = hashCreatorSize.value ?: return XyoResult(XyoError("Problem reading hash child!"))
+            if (sizeToRead.error != null) return XyoResult(
+                    sizeToRead.error ?: XyoError(
+                            this.toString(),
+                            "Unknown hash creator size error!"
+                    )
+            )
+            val sizeToReadValue = sizeToRead.value ?: return XyoResult(XyoError(
+                    this.toString(),
+                    "Size to read for hash is null!")
+            )
+            val hashCreatorSize = hashCreatorValue.readSize(XyoByteArrayReader(byteArray).read(
+                    2,
+                    sizeToReadValue
+            ))
+            if (hashCreatorSize.error != null) return XyoResult(
+                    hashCreatorSize.error ?: XyoError(
+                            this.toString(),
+                            "Unknown hash creator size value error!"
+                    )
+            )
+            val hashCreatorSizeValue = hashCreatorSize.value ?: return XyoResult(XyoError(
+                            this.toString(),
+                            "Hash creator size value is null!!")
+            )
 
             return XyoResult(hashCreatorSizeValue + 2)
         }
 
         override fun createFromPacked(byteArray: ByteArray): XyoResult<XyoObject> {
             val hashCreated = XyoObjectProvider.create(byteArray)
-            if (hashCreated.error != null) return XyoResult(XyoError(""))
-            val hashCreatedValue = hashCreated.value as? XyoHash ?: return XyoResult(XyoError(""))
+            if (hashCreated.error != null) return XyoResult(
+                    hashCreated.error ?: XyoError(
+                            this.toString(),
+                            "Unknown creation error!"
+                    )
+            )
+            val hashCreatedValue = hashCreated.value as? XyoHash ?: return XyoResult(XyoError(
+                    this.toString(),
+                    "Created value is null!"
+            ))
 
             return XyoResult(XyoPreviousHash(hashCreatedValue))
         }

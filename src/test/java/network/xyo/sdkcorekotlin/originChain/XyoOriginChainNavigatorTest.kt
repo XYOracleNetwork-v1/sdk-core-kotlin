@@ -28,7 +28,7 @@ class XyoOriginChainNavigatorTest : XyoTestBase() {
     private val numberOfBlocks = 10
     private val hashCreator = XyoSha256
     private val originNavigator = XyoOriginChainNavigator(XyoInMemoryStorageProvider(), hashCreator)
-    private val originChainState = XyoOriginChainStateManager()
+    private val originChainState = XyoOriginChainStateManager(0)
     private var lastHash : XyoHash? = null
     private var nextKey : XyoObject? = null
 
