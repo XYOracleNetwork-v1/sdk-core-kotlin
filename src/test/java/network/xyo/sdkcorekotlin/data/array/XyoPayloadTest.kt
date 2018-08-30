@@ -1,5 +1,6 @@
-package network.xyo.sdkcorekotlin
+package network.xyo.sdkcorekotlin.data.array
 
+import network.xyo.sdkcorekotlin.XyoTestBase
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.XyoPayload
 import network.xyo.sdkcorekotlin.data.array.multi.XyoMultiTypeArrayInt
