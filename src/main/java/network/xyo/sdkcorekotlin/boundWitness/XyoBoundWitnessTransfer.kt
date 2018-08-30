@@ -13,7 +13,7 @@ class XyoBoundWitnessTransfer(val keysToSend : Array<XyoObject>,
                               val payloadsToSend : Array<XyoObject>,
                               val signatureToSend : Array<XyoObject>) : XyoObject() {
 
-    override val data: XyoResult<ByteArray> = makeEncoded()
+    override val data: XyoResult<ByteArray> = makeWithEverything()
     override val id: XyoResult<ByteArray> = XyoResult(byteArrayOf(major, minor))
     override val sizeIdentifierSize: XyoResult<Int?> = XyoResult(4)
 
@@ -29,100 +29,67 @@ class XyoBoundWitnessTransfer(val keysToSend : Array<XyoObject>,
             return 0x01
         }
 
-    private fun makeWithKeysAndPayload () : XyoResult<ByteArray> {
-        val setter = XyoByteArraySetter(3)
-        setter.add(byteArrayOf(stage), 0)
-
-        val encodedKeySets = XyoSingleTypeArrayShort(XyoKeySet.major, XyoKeySet.minor, keysToSend).untyped
-        val encodedKeySetsValue = encodedKeySets.value ?: return XyoResult(XyoError(
-                this.toString(),
-                "Packing keySet returned null!")
-        )
-        if (encodedKeySets.error != null) return XyoResult(encodedKeySets.error ?: XyoError(
-                this.toString(),
-                "Unknown encodedKeySets error!")
-        )
-        setter.add(encodedKeySetsValue, 1)
-
-        val encodedPayloads = XyoSingleTypeArrayInt(XyoPayload.major, XyoPayload.minor, payloadsToSend).untyped
-        val encodedPayloadsValue = encodedPayloads.value ?: return XyoResult(XyoError(
-                this.toString(),
-                "Unpacking payloads returned null!")
-        )
-        if (encodedPayloads.error != null) return XyoResult(encodedPayloads.error ?: XyoError(
-                this.toString(),
-                "Unknown encodedPayloads error!")
-        )
-        setter.add(encodedPayloadsValue, 2)
-
-        return XyoResult(setter.merge())
-    }
-
     private fun makeWithEverything() : XyoResult<ByteArray> {
-        val setter = XyoByteArraySetter(4)
-        setter.add(byteArrayOf(stage), 0)
+        var elementCount = 1
+        var currentElementIndex = 1
+        var keySetArray : ByteArray? = null
+        var payloadArray : ByteArray? = null
+        var signatureArray :  ByteArray? = null
 
-        val encodedKeySets = XyoSingleTypeArrayShort(XyoKeySet.major, XyoKeySet.minor, keysToSend).untyped
-        val encodedKeySetsValue = encodedKeySets.value ?: return XyoResult(XyoError(
-                this.toString(),
-                "Packing keySet returned null!")
-        )
-        if (encodedKeySets.error != null) return XyoResult(encodedKeySets.error ?: XyoError(
-                this.toString(),
-                "Unknown encodedKeySets error!")
-        )
-        setter.add(encodedKeySetsValue, 1)
+        if (stage == 0x01.toByte() || stage == 0x02.toByte()) {
+            elementCount += 2
+            val encodedKeySets = XyoSingleTypeArrayShort(XyoKeySet.major, XyoKeySet.minor, keysToSend).untyped
+            keySetArray = encodedKeySets.value ?: return XyoResult(XyoError(
+                    this.toString(),
+                    "Packing keySet returned null!")
+            )
+            if (encodedKeySets.error != null) return XyoResult(encodedKeySets.error ?: XyoError(
+                    this.toString(),
+                    "Unknown encodedKeySets error!")
+            )
 
-        val encodedPayloads = XyoSingleTypeArrayInt(XyoPayload.major, XyoPayload.minor, payloadsToSend).untyped
-        val encodedPayloadsValue = encodedPayloads.value ?: return XyoResult(XyoError(
-                this.toString(),
-                "Packing payloads returned null!")
-        )
-        if (encodedPayloads.error != null) return XyoResult(encodedPayloads.error ?: XyoError(
-                this.toString(),
-                "Unknown encodedPayloads error!")
-        )
-        setter.add(encodedPayloadsValue, 2)
-
-        val encodedSignatures = XyoSingleTypeArrayShort(XyoSignatureSet.major, XyoSignatureSet.minor, signatureToSend).untyped
-        val encodedSignaturesValue = encodedSignatures.value ?: return XyoResult(XyoError(
-                this.toString(),
-                "Packing signatures returned null!")
-        )
-        if (encodedSignatures.error != null) return XyoResult(encodedSignatures.error ?: XyoError(
-                this.toString(),
-                "Unknown encodedSignatures error!")
-        )
-        setter.add(encodedSignaturesValue, 3)
-
-        return XyoResult(setter.merge())
-    }
-
-    private fun makeWithSignatures() : XyoResult<ByteArray> {
-        val setter = XyoByteArraySetter(2)
-        setter.add(byteArrayOf(stage), 0)
-
-        val encodedSignatures = XyoSingleTypeArrayShort(XyoSignatureSet.major, XyoSignatureSet.minor, signatureToSend).untyped
-        val encodedSignaturesValue = encodedSignatures.value ?:  return XyoResult(XyoError(
-                this.toString(),
-                "Packing signatures returned null!")
-        )
-        if (encodedSignatures.error != null) return XyoResult(encodedSignatures.error ?: XyoError(
-                this.toString(),
-                "Unknown encodedSignatures error!")
-        )
-        setter.add(encodedSignaturesValue, 3)
-
-        return XyoResult(setter.merge())
-    }
-
-    private fun makeEncoded () : XyoResult<ByteArray> {
-        when (stage) {
-            0x01.toByte() -> return makeWithKeysAndPayload()
-            0x02.toByte() -> return makeWithEverything()
-            0x03.toByte() -> return makeWithSignatures()
+            val encodedPayloads = XyoSingleTypeArrayInt(XyoPayload.major, XyoPayload.minor, payloadsToSend).untyped
+            payloadArray = encodedPayloads.value ?: return XyoResult(XyoError(
+                    this.toString(),
+                    "Packing payloads returned null!")
+            )
+            if (encodedPayloads.error != null) return XyoResult(encodedPayloads.error ?: XyoError(
+                    this.toString(),
+                    "Unknown encodedPayloads error!")
+            )
         }
-        return XyoResult(XyoError(this.toString(),"Unknown stage!"))
+
+        if (stage == 0x02.toByte() || stage == 0x03.toByte()) {
+            elementCount += 1
+            val encodedSignatures = XyoSingleTypeArrayShort(XyoSignatureSet.major, XyoSignatureSet.minor, signatureToSend).untyped
+            signatureArray = encodedSignatures.value ?: return XyoResult(XyoError(
+                    this.toString(),
+                    "Packing signatures returned null!")
+            )
+            if (encodedSignatures.error != null) return XyoResult(encodedSignatures.error ?: XyoError(
+                    this.toString(),
+                    "Unknown encodedSignatures error!")
+            )
+        }
+
+        val setter = XyoByteArraySetter(elementCount)
+        setter.add(byteArrayOf(stage), 0)
+
+        if (keySetArray != null) {
+           setter.add(keySetArray, currentElementIndex)
+            currentElementIndex++
+        }
+
+        if (payloadArray != null) {
+            setter.add(payloadArray, currentElementIndex)
+            currentElementIndex++
+        }
+
+        if (signatureArray != null) {
+            setter.add(signatureArray, currentElementIndex)
+        }
+
+        return XyoResult(setter.merge())
     }
 
     companion object : XyoObjectProvider() {

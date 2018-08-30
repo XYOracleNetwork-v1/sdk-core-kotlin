@@ -27,8 +27,12 @@ open class XyoSingleTypeArrayShort(override val elementMajor : Byte,
 
         override fun createFromPacked(byteArray: ByteArray): XyoResult<XyoObject> {
             val unpackedArray = XyoArrayDecoder(byteArray, true, 2)
-            val majorTypeValue = unpackedArray.majorType ?: return XyoResult(XyoError("Cant find major!"))
-            val minorTypeValue = unpackedArray.minorType ?: return XyoResult(XyoError("Cant find minor!"))
+            val majorTypeValue = unpackedArray.majorType ?: return XyoResult(XyoError(
+                    this.toString(), "Cant find major!")
+            )
+            val minorTypeValue = unpackedArray.minorType ?: return XyoResult(XyoError(
+                    this.toString(), "Cant find minor!")
+            )
             val unpackedArrayObject = XyoSingleTypeArrayShort(majorTypeValue, minorTypeValue, unpackedArray.array.toTypedArray())
             return XyoResult(unpackedArrayObject)
         }
