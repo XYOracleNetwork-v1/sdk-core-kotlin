@@ -8,7 +8,7 @@ import java.nio.ByteBuffer
 
 class XyoIndex(override val number: Int) : XyoNumberUnsigned() {
     override val size: XyoNumberTypes
-        get() = XyoNumberTypes.INT
+        get() = XyoNumberTypes.BYTE
 
     override val id: XyoResult<ByteArray>
         get() = XyoResult(byteArrayOf(major, minor))
@@ -18,20 +18,20 @@ class XyoIndex(override val number: Int) : XyoNumberUnsigned() {
 
     companion object : XyoObjectCreator() {
         override fun readSize(byteArray: ByteArray): XyoResult<Int> {
-            return XyoResult(4)
+            return XyoResult(1)
         }
 
         override val major: Byte
             get() = 0x02
 
         override val minor: Byte
-            get() = 0x04
+            get() = 0x05
 
         override val sizeOfBytesToGetSize: XyoResult<Int?>
             get() = XyoResult(0)
 
         override fun createFromPacked(byteArray: ByteArray): XyoResult<XyoObject> {
-            return XyoResult(XyoIndex(ByteBuffer.wrap(byteArray).int))
+            return XyoResult(XyoIndex(ByteBuffer.wrap(byteArray)[0].toInt()))
         }
     }
 }

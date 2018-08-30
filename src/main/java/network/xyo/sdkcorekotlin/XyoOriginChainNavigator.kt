@@ -96,9 +96,13 @@ class XyoOriginChainNavigator (private val storageProvider : XyoStorageInterface
                 val signedPayload = payload.signedPayloadMapping.value
                 val signedPayloadValue = signedPayload ?: return@async XyoResult<ArrayList<ByteArray?>>(XyoError("Mapping is null!"))
 
-                previousHashes.add(signedPayloadValue[XyoPreviousHash.id.contentHashCode()]?.typed?.value)
+                previousHashes.add(signedPayloadValue[XyoPreviousHash.id.contentHashCode()]?.untyped?.value)
             }
             return@async XyoResult(previousHashes)
+        }
+
+        fun getHash() = async {
+            return@async boundWitness.getHash(hashingObject).await()
         }
     }
 }

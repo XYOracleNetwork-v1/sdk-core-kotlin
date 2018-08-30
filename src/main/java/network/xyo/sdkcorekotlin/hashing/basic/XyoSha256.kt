@@ -8,7 +8,7 @@ class XyoSha256 (pastHash : ByteArray): XyoBasicHashBase(pastHash) {
 
     companion object : XyoBasicHashBaseCreator() {
         override fun readSize(byteArray: ByteArray): XyoResult<Int> {
-            return XyoResult(20)
+            return XyoResult(32)
         }
 
         override val minor: Byte

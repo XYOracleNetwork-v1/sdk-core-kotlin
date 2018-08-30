@@ -44,7 +44,7 @@ class XyoNextPublicKey (private val publicKey: XyoObject): XyoObject() {
             val sizeToRead = publicKeyCreatorValue.sizeOfBytesToGetSize
             if (sizeToRead.error != null) return XyoResult(XyoError(""))
             val sizeToReadValue = sizeToRead.value ?: return XyoResult(XyoError(""))
-            return publicKeyCreatorValue.readSize(XyoByteArrayReader(byteArray).read(2, sizeToReadValue))
+            return XyoResult(publicKeyCreatorValue.readSize(XyoByteArrayReader(byteArray).read(2, sizeToReadValue)).value!! + 2)
         }
     }
 }

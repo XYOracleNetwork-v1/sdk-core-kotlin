@@ -123,7 +123,7 @@ abstract class XyoBoundWitness : XyoObject() {
             val keySetArraySize = XyoSingleTypeArrayShort.readSize(byteReader.read(4, shortArrayReadSize))
             if (keySetArraySize.error != null) return XyoResult(XyoError(""))
             val keySetArraySizeValue = keySetArraySize.value ?: return XyoResult(XyoError(""))
-            println(keySetArraySizeValue)
+
             val keySets = getKeySetsArray(byteReader.read(4, keySetArraySizeValue))
 
             val payloadArraySize = XyoSingleTypeArrayInt.readSize(byteReader.read(keySetArraySizeValue + 4, intArrayReadSize))
