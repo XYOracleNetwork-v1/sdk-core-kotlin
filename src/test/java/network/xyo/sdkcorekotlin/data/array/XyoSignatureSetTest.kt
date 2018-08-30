@@ -1,16 +1,15 @@
 package network.xyo.sdkcorekotlin.data.array
 
 import network.xyo.sdkcorekotlin.XyoTestBase
-import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.signing.XyoSignatureSet
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.signatures.XyoSha256WithEcdsaSignature
-import network.xyo.sdkcorekotlin.signing.algorithms.rsa.signatures.XyoRsaWithSha256Singature
+import network.xyo.sdkcorekotlin.signing.algorithms.rsa.signatures.XyoRsaWithSha256Signature
 
 class XyoSignatureSetTest : XyoTestBase() {
 
     @kotlin.test.Test
     fun testXyoSignatureSetTest() {
-        XyoRsaWithSha256Singature.enable()
+        XyoRsaWithSha256Signature.enable()
         XyoSha256WithEcdsaSignature.enable()
 
         val expected = XyoSignatureSet(

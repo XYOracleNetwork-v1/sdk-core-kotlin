@@ -6,7 +6,7 @@ import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.signing.XyoSigner
 import network.xyo.sdkcorekotlin.signing.XyoSigningObjectCreatorVerify
-import network.xyo.sdkcorekotlin.signing.algorithms.rsa.signatures.XyoRsaWithSha256Singature
+import network.xyo.sdkcorekotlin.signing.algorithms.rsa.signatures.XyoRsaWithSha256Signature
 import java.security.Signature
 
 class XyoRsaWithSha256 : XyoGeneralRsa (512) {
@@ -16,7 +16,7 @@ class XyoRsaWithSha256 : XyoGeneralRsa (512) {
         return async {
             signature.initSign(keyPair.private)
             signature.update(byteArray)
-            return@async XyoResult<XyoObject>(XyoRsaWithSha256Singature(signature.sign()))
+            return@async XyoResult<XyoObject>(XyoRsaWithSha256Signature(signature.sign()))
         }
     }
 
