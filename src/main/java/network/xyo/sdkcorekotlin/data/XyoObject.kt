@@ -18,45 +18,38 @@ abstract class XyoObject {
     private val totalSize : Int
         get() = data.value?.size ?: 0
 
-    private val encodedSize: XyoResult<ByteArray>
+    private val encodedSize: ByteArray
         get() {
             if (sizeIdentifierSize.error == null && sizeIdentifierSize.value != null) {
                 when (sizeIdentifierSize.value) {
-                    1 -> return XyoResult(ByteBuffer.allocate(1).put((totalSize + 1).toByte()).array())
-                    2 -> return XyoResult(ByteBuffer.allocate(2).putShort((totalSize + 2).toShort()).array())
-                    4 -> return XyoResult(ByteBuffer.allocate(4).putInt(totalSize + 4).array())
+                    1 -> return ByteBuffer.allocate(1).put((totalSize + 1).toByte()).array()
+                    2 -> return ByteBuffer.allocate(2).putShort((totalSize + 2).toShort()).array()
+                    4 -> return ByteBuffer.allocate(4).putInt(totalSize + 4).array()
                 }
             }
-            return XyoResult(byteArrayOf())
+            return byteArrayOf()
         }
 
     private fun makeTyped () : XyoResult<ByteArray> {
-        if (encodedSize.error == null && encodedSize.value != null) {
-            val buffer = ByteBuffer.allocate(totalSize + encodedSize.value!!.size + 2)
-            if (id.error == null && id.value != null) {
-                    if (data.error == null && data.value != null) {
-                        buffer.put(id.value)
-                        buffer.put(encodedSize.value)
-                        buffer.put(data.value)
-                        return XyoResult(buffer.array())
-                    }
-                    return XyoResult(XyoError("1"))
+        val buffer = ByteBuffer.allocate(totalSize + encodedSize.size + 2)
+        if (id.error == null && id.value != null) {
+                if (data.error == null && data.value != null) {
+                    buffer.put(id.value)
+                    buffer.put(encodedSize)
+                    buffer.put(data.value)
+                    return XyoResult(buffer.array())
                 }
-                return XyoResult(XyoError("2"))
-        } else {
-            return encodedSize
-        }
+                return XyoResult(XyoError("1"))
+            }
+        return XyoResult(XyoError("2"))
     }
 
     private fun makeUntyped () : XyoResult<ByteArray> {
-        if (encodedSize.error == null && encodedSize.value != null) {
-            val buffer = ByteBuffer.allocate(totalSize + encodedSize.value!!.size)
-            if (data.error == null && data.value != null) {
-                buffer.put(encodedSize.value)
-                buffer.put(data.value)
-            }
-            return XyoResult(buffer.array())
+        val buffer = ByteBuffer.allocate(totalSize + encodedSize.size)
+        if (data.error == null && data.value != null) {
+            buffer.put(encodedSize)
+            buffer.put(data.value)
         }
-        return XyoResult(XyoError(""))
+        return XyoResult(buffer.array())
     }
 }

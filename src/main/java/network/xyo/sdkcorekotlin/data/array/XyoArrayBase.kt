@@ -37,7 +37,8 @@ abstract class XyoArrayBase : XyoObject() {
             return XyoResult(merger.merge())
         } else {
             val merger = XyoByteArraySetter(array.size + 1)
-            merger.add(typedId!!, 0)
+            val typedIdValue = typedId ?: return XyoResult(XyoError("typedId not found"))
+            merger.add(typedIdValue, 0)
             for (i in 0..array.size - 1) {
                 val element = array[i].untyped
                 if (element.error != null) return XyoResult(XyoError(""))

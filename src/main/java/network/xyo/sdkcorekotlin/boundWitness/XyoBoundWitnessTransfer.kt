@@ -163,16 +163,5 @@ class XyoBoundWitnessTransfer(val keysToSend : Array<XyoObject>,
         override fun readSize(byteArray: ByteArray): XyoResult<Int> {
             return XyoResult(ByteBuffer.wrap(byteArray).int)
         }
-
-        fun bytesToString(bytes: ByteArray?): String {
-            val sb = StringBuilder()
-            val it = bytes!!.iterator()
-            sb.append("0x")
-            while (it.hasNext()) {
-                sb.append(String.format("%02X ", it.next()))
-            }
-
-            return sb.toString()
-        }
     }
 }

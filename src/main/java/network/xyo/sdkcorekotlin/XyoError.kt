@@ -5,7 +5,7 @@ class XyoError : Error {
     var errorCode : XyoErrors? = null
 
     override val message: String?
-        get() = errorMessage
+        get() = "M: $errorMessage C: $errorCode"
 
     constructor(errorCode : XyoErrors) {
         this.errorCode = errorCode

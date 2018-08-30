@@ -8,8 +8,11 @@ abstract class XyoSingleTypeArrayBase : XyoArrayBase() {
     abstract val elementMinor : Byte
 
     override fun addElement(element: XyoObject, index: Int) {
-        if (element.id.value!![0] == elementMajor && element.id.value!![0] == elementMinor) {
-            super.addElement(element, index)
+        val elementId = element.id.value
+        if (elementId != null) {
+            if (elementId[0] == elementMajor && elementId[0] == elementMinor) {
+                super.addElement(element, index)
+            }
         }
     }
 }

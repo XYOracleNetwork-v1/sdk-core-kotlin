@@ -22,8 +22,9 @@ class XyoOriginChainStateManager {
 
     val previousHash : XyoPreviousHash?
         get() {
-            if (latestHash != null) {
-                return XyoPreviousHash(latestHash!!)
+            val latestHashValue = latestHash
+            if (latestHashValue != null) {
+                return XyoPreviousHash(latestHashValue)
             }
             return null
         }

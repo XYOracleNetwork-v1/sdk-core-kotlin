@@ -25,7 +25,8 @@ class XyoArrayUnpacker (data : ByteArray, typed: Boolean, sizeOfSize: Int) {
         val typeObject = XyoObjectCreator.getCreator(major, minor).value
         if (typeObject != null) {
             val sizeOfBytesToRead = typeObject.sizeOfBytesToGetSize
-            return typeObject.readSize(readBytes(sizeOfBytesToRead.value!!)).value
+            val sizeOfBytesToReadValue = sizeOfBytesToRead.value ?: return null
+            return typeObject.readSize(readBytes(sizeOfBytesToReadValue)).value
         }
         throw Exception("Can not find $major, $minor")
     }
@@ -64,7 +65,11 @@ class XyoArrayUnpacker (data : ByteArray, typed: Boolean, sizeOfSize: Int) {
                 merger.add(byteArrayOf(arrayType[1]), 1)
                 merger.add(field, 2)
 
-                items.add(XyoObjectCreator.create(merger.merge()).value!!)
+                val createdObject = XyoObjectCreator.create(merger.merge())
+                val createdObjectValue = createdObject.value
+                if (createdObjectValue != null) {
+                    items.add(createdObjectValue)
+                }
             }
         }
 

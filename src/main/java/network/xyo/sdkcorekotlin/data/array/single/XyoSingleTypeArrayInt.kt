@@ -1,5 +1,6 @@
 package network.xyo.sdkcorekotlin.data.array.single
 
+import network.xyo.sdkcorekotlin.XyoError
 import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.array.XyoArrayUnpacker
@@ -31,7 +32,9 @@ open class XyoSingleTypeArrayInt(override val elementMajor : Byte,
 
         override fun createFromPacked(byteArray: ByteArray): XyoResult<XyoObject> {
             val unpackedArray = XyoArrayUnpacker(byteArray, true, 4)
-            val unpackedArrayObject = XyoSingleTypeArrayInt(unpackedArray.majorType!!, unpackedArray.minorType!!, unpackedArray.array.toTypedArray())
+            val majorTypeValue = unpackedArray.majorType ?: return XyoResult(XyoError("Cant find major!"))
+            val minorTypeValue = unpackedArray.minorType ?: return XyoResult(XyoError("Cant find minor!"))
+            val unpackedArrayObject = XyoSingleTypeArrayInt(majorTypeValue, minorTypeValue, unpackedArray.array.toTypedArray())
             return XyoResult(unpackedArrayObject)
         }
     }

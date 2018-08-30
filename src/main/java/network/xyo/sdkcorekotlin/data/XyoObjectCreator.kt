@@ -12,7 +12,7 @@ abstract class XyoObjectCreator : XyoType() {
         val minorMap = creators[major]
         if (minorMap == null) {
             creators[major] = HashMap()
-            val newMinorMap = creators[major]!!
+            val newMinorMap = creators[major] ?: return
             newMinorMap[minor] = this
         } else {
             minorMap[minor] = this

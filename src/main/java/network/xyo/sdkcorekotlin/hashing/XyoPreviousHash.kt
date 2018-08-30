@@ -34,7 +34,10 @@ open class XyoPreviousHash(val hash: XyoHash) : XyoObject() {
             val sizeToRead = hashCreatorValue.sizeOfBytesToGetSize
             if (sizeToRead.error != null) return XyoResult(XyoError(""))
             val sizeToReadValue = sizeToRead.value ?: return XyoResult(XyoError(""))
-            return XyoResult(hashCreatorValue.readSize(XyoByteArrayReader(byteArray).read(2, sizeToReadValue)).value!! + 2)
+            val hashCreatorSize = hashCreatorValue.readSize(XyoByteArrayReader(byteArray).read(2, sizeToReadValue))
+            val hashCreatorSizeValue = hashCreatorSize.value ?: return XyoResult(XyoError("Problem reading hash child!"))
+
+            return XyoResult(hashCreatorSizeValue + 2)
         }
 
         override fun createFromPacked(byteArray: ByteArray): XyoResult<XyoObject> {

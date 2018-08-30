@@ -28,7 +28,7 @@ abstract class XyoBoundWitness : XyoObject() {
 
     fun getHash (hashCreator : XyoHash.XyoHashCreator) = async {
         val dataToHash = getSigningData()
-        val dataToHashValue = dataToHash.value ?: return@async XyoResult<XyoHash>(dataToHash.error!!)
+        val dataToHashValue = dataToHash.value ?: return@async XyoResult<XyoHash>(dataToHash.error ?: XyoError("Cant get hash!"))
         return@async hashCreator.createHash(dataToHashValue).await()
     }
 
@@ -41,9 +41,13 @@ abstract class XyoBoundWitness : XyoObject() {
         if (makePublicKeysUntyped.error == null && makePublicKeysUntyped.value != null) {
             if (makeSignaturesUntyped.error == null && makeSignaturesUntyped.value != null) {
                 if (makePayloadsUntyped.error == null && makePayloadsUntyped.value != null) {
-                    setter.add(makePublicKeysUntyped.value!!, 0)
-                    setter.add(makePayloadsUntyped.value!!, 1)
-                    setter.add(makeSignaturesUntyped.value!!, 2)
+                    val makePublicKeysUntypedValue = makePublicKeysUntyped.value ?: return XyoResult(XyoError("makePublicKeysUntypedValue is null!"))
+                    val makePayloadsUntypedValue = makePayloadsUntyped.value ?: return XyoResult(XyoError("makePayloadsUntypedValue is null!"))
+                    val makeSignaturesUntypedValue = makeSignaturesUntyped.value ?: return XyoResult(XyoError("makeSignaturesUntypedValue is null!"))
+
+                    setter.add(makePublicKeysUntypedValue, 0)
+                    setter.add(makePayloadsUntypedValue, 1)
+                    setter.add(makeSignaturesUntypedValue, 2)
                     return XyoResult(setter.merge())
                 }
                 return XyoResult(XyoError(""))
@@ -75,7 +79,8 @@ abstract class XyoBoundWitness : XyoObject() {
         val setter = XyoByteArraySetter(payloads.size + 1)
         val makePublicKeysUntyped = makePublicKeys().untyped
         if (makePublicKeysUntyped.error == null && makePublicKeysUntyped.value != null) {
-            setter.add(makePublicKeysUntyped.value!!, 0)
+            val makePublicKeysUntypedValue = makePublicKeysUntyped.value ?: return XyoResult(XyoError("makePublicKeysUntypedValue is null!"))
+            setter.add(makePublicKeysUntypedValue, 0)
             for (i in 0 until payloads.size) {
                 val payload = payloads[i] as? XyoPayload
                 if (payload != null) {
@@ -110,7 +115,10 @@ abstract class XyoBoundWitness : XyoObject() {
 
             if (shortArrayReadSize.error == null && shortArrayReadSize.value != null) {
                 if (intArrayReadSize.error == null && intArrayReadSize.value != null) {
-                    return unpackIntoEncodedArrays(byteArray, shortArrayReadSize.value!!, intArrayReadSize.value!!)
+                    val shortArrayReadSizeValue = shortArrayReadSize.value ?: return XyoResult(XyoError("shortArrayReadSizeValue is null!"))
+                    val intArrayReadSizeValue = intArrayReadSize.value ?: return XyoResult(XyoError("intArrayReadSizeValue is null!"))
+
+                    return unpackIntoEncodedArrays(byteArray, shortArrayReadSizeValue, intArrayReadSizeValue)
                 }
                 return XyoResult(XyoError(""))
             }
@@ -123,20 +131,22 @@ abstract class XyoBoundWitness : XyoObject() {
             val keySetArraySize = XyoSingleTypeArrayShort.readSize(byteReader.read(4, shortArrayReadSize))
             if (keySetArraySize.error != null) return XyoResult(XyoError(""))
             val keySetArraySizeValue = keySetArraySize.value ?: return XyoResult(XyoError(""))
-
             val keySets = getKeySetsArray(byteReader.read(4, keySetArraySizeValue))
+            val keySetsValue = keySets.value ?: return XyoResult(XyoError("keySetsValue is null!"))
 
             val payloadArraySize = XyoSingleTypeArrayInt.readSize(byteReader.read(keySetArraySizeValue + 4, intArrayReadSize))
             if (payloadArraySize.error != null)  return XyoResult(XyoError(""))
             val payloadArraySizeValue = payloadArraySize.value ?: return XyoResult(XyoError(""))
             val payloads = getPayloadsArray(byteReader.read(keySetArraySizeValue + 4, payloadArraySizeValue))
+            val payloadsValue = payloads.value ?: return XyoResult(XyoError("payloadsValue is null!"))
 
             val signatureArraySize = XyoSingleTypeArrayShort.readSize(byteReader.read(keySetArraySizeValue + payloadArraySizeValue + 4, shortArrayReadSize))
             if (signatureArraySize.error != null)  return XyoResult(XyoError(""))
             val signatureArraySizeValue = signatureArraySize.value ?: return XyoResult(XyoError(""))
             val signatures = getSignatureArray(byteReader.read(keySetArraySizeValue + payloadArraySizeValue + 4, signatureArraySizeValue))
+            val signaturesValue = signatures.value ?: return XyoResult(XyoError("signaturesValue is null!"))
 
-            return unpackFromArrays(keySets.value!!, payloads.value!!, signatures.value!!)
+            return unpackFromArrays(keySetsValue, payloadsValue, signaturesValue)
         }
 
 

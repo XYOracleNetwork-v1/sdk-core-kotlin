@@ -36,10 +36,13 @@ class XyoPayload(val signedPayload : XyoMultiTypeArrayInt,
         val signedPayloadUntyped = signedPayload.untyped
         val unsignedPayloadUntyped = unsignedPayload.untyped
 
-        if (unsignedPayloadUntyped.error == null && unsignedPayloadUntyped.value != null) {
-            if (signedPayloadUntyped.error == null && signedPayloadUntyped.value != null) {
-                merger.add(signedPayloadUntyped.value!!, 0)
-                merger.add(unsignedPayloadUntyped.value!!, 1)
+        if (unsignedPayloadUntyped.error == null) {
+            if (signedPayloadUntyped.error == null) {
+                val signedPayloadUntypedValue = signedPayloadUntyped.value ?: return XyoResult(XyoError("signedPayloadUntypedValue is null!"))
+                val unsignedPayloadUntypedValue = unsignedPayloadUntyped.value ?: return XyoResult(XyoError("unsignedPayloadUntypedValue is null!"))
+
+                merger.add(signedPayloadUntypedValue, 0)
+                merger.add(unsignedPayloadUntypedValue, 1)
                 return XyoResult(merger.merge())
             }
             return XyoResult(XyoError(""))
