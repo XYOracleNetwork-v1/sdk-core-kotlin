@@ -149,6 +149,7 @@ class XyoBoundWitnessTransfer(val keysToSend : Array<XyoObject>,
                 keySetArray = keySetArrayResult.value as? XyoSingleTypeArrayShort
                 currentOffset += keySetArraySizeValue
 
+
                 val payloadArraySize  = XyoSingleTypeArrayInt.readSize(byteReader.read(currentOffset, intArrayReadSizeValue))
                 if (payloadArraySize.error != null) return XyoResult(payloadArraySize.error ?: XyoError(
                         this.toString(),
@@ -158,11 +159,13 @@ class XyoBoundWitnessTransfer(val keysToSend : Array<XyoObject>,
                         this.toString(),
                         "Unpacking payloads returned null!")
                 )
+
                 val payloadArrayResult = XyoSingleTypeArrayInt.createFromPacked(byteReader.read(currentOffset, payloadArraySizeValue))
                 if (payloadArrayResult.error != null) return XyoResult(payloadArrayResult.error ?: XyoError(
                         this.toString(),
                         "Unknown payloads read error!")
                 )
+
                 payloadArray = payloadArrayResult.value as?  XyoSingleTypeArrayInt
                 currentOffset += payloadArraySizeValue
             }
@@ -177,6 +180,7 @@ class XyoBoundWitnessTransfer(val keysToSend : Array<XyoObject>,
                         this.toString(),
                         "Unpacking signatures returned null!")
                 )
+
                 val signatureArrayResult = XyoSingleTypeArrayShort.createFromPacked(byteReader.read(currentOffset, signatureArraySizeValue))
                 if (signatureArrayResult.error != null) return XyoResult(signatureArraySize.error ?: XyoError(
                         this.toString(),

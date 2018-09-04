@@ -82,7 +82,8 @@ class XyoArrayDecoder (private val data : ByteArray,
                     items.add(createdObjectValue)
                 }
             } else {
-                return XyoResult(XyoError(this.toString(), "Cant find size of element!"))
+                println("Cant find size of element!, ${arrayType[0]}, ${arrayType[1]}")
+                return XyoResult(XyoError(this.toString(), "Cant find size of element!, ${arrayType[0]}, ${arrayType[1]}"))
             }
         }
 

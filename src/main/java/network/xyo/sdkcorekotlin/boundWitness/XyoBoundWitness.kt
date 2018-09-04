@@ -20,6 +20,14 @@ abstract class XyoBoundWitness : XyoObject() {
     override val id: XyoResult<ByteArray> = XyoResult(byteArrayOf(major, minor))
     override val sizeIdentifierSize: XyoResult<Int?> = XyoResult(4)
 
+    val completed : Boolean
+        get() {
+            if (publicKeys.size == signatures.size && publicKeys.isNotEmpty()) {
+                return true
+            }
+            return false
+        }
+
     override val data: XyoResult<ByteArray>
         get() = makeBoundWitness()
 
@@ -63,7 +71,7 @@ abstract class XyoBoundWitness : XyoObject() {
                     this.toString(),
                     "Payload is null!"
             ))
-            setter.add(payloadValue, i + 1)
+            setter.add(payloadValue, i)
         }
 
         return XyoResult(setter.merge())
