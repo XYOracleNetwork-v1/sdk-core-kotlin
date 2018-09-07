@@ -10,7 +10,7 @@ abstract class XyoNumberSigned : XyoObject() {
     abstract val size : XyoNumberTypes
     abstract val number : Int
 
-    override val data: XyoResult<ByteArray>
+    override val objectInBytes: XyoResult<ByteArray>
         get() {
             when (size) {
                 XyoNumberTypes.BYTE ->

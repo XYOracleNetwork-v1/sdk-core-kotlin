@@ -50,7 +50,7 @@ class XyoArrayDecoder (private val data : ByteArray,
                 if (globalCurrentPosition + 2 < data.size) {
                     arrayType = getMajorMinor()
                 } else {
-                    return XyoResult(XyoError(this.toString(), "Cant unpack array! Not enough data!"))
+                    return XyoResult(XyoError(this.toString(), "Cant unpack array! Not enough objectInBytes!"))
                 }
             }
 
@@ -66,7 +66,7 @@ class XyoArrayDecoder (private val data : ByteArray,
                         position++
                     }
                 } else {
-                    return XyoResult(XyoError(this.toString(), "Cant unpack array! Not enough data!"))
+                    return XyoResult(XyoError(this.toString(), "Cant unpack array! Not enough objectInBytes!"))
                 }
 
                 globalCurrentPosition += sizeOfElement

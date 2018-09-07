@@ -9,7 +9,7 @@ import network.xyo.sdkcorekotlin.signing.XyoSignature
 abstract class XyoEcdsaSignature(rawSignature : ByteArray) : XyoSignature() {
     private val signature : ByteArray = rawSignature
 
-    override val data: XyoResult<ByteArray>
+    override val objectInBytes: XyoResult<ByteArray>
         get() = XyoResult(signature)
 
     override val sizeIdentifierSize: XyoResult<Int?> = XyoResult(1)

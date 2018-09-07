@@ -8,7 +8,7 @@ import network.xyo.sdkcorekotlin.data.XyoObjectProvider
 abstract class XyoHash : XyoObject() {
     abstract val hash : ByteArray
 
-    override val data: XyoResult<ByteArray>
+    override val objectInBytes: XyoResult<ByteArray>
         get() = XyoResult(hash)
 
     abstract class XyoHashProvider : XyoObjectProvider() {

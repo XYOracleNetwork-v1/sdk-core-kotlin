@@ -38,7 +38,7 @@ abstract class XyoUncompressedEcPublicKey : ECPublicKey, XyoObject() {
         return ECPoint(x, y)
     }
 
-    override val data: XyoResult<ByteArray>
+    override val objectInBytes: XyoResult<ByteArray>
         get() = XyoResult(encoded)
 
     override val sizeIdentifierSize: XyoResult<Int?>

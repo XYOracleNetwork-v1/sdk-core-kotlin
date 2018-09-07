@@ -7,7 +7,7 @@ import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.XyoObjectProvider
 
 open class XyoPreviousHash(val hash: XyoHash) : XyoObject() {
-    override val data: XyoResult<ByteArray> = hash.typed
+    override val objectInBytes: XyoResult<ByteArray> = hash.typed
     override val id: XyoResult<ByteArray> = XyoResult(byteArrayOf(major, minor))
     override val sizeIdentifierSize: XyoResult<Int?> = XyoResult<Int?>(null)
 

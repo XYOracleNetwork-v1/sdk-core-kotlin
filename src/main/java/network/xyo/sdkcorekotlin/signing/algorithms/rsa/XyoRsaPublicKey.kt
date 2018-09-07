@@ -11,7 +11,7 @@ import java.security.interfaces.RSAPublicKey
 class XyoRsaPublicKey(private val modulus : BigInteger) : RSAPublicKey, XyoObject() {
     private val publicExponent : BigInteger = BigInteger(byteArrayOf(0x01, 0x00, 0x01))
 
-    override val data: XyoResult<ByteArray>
+    override val objectInBytes: XyoResult<ByteArray>
         get() = XyoResult(encoded)
 
     override val sizeIdentifierSize: XyoResult<Int?> = XyoResult<Int?>(null)

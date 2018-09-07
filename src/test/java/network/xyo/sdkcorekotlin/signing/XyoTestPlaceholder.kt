@@ -5,7 +5,7 @@ import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.XyoObjectProvider
 
 class XyoTestPlaceholder : XyoObject() {
-    override val data: XyoResult<ByteArray>
+    override val objectInBytes: XyoResult<ByteArray>
         get() = XyoResult(byteArrayOf(0x00))
 
     override val id: XyoResult<ByteArray>

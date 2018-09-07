@@ -13,7 +13,7 @@ class XyoBoundWitnessTransfer(val keysToSend : Array<XyoObject>,
                               val payloadsToSend : Array<XyoObject>,
                               val signatureToSend : Array<XyoObject>) : XyoObject() {
 
-    override val data: XyoResult<ByteArray> = makeWithEverything()
+    override val objectInBytes: XyoResult<ByteArray> = makeWithEverything()
     override val id: XyoResult<ByteArray> = XyoResult(byteArrayOf(major, minor))
     override val sizeIdentifierSize: XyoResult<Int?> = XyoResult(4)
 

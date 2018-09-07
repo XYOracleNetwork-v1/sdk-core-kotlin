@@ -28,7 +28,7 @@ abstract class XyoBoundWitness : XyoObject() {
             return false
         }
 
-    override val data: XyoResult<ByteArray>
+    override val objectInBytes: XyoResult<ByteArray>
         get() = makeBoundWitness()
 
     fun getHash (hashCreator : XyoHash.XyoHashProvider) = async {

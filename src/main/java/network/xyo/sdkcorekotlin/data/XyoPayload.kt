@@ -8,7 +8,7 @@ import java.nio.ByteBuffer
 class XyoPayload(val signedPayload : XyoMultiTypeArrayInt,
                  val unsignedPayload : XyoMultiTypeArrayInt) : XyoObject() {
 
-    override val data: XyoResult<ByteArray>
+    override val objectInBytes: XyoResult<ByteArray>
         get() = makeEncoded()
 
     override val id: XyoResult<ByteArray> = XyoResult(byteArrayOf(major, minor))

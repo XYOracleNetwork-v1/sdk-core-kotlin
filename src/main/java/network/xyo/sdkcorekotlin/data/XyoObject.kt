@@ -5,7 +5,19 @@ import network.xyo.sdkcorekotlin.XyoResult
 import java.nio.ByteBuffer
 
 abstract class XyoObject {
-    abstract val data : XyoResult<ByteArray>
+    private var dataCache : ByteArray? = null
+    private var isChanged = true
+    private val bytes : XyoResult<ByteArray>
+        get() {
+            if (isChanged || dataCache != null) {
+                dataCache = objectInBytes.value
+                isChanged = false
+                return XyoResult(dataCache)
+            }
+            return XyoResult(dataCache)
+        }
+
+    abstract val objectInBytes : XyoResult<ByteArray>
     abstract val sizeIdentifierSize : XyoResult<Int?>
     abstract val id : XyoResult<ByteArray>
 
@@ -16,7 +28,7 @@ abstract class XyoObject {
         get() = makeUntyped()
 
     private val totalSize : Int
-        get() = data.value?.size ?: 0
+        get() = bytes.value?.size ?: 0
 
     private val encodedSize: ByteArray
         get() {
@@ -30,27 +42,31 @@ abstract class XyoObject {
             return byteArrayOf()
         }
 
+    protected fun updateObjectCache() {
+        isChanged = true
+    }
+
     private fun makeTyped () : XyoResult<ByteArray> {
         val buffer = ByteBuffer.allocate(totalSize + encodedSize.size + 2)
         if (id.error != null)
             return XyoResult(id.error ?: XyoError(this.toString(), "Unknown id error!"))
-        if (data.error != null)
-            return XyoResult(data.error ?: XyoError(this.toString(),"Unknown data error!"))
+        if (bytes.error != null)
+            return XyoResult(bytes.error ?: XyoError(this.toString(),"Unknown objectInBytes error!"))
 
         buffer.put(id.value)
         buffer.put(encodedSize)
-        buffer.put(data.value)
+        buffer.put(bytes.value)
         return XyoResult(buffer.array())
     }
 
     private fun makeUntyped () : XyoResult<ByteArray> {
         val buffer = ByteBuffer.allocate(totalSize + encodedSize.size)
 
-        if (data.error != null)
-            return XyoResult(data.error ?: XyoError(this.toString(), "Unknown data error!"))
+        if (bytes.error != null)
+            return XyoResult(bytes.error ?: XyoError(this.toString(), "Unknown objectInBytes error!"))
 
         buffer.put(encodedSize)
-        buffer.put(data.value)
+        buffer.put(bytes.value)
         return XyoResult(buffer.array())
     }
 }

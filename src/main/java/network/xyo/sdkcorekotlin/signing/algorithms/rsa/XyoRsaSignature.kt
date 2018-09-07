@@ -8,7 +8,7 @@ import network.xyo.sdkcorekotlin.signing.XyoSignature
 import java.nio.ByteBuffer
 
 abstract class XyoRsaSignature (private val signature: ByteArray) : XyoSignature() {
-    override val data: XyoResult<ByteArray> = XyoResult(signature)
+    override val objectInBytes: XyoResult<ByteArray> = XyoResult(signature)
     override val sizeIdentifierSize: XyoResult<Int?> = XyoResult(2)
     override val encodedSignature: ByteArray = signature
 

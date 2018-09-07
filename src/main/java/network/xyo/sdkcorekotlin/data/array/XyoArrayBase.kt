@@ -18,10 +18,11 @@ abstract class XyoArrayBase : XyoObject() {
     }
 
     open fun addElement (element : XyoObject, index: Int) {
+        updateObjectCache()
         array[index] = element
     }
 
-    override val data: XyoResult<ByteArray>
+    override val objectInBytes: XyoResult<ByteArray>
         get() = makeArray()
 
     private fun makeArray () : XyoResult<ByteArray> {

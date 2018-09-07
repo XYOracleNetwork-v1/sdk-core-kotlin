@@ -47,7 +47,7 @@ open class XyoTestBase {
     }
 
     fun assertXyoObject(expected: XyoObject, actual : XyoObject) {
-        Assert.assertArrayEquals(expected.data.value!!, actual.data.value!!)
+        Assert.assertArrayEquals(expected.objectInBytes.value!!, actual.objectInBytes.value!!)
         Assert.assertArrayEquals(expected.id.value!!, actual.id.value!!)
         Assert.assertArrayEquals(expected.typed.value!!, actual.typed.value!!)
         Assert.assertArrayEquals(expected.untyped.value!!, actual.untyped.value!!)
@@ -83,6 +83,6 @@ open class XyoTestBase {
     }
 
     fun assertBoundWitness (boundWitnessOne : XyoBoundWitness, boundWitnessTwo : XyoBoundWitness){
-        Assert.assertArrayEquals(boundWitnessOne.data.value!!, boundWitnessTwo.data.value!!)
+        Assert.assertArrayEquals(boundWitnessOne.objectInBytes.value!!, boundWitnessTwo.objectInBytes.value!!)
     }
 }

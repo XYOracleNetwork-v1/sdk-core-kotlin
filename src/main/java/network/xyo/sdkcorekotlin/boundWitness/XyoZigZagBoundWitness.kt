@@ -28,6 +28,7 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
     private var hasSentKeysAndPayload = false
 
     fun incomingData (transfer : XyoBoundWitnessTransfer?, endPoint : Boolean) = async {
+        updateObjectCache()
         val keysToSend = ArrayList<XyoObject>()
         val payloadsToSend = ArrayList<XyoObject>()
         val signatureToSend = ArrayList<XyoObject>()
@@ -68,7 +69,6 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
                 }
             }
         }
-
 
         return@async XyoResult(XyoBoundWitnessTransfer(keysToSend.toTypedArray(), payloadsToSend.toTypedArray(), signatureToSend.toTypedArray()))
     }
