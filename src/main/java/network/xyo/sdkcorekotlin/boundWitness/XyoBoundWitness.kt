@@ -115,12 +115,12 @@ abstract class XyoBoundWitness : XyoObject() {
         val makeSignaturesUntyped = makeSignatures().untyped
         val makePayloadsUntyped = makePayloads().untyped
 
-        if (makePublicKeysUntyped.error != null) return XyoResult(makePublicKeysUntyped.error ?: return XyoResult(
+        if (makePublicKeysUntyped.error != null) return XyoResult(
                 makePublicKeysUntyped.error ?: XyoError(
                         this.toString(),
                         "Unknown packed public error!"
                 )
-        ))
+        )
         if (makeSignaturesUntyped.error != null) return XyoResult(
                 makeSignaturesUntyped.error ?: XyoError(
                         this.toString(),
