@@ -11,7 +11,7 @@ import network.xyo.sdkcorekotlin.signing.XyoSigner
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.XyoSha1WithSecp256K
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.XyoSha256WithSecp256K
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.keys.XyoSecp256K1CompressedPublicKey
-import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.signatures.XyoSha256WithEcdsaSignature
+import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.signatures.XyoSecp256kSha256WithEcdsaSignature
 import network.xyo.sdkcorekotlin.signing.algorithms.rsa.XyoRsaPublicKey
 import network.xyo.sdkcorekotlin.signing.algorithms.rsa.signatures.XyoRsaWithSha256Signature
 
@@ -38,11 +38,11 @@ class XyoBoundWitnessTransferTest : XyoTestBase() {
 
     private val expectedSignatures = arrayOf<XyoObject>(
             XyoSignatureSet(arrayOf(
-                    XyoSha256WithEcdsaSignature(byteArrayOf(0x00)),
+                    XyoSecp256kSha256WithEcdsaSignature(byteArrayOf(0x00)),
                     XyoRsaWithSha256Signature(byteArrayOf(0x00))
             )),
             XyoSignatureSet(arrayOf(
-                    XyoSha256WithEcdsaSignature(byteArrayOf(0x00))
+                    XyoSecp256kSha256WithEcdsaSignature(byteArrayOf(0x00))
             ))
     )
 
@@ -52,7 +52,7 @@ class XyoBoundWitnessTransferTest : XyoTestBase() {
         XyoKeySet.enable()
         XyoPayload.enable()
         XyoSignatureSet.enable()
-        XyoSha256WithEcdsaSignature.enable()
+        XyoSecp256kSha256WithEcdsaSignature.enable()
         XyoRsaWithSha256Signature.enable()
         XyoSecp256K1CompressedPublicKey.enable()
         XyoRsaPublicKey.enable()

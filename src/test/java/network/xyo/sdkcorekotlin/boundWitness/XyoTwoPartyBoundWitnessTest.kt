@@ -10,9 +10,8 @@ import network.xyo.sdkcorekotlin.signing.XyoSignatureSet
 import network.xyo.sdkcorekotlin.signing.XyoSigner
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.XyoSha256WithSecp256K
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.keys.XyoSecp256K1CompressedPublicKey
-import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.signatures.XyoSha256WithEcdsaSignature
+import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.signatures.XyoSecp256kSha256WithEcdsaSignature
 import network.xyo.sdkcorekotlin.signing.algorithms.rsa.XyoRsaPublicKey
-import network.xyo.sdkcorekotlin.signing.algorithms.rsa.XyoRsaWithSha256
 
 class XyoTwoPartyBoundWitnessTest : XyoTestBase() {
     private val signersAlice = arrayOf<XyoSigner>(XyoSha256WithSecp256K(), XyoSha256WithSecp256K(),XyoSha256WithSecp256K())
@@ -29,7 +28,7 @@ class XyoTwoPartyBoundWitnessTest : XyoTestBase() {
             XyoKeySet.enable()
             XyoPayload.enable()
             XyoSignatureSet.enable()
-            XyoSha256WithEcdsaSignature.enable()
+            XyoSecp256kSha256WithEcdsaSignature.enable()
             XyoRssi.enable()
             XyoSecp256K1CompressedPublicKey.enable()
             XyoRsaPublicKey.enable()

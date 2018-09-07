@@ -20,7 +20,7 @@ import network.xyo.sdkcorekotlin.signing.XyoSignatureSet
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.XyoSha1WithSecp256K
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.XyoSha256WithSecp256K
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.keys.XyoSecp256K1CompressedPublicKey
-import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.signatures.XyoSha256WithEcdsaSignature
+import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.signatures.XyoSecp256kSha256WithEcdsaSignature
 import network.xyo.sdkcorekotlin.storage.XyoInMemoryStorageProvider
 import org.junit.Assert
 
@@ -39,7 +39,7 @@ class XyoOriginChainNavigatorTest : XyoTestBase() {
         XyoPayload.enable()
         XyoKeySet.enable()
         XyoRssi.enable()
-        XyoSha256WithEcdsaSignature.enable()
+        XyoSecp256kSha256WithEcdsaSignature.enable()
         XyoSignatureSet.enable()
         XyoNextPublicKey.enable()
         XyoIndex.enable()
