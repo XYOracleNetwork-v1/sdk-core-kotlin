@@ -2,6 +2,12 @@ package network.xyo.sdkcorekotlin.hashing.basic
 
 import network.xyo.sdkcorekotlin.XyoResult
 
+/**
+ * A Xyo Encoded Sha384 hash
+ *
+ * @major 0x03
+ * @minor 0x06
+ */
 class XyoSha384 (pastHash : ByteArray): XyoBasicHashBase(pastHash) {
     override val id: XyoResult<ByteArray> = XyoResult(byteArrayOf(major, minor))
 

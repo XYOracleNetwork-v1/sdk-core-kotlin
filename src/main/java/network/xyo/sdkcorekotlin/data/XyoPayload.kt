@@ -5,6 +5,15 @@ import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.data.array.multi.XyoMultiTypeArrayInt
 import java.nio.ByteBuffer
 
+/**
+ * A Xyo Payload used in a bound witness.
+ *
+ * @major 0x02
+ * @minor 0x04
+ *
+ * @param signedPayload The payload to be signed.
+ * @param unsignedPayload The payload not to be signed.
+ */
 class XyoPayload(val signedPayload : XyoMultiTypeArrayInt,
                  val unsignedPayload : XyoMultiTypeArrayInt) : XyoObject() {
 
@@ -13,7 +22,15 @@ class XyoPayload(val signedPayload : XyoMultiTypeArrayInt,
 
     override val id: XyoResult<ByteArray> = XyoResult(byteArrayOf(major, minor))
     override val sizeIdentifierSize: XyoResult<Int?> = XyoResult(4)
+
+    /**
+     * A mapping of the signed payload.  Map of the Type to the Value.
+     */
     val signedPayloadMapping :  XyoResult<HashMap<Int, XyoObject>> = getMappingOfElements(signedPayload.array)
+
+    /**
+     * A mapping of the unsigned payload.  Map of the Type to the Value.
+     */
     val unsignedPayloadMapping : XyoResult<HashMap<Int, XyoObject>> = getMappingOfElements(signedPayload.array)
 
     private fun getMappingOfElements (objects : Array<XyoObject>) : XyoResult<HashMap<Int, XyoObject>> {

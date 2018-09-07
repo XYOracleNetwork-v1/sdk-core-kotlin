@@ -4,6 +4,12 @@ import java.math.BigInteger
 import java.security.interfaces.ECPrivateKey
 import java.security.spec.ECParameterSpec
 
+/**
+ * A class for encoding EC Private keys.
+ *
+ * @param s the private key.
+ * @param ecSpec the Java ECParameterSpec to understand the private key.
+ */
 class XyoEcPrivateKey(private val s : BigInteger,
                       private val ecSpec: ECParameterSpec) : ECPrivateKey {
     override fun getAlgorithm(): String {

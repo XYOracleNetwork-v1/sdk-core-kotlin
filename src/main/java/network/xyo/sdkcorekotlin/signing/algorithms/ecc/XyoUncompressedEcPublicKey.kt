@@ -10,9 +10,23 @@ import java.security.interfaces.ECPublicKey
 import java.security.spec.ECParameterSpec
 import java.security.spec.ECPoint
 
+/**
+ * A base class for all uncompressed EC public keys.
+ */
 abstract class XyoUncompressedEcPublicKey : ECPublicKey, XyoObject() {
+    /**
+     * The Java ECParameterSpec to understand the public key (x and y).
+     */
     abstract val ecSpec : ECParameterSpec
+
+    /**
+     * The X point of the public key.
+     */
     abstract val x : BigInteger
+
+    /**
+     * The Y point of the public key.
+     */
     abstract val y : BigInteger
 
     override fun getAlgorithm(): String {
@@ -44,7 +58,7 @@ abstract class XyoUncompressedEcPublicKey : ECPublicKey, XyoObject() {
     override val sizeIdentifierSize: XyoResult<Int?>
         get() = XyoResult<Int?>(null)
 
-    fun get32ByteEcPoint(point : BigInteger) : ByteArray {
+    private fun get32ByteEcPoint(point : BigInteger) : ByteArray {
         val encodedPoint = point.toByteArray()
         if (encodedPoint.size == 32) {
             return encodedPoint
@@ -52,7 +66,13 @@ abstract class XyoUncompressedEcPublicKey : ECPublicKey, XyoObject() {
         return encodedPoint.copyOfRange(1, 33)
     }
 
+    /**
+     * A base class for creating uncompressed EC public keys.
+     */
     abstract class XyoUncompressedEcPublicKeyProvider : XyoObjectProvider () {
+        /**
+         * The Java ECParameterSpec to understand the public key (x and y).
+         */
         abstract val ecPramSpec : ECParameterSpec
         override val major: Byte = 0x04
         override val sizeOfBytesToGetSize: XyoResult<Int?> = XyoResult(0)

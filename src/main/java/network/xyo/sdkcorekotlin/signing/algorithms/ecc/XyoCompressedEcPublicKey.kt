@@ -6,6 +6,13 @@ import java.security.interfaces.ECPublicKey
 import java.security.spec.ECParameterSpec
 import java.security.spec.ECPoint
 
+/**
+ * A compressed EC public key.
+ *
+ * @param x the x value of the public key.
+ * @param y the y value of the public key.
+ * @param ecSpec the Java ECParameterSpec to understand X and Y.
+ */
 class XyoCompressedEcPublicKey (private val x : BigInteger,
                                 private val y : BigInteger,
                                 private val ecSpec : ECParameterSpec) : ECPublicKey {

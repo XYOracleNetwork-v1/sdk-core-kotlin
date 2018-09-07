@@ -9,6 +9,16 @@ import network.xyo.sdkcorekotlin.data.array.single.XyoSingleTypeArrayShort
 import network.xyo.sdkcorekotlin.signing.XyoSignatureSet
 import java.nio.ByteBuffer
 
+/**
+ * A object to use when transferring data when making a bound witness with another party.
+ *
+ * @major 0x02
+ * @minor 0x08
+ *
+ * @param keysToSend The keys to send to the other party.
+ * @param payloadsToSend The payloads to send to the other party.
+ * @param signatureToSend The signatures to send to the other party.
+ */
 class XyoBoundWitnessTransfer(val keysToSend : Array<XyoObject>,
                               val payloadsToSend : Array<XyoObject>,
                               val signatureToSend : Array<XyoObject>) : XyoObject() {

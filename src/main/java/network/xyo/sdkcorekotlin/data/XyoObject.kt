@@ -4,6 +4,9 @@ import network.xyo.sdkcorekotlin.XyoError
 import network.xyo.sdkcorekotlin.XyoResult
 import java.nio.ByteBuffer
 
+/**
+ * The base class of all encodable objects in XYO Network
+ */
 abstract class XyoObject {
     private var dataCache : ByteArray? = null
     private var isChanged = true
@@ -17,13 +20,30 @@ abstract class XyoObject {
             return XyoResult(dataCache)
         }
 
+    /**
+     * The object in byte format wrapped in a XyoResult.
+     */
     abstract val objectInBytes : XyoResult<ByteArray>
+
+    /**
+     * The size of the size that should be created for the object wrapped in a XyoResult.
+     */
     abstract val sizeIdentifierSize : XyoResult<Int?>
+
+    /**
+     * The id of the object (major and minor) wrapped in a XyoResult.
+     */
     abstract val id : XyoResult<ByteArray>
 
+    /**
+     * The object that has its type encoded wrapped in a XyoResult.
+     */
     val typed : XyoResult<ByteArray>
         get() = makeTyped()
 
+    /**
+     * The object that does not have its type encoded wrapped in a XyoResult.
+     */
     val untyped : XyoResult<ByteArray>
         get() = makeUntyped()
 

@@ -6,6 +6,14 @@ import network.xyo.sdkcorekotlin.data.XyoByteArrayReader
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.XyoObjectProvider
 
+/**
+ * A Xyo Previous Hash heuristic.
+ *
+ * @major 0x02
+ * @minor 0x05
+ *
+ * @param hash the hash of the previous hash.
+ */
 open class XyoPreviousHash(val hash: XyoHash) : XyoObject() {
     override val objectInBytes: XyoResult<ByteArray> = hash.typed
     override val id: XyoResult<ByteArray> = XyoResult(byteArrayOf(major, minor))

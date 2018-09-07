@@ -8,7 +8,18 @@ import java.math.BigInteger
 import java.nio.ByteBuffer
 import java.security.interfaces.RSAPublicKey
 
+/**
+ * An Xyo Encoded Rsa Public key.
+ *
+ * @major 0x04
+ * @minor 0x03
+ *
+ * @param modulus the modulus of the public key.
+ */
 class XyoRsaPublicKey(private val modulus : BigInteger) : RSAPublicKey, XyoObject() {
+    /**
+     * @note All Xyo Rsa Public Key operations use the modulus 0x0100001
+     */
     private val publicExponent : BigInteger = BigInteger(byteArrayOf(0x01, 0x00, 0x01))
 
     override val objectInBytes: XyoResult<ByteArray>

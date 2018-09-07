@@ -9,7 +9,13 @@ import network.xyo.sdkcorekotlin.signing.algorithms.rsa.XyoRsaWithSha256
 import java.security.PublicKey
 import java.security.Signature
 
+/**
+ * A base class for verifying signatures that comply to the standard Java Signature object.
+ */
 abstract class XyoSigningObjectCreatorVerify : XyoSigner.XyoSignerProvider() {
+    /**
+     * The instance of a standard Java Signature object to use toi very the signature.
+     */
     abstract val signatureInstance : Signature
 
     override fun verifySign(signature: XyoObject,
@@ -21,10 +27,10 @@ abstract class XyoSigningObjectCreatorVerify : XyoSigner.XyoSignerProvider() {
             val encodedSignature = signature as? XyoSignature
 
             if (encodedPublicKey != null && encodedSignature != null) {
-                XyoRsaWithSha256.signatureInstance.initVerify(encodedPublicKey)
-                XyoRsaWithSha256.signatureInstance.update(byteArray)
+                signatureInstance.initVerify(encodedPublicKey)
+                signatureInstance.update(byteArray)
                 return@async XyoResult(
-                        XyoRsaWithSha256.signatureInstance.verify(encodedSignature.encodedSignature)
+                        signatureInstance.verify(encodedSignature.encodedSignature)
                 )
             }
             return@async XyoResult<Boolean>(XyoError(

@@ -12,14 +12,34 @@ import network.xyo.sdkcorekotlin.signing.XyoSignatureSet
 import network.xyo.sdkcorekotlin.signing.XyoSigner
 import java.nio.ByteBuffer
 
+/**
+ * A Xyo Bound Witness Object
+ *
+ * @major 0x02
+ * @minor 0x01
+ */
 abstract class XyoBoundWitness : XyoObject() {
+    /**
+     * All of the public keys in the bound witness.
+     */
     abstract val publicKeys : Array<XyoKeySet>
+
+    /**
+     * All of the payloads in the bound witness.
+     */
     abstract val payloads : Array<XyoPayload>
+
+    /**
+     * All of the signatures in the bound witness.
+     */
     abstract val signatures : Array<XyoSignatureSet>
 
     override val id: XyoResult<ByteArray> = XyoResult(byteArrayOf(major, minor))
     override val sizeIdentifierSize: XyoResult<Int?> = XyoResult(4)
 
+    /**
+     * If the bound witness is completed or not.
+     */
     val completed : Boolean
         get() {
             if (publicKeys.size == signatures.size && publicKeys.isNotEmpty()) {
@@ -31,6 +51,12 @@ abstract class XyoBoundWitness : XyoObject() {
     override val objectInBytes: XyoResult<ByteArray>
         get() = makeBoundWitness()
 
+    /**
+     * Gets the hash of the bound witness.
+     *
+     * @param hashCreator A hash provider to create the hash with.
+     * @return A deferred XyoHash wrapped in a XyoResult.
+     */
     fun getHash (hashCreator : XyoHash.XyoHashProvider) = async {
         val dataToHash = getSigningData()
         val dataToHashValue = dataToHash.value ?: return@async XyoResult<XyoHash>(
@@ -42,6 +68,12 @@ abstract class XyoBoundWitness : XyoObject() {
         return@async hashCreator.createHash(dataToHashValue).await()
     }
 
+    /**
+     * Creates a signature of the bound witness.
+     *
+     * @param signer A signer to sign with.
+     * @return A deferred XyoObject (signature) wrapped in a XyoResult.
+     */
     fun signCurrent (signer: XyoSigner) = async {
         val dataToSign = getSigningData()
         val dataToSignValue = dataToSign.value ?: return@async XyoResult<XyoObject>(XyoError(

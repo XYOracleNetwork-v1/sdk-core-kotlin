@@ -6,7 +6,13 @@ import java.security.AlgorithmParameters
 import java.security.spec.ECGenParameterSpec
 import java.security.spec.ECParameterSpec
 
-abstract class XyoSecp256K1CompressedPublicKey : XyoUncompressedEcPublicKey() {
+/**
+ * A Xyo Public Key made using EC with the Secp256K curve.
+ *
+ * @major 0x04
+ * @minor 0x01
+ */
+abstract class XyoSecp256K1UnCompressedPublicKey : XyoUncompressedEcPublicKey() {
     override val ecSpec: ECParameterSpec = ecPramSpec
     override val id: XyoResult<ByteArray> = XyoResult(byteArrayOf(major, minor))
 

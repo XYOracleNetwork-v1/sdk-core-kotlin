@@ -7,13 +7,32 @@ import network.xyo.sdkcorekotlin.data.XyoObjectProvider
 import network.xyo.sdkcorekotlin.data.XyoByteArraySetter
 import java.nio.ByteBuffer
 
+/**
+ * A class to decode standard Xyo Arrays from bytes.
+ *
+ * @param data The encoded array.
+ * @param typed If the array is a typed array or not.
+ * @param sizeOfSize The size of the size of the array.
+ */
 class XyoArrayDecoder (private val data : ByteArray,
                        private val typed: Boolean,
                        private val sizeOfSize: Int) {
 
     private var globalCurrentPosition = 0
+
+    /**
+     * The major type of the array
+     */
     var majorType: Byte? = null
+
+    /**
+     * The minor type of the array
+     */
     var minorType: Byte? = null
+
+    /**
+     * The unpacked array wrapped in a XyoResult.
+     */
     val array : XyoResult<ArrayList<XyoObject>> = unpack()
 
     private fun getMajorMinor () : ByteArray {

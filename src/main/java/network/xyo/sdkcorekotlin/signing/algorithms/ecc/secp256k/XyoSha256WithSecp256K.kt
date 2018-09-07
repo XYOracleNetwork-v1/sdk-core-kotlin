@@ -9,7 +9,9 @@ import network.xyo.sdkcorekotlin.signing.XyoSigningObjectCreatorVerify
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.signatures.XyoSecp256kSha256WithEcdsaSignature
 import java.security.Signature
 
-
+/**
+ * A Xyo Signer using EC with the Secp256K curve with SHA256.
+ */
 class XyoSha256WithSecp256K : XyoEcSecp256K() {
     override fun signData(byteArray: ByteArray): Deferred<XyoResult<XyoObject>> {
          return async {

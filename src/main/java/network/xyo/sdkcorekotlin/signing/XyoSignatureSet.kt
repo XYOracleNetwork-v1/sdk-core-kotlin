@@ -7,6 +7,12 @@ import network.xyo.sdkcorekotlin.data.array.XyoArrayDecoder
 import network.xyo.sdkcorekotlin.data.array.multi.XyoMultiTypeArrayBase
 import java.nio.ByteBuffer
 
+/**
+ * An array of signatures for a given party.
+ *
+ * @major 0x02
+ * @minor 0x03
+ */
 open class XyoSignatureSet(override var array: Array<XyoObject>) : XyoMultiTypeArrayBase() {
     override val id: XyoResult<ByteArray> = XyoResult(byteArrayOf(major, minor))
     override val sizeIdentifierSize: XyoResult<Int?> = sizeOfBytesToGetSize

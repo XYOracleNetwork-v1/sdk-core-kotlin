@@ -5,29 +5,35 @@ import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.XyoGeneralEc
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.XyoEcPrivateKey
-import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.keys.XyoSecp256K1CompressedPublicKey
+import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.keys.XyoSecp256K1UnCompressedPublicKey
 import java.math.BigInteger
 import java.security.KeyFactory
 import java.security.KeyPair
 import java.security.interfaces.ECPrivateKey
 import java.security.interfaces.ECPublicKey
 
+/**
+ * A base class for all EC operations using the Secp256K curve.
+ */
 abstract class XyoEcSecp256K : XyoGeneralEc() {
+    /**
+     * The generated public key.
+     */
     open val keyPair: KeyPair = generateKeyPair()
     override val publicKey: XyoResult<XyoObject>
         get() {
-            val ecPublicKey = keyPair.public as? XyoSecp256K1CompressedPublicKey
+            val ecPublicKey = keyPair.public as? XyoSecp256K1UnCompressedPublicKey
             if (ecPublicKey != null) {
                 return XyoResult(ecPublicKey)
             }
             return XyoResult(XyoError(
                     this.toString(),
-                    "Can not cast keypair to XyoSecp256K1CompressedPublicKey!"
+                    "Can not cast keypair to XyoSecp256K1UnCompressedPublicKey!"
             ))
         }
 
     private fun generateKeyPair(): KeyPair {
-        keyGenerator.initialize(XyoSecp256K1CompressedPublicKey.ecPramSpec)
+        keyGenerator.initialize(XyoSecp256K1UnCompressedPublicKey.ecPramSpec)
         KeyFactory.getInstance("EC")
         val generatedKeyPair = keyGenerator.genKeyPair()
         val ecPublic =  generatedKeyPair.public as? ECPublicKey
@@ -35,14 +41,14 @@ abstract class XyoEcSecp256K : XyoGeneralEc() {
 
         if (ecPublic != null && ecPrivate != null) {
             return KeyPair(
-                    object : XyoSecp256K1CompressedPublicKey() {
+                    object : XyoSecp256K1UnCompressedPublicKey() {
                         override val x: BigInteger
                             get() = ecPublic.w.affineX
 
                         override val y: BigInteger
                             get() = ecPublic.w.affineY
                     },
-                    XyoEcPrivateKey(ecPrivate.s, XyoSecp256K1CompressedPublicKey.ecPramSpec))
+                    XyoEcPrivateKey(ecPrivate.s, XyoSecp256K1UnCompressedPublicKey.ecPramSpec))
         }
         throw Exception("No public and private keys!")
     }

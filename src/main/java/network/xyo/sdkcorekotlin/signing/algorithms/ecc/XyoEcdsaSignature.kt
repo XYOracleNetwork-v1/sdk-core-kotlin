@@ -6,6 +6,11 @@ import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.XyoObjectProvider
 import network.xyo.sdkcorekotlin.signing.XyoSignature
 
+/**
+ * A base class for all EC signature operations.
+ *
+ * @param rawSignature the encoded EC signature.
+ */
 abstract class XyoEcdsaSignature(rawSignature : ByteArray) : XyoSignature() {
     private val signature : ByteArray = rawSignature
 

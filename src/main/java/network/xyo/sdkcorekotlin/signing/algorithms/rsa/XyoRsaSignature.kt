@@ -7,11 +7,19 @@ import network.xyo.sdkcorekotlin.data.XyoObjectProvider
 import network.xyo.sdkcorekotlin.signing.XyoSignature
 import java.nio.ByteBuffer
 
-abstract class XyoRsaSignature (private val signature: ByteArray) : XyoSignature() {
+/**
+ * The base class for RSA Signatures
+ *
+ * @param signature the RAW RSA signature to be encoded.
+ */
+abstract class XyoRsaSignature (signature: ByteArray) : XyoSignature() {
     override val objectInBytes: XyoResult<ByteArray> = XyoResult(signature)
     override val sizeIdentifierSize: XyoResult<Int?> = XyoResult(2)
     override val encodedSignature: ByteArray = signature
 
+    /**
+     * The base class for creating RSA Signatures.
+     */
     abstract class XyoRsaSignatureProvider : XyoObjectProvider () {
         override val major: Byte = 0x05
 

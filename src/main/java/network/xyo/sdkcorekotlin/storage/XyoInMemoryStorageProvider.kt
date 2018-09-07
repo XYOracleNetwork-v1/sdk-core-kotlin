@@ -3,6 +3,9 @@ package network.xyo.sdkcorekotlin.storage
 import kotlinx.coroutines.experimental.async
 import network.xyo.sdkcorekotlin.XyoResult
 
+/**
+ * A simple in-memory storage implementation of the XyoStorageProviderInterface.
+ */
 class XyoInMemoryStorageProvider : XyoStorageProviderInterface {
     private val keys = ArrayList<ByteArray>()
     private val storageHashMap = HashMap<Int, ByteArray>()

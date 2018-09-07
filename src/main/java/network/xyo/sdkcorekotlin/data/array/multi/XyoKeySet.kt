@@ -6,6 +6,14 @@ import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.array.XyoArrayDecoder
 import java.nio.ByteBuffer
 
+/**
+ * A Key Set where all public keys come from the same party.
+ *
+ * @major 0x02
+ * @minor 0x02
+ *
+ * @param array The in-memory array to start off the Xyo array with.
+ */
 open class XyoKeySet(override var array: Array<XyoObject>) : XyoMultiTypeArrayBase() {
     override val id: XyoResult<ByteArray> = XyoResult(byteArrayOf(major, minor))
     override val sizeIdentifierSize: XyoResult<Int?> = sizeOfBytesToGetSize

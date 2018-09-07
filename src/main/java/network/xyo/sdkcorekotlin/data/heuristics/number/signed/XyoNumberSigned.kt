@@ -6,8 +6,18 @@ import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.heuristics.number.XyoNumberTypes
 import java.nio.ByteBuffer
 
+/**
+ * A base class for encoding signed numbers.
+ */
 abstract class XyoNumberSigned : XyoObject() {
+    /**
+     * The type of number to encode the number to.
+     */
     abstract val size : XyoNumberTypes
+
+    /**
+     * The number to encode.
+     */
     abstract val number : Int
 
     override val objectInBytes: XyoResult<ByteArray>

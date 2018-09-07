@@ -6,6 +6,14 @@ import network.xyo.sdkcorekotlin.data.XyoObjectProvider
 import network.xyo.sdkcorekotlin.data.heuristics.number.XyoNumberTypes
 import java.nio.ByteBuffer
 
+/**
+ * The Xyo Index heuristic.
+ *
+ * @major 0x02
+ * @minor 0x05
+ *
+ * @param number The index.
+ */
 class XyoIndex(override val number: Int) : XyoNumberUnsigned() {
     override val size: XyoNumberTypes = XyoNumberTypes.BYTE
     override val id: XyoResult<ByteArray> = XyoResult(byteArrayOf(major, minor))

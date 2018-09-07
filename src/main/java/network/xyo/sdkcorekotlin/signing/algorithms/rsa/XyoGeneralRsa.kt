@@ -7,10 +7,19 @@ import network.xyo.sdkcorekotlin.signing.XyoSigner
 import java.security.*
 import java.security.interfaces.RSAPublicKey
 
+/**
+ * A base class for a all RSA cryptography.
+ *
+ * @param keySize The size of the keypair to generate.
+ */
 
-abstract class XyoGeneralRsa(keySize : Int) : XyoSigner() {
-    private val mKeyGenerator: KeyPairGenerator = KeyPairGenerator.getInstance("RSA")
-    private val mKeySize : Int = keySize
+abstract class XyoGeneralRsa(private val keySize : Int) : XyoSigner() {
+    private val keyGenerator: KeyPairGenerator = KeyPairGenerator.getInstance("RSA")
+
+    /**
+     * The Java Signature object when creating signatures. This is used when switching between
+     * SHA1withRSA, SHA256withRSA ect.
+     */
     abstract val signature : Signature
 
     override val publicKey: XyoResult<XyoObject>
@@ -25,8 +34,8 @@ abstract class XyoGeneralRsa(keySize : Int) : XyoSigner() {
     open val keyPair: KeyPair = generateKeyPair()
 
     private fun generateKeyPair(): KeyPair {
-        mKeyGenerator.initialize(mKeySize)
-        val standardKeyPair = mKeyGenerator.genKeyPair()
+        keyGenerator.initialize(keySize)
+        val standardKeyPair = keyGenerator.genKeyPair()
         val publicKey = standardKeyPair.public as? RSAPublicKey
 
         if (publicKey != null) {

@@ -5,6 +5,14 @@ import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.array.XyoArrayDecoder
 
+/**
+ * An single type array with a 1 byte size.
+ *
+ * @major 0x01
+ * @minor 0x04
+ *
+ * @param array The in-memory array to start off the Xyo array with.
+ */
 open class XyoMultiTypeArrayByte(override var array : Array<XyoObject>) : XyoMultiTypeArrayBase() {
     override val id: XyoResult<ByteArray> = XyoResult(byteArrayOf(major, minor))
     override val sizeIdentifierSize: XyoResult<Int?> = sizeOfBytesToGetSize

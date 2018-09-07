@@ -8,11 +8,21 @@ import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import java.security.MessageDigest
 
-abstract class XyoBasicHashBase (pastHash : ByteArray): XyoHash() {
-    override val hash: ByteArray = pastHash
+/**
+ * A base class for fixed size hashes.
+ *
+ * @param hash, the created hash.
+ */
+abstract class XyoBasicHashBase (override val hash : ByteArray): XyoHash() {
     override val sizeIdentifierSize: XyoResult<Int?> = XyoResult<Int?>(null)
 
+    /**
+     * A base class for creating Standard Java hashes supported by MessageDigest.
+     */
     abstract class XyoBasicHashBaseProvider : XyoHashProvider() {
+        /**
+         * The MessageDigest instance key. e.g. "SHA-256"
+         */
         abstract val standardDigestKey : String
         override val sizeOfBytesToGetSize: XyoResult<Int?> = XyoResult(0)
 
