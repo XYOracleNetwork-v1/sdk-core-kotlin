@@ -5,6 +5,7 @@ import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.XyoObjectProvider
 import network.xyo.sdkcorekotlin.data.XyoByteArraySetter
+import network.xyo.sdkcorekotlin.data.XyoUnsignedHelper
 import java.nio.ByteBuffer
 
 /**
@@ -124,9 +125,9 @@ class XyoArrayDecoder (private val data : ByteArray,
         }
 
         when (sizeSize) {
-            1 -> return size[0].toInt()
-            2 -> return ByteBuffer.wrap(size).short.toInt()
-            4 -> return ByteBuffer.wrap(size).int
+            1 -> return XyoUnsignedHelper.readUnsignedByte(size)
+            2 -> return XyoUnsignedHelper.readUnsignedShort(size)
+            4 -> return XyoUnsignedHelper.readUnsignedInt(size)
         }
 
         return ByteBuffer.wrap(size).int

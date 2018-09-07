@@ -296,7 +296,7 @@ abstract class XyoBoundWitness : XyoObject() {
         }
 
         override fun readSize(byteArray: ByteArray): XyoResult<Int> {
-            return XyoResult(ByteBuffer.wrap(byteArray).int)
+            return XyoResult(XyoUnsignedHelper.readUnsignedInt(byteArray))
         }
     }
 }

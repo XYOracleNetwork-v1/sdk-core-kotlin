@@ -3,6 +3,7 @@ package network.xyo.sdkcorekotlin.data.heuristics.number.unsigned
 import network.xyo.sdkcorekotlin.XyoError
 import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.data.XyoObject
+import network.xyo.sdkcorekotlin.data.XyoUnsignedHelper
 import network.xyo.sdkcorekotlin.data.heuristics.number.XyoNumberTypes
 import java.nio.ByteBuffer
 
@@ -23,20 +24,12 @@ abstract class XyoNumberUnsigned : XyoObject() {
     override val objectInBytes: XyoResult<ByteArray>
         get() {
             when (size) {
-                XyoNumberTypes.BYTE ->
-                    return XyoResult(ByteBuffer.allocate(1).put(number.toByte()).array())
+                XyoNumberTypes.BYTE -> return XyoResult(XyoUnsignedHelper.createUnsignedByte(number))
 
-                XyoNumberTypes.SHORT ->
-                    return XyoResult(ByteBuffer.allocate(2).putShort(number.toShort()).array())
+                XyoNumberTypes.SHORT -> return XyoResult(XyoUnsignedHelper.createUnsignedShort(number))
 
-                XyoNumberTypes.INT ->
-                    return XyoResult(ByteBuffer.allocate(4).putInt(number).array())
+                XyoNumberTypes.INT -> return XyoResult(XyoUnsignedHelper.createUnsignedInt(number))
 
-                XyoNumberTypes.LONG ->
-                    return XyoResult(ByteBuffer.allocate(8).putLong(number.toLong()).array())
-
-                XyoNumberTypes.FLOAT ->
-                    return XyoResult(ByteBuffer.allocate(4).putFloat(number.toFloat()).array())
                 else -> {
                     return XyoResult(XyoError(this.toString(), "Not a valid size!"))
                 }

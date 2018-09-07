@@ -4,6 +4,7 @@ import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.data.XyoByteArrayReader
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.XyoObjectProvider
+import network.xyo.sdkcorekotlin.data.XyoUnsignedHelper
 import network.xyo.sdkcorekotlin.signing.XyoSignature
 import java.nio.ByteBuffer
 
@@ -30,7 +31,7 @@ abstract class XyoRsaSignature (signature: ByteArray) : XyoSignature() {
         }
 
         override fun createFromPacked(byteArray: ByteArray): XyoResult<XyoObject> {
-            val size = ByteBuffer.wrap(byteArray).short.toInt()
+            val size = XyoUnsignedHelper.readUnsignedShort(byteArray)
 
             return XyoResult(object : XyoRsaSignature(XyoByteArrayReader(byteArray).read(2, size - 2)) {
                 override val id: XyoResult<ByteArray>

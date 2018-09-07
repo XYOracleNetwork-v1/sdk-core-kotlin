@@ -3,6 +3,7 @@ package network.xyo.sdkcorekotlin.data.array.single
 import network.xyo.sdkcorekotlin.XyoError
 import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.data.XyoObject
+import network.xyo.sdkcorekotlin.data.XyoUnsignedHelper
 import network.xyo.sdkcorekotlin.data.array.XyoArrayDecoder
 import java.nio.ByteBuffer
 
@@ -31,7 +32,7 @@ open class XyoSingleTypeArrayInt(override val elementMajor : Byte,
         override val sizeOfBytesToGetSize: XyoResult<Int?> = XyoResult(4)
 
         override fun readSize(byteArray: ByteArray): XyoResult<Int> {
-            return XyoResult(ByteBuffer.wrap(byteArray).int)
+            return XyoResult(XyoUnsignedHelper.readUnsignedInt(byteArray))
         }
 
         override fun createFromPacked(byteArray: ByteArray): XyoResult<XyoObject> {

@@ -4,6 +4,7 @@ import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.data.XyoByteArrayReader
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.XyoObjectProvider
+import network.xyo.sdkcorekotlin.data.XyoUnsignedHelper
 import network.xyo.sdkcorekotlin.signing.XyoSignature
 
 /**
@@ -27,11 +28,11 @@ abstract class XyoEcdsaSignature(rawSignature : ByteArray) : XyoSignature() {
         override val sizeOfBytesToGetSize: XyoResult<Int?> = XyoResult(1)
 
         override fun readSize(byteArray: ByteArray): XyoResult<Int> {
-            return XyoResult(byteArray[0].toInt())
+            return XyoResult(XyoUnsignedHelper.readUnsignedByte(byteArray))
         }
 
         override fun createFromPacked(byteArray: ByteArray): XyoResult<XyoObject> {
-            val size = byteArray[0].toInt()
+            val size = XyoUnsignedHelper.readUnsignedByte(byteArray)
 
             return XyoResult(object : XyoEcdsaSignature(XyoByteArrayReader(byteArray).read(1, size - 1)) {
                 override val id: XyoResult<ByteArray>

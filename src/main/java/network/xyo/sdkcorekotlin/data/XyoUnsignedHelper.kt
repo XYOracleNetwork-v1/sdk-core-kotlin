@@ -1,5 +1,6 @@
 package network.xyo.sdkcorekotlin.data
 
+import network.xyo.sdkcorekotlin.XyoResult
 import java.lang.reflect.Array.getShort
 import java.nio.ByteBuffer
 import javax.swing.UIManager.put
@@ -7,10 +8,9 @@ import kotlin.experimental.and
 
 /**
  * Unsigned ByteBuffer wrapper.
- * Modified from: https://stackoverflow.com/a/9883582
  */
 
-object XyoUnsignedByteBuffer {
+object XyoUnsignedHelper {
     fun getUnsignedByte(byteBuffer: ByteBuffer): Short {
         return byteBuffer.get().toShort() and 0xff.toShort()
     }
@@ -26,7 +26,6 @@ object XyoUnsignedByteBuffer {
     fun putUnsignedByte(byteBuffer: ByteBuffer, position: Int, value: Int) {
         byteBuffer.put(position, (value and 0xff).toByte())
     }
-
 
     fun getUnsignedShort(byteBuffer: ByteBuffer): Int {
         return byteBuffer.getShort().toInt() and 0xffff
@@ -44,7 +43,6 @@ object XyoUnsignedByteBuffer {
         byteBuffer.putShort(position, (value and 0xffff).toShort())
     }
 
-
     fun getUnsignedInt(byteBuffer: ByteBuffer): Long {
         return byteBuffer.getInt().toLong() and 0xffffffffL
     }
@@ -60,4 +58,37 @@ object XyoUnsignedByteBuffer {
     fun putUnsignedInt(byteBuffer: ByteBuffer, position: Int, value: Long) {
         byteBuffer.putInt(position, (value and 0xffffffffL).toInt())
     }
-}
+
+    fun createUnsignedByte(number: Int) : ByteArray {
+        val signed = ByteBuffer.allocate(1)
+        XyoUnsignedHelper.putUnsignedByte(signed, number)
+        return signed.array()
+    }
+
+    fun createUnsignedShort(number: Int) : ByteArray {
+        val signed = ByteBuffer.allocate(2)
+        XyoUnsignedHelper.putUnsignedShort(signed, number)
+        return signed.array()
+    }
+
+    fun createUnsignedInt(number: Int) : ByteArray {
+        val signed = ByteBuffer.allocate(4)
+        XyoUnsignedHelper.putUnsignedInt(signed, number.toLong())
+        return signed.array()
+    }
+
+    fun readUnsignedByte(bytes : ByteArray) : Int {
+        val byteBuffer = ByteBuffer.wrap(bytes)
+        return getUnsignedByte(byteBuffer).toInt()
+    }
+
+    fun readUnsignedShort(bytes : ByteArray) : Int {
+        val byteBuffer = ByteBuffer.wrap(bytes)
+        return getUnsignedShort(byteBuffer)
+    }
+
+    fun readUnsignedInt(bytes: ByteArray) : Int {
+        val byteBuffer = ByteBuffer.wrap(bytes)
+        return getUnsignedInt(byteBuffer).toInt()
+    }
+ }

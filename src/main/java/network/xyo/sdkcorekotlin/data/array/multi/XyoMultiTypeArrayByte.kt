@@ -3,6 +3,7 @@ package network.xyo.sdkcorekotlin.data.array.multi
 import network.xyo.sdkcorekotlin.XyoError
 import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.data.XyoObject
+import network.xyo.sdkcorekotlin.data.XyoUnsignedHelper
 import network.xyo.sdkcorekotlin.data.array.XyoArrayDecoder
 
 /**
@@ -22,7 +23,7 @@ open class XyoMultiTypeArrayByte(override var array : Array<XyoObject>) : XyoMul
         override val sizeOfBytesToGetSize: XyoResult<Int?> = XyoResult(1)
 
         override fun readSize(byteArray: ByteArray): XyoResult<Int> {
-            return XyoResult(byteArray[0].toInt())
+            return XyoResult(XyoUnsignedHelper.readUnsignedByte(byteArray))
         }
 
         override fun createFromPacked(byteArray: ByteArray): XyoResult<XyoObject> {
