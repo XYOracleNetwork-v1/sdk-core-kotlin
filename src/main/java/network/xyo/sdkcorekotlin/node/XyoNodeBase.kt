@@ -28,7 +28,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
 
     private val heuristics = HashMap<String, XyoObject>()
     private val listeners = HashMap<String, XyoNodeListener>()
-    private var currentBoundWitnessSession : XyoBoundWitness? = null
+    private var currentBoundWitnessSession : XyoZigZagBoundWitnessSession? = null
 
     /**
      * Gets the choice of a catalog from another party.

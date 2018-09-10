@@ -15,7 +15,7 @@ class XyoZigZagBoundWitnessSession(private val pipe : XyoNetworkPipe,
 
     private var cycles = 0
 
-    override fun doBoundWitness(data: ByteArray?): Deferred<XyoError?> {
+    fun doBoundWitness(data: ByteArray?): Deferred<XyoError?> {
         return async {
             if (!completed) {
                 var transferValue : XyoBoundWitnessTransfer? = null
