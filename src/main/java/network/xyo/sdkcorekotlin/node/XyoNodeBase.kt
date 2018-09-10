@@ -117,7 +117,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
             originBlocks.addBoundWitness(boundWitness).await()
 
             for ((_, listener) in listeners) {
-                listener.onBoundWitnessEndSuccess()
+                listener.onBoundWitnessEndSuccess(boundWitness)
             }
             return@async
         }
