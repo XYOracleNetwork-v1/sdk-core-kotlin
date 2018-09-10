@@ -1,6 +1,8 @@
-package network.xyo.sdkcorekotlin
+package network.xyo.sdkcorekotlin.origin
 
 import kotlinx.coroutines.experimental.async
+import network.xyo.sdkcorekotlin.XyoError
+import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
 import network.xyo.sdkcorekotlin.data.XyoByteArraySetter
 import network.xyo.sdkcorekotlin.hashing.XyoHash
@@ -131,7 +133,7 @@ class XyoOriginChainNavigator (private val storageProviderProvider : XyoStorageP
         val blockHashValue = blockHash.value ?: return@async XyoResult<XyoOriginBlock>(
                 XyoError(
                         this.toString(),
-                "Previous Hash is null!"
+                        "Previous Hash is null!"
                 )
         )
 
@@ -156,7 +158,7 @@ class XyoOriginChainNavigator (private val storageProviderProvider : XyoStorageP
         val packedOriginBlockValue = packedOriginBlock.value ?: return@async XyoResult<XyoOriginBlock>(
                 XyoError(
                         this.toString(),
-                "Read Value is null!"
+                        "Read Value is null!"
                 )
         )
 

@@ -1,4 +1,4 @@
-package network.xyo.sdkcorekotlin
+package network.xyo.sdkcorekotlin.origin
 
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.heuristics.number.unsigned.XyoIndex
@@ -11,7 +11,7 @@ import network.xyo.sdkcorekotlin.signing.XyoSigner
  * This class is used to keep track of the state when creating an origin chain. This includes
  * the previous hash, index, and the current/next key-pairs to sign with.
  *
- * @param indexOffset This value is used to create a state manager where the index does not start
+ * @param indexOffset This value is used to create a state manager where the index does not doBoundWitness
  * at 0. This is used when re-starting a origin chain.
  */
 class XyoOriginChainStateManager (private val indexOffset : Int) {

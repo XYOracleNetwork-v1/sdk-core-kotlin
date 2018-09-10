@@ -12,7 +12,7 @@ abstract class XyoObject {
     private var isChanged = true
     private val bytes : XyoResult<ByteArray>
         get() {
-            if (isChanged || dataCache != null) {
+            if (isChanged || dataCache == null) {
                 dataCache = objectInBytes.value
                 isChanged = false
                 return XyoResult(dataCache)

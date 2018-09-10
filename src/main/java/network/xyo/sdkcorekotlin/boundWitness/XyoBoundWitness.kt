@@ -1,5 +1,6 @@
 package network.xyo.sdkcorekotlin.boundWitness
 
+import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.async
 import network.xyo.sdkcorekotlin.XyoError
 import network.xyo.sdkcorekotlin.XyoResult
@@ -33,6 +34,14 @@ abstract class XyoBoundWitness : XyoObject() {
      * All of the signatures in the bound witness.
      */
     abstract val signatures : Array<XyoSignatureSet>
+
+    /**
+     * Completes an entire bound witness.
+     *
+     * @param data Any previous data sent (e.g. other parties data)
+     * @return null if successful.
+     */
+    abstract fun doBoundWitness (data : ByteArray?) : Deferred<XyoError?>
 
     override val id: XyoResult<ByteArray> = XyoResult(byteArrayOf(major, minor))
     override val sizeIdentifierSize: XyoResult<Int?> = XyoResult(4)
@@ -292,6 +301,12 @@ abstract class XyoBoundWitness : XyoObject() {
                 override val payloads: Array<XyoPayload> = payloads
                 override val publicKeys: Array<XyoKeySet> = keysets
                 override val signatures: Array<XyoSignatureSet> = signatures
+
+                override fun doBoundWitness(data: ByteArray?): Deferred<XyoError?> {
+                    return async {
+                        return@async XyoError(this.toString(), "Can not do bound witness!")
+                    }
+                }
             })
         }
 
