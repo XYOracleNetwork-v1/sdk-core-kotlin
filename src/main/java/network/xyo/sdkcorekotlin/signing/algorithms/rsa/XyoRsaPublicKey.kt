@@ -26,7 +26,7 @@ class XyoRsaPublicKey(private val modulus : BigInteger) : RSAPublicKey, XyoObjec
     override val objectInBytes: XyoResult<ByteArray>
         get() = XyoResult(encoded)
 
-    override val sizeIdentifierSize: XyoResult<Int?> = XyoResult<Int?>(null)
+    override val sizeIdentifierSize: XyoResult<Int?> = XyoResult<Int?>(2)
 
     override fun getAlgorithm(): String {
         return "RSA"
@@ -62,7 +62,7 @@ class XyoRsaPublicKey(private val modulus : BigInteger) : RSAPublicKey, XyoObjec
 
         override fun createFromPacked(byteArray: ByteArray): XyoResult<XyoObject> {
             val reader = XyoByteArrayReader(byteArray)
-            val modulusSize = ByteBuffer.allocate(4).put(reader.read(0, 4)).short.toInt() - 4
+            val modulusSize = XyoUnsignedHelper.readUnsignedShort(reader.read(0, 2))
             val modulus = reader.read(0, modulusSize)
 
             return  XyoResult(XyoRsaPublicKey(BigInteger(modulus)))

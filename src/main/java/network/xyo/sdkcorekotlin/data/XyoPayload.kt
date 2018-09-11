@@ -31,7 +31,7 @@ class XyoPayload(val signedPayload : XyoMultiTypeArrayInt,
     /**
      * A mapping of the unsigned payload.  Map of the Type to the Value.
      */
-    val unsignedPayloadMapping : XyoResult<HashMap<Int, XyoObject>> = getMappingOfElements(signedPayload.array)
+    val unsignedPayloadMapping : XyoResult<HashMap<Int, XyoObject>> = getMappingOfElements(unsignedPayload.array)
 
     private fun getMappingOfElements (objects : Array<XyoObject>) : XyoResult<HashMap<Int, XyoObject>> {
         val mapping = HashMap<Int, XyoObject>()

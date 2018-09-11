@@ -147,7 +147,9 @@ class XyoOriginChainNavigator (private val storageProviderProvider : XyoStorageP
      * @return a deferred XyoResult<XyoOriginBlock> that is has the hash.
      */
     fun getOriginBlockByBlockHash (originBlockHash: ByteArray) = async {
-        val packedOriginBlock = storageProviderProvider.read(originBlockHash, 60_000).await()
+        println("h")
+        val packedOriginBlock = storageProviderProvider.read(originBlockHash, 1_000).await()
+        println("g")
         if (packedOriginBlock.error != null) return@async XyoResult<XyoOriginBlock>(
                 packedOriginBlock.error ?: XyoError(
                         this.toString(),

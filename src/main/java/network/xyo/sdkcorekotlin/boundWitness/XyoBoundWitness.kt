@@ -84,6 +84,18 @@ abstract class XyoBoundWitness : XyoObject() {
         return@async signer.signData(dataToSignValue).await()
     }
 
+    /**
+     * Removes the unsigned payload from the bound witness.
+     */
+    fun removeAllUnsigned () {
+        for (payload in payloads) {
+            payload.unsignedPayload.array = arrayOf()
+            payload.unsignedPayload.updateObjectCache()
+            payload.updateObjectCache()
+            updateObjectCache()
+        }
+    }
+
     private fun getSigningData () : XyoResult<ByteArray> {
         val setter = XyoByteArraySetter(payloads.size + 1)
         val makePublicKeysUntyped = makePublicKeys().untyped

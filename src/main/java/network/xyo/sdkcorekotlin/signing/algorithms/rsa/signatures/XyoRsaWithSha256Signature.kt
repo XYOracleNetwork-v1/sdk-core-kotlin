@@ -13,6 +13,6 @@ class XyoRsaWithSha256Signature(rawSignature: ByteArray) : XyoRsaSignature(rawSi
     override val id: XyoResult<ByteArray> = XyoResult(byteArrayOf(major, minor))
 
     companion object : XyoRsaSignatureProvider() {
-        override val minor: Byte = 0x09
+        override val minor: Byte = 0x08
     }
 }

@@ -62,7 +62,10 @@ abstract class XyoObject {
             return byteArrayOf()
         }
 
-    protected fun updateObjectCache() {
+    /**
+     * Clears the cache of the encoded object.
+     */
+    fun updateObjectCache() {
         isChanged = true
     }
 

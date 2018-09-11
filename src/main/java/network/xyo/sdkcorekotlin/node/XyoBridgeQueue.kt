@@ -2,6 +2,7 @@ package network.xyo.sdkcorekotlin.node
 
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
 import network.xyo.sdkcorekotlin.data.XyoObject
+import network.xyo.sdkcorekotlin.data.array.single.XyoSingleTypeArrayInt
 
 /**
  * A class to manage outgoing origin blocks for bridges and sentinels.
@@ -69,7 +70,7 @@ open class XyoBridgeQueue {
         /**
          * The maximum number of blocks to send at a given time.
          */
-        private const val SENT_LIMIT = 2
+        private const val SENT_LIMIT = 10
 
         /**
          * The point at witch blocks should be removed from the queue.

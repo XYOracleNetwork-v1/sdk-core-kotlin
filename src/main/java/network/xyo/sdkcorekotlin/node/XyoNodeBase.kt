@@ -26,6 +26,7 @@ import network.xyo.sdkcorekotlin.storage.XyoStorageProviderInterface
 abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
                             private val hashingProvider : XyoHash.XyoHashProvider) {
 
+    private val boundWitnessOptions = HashMap<Int, XyoBoundWitnessOption>()
     private val heuristics = HashMap<String, XyoObject>()
     private val listeners = HashMap<String, XyoNodeListener>()
     private var currentBoundWitnessSession : XyoZigZagBoundWitnessSession? = null
@@ -97,6 +98,55 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
         boundWitness.incomingData(null, true)
         onBoundWitnessEndSuccess(boundWitness).await()
     }
+
+    fun addBoundWitnessOption (boundWitnessOption: XyoBoundWitnessOption) {
+        boundWitnessOptions[boundWitnessOption.flag] = boundWitnessOption
+    }
+
+    /**
+     * Gets all of the unsigned payloads for a given flag.
+     *
+     * @param bitFlag The flag to filter.
+     * @return All of the options that comply to that filter.
+     */
+    private fun getUnSignedPayloads (bitFlag : Int) : ArrayList<XyoObject> {
+        val unsignedPayloads = ArrayList<XyoObject>()
+
+        for ((flag, option) in boundWitnessOptions) {
+            if (flag and bitFlag != 0) {
+                val unsignedPayload = option.getUnsignedPayload()
+
+                if (unsignedPayload != null) {
+                    unsignedPayloads.add(unsignedPayload)
+                }
+            }
+        }
+
+        return unsignedPayloads
+    }
+
+    /**
+     * Gets all of the signed payloads for a given flag.
+     *
+     * @param bitFlag The flag to filter.
+     * @return All of the options that comply to that filter.
+     */
+    private fun getSignedPayloads (bitFlag: Int) : ArrayList<XyoObject> {
+        val signedPayloads = ArrayList<XyoObject>()
+
+        for ((flag, option) in boundWitnessOptions) {
+            if (flag and bitFlag != 0) {
+                val signedPayload = option.getSignedPayload()
+
+                if (signedPayload != null) {
+                    signedPayloads.add(signedPayload)
+                }
+            }
+        }
+
+        return signedPayloads
+    }
+
 
     private fun getHeuristics () : Array<XyoObject> {
         return heuristics.values.toTypedArray()
@@ -177,8 +227,9 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
         }
 
         signedPayloads.add(index)
-        signedPayloads.addAll(XyoBoundWitnessOption.getUnSignedPayloads(bitFlag))
-        unsignedPayloads.addAll(XyoBoundWitnessOption.getUnSignedPayloads(bitFlag))
+
+        signedPayloads.addAll(getSignedPayloads(bitFlag))
+        unsignedPayloads.addAll(getUnSignedPayloads(bitFlag))
 
         return@async XyoPayload(
                 XyoMultiTypeArrayInt(signedPayloads.toTypedArray()),

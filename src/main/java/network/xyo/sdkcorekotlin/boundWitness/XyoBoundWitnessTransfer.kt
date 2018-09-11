@@ -140,7 +140,6 @@ class XyoBoundWitnessTransfer(val keysToSend : Array<XyoObject>,
                     "Unpacking int array size returned null!")
             )
 
-
             if (type == 0x01.toByte() || type == 0x02.toByte()) {
                 val keySetArraySize  = XyoSingleTypeArrayShort.readSize(byteReader.read(currentOffset, shortArrayReadSizeValue))
                 if (keySetArraySize.error != null) return XyoResult(keySetArraySize.error ?: XyoError(
@@ -158,7 +157,6 @@ class XyoBoundWitnessTransfer(val keysToSend : Array<XyoObject>,
                 )
                 keySetArray = keySetArrayResult.value as? XyoSingleTypeArrayShort
                 currentOffset += keySetArraySizeValue
-
 
                 val payloadArraySize  = XyoSingleTypeArrayInt.readSize(byteReader.read(currentOffset, intArrayReadSizeValue))
                 if (payloadArraySize.error != null) return XyoResult(payloadArraySize.error ?: XyoError(
