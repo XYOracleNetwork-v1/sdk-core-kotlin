@@ -8,12 +8,27 @@ import network.xyo.sdkcorekotlin.data.array.single.XyoSingleTypeArrayInt
  * A class to manage outgoing origin blocks for bridges and sentinels.
  */
 open class XyoBridgeQueue {
-    private class XyoBridgeQueueItem (val boundWitness: XyoBoundWitness, var weight: Int) : Comparable<XyoBridgeQueueItem> {
-        override fun compareTo(other: XyoBridgeQueueItem): Int {
-            return weight - other.weight
-        }
-    }
+    private val listeners = HashMap<String, XyoBridgeQueueListener>()
     private val blocksToBridge = ArrayList<XyoBridgeQueueItem>()
+
+    /**
+     * Adds a listener to the queue.
+     *
+     * @param key The key of the listener to add.
+     * @param listener The listener to add.
+     */
+    fun addListener (key : String, listener : XyoBridgeQueueListener) {
+        listeners[key] = listener
+    }
+
+    /**
+     * Removes a listener from the queue.
+     *
+     * @param key The key of the listener to remove.
+     */
+    fun removeListiner (key : String) {
+        listeners.remove(key)
+    }
 
     /**
      * Adds an origin block into the bridge queue.
@@ -56,7 +71,7 @@ open class XyoBridgeQueue {
         }
 
         for (block in toRemove) {
-            blocksToBridge.remove(block)
+            removeBlock(block)
         }
 
         return toBridge.toTypedArray()
@@ -64,6 +79,14 @@ open class XyoBridgeQueue {
 
     private fun sortQueue () {
         blocksToBridge.sort()
+    }
+
+    private fun removeBlock (block: XyoBridgeQueueItem) {
+        blocksToBridge.remove(block)
+
+        for ((_, listener) in listeners) {
+            listener.onRemove(block.boundWitness)
+        }
     }
 
     companion object {
@@ -75,6 +98,22 @@ open class XyoBridgeQueue {
         /**
          * The point at witch blocks should be removed from the queue.
          */
-        private const val REMOVE_WEIGHT = 5
+        private const val REMOVE_WEIGHT = 100
+
+        /**
+         * A Listener for a XyoBridgeQueue
+         */
+        interface XyoBridgeQueueListener {
+            /**
+             * This function gets called evey time a block gets removed from the queue.
+             */
+            fun onRemove(boundWitness: XyoBoundWitness)
+        }
+
+        private class XyoBridgeQueueItem (val boundWitness: XyoBoundWitness, var weight: Int) : Comparable<XyoBridgeQueueItem> {
+            override fun compareTo(other: XyoBridgeQueueItem): Int {
+                return weight - other.weight
+            }
+        }
     }
 }

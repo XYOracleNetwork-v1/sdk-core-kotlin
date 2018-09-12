@@ -1,7 +1,9 @@
 package network.xyo.sdkcorekotlin.node
 
+import kotlinx.coroutines.experimental.async
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
 import network.xyo.sdkcorekotlin.data.XyoObject
+import network.xyo.sdkcorekotlin.data.array.single.XyoBridgeBlockSet
 import network.xyo.sdkcorekotlin.data.array.single.XyoSingleTypeArrayInt
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.network.XyoProcedureCatalogue
@@ -10,7 +12,7 @@ class XyoBridgingOption (private val hashingProvider : XyoHash.XyoHashProvider):
     private var hashOfOriginBlocks : XyoObject? = null
     private var originBlocksToSend : XyoObject? = null
 
-    override val flag: Int = XyoProcedureCatalogue.TAKE_ORIGIN_CHAIN
+    override val flag: Int = XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN
 
     override fun getSignedPayload(): XyoObject? {
         return hashOfOriginBlocks
@@ -20,18 +22,16 @@ class XyoBridgingOption (private val hashingProvider : XyoHash.XyoHashProvider):
         return originBlocksToSend
     }
 
-    suspend fun updateOriginChain(originBlocksToBridge : Array<XyoObject>) {
-        originBlocksToSend = XyoSingleTypeArrayInt(
-                XyoBoundWitness.major,
-                XyoBoundWitness.minor,
-                originBlocksToBridge
-        )
-
+    fun updateOriginChain(originBlocksToBridge : Array<XyoObject>) = async {
+        originBlocksToSend = XyoBridgeBlockSet(originBlocksToBridge)
         val encodedOriginBlocksToSend = originBlocksToSend?.untyped?.value
 
         if (encodedOriginBlocksToSend != null) {
-            hashOfOriginBlocks = hashingProvider.createHash(encodedOriginBlocksToSend).await().value
-            return
+            val originBlocksToSendTyped = originBlocksToSend
+            if (originBlocksToSendTyped is XyoBridgeBlockSet) {
+                hashOfOriginBlocks = originBlocksToSendTyped.getHashSet(hashingProvider).await()
+            }
+            return@async
         }
 
         hashOfOriginBlocks = null

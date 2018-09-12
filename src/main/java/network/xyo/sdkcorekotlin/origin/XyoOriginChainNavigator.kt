@@ -28,7 +28,11 @@ class XyoOriginChainNavigator (private val storageProviderProvider : XyoStorageP
      * @return A deferred XyoError, if the error is null, the operation was successful.
      */
     fun removeOriginBlock (originBlockHash : ByteArray) = async {
-        return@async storageProviderProvider.delete(originBlockHash).await()
+        val previousHashMerger = XyoByteArraySetter(2)
+        previousHashMerger.add(byteArrayOf(0xff.toByte()), 0)
+        previousHashMerger.add(originBlockHash, 1)
+        storageProviderProvider.delete(originBlockHash).await()
+        storageProviderProvider.delete(previousHashMerger.merge()).await()
     }
 
     /**
@@ -147,9 +151,7 @@ class XyoOriginChainNavigator (private val storageProviderProvider : XyoStorageP
      * @return a deferred XyoResult<XyoOriginBlock> that is has the hash.
      */
     fun getOriginBlockByBlockHash (originBlockHash: ByteArray) = async {
-        println("h")
         val packedOriginBlock = storageProviderProvider.read(originBlockHash, 1_000).await()
-        println("g")
         if (packedOriginBlock.error != null) return@async XyoResult<XyoOriginBlock>(
                 packedOriginBlock.error ?: XyoError(
                         this.toString(),

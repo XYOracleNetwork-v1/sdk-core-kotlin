@@ -22,7 +22,7 @@ class XyoNextPublicKey (publicKey: XyoObject): XyoObject() {
     companion object : XyoObjectProvider() {
         override val major: Byte = 0x02
         override val minor: Byte = 0x07
-        override val sizeOfBytesToGetSize: XyoResult<Int?> = XyoResult(2)
+        override val sizeOfBytesToGetSize: XyoResult<Int?> = XyoResult(4)
 
         override fun createFromPacked(byteArray: ByteArray): XyoResult<XyoObject> {
             val keyCreated = XyoObjectProvider.create(byteArray)
