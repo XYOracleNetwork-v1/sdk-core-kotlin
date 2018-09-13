@@ -4,6 +4,8 @@ import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.XyoObjectProvider
 import network.xyo.sdkcorekotlin.data.XyoByteArraySetter
 import network.xyo.sdkcorekotlin.data.XyoUnsignedHelper
+import network.xyo.sdkcorekotlin.exceptions.XyoCorruptDataException
+import network.xyo.sdkcorekotlin.exceptions.XyoNoObjectException
 import java.nio.ByteBuffer
 
 /**
@@ -67,7 +69,7 @@ class XyoArrayDecoder (private val data : ByteArray,
                 if (globalCurrentPosition + 2 < data.size) {
                     arrayType = getMajorMinor()
                 } else {
-                   throw Exception("Array out of size!")
+                   throw XyoCorruptDataException("Array out of size!")
                 }
             }
 
@@ -83,7 +85,7 @@ class XyoArrayDecoder (private val data : ByteArray,
                         position++
                     }
                 } else {
-                   throw Exception("Array out of size!")
+                   throw XyoCorruptDataException("Array out of size!")
                 }
 
                 globalCurrentPosition += sizeOfElement
@@ -98,7 +100,7 @@ class XyoArrayDecoder (private val data : ByteArray,
                     items.add(createdObject)
                 }
             } else {
-                throw Exception("Cant find size of element!, ${arrayType[0]}, ${arrayType[1]}")
+                throw XyoNoObjectException("Cant find size of element!, ${arrayType[0]}, ${arrayType[1]}")
             }
         }
 

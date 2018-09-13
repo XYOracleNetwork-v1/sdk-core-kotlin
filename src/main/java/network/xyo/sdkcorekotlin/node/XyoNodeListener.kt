@@ -19,5 +19,5 @@ interface XyoNodeListener {
     /**
      * This function will be called on evey time a bound witness did not end successfully.
      */
-    fun onBoundWitnessEndFailure()
+    fun onBoundWitnessEndFailure(error : Exception?)
 }

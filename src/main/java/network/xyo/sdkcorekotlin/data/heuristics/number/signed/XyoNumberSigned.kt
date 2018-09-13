@@ -2,6 +2,7 @@ package network.xyo.sdkcorekotlin.data.heuristics.number.unsigned
 
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.heuristics.number.XyoNumberTypes
+import network.xyo.sdkcorekotlin.exceptions.XyoCorruptDataException
 import java.nio.ByteBuffer
 
 /**
@@ -36,7 +37,7 @@ abstract class XyoNumberSigned : XyoObject() {
                 XyoNumberTypes.FLOAT ->
                     return ByteBuffer.allocate(4).putFloat(number.toFloat()).array()
                 else -> {
-                    throw Exception("Not a valid number type!")
+                    throw Exception("Not a valid size!")
                 }
             }
         }

@@ -191,10 +191,10 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
         return arrayOf()
     }
 
-    private fun onBoundWitnessEndFailure() {
+    private fun onBoundWitnessEndFailure(error: Exception?) {
         currentBoundWitnessSession = null
         for ((_, listener) in listeners) {
-            listener.onBoundWitnessEndFailure()
+            listener.onBoundWitnessEndFailure(error)
         }
     }
 
@@ -215,12 +215,12 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
         val error = currentBoundWitnessSession!!.doBoundWitness(startingData)
         pipe.close().await()
 
-        if (currentBoundWitnessSession?.completed == true) {
+        if (currentBoundWitnessSession?.completed == true && error == null) {
             updateOriginState(currentBoundWitnessSession!!)
             onBoundWitnessEndSuccess(currentBoundWitnessSession).await()
             currentBoundWitnessSession = null
         } else {
-            onBoundWitnessEndFailure()
+            onBoundWitnessEndFailure(error)
             currentBoundWitnessSession = null
         }
     }

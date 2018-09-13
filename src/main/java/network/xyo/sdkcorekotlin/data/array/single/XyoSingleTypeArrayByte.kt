@@ -3,6 +3,7 @@ package network.xyo.sdkcorekotlin.data.array.single
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.XyoUnsignedHelper
 import network.xyo.sdkcorekotlin.data.array.XyoArrayDecoder
+import network.xyo.sdkcorekotlin.exceptions.XyoCorruptDataException
 
 /**
  * An single type array with a 1 byte size.
@@ -36,8 +37,8 @@ open class XyoSingleTypeArrayByte(override val elementMajor : Byte,
         override fun createFromPacked(byteArray: ByteArray): XyoObject {
             val unpackedArray = XyoArrayDecoder(byteArray, true, 1)
             val array = unpackedArray.array
-            val majorType = unpackedArray.majorType ?: throw Exception()
-            val minorType = unpackedArray.minorType ?: throw Exception()
+            val majorType = unpackedArray.majorType ?: throw XyoCorruptDataException("No major!")
+            val minorType = unpackedArray.minorType ?: throw XyoCorruptDataException("No minor!")
             return XyoSingleTypeArrayByte(majorType, minorType, array.toTypedArray())
         }
     }
