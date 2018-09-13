@@ -10,8 +10,8 @@ class XyoRsaWithSha256SignatureTest : XyoTestBase() {
         val starting = XyoRsaWithSha256Signature(byteArrayOf(0x00, 0x01, 0x02))
         val startingPacked = starting.untyped
 
-        val endingUnpacked = XyoRsaWithSha256Signature.createFromPacked(startingPacked.value!!)
+        val endingUnpacked = XyoRsaWithSha256Signature.createFromPacked(startingPacked)
 
-        assertXyoObject(starting, endingUnpacked.value!!)
+        assertXyoObject(starting, endingUnpacked)
     }
 }

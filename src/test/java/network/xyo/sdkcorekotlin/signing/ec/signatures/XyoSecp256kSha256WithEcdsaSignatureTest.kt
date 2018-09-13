@@ -10,8 +10,8 @@ class XyoSecp256kSha256WithEcdsaSignatureTest : XyoTestBase() {
         XyoSecp256kSha256WithEcdsaSignature.enable()
         val starting = XyoSecp256kSha256WithEcdsaSignature(byteArrayOf(0x00, 0x01, 0x02))
         val startingPacked = starting.untyped
-        val endingUnpacked = XyoSecp256kSha256WithEcdsaSignature.createFromPacked(startingPacked.value!!)
+        val endingUnpacked = XyoSecp256kSha256WithEcdsaSignature.createFromPacked(startingPacked)
 
-        assertXyoObject(starting, endingUnpacked.value!!)
+        assertXyoObject(starting, endingUnpacked)
     }
 }

@@ -17,9 +17,9 @@ class XyoPayloadTest : XyoTestBase() {
         val elementsInSignedPayload = arrayListOf(XyoTestPlaceholder())
         val elementsInUnsignedPayload = arrayOf<XyoObject>(XyoTestPlaceholder())
         val payload = XyoPayload(XyoMultiTypeArrayInt(elementsInSignedPayload.toTypedArray()), XyoMultiTypeArrayInt(elementsInUnsignedPayload))
-        val packedPayload = payload.untyped.value!!
-        val recreated = XyoPayload.createFromPacked(packedPayload).value!!
-        println(bytesToString(recreated.untyped.value!!))
+        val packedPayload = payload.untyped
+        val recreated = XyoPayload.createFromPacked(packedPayload)
+        println(bytesToString(recreated.untyped))
         assertXyoObject(payload, recreated)
     }
 }

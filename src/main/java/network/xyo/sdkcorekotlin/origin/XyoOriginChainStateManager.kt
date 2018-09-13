@@ -72,11 +72,9 @@ class XyoOriginChainStateManager (private val indexOffset : Int) {
      * @param signer The signer to be added to the queue.
      */
     fun addSigner (signer : XyoSigner) {
-        val publicKeyValue = signer.publicKey.value ?: return
-        if (signer.publicKey.error != null) return
-        nextPublicKey = XyoNextPublicKey(publicKeyValue)
+        nextPublicKey = XyoNextPublicKey(signer.publicKey)
         waitingSigners.add(signer)
-        allPublicKeys.add(publicKeyValue)
+        allPublicKeys.add(signer.publicKey)
     }
 
     /**

@@ -47,7 +47,7 @@ class XyoOriginChainNavigatorTest : XyoTestBase() {
         XyoSha256.enable()
 
         XyoKeySet.enable()
-        val startingSigner = XyoSha256WithSecp256K.newInstance().value!!
+        val startingSigner = XyoSha256WithSecp256K.newInstance()
         runBlocking {
             originChainState.addSigner(startingSigner)
             for (i in 0..numberOfBlocks) {
@@ -71,19 +71,16 @@ class XyoOriginChainNavigatorTest : XyoTestBase() {
                 val alicePayload = XyoPayload(signedPayload, unsignedPayload)
                 val aliceBoundWitness = XyoZigZagBoundWitness(originChainState.getSigners(), alicePayload)
                 aliceBoundWitness.incomingData(null, true).await()
-                originChainState.newOriginBlock(aliceBoundWitness.getHash(hashCreator).await().value!!)
+                originChainState.newOriginBlock(aliceBoundWitness.getHash(hashCreator).await())
                 originNavigator.addBoundWitness(aliceBoundWitness).await()
 
-                originChainState.addSigner(XyoSha256WithSecp256K.newInstance().value!!)
-                lastHash = aliceBoundWitness.getHash(hashCreator).await().value!!
+                originChainState.addSigner(XyoSha256WithSecp256K.newInstance())
+                lastHash = aliceBoundWitness.getHash(hashCreator).await()
 
 
                 val packedBoundWitness = aliceBoundWitness.untyped
-                if (packedBoundWitness.error != null) throw Exception("packedBoundWitness Error!")
-                val packedBoundWitnessValue = packedBoundWitness.value ?: throw Exception("Value is null!")
-
-                val recreated = XyoBoundWitness.createFromPacked(packedBoundWitnessValue)
-                Assert.assertArrayEquals(recreated.value!!.untyped.value!!, packedBoundWitness.value!!)
+                val recreated = XyoBoundWitness.createFromPacked(packedBoundWitness)
+                Assert.assertArrayEquals(recreated.untyped, packedBoundWitness)
             }
         }
     }
@@ -93,24 +90,21 @@ class XyoOriginChainNavigatorTest : XyoTestBase() {
         runBlocking {
             createOriginChain()
 
-            val startingHash = originChainState.allHashes[5].typed.value!!
+            val startingHash = originChainState.allHashes[5].typed
             val originBlockStart = originNavigator.getOriginBlockByBlockHash(startingHash).await()
-            val originBlockValue = originBlockStart.value ?: throw Exception("Origin Block is null!")
+            val originBlockValue = originBlockStart ?: throw Exception("Origin Block is null!")
             val previousBlocks = originBlockValue.findPreviousBlocks().await()
-            val previousBlocksValue = previousBlocks.value ?: throw Exception("Previous Blocks is null!")
+            val firstPreviousHash = previousBlocks[0]
 
-            val firstPreviousHash = previousBlocksValue[0]!!
-
-            val previousBlock = originNavigator.getOriginBlockByBlockHash(firstPreviousHash).await()
-            val previousBlockValue = previousBlock.value ?: throw Exception("Previous Block is null!")
+            val previousBlock = originNavigator.getOriginBlockByBlockHash(firstPreviousHash!!).await()
+            val previousBlockValue = previousBlock ?: throw Exception("Previous Block is null!")
 
             val parentOfPreviousBlockHash = previousBlockValue.getHash().await()
-            val parentOfPreviousBlockHashValue = parentOfPreviousBlockHash.value ?: throw Exception("Previous Block Parent Hash is null!")
 
-            val originalBlock = originNavigator.getOriginBlockByPreviousHash(parentOfPreviousBlockHashValue.typed.value!!).await()
-            val originalBlockValue = originalBlock.value ?: throw Exception("Original Block is null!")
+            val originalBlock = originNavigator.getOriginBlockByPreviousHash(parentOfPreviousBlockHash.typed).await()
+            val originalBlockValue = originalBlock ?: throw Exception("Original Block is null!")
 
-            Assert.assertArrayEquals(originalBlockValue.boundWitness.untyped.value!!, originBlockValue.boundWitness.untyped.value!!)
+            Assert.assertArrayEquals(originalBlockValue.boundWitness.untyped, originBlockValue.boundWitness.untyped)
         }
     }
 }

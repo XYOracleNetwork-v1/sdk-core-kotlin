@@ -68,10 +68,10 @@ class XyoMultiTypeArrayTest : XyoTestBase() {
         XyoMd2.enable()
         XyoRssi.enable()
         val intArray = XyoMultiTypeArrayInt(elements)
-        Assert.assertArrayEquals(expectedIntSize, intArray.untyped.value!!)
+        Assert.assertArrayEquals(expectedIntSize, intArray.untyped)
 
-        val intArrayCreatedFromBytes = XyoMultiTypeArrayInt.createFromPacked(intArray.untyped.value!!)
-        Assert.assertArrayEquals(expectedIntSize, intArrayCreatedFromBytes.value!!.untyped.value)
+        val intArrayCreatedFromBytes = XyoMultiTypeArrayInt.createFromPacked(intArray.untyped)
+        Assert.assertArrayEquals(expectedIntSize, intArrayCreatedFromBytes.untyped)
     }
 
     @kotlin.test.Test
@@ -79,10 +79,10 @@ class XyoMultiTypeArrayTest : XyoTestBase() {
         XyoMd2.enable()
         XyoRssi.enable()
         val shortArray = XyoMultiTypeArrayShort(elements)
-        Assert.assertArrayEquals(expectedShortSize, shortArray.untyped.value!!)
+        Assert.assertArrayEquals(expectedShortSize, shortArray.untyped)
 
-        val intArrayCreatedFromBytes= XyoMultiTypeArrayShort.createFromPacked(shortArray.untyped.value!!)
-        Assert.assertArrayEquals(expectedShortSize, intArrayCreatedFromBytes.value!!.untyped.value)
+        val intArrayCreatedFromBytes= XyoMultiTypeArrayShort.createFromPacked(shortArray.untyped)
+        Assert.assertArrayEquals(expectedShortSize, intArrayCreatedFromBytes.untyped)
     }
 
     @kotlin.test.Test
@@ -90,13 +90,13 @@ class XyoMultiTypeArrayTest : XyoTestBase() {
         XyoMd2.enable()
         XyoRssi.enable()
         val byteArray = XyoMultiTypeArrayByte(elements)
-        Assert.assertArrayEquals(expectedByteSize, byteArray.untyped.value!!)
+        Assert.assertArrayEquals(expectedByteSize, byteArray.untyped)
 
-        val intArrayCreatedFromBytes = XyoMultiTypeArrayByte.createFromPacked(byteArray.untyped.value!!)
-        Assert.assertArrayEquals(expectedByteSize, intArrayCreatedFromBytes.value!!.untyped.value)
+        val intArrayCreatedFromBytes = XyoMultiTypeArrayByte.createFromPacked(byteArray.untyped)
+        Assert.assertArrayEquals(expectedByteSize, intArrayCreatedFromBytes.untyped)
     }
 
     private fun getTestHash() : XyoObject = runBlocking {
-        return@runBlocking XyoMd2.createHash(byteArrayOf(0x01, 0x02, 0x03)).await().value!!
+        return@runBlocking XyoMd2.createHash(byteArrayOf(0x01, 0x02, 0x03)).await()
     }
 }

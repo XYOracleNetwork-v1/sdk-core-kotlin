@@ -25,7 +25,7 @@ class XyoOriginChainStateTest : XyoTestBase() {
     @kotlin.test.Test
     fun testOriginChainTest () {
         XyoSha1WithSecp256K.enable()
-        val startingSigner = XyoSigner.getCreator(0x02)!!.newInstance().value!!
+        val startingSigner = XyoSigner.getCreator(0x02)!!.newInstance()
         runBlocking {
             val originBlocks = ArrayList<XyoBoundWitness>()
             originChainState.addSigner(startingSigner)
@@ -50,11 +50,11 @@ class XyoOriginChainStateTest : XyoTestBase() {
                 val aliceBoundWitness = XyoZigZagBoundWitness(originChainState.getSigners(), alicePayload)
 
                 aliceBoundWitness.incomingData(null, true).await()
-                originChainState.newOriginBlock(aliceBoundWitness.getHash(hashCreator).await().value!!)
+                originChainState.newOriginBlock(aliceBoundWitness.getHash(hashCreator).await())
                 originBlocks.add(aliceBoundWitness)
 
-                originChainState.addSigner(XyoSigner.getCreator(0x02)!!.newInstance().value!!)
-                lastHash = aliceBoundWitness.getHash(hashCreator).await().value!!
+                originChainState.addSigner(XyoSigner.getCreator(0x02)!!.newInstance())
+                lastHash = aliceBoundWitness.getHash(hashCreator).await()
 
                 if (i != 0) {
                     Assert.assertArrayEquals(lastHash!!.hash, originChainState.previousHash!!.hash.hash)

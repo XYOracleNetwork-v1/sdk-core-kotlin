@@ -24,7 +24,7 @@ class XyoBridgingOption (private val hashingProvider : XyoHash.XyoHashProvider):
 
     fun updateOriginChain(originBlocksToBridge : Array<XyoObject>) = async {
         originBlocksToSend = XyoBridgeBlockSet(originBlocksToBridge)
-        val encodedOriginBlocksToSend = originBlocksToSend?.untyped?.value
+        val encodedOriginBlocksToSend = originBlocksToSend?.untyped
 
         if (encodedOriginBlocksToSend != null) {
             val originBlocksToSendTyped = originBlocksToSend

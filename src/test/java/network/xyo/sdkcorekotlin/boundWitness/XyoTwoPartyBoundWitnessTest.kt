@@ -44,13 +44,13 @@ class XyoTwoPartyBoundWitnessTest : XyoTestBase() {
             val boundWitnessBob = XyoZigZagBoundWitness(signersBob, payloadBob)
 
             val aliceToBobOne = boundWitnessAlice.incomingData(null, false).await()
-            val bobToAliceOne = boundWitnessBob.incomingData(aliceToBobOne.value, true).await()
-            val aliceToBobTwo = boundWitnessAlice.incomingData(bobToAliceOne.value, false).await()
-            boundWitnessBob.incomingData(aliceToBobTwo.value, false).await()
+            val bobToAliceOne = boundWitnessBob.incomingData(aliceToBobOne, true).await()
+            val aliceToBobTwo = boundWitnessAlice.incomingData(bobToAliceOne, false).await()
+            boundWitnessBob.incomingData(aliceToBobTwo, false).await()
 
             assertBoundWitness(boundWitnessAlice, boundWitnessBob)
 
-            val packedBoundWitness = boundWitnessAlice.untyped.value!!
+            val packedBoundWitness = boundWitnessAlice.untyped
             println(bytesToString(packedBoundWitness))
             val recreated = XyoBoundWitness.createFromPacked(packedBoundWitness)
         }

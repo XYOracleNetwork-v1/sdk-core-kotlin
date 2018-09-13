@@ -43,29 +43,29 @@ class XyoSingleTypeArrayTest : XyoTestBase() {
     fun testIntSingleArray () {
         XyoRssi.enable()
         val intArray = XyoSingleTypeArrayInt(XyoRssi.major, XyoRssi.minor, elements)
-        Assert.assertArrayEquals(expectedIntSize, intArray.untyped.value!!)
+        Assert.assertArrayEquals(expectedIntSize, intArray.untyped)
 
-        val intArrayCreatedFromBytes = XyoSingleTypeArrayInt.createFromPacked(intArray.untyped.value!!)
-        Assert.assertArrayEquals(expectedIntSize, intArrayCreatedFromBytes.value!!.untyped.value)
+        val intArrayCreatedFromBytes = XyoSingleTypeArrayInt.createFromPacked(intArray.untyped)
+        Assert.assertArrayEquals(expectedIntSize, intArrayCreatedFromBytes.untyped)
     }
 
     @kotlin.test.Test
     fun testShortSingleArray () {
         XyoRssi.enable()
         val shortArray = XyoSingleTypeArrayShort(XyoRssi.major, XyoRssi.minor, elements)
-        Assert.assertArrayEquals(expectedShortSize, shortArray.untyped.value!!)
+        Assert.assertArrayEquals(expectedShortSize, shortArray.untyped)
 
-        val intArrayCreatedFromBytes= XyoSingleTypeArrayShort.createFromPacked(shortArray.untyped.value!!)
-        Assert.assertArrayEquals(expectedShortSize, intArrayCreatedFromBytes.value!!.untyped.value)
+        val intArrayCreatedFromBytes= XyoSingleTypeArrayShort.createFromPacked(shortArray.untyped)
+        Assert.assertArrayEquals(expectedShortSize, intArrayCreatedFromBytes.untyped)
     }
 
     @kotlin.test.Test
     fun testByteSingleArray () {
         XyoRssi.enable()
         val byteArray = XyoSingleTypeArrayByte(XyoRssi.major, XyoRssi.minor, elements)
-        Assert.assertArrayEquals(expectedByteSize, byteArray.untyped.value!!)
+        Assert.assertArrayEquals(expectedByteSize, byteArray.untyped)
 
-        val intArrayCreatedFromBytes = XyoSingleTypeArrayByte.createFromPacked(byteArray.untyped.value!!)
-        Assert.assertArrayEquals(expectedByteSize, intArrayCreatedFromBytes.value!!.untyped.value)
+        val intArrayCreatedFromBytes = XyoSingleTypeArrayByte.createFromPacked(byteArray.untyped)
+        Assert.assertArrayEquals(expectedByteSize, intArrayCreatedFromBytes.untyped)
     }
 }

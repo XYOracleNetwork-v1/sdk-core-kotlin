@@ -19,7 +19,7 @@ class XyoSignatureSetTest : XyoTestBase() {
                 )
         )
 
-        val unpacked = XyoSignatureSet.createFromPacked(expected.untyped.value!!)
-        assertXyoObject(expected, unpacked.value!!)
+        val unpacked = XyoSignatureSet.createFromPacked(expected.untyped)
+        assertXyoObject(expected, unpacked)
     }
 }

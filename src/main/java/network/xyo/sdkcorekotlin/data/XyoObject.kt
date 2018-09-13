@@ -1,63 +1,59 @@
 package network.xyo.sdkcorekotlin.data
 
-import network.xyo.sdkcorekotlin.XyoError
-import network.xyo.sdkcorekotlin.XyoResult
 import java.nio.ByteBuffer
 
 /**
  * The base class of all encodable objects in XYO Network
  */
 abstract class XyoObject {
-    private var dataCache : ByteArray? = null
+    private var dataCache = byteArrayOf()
     private var isChanged = true
-    private val bytes : XyoResult<ByteArray>
+    private val bytes : ByteArray
         get() {
-            if (isChanged || dataCache == null) {
-                dataCache = objectInBytes.value
+            if (isChanged) {
+                dataCache = objectInBytes
                 isChanged = false
-                return XyoResult(dataCache)
+                return dataCache
             }
-            return XyoResult(dataCache)
+            return dataCache
         }
 
     /**
-     * The object in byte format wrapped in a XyoResult.
+     * The object in byte format wrapped.
      */
-    abstract val objectInBytes : XyoResult<ByteArray>
+    abstract val objectInBytes : ByteArray
 
     /**
-     * The size of the size that should be created for the object wrapped in a XyoResult.
+     * The size of the size that should be created for the object.
      */
-    abstract val sizeIdentifierSize : XyoResult<Int?>
+    abstract val sizeIdentifierSize : Int?
 
     /**
-     * The id of the object (major and minor) wrapped in a XyoResult.
+     * The id of the object (major and minor).
      */
-    abstract val id : XyoResult<ByteArray>
+    abstract val id : ByteArray
 
     /**
-     * The object that has its type encoded wrapped in a XyoResult.
+     * The object that has its type encoded
      */
-    val typed : XyoResult<ByteArray>
+    val typed : ByteArray
         get() = makeTyped()
 
     /**
-     * The object that does not have its type encoded wrapped in a XyoResult.
+     * The object that does not have its type encoded.
      */
-    val untyped : XyoResult<ByteArray>
+    val untyped : ByteArray
         get() = makeUntyped()
 
     private val totalSize : Int
-        get() = bytes.value?.size ?: 0
+        get() = bytes.size
 
     private val encodedSize: ByteArray
         get() {
-            if (sizeIdentifierSize.error == null && sizeIdentifierSize.value != null) {
-                when (sizeIdentifierSize.value) {
-                    1 -> return ByteBuffer.allocate(1).put((totalSize + 1).toByte()).array()
-                    2 -> return ByteBuffer.allocate(2).putShort((totalSize + 2).toShort()).array()
-                    4 -> return ByteBuffer.allocate(4).putInt(totalSize + 4).array()
-                }
+            when (sizeIdentifierSize) {
+                1 -> return ByteBuffer.allocate(1).put((totalSize + 1).toByte()).array()
+                2 -> return ByteBuffer.allocate(2).putShort((totalSize + 2).toShort()).array()
+                4 -> return ByteBuffer.allocate(4).putInt(totalSize + 4).array()
             }
             return byteArrayOf()
         }
@@ -69,27 +65,18 @@ abstract class XyoObject {
         isChanged = true
     }
 
-    private fun makeTyped () : XyoResult<ByteArray> {
+    private fun makeTyped () : ByteArray {
         val buffer = ByteBuffer.allocate(totalSize + encodedSize.size + 2)
-        if (id.error != null)
-            return XyoResult(id.error ?: XyoError(this.toString(), "Unknown id error!"))
-        if (bytes.error != null)
-            return XyoResult(bytes.error ?: XyoError(this.toString(),"Unknown objectInBytes error!"))
-
-        buffer.put(id.value)
+        buffer.put(id)
         buffer.put(encodedSize)
-        buffer.put(bytes.value)
-        return XyoResult(buffer.array())
+        buffer.put(bytes)
+        return buffer.array()
     }
 
-    private fun makeUntyped () : XyoResult<ByteArray> {
+    private fun makeUntyped () : ByteArray {
         val buffer = ByteBuffer.allocate(totalSize + encodedSize.size)
-
-        if (bytes.error != null)
-            return XyoResult(bytes.error ?: XyoError(this.toString(), "Unknown objectInBytes error!"))
-
         buffer.put(encodedSize)
-        buffer.put(bytes.value)
-        return XyoResult(buffer.array())
+        buffer.put(bytes)
+        return buffer.array()
     }
 }

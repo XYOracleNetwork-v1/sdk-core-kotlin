@@ -26,7 +26,7 @@ class XyoPlaceholderBoundWitness : XyoTestBase() {
         runBlocking {
             boundWitness.incomingData(null, true).await()
             printBoundWitness(boundWitness)
-            println(bytesToString(boundWitness.typed.value!!))
+            println(bytesToString(boundWitness.typed))
         }
     }
 }

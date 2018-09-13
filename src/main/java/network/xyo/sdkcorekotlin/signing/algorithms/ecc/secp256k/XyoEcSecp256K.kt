@@ -1,7 +1,5 @@
 package network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k
 
-import network.xyo.sdkcorekotlin.XyoError
-import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.XyoGeneralEc
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.XyoEcPrivateKey
@@ -20,16 +18,13 @@ abstract class XyoEcSecp256K : XyoGeneralEc() {
      * The generated public key.
      */
     open val keyPair: KeyPair = generateKeyPair()
-    override val publicKey: XyoResult<XyoObject>
+    override val publicKey: XyoObject
         get() {
             val ecPublicKey = keyPair.public as? XyoSecp256K1UnCompressedPublicKey
             if (ecPublicKey != null) {
-                return XyoResult(ecPublicKey)
+                return ecPublicKey
             }
-            return XyoResult(XyoError(
-                    this.toString(),
-                    "Can not cast keypair to XyoSecp256K1UnCompressedPublicKey!"
-            ))
+            throw Exception("Can not cast public key!")
         }
 
     private fun generateKeyPair(): KeyPair {

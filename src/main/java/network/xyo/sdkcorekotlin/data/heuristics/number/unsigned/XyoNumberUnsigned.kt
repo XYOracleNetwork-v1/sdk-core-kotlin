@@ -1,11 +1,8 @@
 package network.xyo.sdkcorekotlin.data.heuristics.number.unsigned
 
-import network.xyo.sdkcorekotlin.XyoError
-import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.XyoUnsignedHelper
 import network.xyo.sdkcorekotlin.data.heuristics.number.XyoNumberTypes
-import java.nio.ByteBuffer
 
 /**
  * A base class for encoding unsigned numbers.
@@ -21,17 +18,17 @@ abstract class XyoNumberUnsigned : XyoObject() {
      */
     abstract val number : Int
 
-    override val objectInBytes: XyoResult<ByteArray>
+    override val objectInBytes: ByteArray
         get() {
             when (size) {
-                XyoNumberTypes.BYTE -> return XyoResult(XyoUnsignedHelper.createUnsignedByte(number))
+                XyoNumberTypes.BYTE -> return XyoUnsignedHelper.createUnsignedByte(number)
 
-                XyoNumberTypes.SHORT -> return XyoResult(XyoUnsignedHelper.createUnsignedShort(number))
+                XyoNumberTypes.SHORT -> return XyoUnsignedHelper.createUnsignedShort(number)
 
-                XyoNumberTypes.INT -> return XyoResult(XyoUnsignedHelper.createUnsignedInt(number))
+                XyoNumberTypes.INT -> return XyoUnsignedHelper.createUnsignedInt(number)
 
                 else -> {
-                    return XyoResult(XyoError(this.toString(), "Not a valid size!"))
+                    throw Exception("Not a valid size!")
                 }
             }
         }

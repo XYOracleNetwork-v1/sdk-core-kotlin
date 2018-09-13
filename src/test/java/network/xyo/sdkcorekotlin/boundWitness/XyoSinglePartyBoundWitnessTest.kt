@@ -10,7 +10,7 @@ import network.xyo.sdkcorekotlin.signing.algorithms.rsa.XyoRsaWithSha256
 import org.junit.Assert
 
 class XyoSinglePartyBoundWitnessTest : XyoTestBase() {
-    private val aliceSigners = arrayOf(XyoSha256WithSecp256K.newInstance().value!!, XyoRsaWithSha256.newInstance().value!!)
+    private val aliceSigners = arrayOf(XyoSha256WithSecp256K.newInstance(), XyoRsaWithSha256.newInstance())
     private val aliceSignedPayload = XyoMultiTypeArrayInt(arrayOf(XyoRssi(-32)))
     private val aliceUnsignedPayload = XyoMultiTypeArrayInt(arrayOf(XyoRssi(-52)))
 

@@ -1,12 +1,10 @@
 package network.xyo.sdkcorekotlin.signing.algorithms.rsa
 
-import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.data.XyoByteArrayReader
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.XyoObjectProvider
 import network.xyo.sdkcorekotlin.data.XyoUnsignedHelper
 import java.math.BigInteger
-import java.nio.ByteBuffer
 import java.security.interfaces.RSAPublicKey
 
 /**
@@ -23,10 +21,10 @@ class XyoRsaPublicKey(private val modulus : BigInteger) : RSAPublicKey, XyoObjec
      */
     private val publicExponent : BigInteger = BigInteger(byteArrayOf(0x01, 0x00, 0x01))
 
-    override val objectInBytes: XyoResult<ByteArray>
-        get() = XyoResult(encoded)
+    override val objectInBytes: ByteArray
+        get() = encoded
 
-    override val sizeIdentifierSize: XyoResult<Int?> = XyoResult<Int?>(2)
+    override val sizeIdentifierSize: Int? = 2
 
     override fun getAlgorithm(): String {
         return "RSA"
@@ -48,24 +46,24 @@ class XyoRsaPublicKey(private val modulus : BigInteger) : RSAPublicKey, XyoObjec
         return publicExponent
     }
 
-    override val id: XyoResult<ByteArray>
-        get() = XyoResult(byteArrayOf(major, minor))
+    override val id: ByteArray
+        get() = byteArrayOf(major, minor)
 
     companion object : XyoObjectProvider() {
         override val major: Byte = 0x04
         override val minor: Byte = 0x03
-        override val sizeOfBytesToGetSize: XyoResult<Int?> = XyoResult(2)
+        override val sizeOfBytesToGetSize: Int? = 2
 
-        override fun readSize(byteArray: ByteArray): XyoResult<Int> {
-            return XyoResult(XyoUnsignedHelper.readUnsignedShort(byteArray))
+        override fun readSize(byteArray: ByteArray): Int {
+            return XyoUnsignedHelper.readUnsignedShort(byteArray)
         }
 
-        override fun createFromPacked(byteArray: ByteArray): XyoResult<XyoObject> {
+        override fun createFromPacked(byteArray: ByteArray): XyoObject {
             val reader = XyoByteArrayReader(byteArray)
             val modulusSize = XyoUnsignedHelper.readUnsignedShort(reader.read(0, 2))
             val modulus = reader.read(2, modulusSize - 2)
 
-            return  XyoResult(XyoRsaPublicKey(BigInteger(modulus)))
+            return  XyoRsaPublicKey(BigInteger(modulus))
         }
     }
 }

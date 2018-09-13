@@ -21,20 +21,20 @@ class XyoBoundWitnessTransferTest : XyoTestBase() {
     )
 
     private val expectedKeys : Array<XyoObject>
-            get() {
-                XyoSha256WithSecp256K.enable()
-                XyoSha1WithSecp256K.enable()
-                return arrayOf(
-                XyoKeySet(arrayOf(
-                            XyoSigner.getCreator(0x02)!!.newInstance().value!!.publicKey.value!!,
-                            XyoSigner.getCreator(0x02)!!.newInstance().value!!.publicKey.value!!
+        get() {
+            XyoSha256WithSecp256K.enable()
+            XyoSha1WithSecp256K.enable()
+            return arrayOf(
+                    XyoKeySet(arrayOf(
+                            XyoSigner.getCreator(0x02)!!.newInstance().publicKey,
+                            XyoSigner.getCreator(0x02)!!.newInstance().publicKey
                     )),
-                            XyoKeySet(arrayOf(
-                            XyoSigner.getCreator(0x01)!!.newInstance().value!!.publicKey.value!!,
-                            XyoSigner.getCreator(0x02)!!.newInstance().value!!.publicKey.value!!
+                    XyoKeySet(arrayOf(
+                            XyoSigner.getCreator(0x01)!!.newInstance().publicKey,
+                            XyoSigner.getCreator(0x02)!!.newInstance().publicKey
                     ))
-                )
-            }
+            )
+        }
 
     private val expectedSignatures = arrayOf<XyoObject>(
             XyoSignatureSet(arrayOf(
@@ -61,8 +61,8 @@ class XyoBoundWitnessTransferTest : XyoTestBase() {
 
         val expectedTransfer = XyoBoundWitnessTransfer(expectedKeys, expectedPayloads, expectedSignatures)
         val expectedTransferPacked = expectedTransfer.untyped
-        val recreated = XyoBoundWitnessTransfer.createFromPacked(expectedTransferPacked.value!!)
+        val recreated = XyoBoundWitnessTransfer.createFromPacked(expectedTransferPacked)
 
-        assertXyoObject(expectedTransfer, recreated.value!!)
+        assertXyoObject(expectedTransfer, recreated)
     }
 }

@@ -1,6 +1,5 @@
 package network.xyo.sdkcorekotlin.signing.algorithms.rsa.signatures
 
-import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.signing.algorithms.rsa.XyoRsaSignature
 
 /**
@@ -10,7 +9,7 @@ import network.xyo.sdkcorekotlin.signing.algorithms.rsa.XyoRsaSignature
  * @minor 0x09
  */
 class XyoRsaWithSha256Signature(rawSignature: ByteArray) : XyoRsaSignature(rawSignature) {
-    override val id: XyoResult<ByteArray> = XyoResult(byteArrayOf(major, minor))
+    override val id: ByteArray = byteArrayOf(major, minor)
 
     companion object : XyoRsaSignatureProvider() {
         override val minor: Byte = 0x08

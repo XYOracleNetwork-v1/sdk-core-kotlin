@@ -1,6 +1,5 @@
 package network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.keys
 
-import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.XyoUncompressedEcPublicKey
 import java.security.AlgorithmParameters
 import java.security.spec.ECGenParameterSpec
@@ -14,7 +13,7 @@ import java.security.spec.ECParameterSpec
  */
 abstract class XyoSecp256K1UnCompressedPublicKey : XyoUncompressedEcPublicKey() {
     override val ecSpec: ECParameterSpec = ecPramSpec
-    override val id: XyoResult<ByteArray> = XyoResult(byteArrayOf(major, minor))
+    override val id: ByteArray = byteArrayOf(major, minor)
 
     companion object : XyoUncompressedEcPublicKeyProvider() {
         override val minor: Byte = 0x01

@@ -1,11 +1,8 @@
 package network.xyo.sdkcorekotlin.data.array.multi
 
-import network.xyo.sdkcorekotlin.XyoError
-import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.XyoUnsignedHelper
 import network.xyo.sdkcorekotlin.data.array.XyoArrayDecoder
-import java.nio.ByteBuffer
 
 /**
  * An single type array with a 2 byte size.
@@ -16,31 +13,21 @@ import java.nio.ByteBuffer
  * @param array The in-memory array to start off the Xyo array with.
  */
 open class XyoMultiTypeArrayShort(override var array: Array<XyoObject>) : XyoMultiTypeArrayBase() {
-    override val id: XyoResult<ByteArray> = XyoResult(byteArrayOf(major, minor))
-    override val sizeIdentifierSize: XyoResult<Int?> = sizeOfBytesToGetSize
+    override val id: ByteArray = byteArrayOf(major, minor)
+    override val sizeIdentifierSize: Int? = sizeOfBytesToGetSize
 
     companion object : XyoArrayProvider() {
         override val minor: Byte = 0x05
-        override val sizeOfBytesToGetSize: XyoResult<Int?> = XyoResult(2)
+        override val sizeOfBytesToGetSize: Int? = 2
 
-        override fun readSize(byteArray: ByteArray): XyoResult<Int> {
-            return XyoResult(XyoUnsignedHelper.readUnsignedShort(byteArray))
+        override fun readSize(byteArray: ByteArray): Int {
+            return XyoUnsignedHelper.readUnsignedShort(byteArray)
         }
 
-        override fun createFromPacked(byteArray: ByteArray): XyoResult<XyoObject> {
+        override fun createFromPacked(byteArray: ByteArray): XyoObject {
             val unpackedArray = XyoArrayDecoder(byteArray, false, 2)
-            if (unpackedArray.array.error != null) return XyoResult(
-                    unpackedArray.array.error ?: XyoError(
-                            this.toString(),
-                            "Unknown array unpacking error!"
-                    )
-            )
-            val unpackedArrayValue = unpackedArray.array.value ?: return XyoResult(XyoError(
-                    this.toString(),
-                    "Array value is null!"
-            ))
-            val unpackedArrayObject = XyoMultiTypeArrayShort(unpackedArrayValue.toTypedArray())
-            return XyoResult(unpackedArrayObject)
+            val array = unpackedArray.array
+            return XyoMultiTypeArrayShort(array.toTypedArray())
         }
     }
 }

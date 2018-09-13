@@ -1,11 +1,9 @@
 package network.xyo.sdkcorekotlin.data.heuristics.number.unsigned
 
-import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.XyoObjectProvider
 import network.xyo.sdkcorekotlin.data.XyoUnsignedHelper
 import network.xyo.sdkcorekotlin.data.heuristics.number.XyoNumberTypes
-import java.nio.ByteBuffer
 
 /**
  * The Xyo Index heuristic.
@@ -17,20 +15,20 @@ import java.nio.ByteBuffer
  */
 class XyoIndex(override val number: Int) : XyoNumberUnsigned() {
     override val size: XyoNumberTypes = XyoNumberTypes.INT
-    override val id: XyoResult<ByteArray> = XyoResult(byteArrayOf(major, minor))
-    override val sizeIdentifierSize: XyoResult<Int?> = XyoResult<Int?>(null)
+    override val id: ByteArray = byteArrayOf(major, minor)
+    override val sizeIdentifierSize: Int? = null
 
     companion object : XyoObjectProvider() {
         override val major: Byte = 0x02
         override val minor: Byte = 0x05
-        override val sizeOfBytesToGetSize: XyoResult<Int?> = XyoResult(0)
+        override val sizeOfBytesToGetSize: Int? = 0
 
-        override fun readSize(byteArray: ByteArray): XyoResult<Int> {
-            return XyoResult(4)
+        override fun readSize(byteArray: ByteArray): Int {
+            return 4
         }
 
-        override fun createFromPacked(byteArray: ByteArray): XyoResult<XyoObject> {
-            return XyoResult(XyoIndex(XyoUnsignedHelper.readUnsignedInt(byteArray)))
+        override fun createFromPacked(byteArray: ByteArray): XyoObject {
+            return XyoIndex(XyoUnsignedHelper.readUnsignedInt(byteArray))
         }
     }
 }

@@ -1,7 +1,6 @@
 package network.xyo.sdkcorekotlin.signing
 
 import kotlinx.coroutines.experimental.Deferred
-import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.data.XyoObject
 
 /**
@@ -14,7 +13,7 @@ abstract class XyoSigner {
     /**
      * The public key of the XyoSigner.
      */
-    abstract val publicKey : XyoResult<XyoObject>
+    abstract val publicKey : XyoObject
 
     /**
      * Cryptographically signs a given ByteArray so that it can verified with verify().
@@ -22,9 +21,9 @@ abstract class XyoSigner {
      * @param byteArray The data to cryptographically sign using the private key of the
      * XyoSigner.
      * @return A deferred cryptographic signature of the data field, that was
-     * created with the private key, in form of a XyoResult<XyoObject>
+     * created with the private key, in form of a XyoObject
      */
-    abstract fun signData (byteArray: ByteArray) : Deferred<XyoResult<XyoObject>>
+    abstract fun signData (byteArray: ByteArray) : Deferred<XyoObject>
 
     /**
      * Gives access to a XyoSigner that can preform public key cryptographic functions.
@@ -33,7 +32,7 @@ abstract class XyoSigner {
         /**
          * Provides a new instance of a XyoSigner for the given algorithm.
          */
-        abstract fun newInstance () : XyoResult<XyoSigner>
+        abstract fun newInstance () : XyoSigner
 
         /**
          * Cryptographically verify a signature given data, a signature, and a public
@@ -45,12 +44,12 @@ abstract class XyoSigner {
          * XyoSigner supports.
          * @param publicKey The public key of the party that signed the data with the the
          * cryptographic function that the XyoSigner supports.
-         * @return If the signature is valid, the deferred XyoResult<Boolean> will be true, if it
-         * is invalid the deferred XyoResult<Boolean> will be false.
+         * @return If the signature is valid, the deferred Boolean will be true, if it
+         * is invalid the deferred <Boolean will be false.
          */
         abstract fun verifySign (signature: XyoObject,
                                  byteArray: ByteArray,
-                                 publicKey : XyoObject) : Deferred<XyoResult<Boolean>>
+                                 publicKey : XyoObject) : Deferred<Boolean>
 
         /**
          * The key to identify the signer provider by so it can be added to a mapping.

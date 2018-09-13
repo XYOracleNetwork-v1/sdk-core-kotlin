@@ -1,8 +1,6 @@
 package network.xyo.sdkcorekotlin.node
 
 import kotlinx.coroutines.experimental.async
-import network.xyo.sdkcorekotlin.XyoError
-import network.xyo.sdkcorekotlin.XyoErrors
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
 import network.xyo.sdkcorekotlin.boundWitness.XyoZigZagBoundWitness
 import network.xyo.sdkcorekotlin.boundWitness.XyoZigZagBoundWitnessSession
@@ -162,10 +160,8 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
     private fun onBoundWitnessEndSuccess (boundWitness: XyoBoundWitness?) = async {
         if (boundWitness != null) {
             val hash = boundWitness.getHash(hashingProvider).await()
-            val hashValue = hash.value ?: return@async
-            val encodedHash = hashValue.typed.value ?: return@async
 
-            if (originBlocks.containsOriginBlock(encodedHash).await().value == false) {
+            if (!originBlocks.containsOriginBlock(hash.typed).await()) {
                 originBlocks.addBoundWitness(boundWitness).await()
                 val subBlocks = getBridgedBlocks(boundWitness)
                 boundWitness.removeAllUnsigned()
@@ -186,13 +182,10 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
 
     private fun getBridgedBlocks (boundWitness: XyoBoundWitness) : Array<XyoObject> {
         for (payload in boundWitness.payloads) {
-            val mappingValue = payload.unsignedPayloadMapping.value
-            if (mappingValue != null) {
-                val bridgeSet = mappingValue[XyoBridgeBlockSet.id.contentHashCode()]
-                val bridgeSetCasted = bridgeSet as? XyoBridgeBlockSet
-                if (bridgeSetCasted != null) {
-                    return bridgeSetCasted.array
-                }
+            val bridgeSet = payload.unsignedPayloadMapping[XyoBridgeBlockSet.id.contentHashCode()]
+            val bridgeSetCasted = bridgeSet as? XyoBridgeBlockSet
+            if (bridgeSetCasted != null) {
+                return bridgeSetCasted.array
             }
         }
         return arrayOf()
@@ -205,21 +198,11 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
         }
     }
 
-    private fun onError (error: XyoError?) {
-        for ((_, listener) in listeners) {
-            listener.onError(error)
-        }
-    }
-
     protected suspend fun doBoundWitness (startingData : ByteArray?, pipe: XyoNetworkPipe) {
         if (currentBoundWitnessSession != null) return
         onBoundWitnessStart()
-        var choice = 0
+        val choice = getChoice(XyoUnsignedHelper.readUnsignedInt(pipe.peer.getRole()))
 
-        val otherPartyChoice = pipe.peer.getRole().value
-        if (otherPartyChoice != null) {
-            choice = getChoice(XyoUnsignedHelper.readUnsignedInt(otherPartyChoice))
-        }
 
         currentBoundWitnessSession = XyoZigZagBoundWitnessSession(
                 pipe,
@@ -228,22 +211,15 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
                 XyoUnsignedHelper.createUnsignedInt(choice)
         )
 
-        if (currentBoundWitnessSession == null) {
-            onBoundWitnessEndFailure()
-            onError(XyoError(this.toString(), "currentBoundWitnessSession is null!"))
-        }
 
-        val error = currentBoundWitnessSession!!.doBoundWitness(startingData).await()
+        val error = currentBoundWitnessSession!!.doBoundWitness(startingData)
         pipe.close().await()
 
-        if ((error == null || error.errorCode == XyoErrors.ERR_DISCONNECT)
-                && currentBoundWitnessSession?.completed == true) {
-
+        if (currentBoundWitnessSession?.completed == true) {
             updateOriginState(currentBoundWitnessSession!!)
             onBoundWitnessEndSuccess(currentBoundWitnessSession).await()
             currentBoundWitnessSession = null
         } else {
-            onError(error)
             onBoundWitnessEndFailure()
             currentBoundWitnessSession = null
         }
@@ -251,8 +227,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
 
     private fun updateOriginState (boundWitness: XyoBoundWitness) = async {
         val hash = boundWitness.getHash(hashingProvider).await()
-        val hashValue = hash.value ?: return@async
-        originState.newOriginBlock(hashValue)
+        originState.newOriginBlock(hash)
     }
 
     private fun makePayload (bitFlag : Int) = async {

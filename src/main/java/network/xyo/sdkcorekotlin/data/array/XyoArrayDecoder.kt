@@ -1,7 +1,5 @@
 package network.xyo.sdkcorekotlin.data.array
 
-import network.xyo.sdkcorekotlin.XyoError
-import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.XyoObjectProvider
 import network.xyo.sdkcorekotlin.data.XyoByteArraySetter
@@ -32,9 +30,9 @@ class XyoArrayDecoder (private val data : ByteArray,
     var minorType: Byte? = null
 
     /**
-     * The unpacked array wrapped in a XyoResult.
+     * The unpacked array.
      */
-    val array : XyoResult<ArrayList<XyoObject>> = unpack()
+    val array : ArrayList<XyoObject> = unpack()
 
     private fun getMajorMinor () : ByteArray {
         val major = data[globalCurrentPosition]
@@ -44,17 +42,16 @@ class XyoArrayDecoder (private val data : ByteArray,
     }
 
     private fun readCurrentSizeFromType (major: Byte, minor: Byte) : Int? {
-        val typeObject = XyoObjectProvider.getCreator(major, minor).value
+        val typeObject = XyoObjectProvider.getCreator(major, minor)
         if (typeObject != null) {
-            val sizeOfBytesToRead = typeObject.sizeOfBytesToGetSize
-            val sizeOfBytesToReadValue = sizeOfBytesToRead.value ?: return null
-            if (sizeOfBytesToReadValue + globalCurrentPosition > data.size) return null
-            return typeObject.readSize(readBytes(sizeOfBytesToReadValue)).value
+            val sizeOfBytesToRead = typeObject.sizeOfBytesToGetSize ?: 0
+            if (sizeOfBytesToRead + globalCurrentPosition > data.size) return null
+            return typeObject.readSize(readBytes(sizeOfBytesToRead))
         }
         return null
     }
 
-    private fun unpack () : XyoResult<ArrayList<XyoObject>> {
+    private fun unpack () : ArrayList<XyoObject> {
         val expectedSize = getSize(sizeOfSize)
         val items = ArrayList<XyoObject>()
         var arrayType : ByteArray = byteArrayOf()
@@ -70,7 +67,7 @@ class XyoArrayDecoder (private val data : ByteArray,
                 if (globalCurrentPosition + 2 < data.size) {
                     arrayType = getMajorMinor()
                 } else {
-                    return XyoResult(XyoError(this.toString(), "Cant unpack array! Not enough objectInBytes!"))
+                   throw Exception("Array out of size!")
                 }
             }
 
@@ -86,7 +83,7 @@ class XyoArrayDecoder (private val data : ByteArray,
                         position++
                     }
                 } else {
-                    return XyoResult(XyoError(this.toString(), "Cant unpack array! Not enough objectInBytes!"))
+                   throw Exception("Array out of size!")
                 }
 
                 globalCurrentPosition += sizeOfElement
@@ -97,17 +94,15 @@ class XyoArrayDecoder (private val data : ByteArray,
                 merger.add(field, 2)
 
                 val createdObject = XyoObjectProvider.create(merger.merge())
-                val createdObjectValue = createdObject.value
-                if (createdObjectValue != null) {
-                    items.add(createdObjectValue)
+                if (createdObject != null) {
+                    items.add(createdObject)
                 }
             } else {
-                println("Cant find size of element!, ${arrayType[0]}, ${arrayType[1]}")
-                return XyoResult(XyoError(this.toString(), "Cant find size of element!, ${arrayType[0]}, ${arrayType[1]}"))
+                throw Exception("Cant find size of element!, ${arrayType[0]}, ${arrayType[1]}")
             }
         }
 
-        return XyoResult(items)
+        return items
     }
 
     private fun getSize (sizeSize : Int) : Int? {

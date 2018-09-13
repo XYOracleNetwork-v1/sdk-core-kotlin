@@ -1,8 +1,5 @@
 package network.xyo.sdkcorekotlin.data
 
-import network.xyo.sdkcorekotlin.XyoError
-import network.xyo.sdkcorekotlin.XyoResult
-
 /**
  * Can create a XYO Object from a ByteArray and stores information about that object.
  */
@@ -10,7 +7,7 @@ abstract class XyoObjectProvider : XyoType() {
     /**
      * The number of bytes to read to get the size.
      */
-    abstract val sizeOfBytesToGetSize : XyoResult<Int?>
+    abstract val sizeOfBytesToGetSize : Int?
 
     /**
      * Gets the size of the payload given a number (from sizeOfBytesToGetSize) of bytes
@@ -20,18 +17,18 @@ abstract class XyoObjectProvider : XyoType() {
      *
      * @param byteArray A group of bytes starting from the beginning of the entire object. The
      * size of this field is obtained from sizeOfBytesToGetSize
-     * @return The size of the entire encoded payload wrapped in a XyoResult.
+     * @return The size of the entire encoded payload.
      */
-    abstract fun readSize (byteArray: ByteArray) : XyoResult<Int>
+    abstract fun readSize (byteArray: ByteArray) : Int
 
     /**
      * Given the encoded object (obtained from getUntyped() from XyoObject) will return a XyoObject
      * of that type.
      *
      * @param byteArray A encoded object obtained from getUntyped() from a XyoObject.
-     * @return The XyoObject that the provider is providing wrapped in a XyoResult.
+     * @return The XyoObject that the provider is providing.
      */
-    abstract fun createFromPacked (byteArray: ByteArray) : XyoResult<XyoObject>
+    abstract fun createFromPacked (byteArray: ByteArray) : XyoObject
 
     /**
      * Adds the current object to a mapping from major and minor to the creator.
@@ -66,7 +63,7 @@ abstract class XyoObjectProvider : XyoType() {
          * @param data The encoded typed form of the object.
          * @return The created object wrapped in a XyoObject.
          */
-        fun create(data : ByteArray) : XyoResult<XyoObject> {
+        fun create(data : ByteArray) : XyoObject? {
             val majorMap = creators[data[0]]
             if (majorMap != null) {
                 val creator = majorMap[data[1]]?.createFromPacked(XyoByteArrayReader(data).read(2, data.size - 2))
@@ -74,7 +71,7 @@ abstract class XyoObjectProvider : XyoType() {
                     return creator
                 }
             }
-            return XyoResult(XyoError(this.toString(), "Cant find element!"))
+            return null
         }
 
         /**
@@ -82,14 +79,14 @@ abstract class XyoObjectProvider : XyoType() {
          *
          * @param major The object creator major.
          * @param minor The object creator minor.
-         * @return the object creator wrapped in a XyoResult.
+         * @return the object creator.
          */
-        fun getCreator (major: Byte, minor: Byte) : XyoResult<XyoObjectProvider?> {
+        fun getCreator (major: Byte, minor: Byte) : XyoObjectProvider? {
             val majorMap = creators[major]
             if (majorMap != null) {
-                return XyoResult(majorMap[minor])
+                return majorMap[minor]
             }
-            return XyoResult(XyoError(this.toString(), "Cant find creator!"))
+            return null
         }
     }
 }

@@ -1,8 +1,6 @@
 package network.xyo.sdkcorekotlin.network
 
 import kotlinx.coroutines.experimental.Deferred
-import network.xyo.sdkcorekotlin.XyoError
-import network.xyo.sdkcorekotlin.XyoResult
 
 /**
  * A network abstraction to communicate with another peer.
@@ -22,14 +20,12 @@ abstract class XyoNetworkPipe {
      * Send data to the other end of the peer.
      *
      * @param data The data to send to the other peer.
-     * @return A deferred response from the other peer, in a XyoResult.
+     * @return A deferred response from the other peer.
      */
-    abstract fun send (data : ByteArray) : Deferred<XyoResult<ByteArray>>
+    abstract fun send (data : ByteArray) : Deferred<ByteArray?>
 
     /**
      * Closes the pipe.
-     *
-     * @return XyoError is the operation failed, if not, null.
      */
-    abstract fun close() : Deferred<XyoError?>
+    abstract fun close() : Deferred<Any?>
 }

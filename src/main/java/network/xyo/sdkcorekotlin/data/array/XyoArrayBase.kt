@@ -1,7 +1,5 @@
 package network.xyo.sdkcorekotlin.data.array
 
-import network.xyo.sdkcorekotlin.XyoError
-import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.XyoByteArraySetter
 import network.xyo.sdkcorekotlin.data.XyoObjectProvider
@@ -47,47 +45,24 @@ abstract class XyoArrayBase : XyoObject() {
         array[index] = element
     }
 
-    override val objectInBytes: XyoResult<ByteArray>
+    override val objectInBytes: ByteArray
         get() = makeArray()
 
-    private fun makeArray () : XyoResult<ByteArray> {
+    private fun makeArray () : ByteArray {
         if (typedId == null) {
             val merger = XyoByteArraySetter(array.size)
             for (i in 0..array.size - 1) {
-                val element = array[i].typed
-                if (element.error != null) return XyoResult(
-                        element.error ?: XyoError(
-                                this.toString(),
-                                "Unknown element packing error!"
-                        )
-                )
-                val elementValue = element.value ?: return XyoResult(
-                        XyoError(this.toString(), "Element payload is null!")
-                )
-                merger.add(elementValue, i)
+                merger.add(array[i].typed, i)
             }
-            return XyoResult(merger.merge())
+            return merger.merge()
         } else {
             val merger = XyoByteArraySetter(array.size + 1)
-            val typedIdValue = typedId ?: return XyoResult(XyoError(
-                    this.toString(),
-                    "Type not found!")
-            )
-            merger.add(typedIdValue, 0)
+            val typeIdValue = typedId ?: throw Exception("Type is null!")
+            merger.add(typeIdValue, 0)
             for (i in 0..array.size - 1) {
-                val element = array[i].untyped
-                if (element.error != null) return XyoResult(
-                        element.error ?: XyoError(
-                                this.toString(),
-                                "Unknown element packing error!"
-                        )
-                )
-                val elementValue = element.value ?: return XyoResult(
-                        XyoError(this.toString(), "Element payload is null!")
-                )
-                merger.add(elementValue, i + 1)
+                merger.add(array[i].untyped, i + 1)
             }
-            return XyoResult(merger.merge())
+            return merger.merge()
         }
     }
 

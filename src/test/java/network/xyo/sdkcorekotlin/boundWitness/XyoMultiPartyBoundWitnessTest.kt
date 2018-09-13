@@ -14,19 +14,19 @@ class XyoMultiPartyBoundWitnessTest : XyoTestBase() {
     fun testMultiPartyBoundWitness () {
         runBlocking {
             var currentCacheData : XyoBoundWitnessTransfer? = null
-            val boundWitnesses = Array(numberOfSigners, {i -> XyoZigZagBoundWitness(arrayOf(XyoRsaWithSha256.newInstance().value!!), payload) })
+            val boundWitnesses = Array(numberOfSigners, {i -> XyoZigZagBoundWitness(arrayOf(XyoRsaWithSha256.newInstance()), payload) })
 
             for (i in 0..numberOfSigners - 2) {
-                currentCacheData = boundWitnesses[i].incomingData(currentCacheData, false).await().value
+                currentCacheData = boundWitnesses[i].incomingData(currentCacheData, false).await()
             }
 
-            currentCacheData = boundWitnesses[numberOfSigners - 1].incomingData(currentCacheData, true).await().value
+            currentCacheData = boundWitnesses[numberOfSigners - 1].incomingData(currentCacheData, true).await()
 
             for (i in 0..numberOfSigners - 2) {
-                currentCacheData = boundWitnesses[i].incomingData(currentCacheData, false).await().value
+                currentCacheData = boundWitnesses[i].incomingData(currentCacheData, false).await()
             }
 
-            boundWitnesses[numberOfSigners - 1].incomingData(currentCacheData, false).await().value
+            boundWitnesses[numberOfSigners - 1].incomingData(currentCacheData, false).await()
 
             for (i in 0..numberOfSigners - 1) {
                 printBoundWitness(boundWitnesses[i])

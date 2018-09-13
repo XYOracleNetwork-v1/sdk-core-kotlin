@@ -1,7 +1,6 @@
 package network.xyo.sdkcorekotlin.hashing
 
 import kotlinx.coroutines.experimental.Deferred
-import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.XyoObjectProvider
 
@@ -14,8 +13,8 @@ abstract class XyoHash : XyoObject() {
      */
     abstract val hash : ByteArray
 
-    override val objectInBytes: XyoResult<ByteArray>
-        get() = XyoResult(hash)
+    override val objectInBytes: ByteArray
+        get() = hash
 
     /**
      * A base class for creating hashes.
@@ -27,8 +26,8 @@ abstract class XyoHash : XyoObject() {
          * Creates a hash given a ByteArray.
          *
          * @param data The data to hash.
-         * @return A deferred XyoResult wrapping a XyoHash.
+         * @return A deferred XyoHash.
          */
-        abstract fun createHash (data: ByteArray) : Deferred<XyoResult<XyoHash>>
+        abstract fun createHash (data: ByteArray) : Deferred<XyoHash>
     }
 }

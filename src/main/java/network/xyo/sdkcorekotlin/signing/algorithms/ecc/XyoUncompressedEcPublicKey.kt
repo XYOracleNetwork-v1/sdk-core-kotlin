@@ -1,6 +1,5 @@
 package network.xyo.sdkcorekotlin.signing.algorithms.ecc
 
-import network.xyo.sdkcorekotlin.XyoResult
 import network.xyo.sdkcorekotlin.data.XyoByteArrayReader
 import network.xyo.sdkcorekotlin.data.XyoByteArraySetter
 import network.xyo.sdkcorekotlin.data.XyoObject
@@ -52,11 +51,11 @@ abstract class XyoUncompressedEcPublicKey : ECPublicKey, XyoObject() {
         return ECPoint(x, y)
     }
 
-    override val objectInBytes: XyoResult<ByteArray>
-        get() = XyoResult(encoded)
+    override val objectInBytes: ByteArray
+        get() = encoded
 
-    override val sizeIdentifierSize: XyoResult<Int?>
-        get() = XyoResult<Int?>(null)
+    override val sizeIdentifierSize: Int?
+        get() = null
 
     private fun get32ByteEcPoint(point : BigInteger) : ByteArray {
         val encodedPoint = point.toByteArray()
@@ -75,23 +74,23 @@ abstract class XyoUncompressedEcPublicKey : ECPublicKey, XyoObject() {
          */
         abstract val ecPramSpec : ECParameterSpec
         override val major: Byte = 0x04
-        override val sizeOfBytesToGetSize: XyoResult<Int?> = XyoResult(0)
+        override val sizeOfBytesToGetSize: Int? = 0
 
-        override fun readSize(byteArray: ByteArray): XyoResult<Int> {
-            return XyoResult(64)
+        override fun readSize(byteArray: ByteArray): Int {
+            return 64
         }
 
-        override fun createFromPacked(byteArray: ByteArray): XyoResult<XyoObject> {
+        override fun createFromPacked(byteArray: ByteArray): XyoObject {
             val reader = XyoByteArrayReader(byteArray)
             val xPoint = BigInteger(reader.read(0, 32))
             val yPoint = BigInteger(reader.read(32, 32))
 
-            return XyoResult(object : XyoUncompressedEcPublicKey() {
+            return object : XyoUncompressedEcPublicKey() {
                 override val ecSpec: ECParameterSpec = ecPramSpec
                 override val x: BigInteger = xPoint
                 override val y: BigInteger = yPoint
-                override val id: XyoResult<ByteArray> = XyoResult(byteArrayOf(major, minor))
-            })
+                override val id: ByteArray = byteArrayOf(major, minor)
+            }
         }
     }
 }
