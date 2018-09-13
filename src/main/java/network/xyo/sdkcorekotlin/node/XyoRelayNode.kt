@@ -1,6 +1,5 @@
 package network.xyo.sdkcorekotlin.node
 
-import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
@@ -8,10 +7,8 @@ import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.network.XyoNetworkPipe
 import network.xyo.sdkcorekotlin.network.XyoNetworkProcedureCatalogueInterface
-import network.xyo.sdkcorekotlin.network.XyoNetworkProviderInterface
 import network.xyo.sdkcorekotlin.network.XyoProcedureCatalogue
 import network.xyo.sdkcorekotlin.storage.XyoStorageProviderInterface
-import kotlin.coroutines.experimental.suspendCoroutine
 
 /**
  * A base class for nodes creating data, then relaying it (e.g.) sentinels and bridges.
@@ -22,7 +19,7 @@ import kotlin.coroutines.experimental.suspendCoroutine
 abstract class XyoRelayNode (storageProvider : XyoStorageProviderInterface,
                              hashingProvider : XyoHash.XyoHashProvider) : XyoNodeBase(storageProvider, hashingProvider) {
 
-    private val bridgeToArchivistOption = XyoBridgingOption(hashingProvider)
+    private val selfToOtherQueue = XyoBridgingOption(hashingProvider)
     private val originBlocksToBridge = XyoBridgeQueue()
     private var running = false
 
@@ -32,9 +29,8 @@ abstract class XyoRelayNode (storageProvider : XyoStorageProviderInterface,
 
         override fun onBoundWitnessDiscovered(boundWitness: XyoBoundWitness) {
             originBlocksToBridge.addBlock(boundWitness)
-            bridgeToArchivistOption.updateOriginChain(getOriginBlocksToBridge())
+            selfToOtherQueue.updateOriginChain(getOriginBlocksToBridge())
         }
-
     }
 
     private val bridgeQueueListener = object : XyoBridgeQueue.Companion.XyoBridgeQueueListener {
@@ -77,6 +73,14 @@ abstract class XyoRelayNode (storageProvider : XyoStorageProviderInterface,
         }
     }
 
+    /**
+     * Calls purgeQueue on the current bridging queue. This is useful to call in low
+     * memory situations.
+     */
+    fun purgeQueue (mask : Int) {
+        originBlocksToBridge.purgeQueue(mask)
+    }
+
     private fun getOriginBlocksToBridge() : Array<XyoObject> {
         return originBlocksToBridge.getBlocksToBridge()
     }
@@ -117,7 +121,7 @@ abstract class XyoRelayNode (storageProvider : XyoStorageProviderInterface,
 
     init {
         addListener(this.toString(), mainBoundWitnessListener)
-        addBoundWitnessOption(bridgeToArchivistOption)
+        addBoundWitnessOption(selfToOtherQueue)
         originBlocksToBridge.addListener(this.toString(), bridgeQueueListener)
     }
 }

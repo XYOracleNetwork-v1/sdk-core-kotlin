@@ -52,6 +52,26 @@ open class XyoBridgeQueue {
     }
 
     /**
+     * Will filter to queue for a given weight/mask. For example purgeQueue(1) will remove all
+     * blocks with a weight of 1 or higher.
+     *
+     * @param mask The weight to remove.
+     */
+    fun purgeQueue (mask : Int) {
+        val toRemove = ArrayList<XyoBridgeQueueItem>()
+
+        for (block in blocksToBridge) {
+            if (block.weight >= mask) {
+                toRemove.add(block)
+            }
+        }
+
+        for (block in toRemove) {
+            removeBlock(block)
+        }
+    }
+
+    /**
      * Gets the current list of origin blocks to send.
      *
      * @return An array of blocks to send to the bridge.
