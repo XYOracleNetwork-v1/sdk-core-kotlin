@@ -96,10 +96,6 @@ class XyoOriginChainNavigatorTest : XyoTestBase() {
 
             val allBlocks = originNavigator.getAllOriginBlockHashes().await()
 
-            for (block in allBlocks) {
-                println(bytesToString(block))
-            }
-
             val previousBlocks = originBlockValue.findPreviousBlocks().await()
             val firstPreviousHash = previousBlocks[0]
 
