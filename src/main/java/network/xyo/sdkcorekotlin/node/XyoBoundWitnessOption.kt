@@ -17,12 +17,12 @@ abstract class XyoBoundWitnessOption {
      *
      * @return The optional signed data.
      */
-    abstract fun getSignedPayload() : XyoObject?
+    abstract suspend fun getSignedPayload() : XyoObject?
 
     /**
      * Gets the unsigned payload to include in the bound witness.
      *
      * @return The option unsigned data.
      */
-    abstract fun getUnsignedPayload() : XyoObject?
+    abstract suspend fun getUnsignedPayload() : XyoObject?
 }

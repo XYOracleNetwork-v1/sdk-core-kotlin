@@ -2,6 +2,7 @@ package network.xyo.sdkcorekotlin.boundWitness
 
 import network.xyo.sdkcorekotlin.data.XyoByteArraySetter
 import network.xyo.sdkcorekotlin.data.XyoPayload
+import network.xyo.sdkcorekotlin.data.XyoUnsignedHelper
 import network.xyo.sdkcorekotlin.exceptions.XyoCorruptDataException
 import network.xyo.sdkcorekotlin.exceptions.XyoNoObjectException
 import network.xyo.sdkcorekotlin.network.XyoNetworkPipe
@@ -28,9 +29,10 @@ class XyoZigZagBoundWitnessSession(private val pipe : XyoNetworkPipe,
                 val response : ByteArray
 
                 if (cycles == 0 && data == null) {
-                    val merger = XyoByteArraySetter(2)
-                    merger.add(choice, 0)
-                    merger.add(returnDataEncoded, 1)
+                    val merger = XyoByteArraySetter(3)
+                    merger.add(XyoUnsignedHelper.createUnsignedByte(choice.size), 0)
+                    merger.add(choice, 1)
+                    merger.add(returnDataEncoded, 2)
                     response = pipe.send(merger.merge()).await() ?: return null
                 } else {
                     response = pipe.send(returnDataEncoded).await() ?: return null
