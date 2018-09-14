@@ -4,7 +4,7 @@ This includes creating an origin chain, maintaining an origin chain, negotiation
 The library has heavily abstracted modules so that all operations will work with any crypto, storage, networking, ect.
 
 ## Installing
-You can add sdk-core-kotlin to your existing app by cloning the project and manually adding it to your build.gradle:
+You can add sdk-core-kotlin to your existing app by cloning the project and manually adding it to your build.gradle or by using JitPack:
 
 ```
 git clone git@github.com:XYOracleNetwork/sdk-core-kotlin.git
