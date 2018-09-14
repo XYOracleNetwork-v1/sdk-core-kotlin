@@ -40,12 +40,7 @@ class XyoBoundWitnessPacking : XyoTestBase() {
 
             val packedBoundWitness = aliceBoundWitness.untyped
 
-
-
             val recreated = XyoBoundWitness.createFromPacked(packedBoundWitness)
-
-            println(bytesToString(packedBoundWitness))
-            println(bytesToString(recreated.untyped))
 
             Assert.assertArrayEquals(recreated.untyped, packedBoundWitness)
         }

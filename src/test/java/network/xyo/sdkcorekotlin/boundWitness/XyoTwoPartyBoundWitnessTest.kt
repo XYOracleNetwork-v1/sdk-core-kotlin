@@ -51,7 +51,6 @@ class XyoTwoPartyBoundWitnessTest : XyoTestBase() {
             assertBoundWitness(boundWitnessAlice, boundWitnessBob)
 
             val packedBoundWitness = boundWitnessAlice.untyped
-            println(bytesToString(packedBoundWitness))
             val recreated = XyoBoundWitness.createFromPacked(packedBoundWitness)
         }
     }

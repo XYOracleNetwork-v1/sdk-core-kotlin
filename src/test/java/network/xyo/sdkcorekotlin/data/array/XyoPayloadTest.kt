@@ -11,7 +11,6 @@ class XyoPayloadTest : XyoTestBase() {
 
     @kotlin.test.Test
     fun packAndUnpackPayload() {
-        println("here")
         XyoRssi.enable()
         XyoTestPlaceholder.enable()
         val elementsInSignedPayload = arrayListOf(XyoTestPlaceholder())
@@ -19,7 +18,6 @@ class XyoPayloadTest : XyoTestBase() {
         val payload = XyoPayload(XyoMultiTypeArrayInt(elementsInSignedPayload.toTypedArray()), XyoMultiTypeArrayInt(elementsInUnsignedPayload))
         val packedPayload = payload.untyped
         val recreated = XyoPayload.createFromPacked(packedPayload)
-        println(bytesToString(recreated.untyped))
         assertXyoObject(payload, recreated)
     }
 }
