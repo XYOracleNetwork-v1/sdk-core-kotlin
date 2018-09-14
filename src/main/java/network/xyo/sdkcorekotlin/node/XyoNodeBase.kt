@@ -162,9 +162,9 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
             val hash = boundWitness.getHash(hashingProvider).await()
 
             if (!originBlocks.containsOriginBlock(hash.typed).await()) {
-                originBlocks.addBoundWitness(boundWitness).await()
                 val subBlocks = getBridgedBlocks(boundWitness)
                 boundWitness.removeAllUnsigned()
+                originBlocks.addBoundWitness(boundWitness).await()
 
                 for ((_, listener) in listeners) {
                     listener.onBoundWitnessDiscovered(boundWitness)

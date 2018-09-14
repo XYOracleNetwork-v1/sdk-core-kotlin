@@ -1,0 +1,76 @@
+package network.xyo.sdkcorekotlin.storage
+
+import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.async
+import java.io.*
+import java.nio.charset.Charset
+import java.util.*
+
+/**
+ * A simple XyoStorageProviderInterface implementation to store files on the naive file system
+ * using file names as keys.
+ *
+ * @param basePath The base path for storing files.
+ */
+class XyoFileStorage(private val basePath : File) : XyoStorageProviderInterface {
+    override fun containsKey(key: ByteArray): Deferred<Boolean> = async {
+        return@async File(basePath, getFileName(key)).exists()
+    }
+
+    override fun delete(key: ByteArray): Deferred<Exception?> = async {
+        try {
+            File(basePath, getFileName(key)).delete()
+            return@async null
+        } catch (exception : Exception) {
+            return@async exception
+        }
+    }
+
+    override fun getAllKeys(): Deferred<Array<ByteArray>> = async {
+        return@async arrayOf<ByteArray>()
+    }
+
+    override fun read(key: ByteArray): Deferred<ByteArray?>  = async {
+        try {
+            val inputFile = File(basePath, getFileName(key))
+            return@async readFileFromDisk(inputFile).await()
+        } catch (ioException : IOException) {
+            return@async null
+        }
+    }
+
+
+    override fun write(key: ByteArray, value: ByteArray): Deferred<Exception?> = async {
+        try {
+            val file = File(basePath, getFileName(key))
+            writeFileToDisk(file, value).await()
+        } catch (ioException : IOException) {
+            return@async ioException
+        }
+    }
+
+    private fun getFileName (key : ByteArray) : String {
+        return Base64.getEncoder().encode(key).toString(Charset.defaultCharset())
+    }
+
+    private fun writeFileToDisk (file : File, value : ByteArray) = async {
+        val pathField = FileOutputStream(file)
+        pathField.write(value)
+        pathField.flush()
+        pathField.close()
+        return@async null
+    }
+
+    private fun readFileFromDisk (file : File) = async {
+        val data = ByteArray(file.length().toInt())
+        val inputStream = FileInputStream(file)
+        inputStream.read(data, 0, data.size)
+        inputStream.close()
+        return@async data
+    }
+
+    init {
+        basePath.mkdirs()
+    }
+}
+

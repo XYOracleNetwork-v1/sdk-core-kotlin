@@ -1,21 +1,23 @@
 package network.xyo.sdkcorekotlin.data
 
+import java.lang.ref.WeakReference
 import java.nio.ByteBuffer
 
 /**
  * The base class of all encodable objects in XYO Network
  */
 abstract class XyoObject {
-    private var dataCache = byteArrayOf()
+    private var dataCache : WeakReference<ByteArray?> = WeakReference(null)
     private var isChanged = true
     private val bytes : ByteArray
         get() {
-            if (isChanged) {
-                dataCache = objectInBytes
+            val cache = dataCache.get()
+            if (isChanged || cache == null) {
+                dataCache = WeakReference(objectInBytes)
                 isChanged = false
-                return dataCache
+                return dataCache.get() ?: objectInBytes
             }
-            return dataCache
+            return cache
         }
 
     /**

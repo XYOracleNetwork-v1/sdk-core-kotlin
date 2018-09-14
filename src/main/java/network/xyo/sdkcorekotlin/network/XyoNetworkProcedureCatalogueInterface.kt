@@ -18,11 +18,4 @@ interface XyoNetworkProcedureCatalogueInterface {
      * @return What the device can do according to its protocol.
      */
     fun getEncodedCanDo() : ByteArray
-
-    /**
-     * The size to read to get the procedure catalogue from the other party.
-     *
-     * @returns Size to read.
-     */
-    fun sizeToRead() : Int
 }

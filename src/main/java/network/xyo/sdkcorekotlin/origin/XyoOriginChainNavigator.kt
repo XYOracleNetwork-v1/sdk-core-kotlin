@@ -6,7 +6,6 @@ import network.xyo.sdkcorekotlin.data.XyoByteArraySetter
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.hashing.XyoPreviousHash
 import network.xyo.sdkcorekotlin.storage.XyoStorageProviderInterface
-import network.xyo.sdkcorekotlin.storage.XyoStorageProviderPriority
 
 
 /**
@@ -70,13 +69,7 @@ class XyoOriginChainNavigator (private val storageProviderProvider : XyoStorageP
                 previousHashMerger.add(byteArrayOf(0xff.toByte()), 0)
                 previousHashMerger.add(hash, 1)
 
-                val error = storageProviderProvider.write(
-                        previousHashMerger.merge(),
-                        blockData,
-                        XyoStorageProviderPriority.PRIORITY_MED,
-                        true,
-                        60_000
-                ).await()
+                val error = storageProviderProvider.write(previousHashMerger.merge(), blockHash.typed).await()
 
                 if (error != null) {
                     return@async error
@@ -84,13 +77,7 @@ class XyoOriginChainNavigator (private val storageProviderProvider : XyoStorageP
             }
         }
 
-        return@async storageProviderProvider.write(
-                blockHash.typed,
-                blockData,
-                XyoStorageProviderPriority.PRIORITY_MED,
-                true,
-                60_000
-        ).await()
+        return@async storageProviderProvider.write(blockHash.typed, blockData).await()
     }
 
     /**
@@ -104,7 +91,7 @@ class XyoOriginChainNavigator (private val storageProviderProvider : XyoStorageP
         val previousHashMerger = XyoByteArraySetter(2)
         previousHashMerger.add(byteArrayOf(0xff.toByte()), 0)
         previousHashMerger.add(originBlockHash, 1)
-        val blockHash = storageProviderProvider.read(previousHashMerger.merge(), 60_000).await() ?: return@async null
+        val blockHash = storageProviderProvider.read(previousHashMerger.merge()).await() ?: return@async null
         return@async getOriginBlockByBlockHash(blockHash).await()
     }
 
@@ -115,7 +102,7 @@ class XyoOriginChainNavigator (private val storageProviderProvider : XyoStorageP
      * @return a deferred XyoOriginBlock that is has the hash.
      */
     fun getOriginBlockByBlockHash (originBlockHash: ByteArray) = async {
-        val packedOriginBlock = storageProviderProvider.read(originBlockHash, 1_000).await() ?: return@async null
+        val packedOriginBlock = storageProviderProvider.read(originBlockHash).await() ?: return@async null
         val unpackedOriginBlock = XyoBoundWitness.createFromPacked(packedOriginBlock) as XyoBoundWitness
         return@async XyoOriginBlock(unpackedOriginBlock)
     }
@@ -137,7 +124,11 @@ class XyoOriginChainNavigator (private val storageProviderProvider : XyoStorageP
             val previousHashes = ArrayList<ByteArray?>()
             for (payload in boundWitness.payloads) {
                 val signedPayload = payload.signedPayloadMapping
-                previousHashes.add(signedPayload[XyoPreviousHash.id.contentHashCode()]?.untyped)
+                signedPayload
+                val previousHash = signedPayload[XyoPreviousHash.id.contentHashCode()]
+                if (previousHash != null) {
+                    previousHashes.add(previousHash.untyped)
+                }
             }
             return@async previousHashes
         }

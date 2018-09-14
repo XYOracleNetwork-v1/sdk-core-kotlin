@@ -7,10 +7,11 @@ import network.xyo.sdkcorekotlin.data.array.single.XyoBridgeBlockSet
 import network.xyo.sdkcorekotlin.data.array.single.XyoSingleTypeArrayInt
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.network.XyoProcedureCatalogue
+import network.xyo.sdkcorekotlin.storage.XyoStorageProviderInterface
 
-class XyoBridgingOption (private val hashingProvider : XyoHash.XyoHashProvider): XyoBoundWitnessOption() {
-    private var hashOfOriginBlocks : XyoObject? = null
-    private var originBlocksToSend : XyoObject? = null
+open class XyoBridgingOption (private val hashingProvider : XyoHash.XyoHashProvider): XyoBoundWitnessOption() {
+    protected open var hashOfOriginBlocks : XyoObject? = null
+    protected open var originBlocksToSend : XyoObject? = null
 
     override val flag: Int = XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN
 
@@ -22,7 +23,7 @@ class XyoBridgingOption (private val hashingProvider : XyoHash.XyoHashProvider):
         return originBlocksToSend
     }
 
-    fun updateOriginChain(originBlocksToBridge : Array<XyoObject>) = async {
+    private fun updateOriginChain(originBlocksToBridge : Array<XyoObject>) = async {
         originBlocksToSend = XyoBridgeBlockSet(originBlocksToBridge)
         val encodedOriginBlocksToSend = originBlocksToSend?.untyped
 

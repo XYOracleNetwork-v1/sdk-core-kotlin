@@ -13,26 +13,18 @@ interface XyoStorageProviderInterface {
      *
      * @param key A key so that data can be received at a future point.
      * @param value The value that is held under a key.
-     * @param priority The priory of the speed of the write.
-     * @param cache If true, the XyoStorageProvider will cache the data, if false, the
-     * XyoStorageProvider
-     * will not cache the data.
-     * @param timeout Specified in milliseconds. Defaults to 60000, or 1 minute if null. If timed
-     * out the method will return ERR_TIMEOUT.
-     * @return A deferred XyoError?. If the error is null. The operation was successful.
+     * @return A deferred Exception?. If the error is null. The operation was successful.
      */
-    fun write(key: ByteArray, value: ByteArray, priority: XyoStorageProviderPriority, cache: Boolean, timeout: Int) : Deferred<Any?>
+    fun write(key: ByteArray, value: ByteArray) : Deferred<Exception?>
 
     /**
      * Read from storage.
      *
      * @param key A key to retrieve the data from. This key is set from write()
-     * @param timeout Specified in Milliseconds. Defaults to 60000, or 1 minute if null. If timed
-     * out the method will have a ERR_TIMEOUT.
      * @return Returns a deferred that contains a ByteArray. Contains the value of
      * the key. If the key does it exist, the value will be null.
      */
-    fun read(key: ByteArray, timeout: Int): Deferred<ByteArray?>
+    fun read(key: ByteArray): Deferred<ByteArray?>
 
     /**
      * The provider returns all the corresponding keys for the values stored.
@@ -47,7 +39,7 @@ interface XyoStorageProviderInterface {
      *
      * @param key A key to delete the data from. This key is set from write()
      */
-    fun delete(key: ByteArray) : Deferred<Any?>
+    fun delete(key: ByteArray) : Deferred<Exception?>
 
     /**
      * Checks if a key exists in storage.

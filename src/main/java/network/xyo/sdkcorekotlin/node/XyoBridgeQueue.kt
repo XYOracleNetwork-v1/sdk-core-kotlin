@@ -33,21 +33,21 @@ open class XyoBridgeQueue {
     /**
      * Adds an origin block into the bridge queue.
      *
-     * @param block The block to add.
+     * @param blockHash The block to add.
      */
-    fun addBlock (block : XyoBoundWitness) {
-        blocksToBridge.add(XyoBridgeQueueItem(block, 0))
+    fun addBlock (blockHash : ByteArray) {
+        blocksToBridge.add(XyoBridgeQueueItem(blockHash, 0))
         sortQueue()
     }
 
     /**
      * Adds an origin block into the bridge queue with a weight.
      *
-     * @param block The block to add.
+     * @param blockHash The block to add.
      * @param weight The weight to add the block to the queue with.
      */
-    fun addBlock (block : XyoBoundWitness, weight : Int) {
-        blocksToBridge.add(XyoBridgeQueueItem(block, weight))
+    fun addBlock (blockHash : ByteArray, weight : Int) {
+        blocksToBridge.add(XyoBridgeQueueItem(blockHash, weight))
         sortQueue()
     }
 
@@ -76,13 +76,13 @@ open class XyoBridgeQueue {
      *
      * @return An array of blocks to send to the bridge.
      */
-    fun getBlocksToBridge () : Array<XyoObject> {
+    fun getBlocksToBridge () : Array<ByteArray> {
         val toRemove = ArrayList<XyoBridgeQueueItem>()
-        val toBridge = ArrayList<XyoObject>()
+        val toBridge = ArrayList<ByteArray>()
 
         for (i in 0 until Math.min(SENT_LIMIT, blocksToBridge.size)) {
             val block = blocksToBridge[i]
-            toBridge.add(block.boundWitness)
+            toBridge.add(block.boundWitnessHash)
             block.weight++
 
             if (block.weight >= REMOVE_WEIGHT) {
@@ -105,7 +105,7 @@ open class XyoBridgeQueue {
         blocksToBridge.remove(block)
 
         for ((_, listener) in listeners) {
-            listener.onRemove(block.boundWitness)
+            listener.onRemove(block.boundWitnessHash)
         }
     }
 
@@ -127,10 +127,10 @@ open class XyoBridgeQueue {
             /**
              * This function gets called evey time a block gets removed from the queue.
              */
-            fun onRemove(boundWitness: XyoBoundWitness)
+            fun onRemove(boundWitnessHash: ByteArray)
         }
 
-        private class XyoBridgeQueueItem (val boundWitness: XyoBoundWitness, var weight: Int) : Comparable<XyoBridgeQueueItem> {
+        private class XyoBridgeQueueItem (val boundWitnessHash: ByteArray, var weight: Int) : Comparable<XyoBridgeQueueItem> {
             override fun compareTo(other: XyoBridgeQueueItem): Int {
                 return weight - other.weight
             }

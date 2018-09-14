@@ -14,20 +14,30 @@ class XyoInMemoryStorageProvider : XyoStorageProviderInterface {
     }
 
     override fun delete(key: ByteArray) = async {
-        storageHashMap.remove(key.contentHashCode())
-        keys.remove(key)
+        try {
+            storageHashMap.remove(key.contentHashCode())
+            keys.remove(key)
+            return@async null
+        } catch (e : Exception) {
+            return@async e
+        }
     }
 
     override fun getAllKeys() = async {
         return@async keys.toTypedArray()
     }
 
-    override fun read(key: ByteArray, timeout: Int) = async {
+    override fun read(key: ByteArray) = async {
         return@async storageHashMap[key.contentHashCode()]
     }
 
-    override fun write(key: ByteArray, value: ByteArray, priority: XyoStorageProviderPriority, cache: Boolean, timeout: Int) = async {
-        keys.add(key)
-        storageHashMap[key.contentHashCode()] = value
+    override fun write(key: ByteArray, value: ByteArray) = async {
+        try {
+            keys.add(key)
+            storageHashMap[key.contentHashCode()] = value
+            return@async null
+        } catch (e : Exception) {
+            return@async e
+        }
     }
 }

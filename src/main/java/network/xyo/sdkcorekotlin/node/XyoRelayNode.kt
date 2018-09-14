@@ -17,7 +17,7 @@ import network.xyo.sdkcorekotlin.storage.XyoStorageProviderInterface
  * @param hashingProvider A hashing provider to use hashing utilises.
  */
 abstract class XyoRelayNode (storageProvider : XyoStorageProviderInterface,
-                             hashingProvider : XyoHash.XyoHashProvider) : XyoNodeBase(storageProvider, hashingProvider) {
+                             private val hashingProvider : XyoHash.XyoHashProvider) : XyoNodeBase(storageProvider, hashingProvider) {
 
     private val selfToOtherQueue = XyoBridgingOption(hashingProvider)
     private val originBlocksToBridge = XyoBridgeQueue()
@@ -28,16 +28,16 @@ abstract class XyoRelayNode (storageProvider : XyoStorageProviderInterface,
         override fun onBoundWitnessStart() {}
 
         override fun onBoundWitnessDiscovered(boundWitness: XyoBoundWitness) {
-            originBlocksToBridge.addBlock(boundWitness)
-            selfToOtherQueue.updateOriginChain(getOriginBlocksToBridge())
+            async {
+                originBlocksToBridge.addBlock(boundWitness.getHash(hashingProvider).await().typed)
+            }
         }
     }
 
     private val bridgeQueueListener = object : XyoBridgeQueue.Companion.XyoBridgeQueueListener {
-        override fun onRemove(boundWitness: XyoBoundWitness) {
+        override fun onRemove(boundWitnessHash: ByteArray) {
             async {
-                val blockHash = boundWitness.getHash(hashingProvider).await()
-                originBlocks.removeOriginBlock(blockHash.typed)
+                originBlocks.removeOriginBlock(boundWitnessHash)
             }
         }
     }
@@ -79,10 +79,6 @@ abstract class XyoRelayNode (storageProvider : XyoStorageProviderInterface,
      */
     fun purgeQueue (mask : Int) {
         originBlocksToBridge.purgeQueue(mask)
-    }
-
-    private fun getOriginBlocksToBridge() : Array<XyoObject> {
-        return originBlocksToBridge.getBlocksToBridge()
     }
 
     override fun getChoice(catalog: Int): Int {
