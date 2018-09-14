@@ -88,5 +88,21 @@ abstract class XyoObjectProvider : XyoType() {
             }
             return null
         }
+
+        /**
+         * Decodes a group of objects.
+         *
+         * @param encodedArray The encoded objects to decode.
+         */
+        fun encodedToDecodedArray (encodedArray : Array<ByteArray>) : Array<XyoObject> {
+            val toSend = ArrayList<XyoObject>()
+            for (encoded in encodedArray) {
+                val obj = XyoObjectProvider.create(encoded)
+                if (obj != null) {
+                    toSend.add(obj)
+                }
+            }
+            return toSend.toTypedArray()
+        }
     }
 }

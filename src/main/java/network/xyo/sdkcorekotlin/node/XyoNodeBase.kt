@@ -108,7 +108,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
      * @param bitFlag The flag to filter.
      * @return All of the options that comply to that filter.
      */
-    private fun getUnSignedPayloads (bitFlag : Int) : ArrayList<XyoObject> {
+    private fun getUnSignedPayloads (bitFlag : Int) = async {
         val unsignedPayloads = ArrayList<XyoObject>()
 
         for ((flag, option) in boundWitnessOptions) {
@@ -121,7 +121,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
             }
         }
 
-        return unsignedPayloads
+        return@async unsignedPayloads
     }
 
     /**
@@ -130,7 +130,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
      * @param bitFlag The flag to filter.
      * @return All of the options that comply to that filter.
      */
-    private fun getSignedPayloads (bitFlag: Int) : ArrayList<XyoObject> {
+    private fun getSignedPayloads (bitFlag: Int) = async {
         val signedPayloads = ArrayList<XyoObject>()
 
         for ((flag, option) in boundWitnessOptions) {
@@ -143,7 +143,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
             }
         }
 
-        return signedPayloads
+        return@async signedPayloads
     }
 
 
@@ -247,8 +247,8 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
 
         signedPayloads.add(index)
 
-        signedPayloads.addAll(getSignedPayloads(bitFlag))
-        unsignedPayloads.addAll(getUnSignedPayloads(bitFlag))
+        signedPayloads.addAll(getSignedPayloads(bitFlag).await())
+        unsignedPayloads.addAll(getUnSignedPayloads(bitFlag).await())
 
         return@async XyoPayload(
                 XyoMultiTypeArrayInt(signedPayloads.toTypedArray()),

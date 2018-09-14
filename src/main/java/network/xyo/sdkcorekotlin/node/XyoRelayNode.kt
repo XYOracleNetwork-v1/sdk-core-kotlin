@@ -4,6 +4,8 @@ import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
 import network.xyo.sdkcorekotlin.data.XyoObject
+import network.xyo.sdkcorekotlin.data.XyoObjectProvider
+import network.xyo.sdkcorekotlin.data.array.multi.XyoBridgeHashSet
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.network.XyoNetworkPipe
 import network.xyo.sdkcorekotlin.network.XyoNetworkProcedureCatalogueInterface
@@ -19,7 +21,7 @@ import network.xyo.sdkcorekotlin.storage.XyoStorageProviderInterface
 abstract class XyoRelayNode (storageProvider : XyoStorageProviderInterface,
                              private val hashingProvider : XyoHash.XyoHashProvider) : XyoNodeBase(storageProvider, hashingProvider) {
 
-    private val selfToOtherQueue = XyoBridgingOption(hashingProvider)
+    private val selfToOtherQueue = XyoBridgingOption(storageProvider)
     private val originBlocksToBridge = XyoBridgeQueue()
     private var running = false
 
@@ -30,6 +32,8 @@ abstract class XyoRelayNode (storageProvider : XyoStorageProviderInterface,
         override fun onBoundWitnessDiscovered(boundWitness: XyoBoundWitness) {
             async {
                 originBlocksToBridge.addBlock(boundWitness.getHash(hashingProvider).await().typed)
+                val toBridge = originBlocksToBridge.getBlocksToBridge()
+                selfToOtherQueue.addHashSet(XyoBridgeHashSet(XyoObjectProvider.encodedToDecodedArray(toBridge)))
             }
         }
     }
