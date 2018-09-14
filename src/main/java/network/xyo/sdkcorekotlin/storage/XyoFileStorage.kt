@@ -6,6 +6,7 @@ import java.io.*
 import java.nio.charset.Charset
 import java.util.*
 
+
 /**
  * A simple XyoStorageProviderInterface implementation to store files on the naive file system
  * using file names as keys.
@@ -14,12 +15,12 @@ import java.util.*
  */
 class XyoFileStorage(private val basePath : File) : XyoStorageProviderInterface {
     override fun containsKey(key: ByteArray): Deferred<Boolean> = async {
-        return@async File(basePath, getFileName(key)).exists()
+        return@async File(basePath, encodeFileName(key)).exists()
     }
 
     override fun delete(key: ByteArray): Deferred<Exception?> = async {
         try {
-            File(basePath, getFileName(key)).delete()
+            File(basePath, encodeFileName(key)).delete()
             return@async null
         } catch (exception : Exception) {
             return@async exception
@@ -27,12 +28,13 @@ class XyoFileStorage(private val basePath : File) : XyoStorageProviderInterface 
     }
 
     override fun getAllKeys(): Deferred<Array<ByteArray>> = async {
-        return@async arrayOf<ByteArray>()
+        val listOfFiles = basePath.listFiles()
+        return@async Array(listOfFiles.size, { i -> decodeFileName(listOfFiles[i].name)})
     }
 
     override fun read(key: ByteArray): Deferred<ByteArray?>  = async {
         try {
-            val inputFile = File(basePath, getFileName(key))
+            val inputFile = File(basePath, encodeFileName(key))
             return@async readFileFromDisk(inputFile).await()
         } catch (ioException : IOException) {
             return@async null
@@ -42,15 +44,19 @@ class XyoFileStorage(private val basePath : File) : XyoStorageProviderInterface 
 
     override fun write(key: ByteArray, value: ByteArray): Deferred<Exception?> = async {
         try {
-            val file = File(basePath, getFileName(key))
+            val file = File(basePath, encodeFileName(key))
             writeFileToDisk(file, value).await()
         } catch (ioException : IOException) {
             return@async ioException
         }
     }
 
-    private fun getFileName (key : ByteArray) : String {
+    private fun encodeFileName (key : ByteArray) : String {
         return Base64.getEncoder().encode(key).toString(Charset.defaultCharset())
+    }
+
+    private fun decodeFileName (name : String) : ByteArray {
+        return Base64.getDecoder().decode(name)
     }
 
     private fun writeFileToDisk (file : File, value : ByteArray) = async {

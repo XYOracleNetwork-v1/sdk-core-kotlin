@@ -124,7 +124,6 @@ class XyoOriginChainNavigator (private val storageProviderProvider : XyoStorageP
             val previousHashes = ArrayList<ByteArray?>()
             for (payload in boundWitness.payloads) {
                 val signedPayload = payload.signedPayloadMapping
-                signedPayload
                 val previousHash = signedPayload[XyoPreviousHash.id.contentHashCode()]
                 if (previousHash != null) {
                     previousHashes.add(previousHash.untyped)
