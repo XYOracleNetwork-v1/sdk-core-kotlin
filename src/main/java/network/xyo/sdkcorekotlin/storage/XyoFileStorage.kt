@@ -15,7 +15,8 @@ import java.util.*
  */
 class XyoFileStorage(private val basePath : File) : XyoStorageProviderInterface {
     override fun containsKey(key: ByteArray): Deferred<Boolean> = async {
-        return@async File(basePath, encodeFileName(key)).exists()
+        val file = File(basePath, encodeFileName(key)).absoluteFile
+        return@async file.exists()
     }
 
     override fun delete(key: ByteArray): Deferred<Exception?> = async {
@@ -46,17 +47,18 @@ class XyoFileStorage(private val basePath : File) : XyoStorageProviderInterface 
         try {
             val file = File(basePath, encodeFileName(key))
             writeFileToDisk(file, value).await()
+            return@async null
         } catch (ioException : IOException) {
             return@async ioException
         }
     }
 
     private fun encodeFileName (key : ByteArray) : String {
-        return Base64.getEncoder().encode(key).toString(Charset.defaultCharset())
+        return Base64.getUrlEncoder().encode(key).toString(Charset.defaultCharset())
     }
 
     private fun decodeFileName (name : String) : ByteArray {
-        return Base64.getDecoder().decode(name)
+        return Base64.getUrlDecoder().decode(name)
     }
 
     private fun writeFileToDisk (file : File, value : ByteArray) = async {

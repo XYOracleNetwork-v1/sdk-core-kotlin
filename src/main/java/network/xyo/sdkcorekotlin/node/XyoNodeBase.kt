@@ -53,7 +53,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
      * @param key The key for the heuristic.
      * @param heuristic The heuristic to use in  bound witnesses.
      */
-    fun addHueristic (key: String, heuristic : XyoObject) {
+    fun addHeuristic (key: String, heuristic : XyoObject) {
         heuristics[key] = heuristic
     }
 
@@ -182,10 +182,9 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
 
     private fun getBridgedBlocks (boundWitness: XyoBoundWitness) : Array<XyoObject> {
         for (payload in boundWitness.payloads) {
-            val bridgeSet = payload.unsignedPayloadMapping[XyoBridgeBlockSet.id.contentHashCode()]
-            val bridgeSetCasted = bridgeSet as? XyoBridgeBlockSet
-            if (bridgeSetCasted != null) {
-                return bridgeSetCasted.array
+            val bridgeSet = payload.unsignedPayloadMapping[XyoBridgeBlockSet.id.contentHashCode()] as? XyoBridgeBlockSet
+            if (bridgeSet != null) {
+                return bridgeSet.array
             }
         }
         return arrayOf()

@@ -15,7 +15,7 @@ class XyoWeakReferenceCaching (private val layerToAddCacheTo : XyoStorageProvide
     override fun write(key: ByteArray, value: ByteArray): Deferred<Exception?> = async {
         try {
             cache[key.contentHashCode()] = value
-            layerToAddCacheTo.write(key, value)
+            layerToAddCacheTo.write(key, value).await()
             return@async null
         } catch (exception : Exception) {
             return@async exception
@@ -38,6 +38,7 @@ class XyoWeakReferenceCaching (private val layerToAddCacheTo : XyoStorageProvide
         if (cache.containsKey(key.contentHashCode())) {
             return@async true
         }
+
         return@async layerToAddCacheTo.containsKey(key).await()
     }
 

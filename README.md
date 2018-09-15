@@ -1,4 +1,7 @@
 # sdk-core-kotlin
+
+[![](https://jitpack.io/v/XYOracleNetwork/sdk-core-kotlin.svg)](https://jitpack.io/#XYOracleNetwork/sdk-core-kotlin)
+
 A library to preform all basic XYO Network functions.
 This includes creating an origin chain, maintaining an origin chain, negotiations for talking to other nodes, and other basic functionality.
 The library has heavily abstracted modules so that all operations will work with any crypto, storage, networking, ect.

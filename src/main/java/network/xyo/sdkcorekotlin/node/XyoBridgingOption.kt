@@ -52,6 +52,6 @@ class XyoBridgingOption (private val originBlocks: XyoStorageProviderInterface):
             }
         }
 
-        originBlocksToSend = WeakReference(XyoBridgeHashSet(blocks.toTypedArray()))
+        originBlocksToSend = WeakReference(XyoBridgeBlockSet(blocks.toTypedArray()))
     }
 }
