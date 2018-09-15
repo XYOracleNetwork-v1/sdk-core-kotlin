@@ -77,6 +77,7 @@ open class XyoBridgeQueue {
      * @return An array of blocks to send to the bridge.
      */
     fun getBlocksToBridge () : Array<ByteArray> {
+        sortQueue ()
         val toRemove = ArrayList<XyoBridgeQueueItem>()
         val toBridge = ArrayList<ByteArray>()
 
@@ -113,7 +114,7 @@ open class XyoBridgeQueue {
         /**
          * The maximum number of blocks to send at a given time.
          */
-        private const val SENT_LIMIT = 10
+        private const val SENT_LIMIT = 50
 
         /**
          * The point at witch blocks should be removed from the queue.
@@ -132,7 +133,7 @@ open class XyoBridgeQueue {
 
         private class XyoBridgeQueueItem (val boundWitnessHash: ByteArray, var weight: Int) : Comparable<XyoBridgeQueueItem> {
             override fun compareTo(other: XyoBridgeQueueItem): Int {
-                return weight - other.weight
+                return weight.compareTo(other.weight)
             }
         }
     }
