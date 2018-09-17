@@ -9,7 +9,7 @@ import java.nio.ByteBuffer
  * An array of origin blocks hashes that are being transferred.
  *
  * @major 0x02
- * @minor 0x16
+ * @minor 0x08
  * @param array The array of origin block hashes.
  */
 open class XyoBridgeHashSet(override var array: Array<XyoObject>) : XyoMultiTypeArrayBase() {
@@ -18,7 +18,7 @@ open class XyoBridgeHashSet(override var array: Array<XyoObject>) : XyoMultiType
 
     companion object : XyoArrayProvider() {
         override val major: Byte = 0x02
-        override val minor: Byte = 0x016
+        override val minor: Byte = 0x08
         override val sizeOfBytesToGetSize: Int? = 2
 
         override fun readSize(byteArray: ByteArray): Int {
