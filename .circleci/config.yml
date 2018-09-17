@@ -46,7 +46,7 @@ jobs:
       - checkout
       - run:
           name: Test
-          command: gradle
+          command: gradle test
       - run:
           name: Generate code coverage
           command: |
