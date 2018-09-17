@@ -96,6 +96,7 @@ abstract class XyoRelayNode (storageProvider : XyoStorageProviderInterface,
                 && procedureCatalogue.canDo(XyoUnsignedHelper.createUnsignedInt(XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN))) {
             return XyoProcedureCatalogue.TAKE_ORIGIN_CHAIN
         }
+
         return XyoProcedureCatalogue.BOUND_WITNESS
     }
 
