@@ -13,7 +13,10 @@ import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.hashing.basic.XyoSha256
 import network.xyo.sdkcorekotlin.signing.XyoSigner
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.XyoSha1WithSecp256K
-import org.junit.Assert
+import org.junit.Assert.assertArrayEquals
+import org.junit.Assert.assertEquals
+import org.junit.Test
+
 
 class XyoOriginChainStateTest : XyoTestBase() {
     private val numberOfBlocks = 10
@@ -22,7 +25,7 @@ class XyoOriginChainStateTest : XyoTestBase() {
     private var lastHash : XyoHash? = null
     private var nextKey : XyoObject? = null
 
-    @kotlin.test.Test
+    @Test
     fun testOriginChainTest () {
         XyoSha1WithSecp256K.enable()
         val startingSigner = XyoSigner.getCreator(0x02)!!.newInstance()
@@ -57,11 +60,11 @@ class XyoOriginChainStateTest : XyoTestBase() {
                 lastHash = aliceBoundWitness.getHash(hashCreator).await()
 
                 if (i != 0) {
-                    Assert.assertArrayEquals(lastHash!!.hash, originChainState.previousHash!!.hash.hash)
+                    assertArrayEquals(lastHash!!.hash, originChainState.previousHash!!.hash.hash)
                     originChainState.removeOldestSigner()
                 }
 
-                Assert.assertEquals(i, originChainState.index.number - 1)
+                assertEquals(i, originChainState.index.number - 1)
             }
         }
     }

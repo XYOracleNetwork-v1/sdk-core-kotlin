@@ -1,5 +1,5 @@
-apply plugin: 'kotlin'
-group='com.github.XYOracleNetwork'
+apply plugin: "kotlin"
+group="com.github.XYOracleNetwork"
 
 buildscript {
     ext.kotlin_version = '1.2.60'
@@ -8,6 +8,7 @@ buildscript {
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.junit.platform:junit-platform-gradle-plugin:1.0.0-M4"
     }
 }
 
@@ -15,10 +16,24 @@ repositories {
     mavenCentral()
 }
 
+test {
+    useJUnit()
+}
+
+
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    testCompile "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
+
+    testImplementation 'junit:junit:4.12'
     testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+
+    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.25.0'
 }
+
+
+wrapper {
+    gradleVersion = '4.8'
+}
+
+sourceCompatibility = "1.8"

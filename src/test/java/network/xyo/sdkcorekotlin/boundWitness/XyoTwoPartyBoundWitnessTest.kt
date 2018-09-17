@@ -15,6 +15,7 @@ import network.xyo.sdkcorekotlin.signing.algorithms.rsa.XyoRsaPublicKey
 import network.xyo.sdkcorekotlin.signing.algorithms.rsa.XyoRsaSignature
 import network.xyo.sdkcorekotlin.signing.algorithms.rsa.XyoRsaWithSha256
 import network.xyo.sdkcorekotlin.signing.algorithms.rsa.signatures.XyoRsaWithSha256Signature
+import org.junit.Test
 
 class XyoTwoPartyBoundWitnessTest : XyoTestBase() {
     private val signersAlice = arrayOf<XyoSigner>(XyoRsaWithSha256(), XyoRsaWithSha256(),XyoSha256WithSecp256K())
@@ -25,7 +26,7 @@ class XyoTwoPartyBoundWitnessTest : XyoTestBase() {
     private val signedPayloadBob= XyoMultiTypeArrayInt(arrayOf(XyoRssi(10)))
     private val unsignedPayloadBob= XyoMultiTypeArrayInt(arrayOf(XyoRssi(10)))
 
-    @kotlin.test.Test
+    @Test
     fun testTwoPartyBoundWitness () {
         runBlocking {
             XyoKeySet.enable()

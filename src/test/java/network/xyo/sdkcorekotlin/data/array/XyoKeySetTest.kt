@@ -7,10 +7,11 @@ import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.XyoSha1WithSecp
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.XyoSha256WithSecp256K
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.keys.XyoSecp256K1UnCompressedPublicKey
 import network.xyo.sdkcorekotlin.signing.algorithms.rsa.XyoRsaPublicKey
+import org.junit.Test
 
 class XyoKeySetTest : XyoTestBase() {
 
-    @kotlin.test.Test
+    @Test
     fun testKeySet() {
         XyoSha256WithSecp256K.enable()
         XyoSha1WithSecp256K.enable()

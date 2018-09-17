@@ -6,7 +6,8 @@ import network.xyo.sdkcorekotlin.data.array.single.XyoSingleTypeArrayByte
 import network.xyo.sdkcorekotlin.data.array.single.XyoSingleTypeArrayInt
 import network.xyo.sdkcorekotlin.data.array.single.XyoSingleTypeArrayShort
 import network.xyo.sdkcorekotlin.data.heuristics.number.signed.XyoRssi
-import org.junit.Assert
+import org.junit.Assert.assertArrayEquals
+import org.junit.Test
 
 class XyoSingleTypeArrayTest : XyoTestBase() {
     private val expectedIntSize = byteArrayOf (
@@ -39,33 +40,33 @@ class XyoSingleTypeArrayTest : XyoTestBase() {
             XyoRssi(2)
     )
 
-    @kotlin.test.Test
+    @Test
     fun testIntSingleArray () {
         XyoRssi.enable()
         val intArray = XyoSingleTypeArrayInt(XyoRssi.major, XyoRssi.minor, elements)
-        Assert.assertArrayEquals(expectedIntSize, intArray.untyped)
+        assertArrayEquals(expectedIntSize, intArray.untyped)
 
         val intArrayCreatedFromBytes = XyoSingleTypeArrayInt.createFromPacked(intArray.untyped)
-        Assert.assertArrayEquals(expectedIntSize, intArrayCreatedFromBytes.untyped)
+        assertArrayEquals(expectedIntSize, intArrayCreatedFromBytes.untyped)
     }
 
-    @kotlin.test.Test
+    @Test
     fun testShortSingleArray () {
         XyoRssi.enable()
         val shortArray = XyoSingleTypeArrayShort(XyoRssi.major, XyoRssi.minor, elements)
-        Assert.assertArrayEquals(expectedShortSize, shortArray.untyped)
+        assertArrayEquals(expectedShortSize, shortArray.untyped)
 
         val intArrayCreatedFromBytes= XyoSingleTypeArrayShort.createFromPacked(shortArray.untyped)
-        Assert.assertArrayEquals(expectedShortSize, intArrayCreatedFromBytes.untyped)
+        assertArrayEquals(expectedShortSize, intArrayCreatedFromBytes.untyped)
     }
 
-    @kotlin.test.Test
+    @Test
     fun testByteSingleArray () {
         XyoRssi.enable()
         val byteArray = XyoSingleTypeArrayByte(XyoRssi.major, XyoRssi.minor, elements)
-        Assert.assertArrayEquals(expectedByteSize, byteArray.untyped)
+        assertArrayEquals(expectedByteSize, byteArray.untyped)
 
         val intArrayCreatedFromBytes = XyoSingleTypeArrayByte.createFromPacked(byteArray.untyped)
-        Assert.assertArrayEquals(expectedByteSize, intArrayCreatedFromBytes.untyped)
+        assertArrayEquals(expectedByteSize, intArrayCreatedFromBytes.untyped)
     }
 }

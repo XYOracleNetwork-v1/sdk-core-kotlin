@@ -22,7 +22,8 @@ import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.XyoSha256WithSe
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.keys.XyoSecp256K1UnCompressedPublicKey
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.signatures.XyoSecp256kSha256WithEcdsaSignature
 import network.xyo.sdkcorekotlin.storage.XyoInMemoryStorageProvider
-import org.junit.Assert
+import org.junit.Assert.assertArrayEquals
+import org.junit.Test
 
 class XyoOriginChainNavigatorTest : XyoTestBase() {
     private val numberOfBlocks = 10
@@ -80,12 +81,12 @@ class XyoOriginChainNavigatorTest : XyoTestBase() {
 
                 val packedBoundWitness = aliceBoundWitness.untyped
                 val recreated = XyoBoundWitness.createFromPacked(packedBoundWitness)
-                Assert.assertArrayEquals(recreated.untyped, packedBoundWitness)
+                assertArrayEquals(recreated.untyped, packedBoundWitness)
             }
         }
     }
 
-    @kotlin.test.Test
+    @Test
     fun testOriginChainNavigatorTest () {
         runBlocking {
             createOriginChain()
@@ -107,7 +108,7 @@ class XyoOriginChainNavigatorTest : XyoTestBase() {
             val originalBlock = originNavigator.getOriginBlockByPreviousHash(parentOfPreviousBlockHash.typed).await()
             val originalBlockValue = originalBlock ?: throw Exception("Original Block is null!")
 
-            Assert.assertArrayEquals(originalBlockValue.boundWitness.untyped, originBlockValue.boundWitness.untyped)
+            assertArrayEquals(originalBlockValue.boundWitness.untyped, originBlockValue.boundWitness.untyped)
         }
     }
 }

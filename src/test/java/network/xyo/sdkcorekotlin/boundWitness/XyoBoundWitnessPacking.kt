@@ -15,14 +15,15 @@ import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.signatures.XyoS
 import network.xyo.sdkcorekotlin.signing.algorithms.rsa.XyoRsaPublicKey
 import network.xyo.sdkcorekotlin.signing.algorithms.rsa.XyoRsaWithSha256
 import network.xyo.sdkcorekotlin.signing.algorithms.rsa.signatures.XyoRsaWithSha256Signature
-import org.junit.Assert
+import org.junit.Assert.assertArrayEquals
+import org.junit.Test
 
 class XyoBoundWitnessPacking : XyoTestBase() {
     private val aliceSigners = arrayOf<XyoSigner>(XyoRsaWithSha256())
     private val aliceSignedPayload = XyoMultiTypeArrayInt(arrayOf(XyoRssi(-32)))
     private val aliceUnsignedPayload = XyoMultiTypeArrayInt(arrayOf(XyoRssi(-52)))
 
-    @kotlin.test.Test
+    @Test
     fun packAndUnpackBoundWitnessTest () {
         runBlocking {
             XyoKeySet.enable()
@@ -42,7 +43,7 @@ class XyoBoundWitnessPacking : XyoTestBase() {
 
             val recreated = XyoBoundWitness.createFromPacked(packedBoundWitness)
 
-            Assert.assertArrayEquals(recreated.untyped, packedBoundWitness)
+            assertArrayEquals(recreated.untyped, packedBoundWitness)
         }
     }
 }

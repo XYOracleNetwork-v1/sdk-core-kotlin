@@ -5,12 +5,13 @@ import network.xyo.sdkcorekotlin.XyoTestBase
 import network.xyo.sdkcorekotlin.data.XyoPayload
 import network.xyo.sdkcorekotlin.data.array.multi.XyoMultiTypeArrayInt
 import network.xyo.sdkcorekotlin.signing.algorithms.rsa.XyoRsaWithSha256
+import org.junit.Test
 
 class XyoMultiPartyBoundWitnessTest : XyoTestBase() {
     private val numberOfSigners = 3
     private val payload = XyoPayload(XyoMultiTypeArrayInt(arrayOf()), XyoMultiTypeArrayInt(arrayOf()))
 
-    @kotlin.test.Test
+    @Test
     fun testMultiPartyBoundWitness () {
         runBlocking {
             var currentCacheData : XyoBoundWitnessTransfer? = null

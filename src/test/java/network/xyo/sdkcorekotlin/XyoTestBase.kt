@@ -5,7 +5,7 @@ import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.XyoPayload
 import network.xyo.sdkcorekotlin.data.array.multi.XyoKeySet
 import network.xyo.sdkcorekotlin.signing.XyoSignatureSet
-import org.junit.Assert
+import org.junit.Assert.assertArrayEquals
 
 open class XyoTestBase {
     fun String.hexStringToByteArray() : ByteArray {
@@ -47,10 +47,10 @@ open class XyoTestBase {
     }
 
     fun assertXyoObject(expected: XyoObject, actual : XyoObject) {
-        Assert.assertArrayEquals(expected.objectInBytes, actual.objectInBytes)
-        Assert.assertArrayEquals(expected.id, actual.id)
-        Assert.assertArrayEquals(expected.typed, actual.typed)
-        Assert.assertArrayEquals(expected.untyped, actual.untyped)
+        assertArrayEquals(expected.objectInBytes, actual.objectInBytes)
+        assertArrayEquals(expected.id, actual.id)
+        assertArrayEquals(expected.typed, actual.typed)
+        assertArrayEquals(expected.untyped, actual.untyped)
     }
 
     fun printBoundWitness(boundWitness : XyoBoundWitness) {
@@ -80,6 +80,6 @@ open class XyoTestBase {
     }
 
     fun assertBoundWitness (boundWitnessOne : XyoBoundWitness, boundWitnessTwo : XyoBoundWitness){
-        Assert.assertArrayEquals(boundWitnessOne.objectInBytes, boundWitnessTwo.objectInBytes)
+       assertArrayEquals(boundWitnessOne.objectInBytes, boundWitnessTwo.objectInBytes)
     }
 }

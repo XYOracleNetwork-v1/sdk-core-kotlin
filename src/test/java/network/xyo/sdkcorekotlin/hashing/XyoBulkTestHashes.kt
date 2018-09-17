@@ -3,13 +3,14 @@ package network.xyo.sdkcorekotlin.hashing
 import kotlinx.coroutines.experimental.runBlocking
 import network.xyo.sdkcorekotlin.XyoTestBase
 import network.xyo.sdkcorekotlin.hashing.basic.*
-import org.junit.Assert
+import org.junit.Assert.assertArrayEquals
+import org.junit.Test
 
 
 class XyoBulkTestHashes : XyoTestBase() {
     private val calibrationSeed = byteArrayOf(0x01, 0x02, 0x03)
 
-    @kotlin.test.Test
+    @Test
     fun bulkTestHashes () {
         runBlocking {
             testHash(XyoMd2, "30BD026F5B88B4719B563BDDB68917BE".hexStringToByteArray())
@@ -23,6 +24,6 @@ class XyoBulkTestHashes : XyoTestBase() {
 
     private suspend fun testHash (hashCreator : XyoHash.XyoHashProvider, expected : ByteArray) {
         val hashResult = hashCreator.createHash(calibrationSeed).await()
-        Assert.assertArrayEquals(expected, hashResult.hash)
+        assertArrayEquals(expected, hashResult.hash)
     }
 }

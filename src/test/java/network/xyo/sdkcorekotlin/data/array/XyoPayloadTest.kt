@@ -6,10 +6,11 @@ import network.xyo.sdkcorekotlin.data.XyoPayload
 import network.xyo.sdkcorekotlin.data.array.multi.XyoMultiTypeArrayInt
 import network.xyo.sdkcorekotlin.data.heuristics.number.signed.XyoRssi
 import network.xyo.sdkcorekotlin.signing.XyoTestPlaceholder
+import org.junit.Test
 
 class XyoPayloadTest : XyoTestBase() {
 
-    @kotlin.test.Test
+    @Test
     fun packAndUnpackPayload() {
         XyoRssi.enable()
         XyoTestPlaceholder.enable()
