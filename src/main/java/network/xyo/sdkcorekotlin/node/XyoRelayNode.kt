@@ -94,7 +94,6 @@ abstract class XyoRelayNode (storageProvider : XyoStorageProviderInterface,
             return XyoProcedureCatalogue.TAKE_ORIGIN_CHAIN
         }
 
-        println("BOUND_WITNESS")
         return XyoProcedureCatalogue.BOUND_WITNESS
     }
 
