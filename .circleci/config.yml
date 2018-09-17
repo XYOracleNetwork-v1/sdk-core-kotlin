@@ -54,7 +54,7 @@ jobs:
                     find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} ~/junit/ \;
       - store_artifacts:
           path: ~/junit
-      - store_artifacts:
+      - store_test_results:
           path: ~/junit
 
 workflows:
