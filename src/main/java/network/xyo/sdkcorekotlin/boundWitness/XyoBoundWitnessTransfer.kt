@@ -10,7 +10,7 @@ import network.xyo.sdkcorekotlin.signing.XyoSignatureSet
  * A object to use when transferring data when making a bound witness with another party.
  *
  * @major 0x02
- * @minor 0x08
+ * @minor 0x0a
  *
  * @param keysToSend The keys to send to the other party.
  * @param payloadsToSend The payloads to send to the other party.
@@ -76,7 +76,7 @@ class XyoBoundWitnessTransfer(val keysToSend : Array<XyoObject>,
 
     companion object : XyoObjectProvider() {
         override val major: Byte = 0x02
-        override val minor: Byte = 0x08
+        override val minor: Byte = 0x0a
         override val sizeOfBytesToGetSize: Int? = 4
 
         override fun createFromPacked(byteArray: ByteArray): XyoObject {

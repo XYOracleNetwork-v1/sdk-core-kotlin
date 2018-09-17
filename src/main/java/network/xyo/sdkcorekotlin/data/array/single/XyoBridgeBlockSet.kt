@@ -12,7 +12,7 @@ import network.xyo.sdkcorekotlin.hashing.XyoHash
  * An array of origin blocks that are being transferred.
  *
  * @major 0x02
- * @minor 0x15
+ * @minor 0x09
  * @param array The array of origin blocks.
  */
 
@@ -38,7 +38,7 @@ open class XyoBridgeBlockSet(override var array: Array<XyoObject>) : XyoSingleTy
 
     companion object : XyoArrayProvider() {
         override val major: Byte = 0x02
-        override val minor: Byte = 0x15
+        override val minor: Byte = 0x09
         override val sizeOfBytesToGetSize: Int? = 4
 
         override fun readSize(byteArray: ByteArray): Int {
