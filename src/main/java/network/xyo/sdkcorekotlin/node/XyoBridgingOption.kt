@@ -2,6 +2,7 @@ package network.xyo.sdkcorekotlin.node
 
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.experimental.selects.selectUnbiased
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.array.multi.XyoBridgeHashSet
@@ -36,6 +37,7 @@ class XyoBridgingOption (private val originBlocks: XyoStorageProviderInterface):
         updateOriginChain(bridgeHashSet)
     }
 
+
     private fun updateOriginChain(bridgeHashSet : XyoBridgeHashSet) = async {
         hashOfOriginBlocks = bridgeHashSet
         val blocks = ArrayList<XyoObject>()
@@ -51,7 +53,6 @@ class XyoBridgingOption (private val originBlocks: XyoStorageProviderInterface):
                 }
             }
         }
-
         originBlocksToSend = WeakReference(XyoBridgeBlockSet(blocks.toTypedArray()))
     }
 }

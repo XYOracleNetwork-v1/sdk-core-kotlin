@@ -1,5 +1,6 @@
 package network.xyo.sdkcorekotlin.node
 
+import com.sun.org.apache.xpath.internal.operations.Bool
 import kotlinx.coroutines.experimental.async
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
 import network.xyo.sdkcorekotlin.boundWitness.XyoZigZagBoundWitness
@@ -35,7 +36,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
      * @param catalog The catalog of the other party.
      * @return The choice to preform in the bound witness.
      */
-    abstract fun getChoice (catalog : Int) : Int
+    abstract fun getChoice (catalog : Int, strict : Boolean) : Int
 
     /**
      * All of the origin blocks that the node contains.
@@ -200,7 +201,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
     protected suspend fun doBoundWitness (startingData : ByteArray?, pipe: XyoNetworkPipe) {
         if (currentBoundWitnessSession != null) return
         onBoundWitnessStart()
-        val choice = getChoice(XyoUnsignedHelper.readUnsignedInt(pipe.peer.getRole()))
+        val choice = getChoice(XyoUnsignedHelper.readUnsignedInt(pipe.peer.getRole()), startingData == null)
 
 
         currentBoundWitnessSession = XyoZigZagBoundWitnessSession(

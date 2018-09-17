@@ -1,5 +1,6 @@
 package network.xyo.sdkcorekotlin.node
 
+import com.sun.org.apache.xpath.internal.operations.Bool
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
@@ -87,10 +88,12 @@ abstract class XyoRelayNode (storageProvider : XyoStorageProviderInterface,
         originBlocksToBridge.purgeQueue(mask)
     }
 
-    override fun getChoice(catalog: Int): Int {
-        if (catalog and XyoProcedureCatalogue.TAKE_ORIGIN_CHAIN == XyoProcedureCatalogue.TAKE_ORIGIN_CHAIN && procedureCatalogue.canDo(XyoUnsignedHelper.createUnsignedInt(XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN))) {
+    override fun getChoice(catalog: Int, strict: Boolean): Int {
+        if (catalog and XyoProcedureCatalogue.TAKE_ORIGIN_CHAIN == XyoProcedureCatalogue.TAKE_ORIGIN_CHAIN
+                && procedureCatalogue.canDo(XyoUnsignedHelper.createUnsignedInt(XyoProcedureCatalogue.TAKE_ORIGIN_CHAIN))) {
             return  XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN
-        } else if (catalog and XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN == XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN && procedureCatalogue.canDo(XyoUnsignedHelper.createUnsignedInt(XyoProcedureCatalogue.TAKE_ORIGIN_CHAIN))) {
+        } else if (catalog and XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN == XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN
+                && procedureCatalogue.canDo(XyoUnsignedHelper.createUnsignedInt(XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN))) {
             return XyoProcedureCatalogue.TAKE_ORIGIN_CHAIN
         }
 
