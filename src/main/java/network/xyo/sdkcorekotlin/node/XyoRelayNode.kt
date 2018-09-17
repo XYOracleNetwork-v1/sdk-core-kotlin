@@ -5,6 +5,7 @@ import kotlinx.coroutines.experimental.launch
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.XyoObjectProvider
+import network.xyo.sdkcorekotlin.data.XyoUnsignedHelper
 import network.xyo.sdkcorekotlin.data.array.multi.XyoBridgeHashSet
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.network.XyoNetworkPipe
@@ -87,12 +88,13 @@ abstract class XyoRelayNode (storageProvider : XyoStorageProviderInterface,
     }
 
     override fun getChoice(catalog: Int): Int {
-        if (catalog and XyoProcedureCatalogue.TAKE_ORIGIN_CHAIN == XyoProcedureCatalogue.TAKE_ORIGIN_CHAIN) {
+        if (catalog and XyoProcedureCatalogue.TAKE_ORIGIN_CHAIN == XyoProcedureCatalogue.TAKE_ORIGIN_CHAIN && procedureCatalogue.canDo(XyoUnsignedHelper.createUnsignedInt(XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN))) {
             return  XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN
-        } else if (catalog and XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN == XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN) {
+        } else if (catalog and XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN == XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN && procedureCatalogue.canDo(XyoUnsignedHelper.createUnsignedInt(XyoProcedureCatalogue.TAKE_ORIGIN_CHAIN))) {
             return XyoProcedureCatalogue.TAKE_ORIGIN_CHAIN
         }
 
+        println("BOUND_WITNESS")
         return XyoProcedureCatalogue.BOUND_WITNESS
     }
 

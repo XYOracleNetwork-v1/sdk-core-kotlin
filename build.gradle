@@ -20,7 +20,6 @@ test {
     useJUnit()
 }
 
-
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
@@ -29,11 +28,6 @@ dependencies {
 
     compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.25.0'
-}
-
-
-wrapper {
-    gradleVersion = '4.8'
 }
 
 sourceCompatibility = "1.8"
