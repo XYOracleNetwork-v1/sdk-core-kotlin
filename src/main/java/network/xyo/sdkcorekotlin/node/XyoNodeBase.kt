@@ -211,7 +211,6 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
                 XyoUnsignedHelper.createUnsignedInt(choice)
         )
 
-
         val error = currentBoundWitnessSession!!.doBoundWitness(startingData)
         pipe.close().await()
 

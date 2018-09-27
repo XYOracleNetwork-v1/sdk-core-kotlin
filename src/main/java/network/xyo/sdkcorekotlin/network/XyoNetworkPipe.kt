@@ -22,7 +22,7 @@ abstract class XyoNetworkPipe {
      * @param data The data to send to the other peer.
      * @return A deferred response from the other peer.
      */
-    abstract fun send (data : ByteArray) : Deferred<ByteArray?>
+    abstract fun send (data : ByteArray, waitForResponse : Boolean) : Deferred<ByteArray?>
 
     /**
      * Closes the pipe.
