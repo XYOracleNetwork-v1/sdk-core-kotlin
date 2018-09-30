@@ -1,6 +1,5 @@
 package network.xyo.sdkcorekotlin.node
 
-import com.sun.org.apache.xpath.internal.operations.Bool
 import kotlinx.coroutines.experimental.async
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
 import network.xyo.sdkcorekotlin.boundWitness.XyoZigZagBoundWitness

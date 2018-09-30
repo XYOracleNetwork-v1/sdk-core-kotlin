@@ -1,34 +1,24 @@
-apply plugin: "kotlin"
-group="com.github.XYOracleNetwork"
-
-buildscript {
-    ext.kotlin_version = '1.2.60'
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.51"
-        classpath "org.junit.platform:junit-platform-gradle-plugin:1.0.0-M4"
-    }
+plugins {
+    id 'java'
+    id 'org.jetbrains.kotlin.jvm' version '1.2.51'
 }
+
+group 'com.github.XYOracleNetwork'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
 }
 
-test {
-    useJUnit()
-}
-
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-
-    testImplementation 'junit:junit:4.12'
-    testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
-
-    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:0.26.0"
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:0.26.0'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
-sourceCompatibility = "1.8"
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
