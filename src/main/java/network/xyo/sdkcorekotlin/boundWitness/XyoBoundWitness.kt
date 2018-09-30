@@ -82,7 +82,7 @@ abstract class XyoBoundWitness : XyoObject() {
         }
     }
 
-    private fun getSigningData () : ByteArray {
+    fun getSigningData () : ByteArray {
         val setter = XyoByteArraySetter(payloads.size + 1)
         val makePublicKeysUntyped = makePublicKeys().untyped
 
@@ -90,7 +90,7 @@ abstract class XyoBoundWitness : XyoObject() {
 
         for (i in 0 until payloads.size) {
             val payload = payloads[i]
-            setter.add(payload.signedPayload.untyped, i)
+            setter.add(payload.signedPayload.untyped, i + 1)
         }
 
         return setter.merge()

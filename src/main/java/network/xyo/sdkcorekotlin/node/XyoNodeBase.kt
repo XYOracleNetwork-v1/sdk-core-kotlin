@@ -212,6 +212,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
         )
 
         val error = currentBoundWitnessSession!!.doBoundWitness(startingData)
+
         pipe.close().await()
 
         if (currentBoundWitnessSession?.completed == true && error == null) {
