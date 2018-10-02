@@ -11,7 +11,7 @@ import network.xyo.sdkcorekotlin.data.array.multi.XyoMultiTypeArrayInt
 import network.xyo.sdkcorekotlin.data.array.single.XyoBridgeBlockSet
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.network.XyoNetworkPipe
-import network.xyo.sdkcorekotlin.origin.XyoOriginChainNavigator
+import network.xyo.sdkcorekotlin.origin.XyoStorageOriginBlockRepository
 import network.xyo.sdkcorekotlin.origin.XyoOriginChainStateManager
 import network.xyo.sdkcorekotlin.storage.XyoStorageProviderInterface
 
@@ -40,7 +40,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
     /**
      * All of the origin blocks that the node contains.
      */
-    open val originBlocks = XyoOriginChainNavigator(storageProvider, hashingProvider)
+    open val originBlocks = XyoStorageOriginBlockRepository(storageProvider, hashingProvider)
 
     /**
      * The current origin state of the origin node.
@@ -211,7 +211,6 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
         )
 
         val error = currentBoundWitnessSession!!.doBoundWitness(startingData)
-
         pipe.close().await()
 
         if (currentBoundWitnessSession?.completed == true && error == null) {
