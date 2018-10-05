@@ -36,9 +36,15 @@ class XyoZigZagBoundWitnessSession(private val pipe : XyoNetworkPipe,
                     merger.add(choice, 1)
                     merger.add(returnDataEncoded, 2)
 
-                    response = pipe.send(merger.merge(), true).await() ?: return null
+                    response = pipe.send(merger.merge(), true).await() ?: throw XyoBoundWitnessCreationException("Response is null!")
                 } else {
-                    response = pipe.send(returnDataEncoded, cycles == 0).await() ?: return null
+                    val responseFromReturnDataEncode = pipe.send(returnDataEncoded, cycles == 0).await()
+
+                    if (cycles == 0 && responseFromReturnDataEncode == null) {
+                        throw XyoBoundWitnessCreationException("Response is null!")
+                    }
+
+                    response = responseFromReturnDataEncode ?: return null
                 }
 
                 if (cycles == 0 && data != null) {
@@ -49,16 +55,28 @@ class XyoZigZagBoundWitnessSession(private val pipe : XyoNetworkPipe,
                     return doBoundWitness(response)
                 }
             }
+
             return null
         } catch (corruptDataException : XyoCorruptDataException) {
+
             corruptDataException.printStackTrace()
             return corruptDataException
+
         } catch (noObjectException : XyoNoObjectException) {
+
             noObjectException.printStackTrace()
             return noObjectException
-        } catch (e : Exception) {
-            e.printStackTrace()
-            throw e
+
+        } catch (boundWitnessException : XyoBoundWitnessCreationException) {
+
+            boundWitnessException.printStackTrace()
+            return boundWitnessException
+
+        } catch (exception : Exception) {
+
+            exception.printStackTrace()
+            throw exception
+
         }
     }
 }

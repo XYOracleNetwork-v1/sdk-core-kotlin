@@ -10,9 +10,8 @@ import network.xyo.sdkcorekotlin.signing.XyoSignatureSet
 import network.xyo.sdkcorekotlin.signing.XyoSigner
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.XyoSha256WithSecp256K
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.keys.XyoSecp256K1UnCompressedPublicKey
-import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.signatures.XyoSecp256kSha256WithEcdsaSignature
+import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.signatures.XyoSecp256k1Sha256WithEcdsaSignature
 import network.xyo.sdkcorekotlin.signing.algorithms.rsa.XyoRsaPublicKey
-import network.xyo.sdkcorekotlin.signing.algorithms.rsa.XyoRsaSignature
 import network.xyo.sdkcorekotlin.signing.algorithms.rsa.XyoRsaWithSha256
 import network.xyo.sdkcorekotlin.signing.algorithms.rsa.signatures.XyoRsaWithSha256Signature
 import org.junit.Test
@@ -34,7 +33,7 @@ class XyoTwoPartyBoundWitnessTest : XyoTestBase() {
             XyoRsaPublicKey.enable()
             XyoRsaWithSha256Signature.enable()
             XyoSignatureSet.enable()
-            XyoSecp256kSha256WithEcdsaSignature.enable()
+            XyoSecp256k1Sha256WithEcdsaSignature.enable()
             XyoRssi.enable()
             XyoSecp256K1UnCompressedPublicKey.enable()
             XyoRsaPublicKey.enable()

@@ -29,12 +29,13 @@ abstract class XyoRelayNode (storageProvider : XyoStorageProviderInterface,
 
     private val mainBoundWitnessListener = object : XyoNodeListener {
         override fun onBoundWitnessEndFailure(error: Exception?) {}
+        override fun onBoundWitnessDiscovered(boundWitness: XyoBoundWitness) {}
         override fun onBoundWitnessStart() {
             val toBridge = originBlocksToBridge.getBlocksToBridge()
             selfToOtherQueue.addHashSet(XyoBridgeHashSet(XyoObjectProvider.encodedToDecodedArray(toBridge)))
         }
 
-        override fun onBoundWitnessDiscovered(boundWitness: XyoBoundWitness) {
+        override fun onBoundWitnessEndSucess(boundWitness: XyoBoundWitness) {
             async {
                 originBlocksToBridge.addBlock(boundWitness.getHash(hashingProvider).await().typed)
             }

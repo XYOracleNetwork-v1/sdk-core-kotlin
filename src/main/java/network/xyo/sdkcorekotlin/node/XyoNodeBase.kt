@@ -95,7 +95,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
         val boundWitness = XyoZigZagBoundWitness(originState.getSigners(), makePayload(bitFlag).await())
         boundWitness.incomingData(null, true)
         updateOriginState(boundWitness).await()
-        onBoundWitnessEndSuccess(boundWitness).await()
+        onBoundWitnessEndSucess(boundWitness).await()
     }
 
     fun addBoundWitnessOption (boundWitnessOption: XyoBoundWitnessOption) {
@@ -157,7 +157,15 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
         }
     }
 
-    private fun onBoundWitnessEndSuccess (boundWitness: XyoBoundWitness?) = async {
+    private fun onBoundWitnessEndSucess (boundWitness: XyoBoundWitness) = async {
+        loadCreatedBoundWitness(boundWitness).await()
+
+        for ((_, listener) in listeners) {
+            listener.onBoundWitnessEndSucess(boundWitness)
+        }
+    }
+
+    private fun loadCreatedBoundWitness (boundWitness: XyoBoundWitness) = async {
         if (boundWitness != null) {
             val hash = boundWitness.getHash(hashingProvider).await()
 
@@ -173,7 +181,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
                 for (subBlock in subBlocks) {
                     val subBlockBoundWitness = subBlock as? XyoBoundWitness
                     if (subBlockBoundWitness != null) {
-                        onBoundWitnessEndSuccess(subBlockBoundWitness)
+                        loadCreatedBoundWitness(subBlockBoundWitness)
                     }
                 }
             }
@@ -215,7 +223,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
 
         if (currentBoundWitnessSession?.completed == true && error == null) {
             updateOriginState(currentBoundWitnessSession!!)
-            onBoundWitnessEndSuccess(currentBoundWitnessSession).await()
+            onBoundWitnessEndSucess(currentBoundWitnessSession!!).await()
             currentBoundWitnessSession = null
         } else {
             onBoundWitnessEndFailure(error)
