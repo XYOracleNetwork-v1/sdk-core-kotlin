@@ -1,5 +1,6 @@
 package network.xyo.sdkcorekotlin.boundWitness
 
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
 import network.xyo.sdkcorekotlin.data.*
 import network.xyo.sdkcorekotlin.data.array.multi.XyoKeySet
@@ -19,17 +20,17 @@ abstract class XyoBoundWitness : XyoObject() {
     /**
      * All of the public keys in the bound witness.
      */
-    abstract val publicKeys : Array<XyoKeySet>
+    abstract val publicKeys: Array<XyoKeySet>
 
     /**
      * All of the payloads in the bound witness.
      */
-    abstract val payloads : Array<XyoPayload>
+    abstract val payloads: Array<XyoPayload>
 
     /**
      * All of the signatures in the bound witness.
      */
-    abstract val signatures : Array<XyoSignatureSet>
+    abstract val signatures: Array<XyoSignatureSet>
 
     override val id: ByteArray = byteArrayOf(major, minor)
     override val sizeIdentifierSize: Int? = 4
@@ -37,7 +38,7 @@ abstract class XyoBoundWitness : XyoObject() {
     /**
      * If the bound witness is completed or not.
      */
-    val completed : Boolean
+    val completed: Boolean
         get() {
             if (publicKeys.size == signatures.size && publicKeys.isNotEmpty()) {
                 return true
@@ -54,7 +55,7 @@ abstract class XyoBoundWitness : XyoObject() {
      * @param hashCreator A hash provider to create the hash with.
      * @return A deferred XyoHash
      */
-    fun getHash (hashCreator : XyoHash.XyoHashProvider) = async {
+    fun getHash(hashCreator: XyoHash.XyoHashProvider) = GlobalScope.async {
         val dataToHash = getSigningData()
         return@async hashCreator.createHash(dataToHash).await()
     }
@@ -65,7 +66,7 @@ abstract class XyoBoundWitness : XyoObject() {
      * @param signer A signer to sign with.
      * @return A deferred XyoObject (signature).
      */
-    fun signCurrent (signer: XyoSigner) = async {
+    fun signCurrent(signer: XyoSigner) = GlobalScope.async {
         val dataToSign = getSigningData()
         return@async signer.signData(dataToSign).await()
     }
@@ -73,7 +74,7 @@ abstract class XyoBoundWitness : XyoObject() {
     /**
      * Removes the unsigned payload from the bound witness.
      */
-    fun removeAllUnsigned () {
+    fun removeAllUnsigned() {
         for (payload in payloads) {
             payload.unsignedPayload.array = arrayOf()
             payload.unsignedPayload.updateObjectCache()
@@ -82,7 +83,7 @@ abstract class XyoBoundWitness : XyoObject() {
         }
     }
 
-    fun getSigningData () : ByteArray {
+    fun getSigningData(): ByteArray {
         val setter = XyoByteArraySetter(payloads.size + 1)
         val makePublicKeysUntyped = makePublicKeys().untyped
 
@@ -96,7 +97,7 @@ abstract class XyoBoundWitness : XyoObject() {
         return setter.merge()
     }
 
-    private fun makeBoundWitness() : ByteArray {
+    private fun makeBoundWitness(): ByteArray {
         val setter = XyoByteArraySetter(3)
         val makePublicKeysUntyped = makePublicKeys().untyped
         val makePayloadsUntyped = makePayloads().untyped
@@ -109,15 +110,15 @@ abstract class XyoBoundWitness : XyoObject() {
 
     }
 
-    private fun makePublicKeys () : XyoSingleTypeArrayShort {
-        return XyoSingleTypeArrayShort(XyoKeySet.major, XyoKeySet.minor,  Array(publicKeys.size, { i -> publicKeys[i] as XyoObject }))
+    private fun makePublicKeys(): XyoSingleTypeArrayShort {
+        return XyoSingleTypeArrayShort(XyoKeySet.major, XyoKeySet.minor, Array(publicKeys.size, { i -> publicKeys[i] as XyoObject }))
     }
 
-    private fun makePayloads () : XyoSingleTypeArrayInt {
+    private fun makePayloads(): XyoSingleTypeArrayInt {
         return XyoSingleTypeArrayInt(XyoPayload.major, XyoPayload.minor, Array(payloads.size, { i -> payloads[i] as XyoObject }))
     }
 
-    private fun makeSignatures () : XyoSingleTypeArrayShort {
+    private fun makeSignatures(): XyoSingleTypeArrayShort {
         return XyoSingleTypeArrayShort(XyoSignatureSet.major, XyoSignatureSet.minor, Array(signatures.size, { i -> signatures[i] as XyoObject }))
     }
 
@@ -166,7 +167,7 @@ abstract class XyoBoundWitness : XyoObject() {
             return Array(signatureArray.size, { i -> signatureArray.array[i] as XyoSignatureSet })
         }
 
-        private fun unpackFromArrays(keysets : Array<XyoKeySet>, payloads: Array<XyoPayload>, signatures: Array<XyoSignatureSet>): XyoObject {
+        private fun unpackFromArrays(keysets: Array<XyoKeySet>, payloads: Array<XyoPayload>, signatures: Array<XyoSignatureSet>): XyoObject {
             return object : XyoBoundWitness() {
                 override val payloads: Array<XyoPayload> = payloads
                 override val publicKeys: Array<XyoKeySet> = keysets

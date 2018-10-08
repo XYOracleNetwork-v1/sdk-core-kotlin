@@ -1,5 +1,6 @@
 package network.xyo.sdkcorekotlin.data.array.single
 
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
 import network.xyo.sdkcorekotlin.data.XyoObject
@@ -26,7 +27,7 @@ open class XyoBridgeBlockSet(override var array: Array<XyoObject>) : XyoSingleTy
      * @param hashProvider The hash creator to hash the blocks with.
      * @return A XyoBridgeHashSet for this block set.
      */
-    fun getHashSet (hashProvider: XyoHash.XyoHashProvider) = async {
+    fun getHashSet (hashProvider: XyoHash.XyoHashProvider) = GlobalScope.async {
         val hashes = ArrayList<XyoObject>()
         for (block in array) {
             if (block is XyoBoundWitness) {

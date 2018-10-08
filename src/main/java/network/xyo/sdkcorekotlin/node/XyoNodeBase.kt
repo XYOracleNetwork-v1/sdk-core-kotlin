@@ -1,5 +1,6 @@
 package network.xyo.sdkcorekotlin.node
 
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
 import network.xyo.sdkcorekotlin.boundWitness.XyoZigZagBoundWitness
@@ -90,7 +91,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
      *
      * @param flag The optional flag to use when self signing.
      */
-    fun selfSignOriginChain (flag: Int?) = async {
+    fun selfSignOriginChain (flag: Int?) = GlobalScope.async {
         val bitFlag = flag ?: 0
         val boundWitness = XyoZigZagBoundWitness(originState.getSigners(), makePayload(bitFlag).await())
         boundWitness.incomingData(null, true)
@@ -108,7 +109,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
      * @param bitFlag The flag to filter.
      * @return All of the options that comply to that filter.
      */
-    private fun getUnSignedPayloads (bitFlag : Int) = async {
+    private fun getUnSignedPayloads (bitFlag : Int) = GlobalScope.async {
         val unsignedPayloads = ArrayList<XyoObject>()
 
         for ((flag, option) in boundWitnessOptions) {
@@ -130,7 +131,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
      * @param bitFlag The flag to filter.
      * @return All of the options that comply to that filter.
      */
-    private fun getSignedPayloads (bitFlag: Int) = async {
+    private fun getSignedPayloads (bitFlag: Int) = GlobalScope.async {
         val signedPayloads = ArrayList<XyoObject>()
 
         for ((flag, option) in boundWitnessOptions) {
@@ -157,7 +158,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
         }
     }
 
-    private fun onBoundWitnessEndSucess (boundWitness: XyoBoundWitness) = async {
+    private fun onBoundWitnessEndSucess (boundWitness: XyoBoundWitness) = GlobalScope.async {
         loadCreatedBoundWitness(boundWitness).await()
 
         for ((_, listener) in listeners) {
@@ -165,7 +166,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
         }
     }
 
-    private fun loadCreatedBoundWitness (boundWitness: XyoBoundWitness) = async {
+    private fun loadCreatedBoundWitness (boundWitness: XyoBoundWitness) = GlobalScope.async {
         if (boundWitness != null) {
             val hash = boundWitness.getHash(hashingProvider).await()
 
@@ -231,12 +232,12 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
         }
     }
 
-    private fun updateOriginState (boundWitness: XyoBoundWitness) = async {
+    private fun updateOriginState (boundWitness: XyoBoundWitness) = GlobalScope.async {
         val hash = boundWitness.getHash(hashingProvider).await()
         originState.newOriginBlock(hash)
     }
 
-    private fun makePayload (bitFlag : Int) = async {
+    private fun makePayload (bitFlag : Int) = GlobalScope.async {
         val unsignedPayloads = ArrayList<XyoObject>(getHeuristics().asList())
         val signedPayloads = ArrayList<XyoObject>()
         val previousHash = originState.previousHash

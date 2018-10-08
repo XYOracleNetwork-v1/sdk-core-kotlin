@@ -1,5 +1,6 @@
 package network.xyo.sdkcorekotlin.boundWitness
 
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.XyoPayload
@@ -38,7 +39,7 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
      * @param endPoint If not already turned around, decide if what to send sign and send back.
      * @return A XyoBoundWitnessTransfer to send to the other party.
      */
-    fun incomingData (transfer : XyoBoundWitnessTransfer?, endPoint : Boolean) = async {
+    fun incomingData (transfer : XyoBoundWitnessTransfer?, endPoint : Boolean) = GlobalScope.async {
         updateObjectCache()
         val keysToSend = ArrayList<XyoObject>()
         val payloadsToSend = ArrayList<XyoObject>()
@@ -84,7 +85,7 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
         return@async XyoBoundWitnessTransfer(keysToSend.toTypedArray(), payloadsToSend.toTypedArray(), signatureToSend.toTypedArray())
     }
 
-    private fun addTransfer (transfer : XyoBoundWitnessTransfer) = async {
+    private fun addTransfer (transfer : XyoBoundWitnessTransfer) = GlobalScope.async {
         addIncomingKeys(transfer.keysToSend)
         addIncomingPayload(transfer.payloadsToSend)
         addIncomingSignatures(transfer.signatureToSend)
@@ -125,11 +126,11 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
         return XyoKeySet(publicKeys.toTypedArray())
     }
 
-    private fun signBoundWitness () = async {
-        return@async XyoSignatureSet(Array(signers.size, { i -> signCurrent(signers[i]).await() }))
+    private fun signBoundWitness () = GlobalScope.async {
+        return@async XyoSignatureSet(Array(signers.size) { i -> signCurrent(signers[i]).await() })
     }
 
-    private fun signForSelf () = async {
+    private fun signForSelf () = GlobalScope.async {
         val signatureSet = signBoundWitness().await()
         dynamicSignatureSets.add(signatureSet)
     }

@@ -1,6 +1,7 @@
 package network.xyo.sdkcorekotlin.signing.algorithms.rsa
 
 import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.signing.XyoSigner
@@ -15,7 +16,7 @@ class XyoRsaWithSha256 : XyoGeneralRsa (512) {
     override val signature: Signature = signatureInstance
 
     override fun signData(byteArray: ByteArray): Deferred<XyoObject> {
-        return async {
+        return GlobalScope.async {
             signature.initSign(keyPair.private)
             signature.update(byteArray)
             return@async XyoRsaWithSha256Signature(signature.sign())

@@ -1,6 +1,7 @@
 package network.xyo.sdkcorekotlin.node
 
 import com.sun.org.apache.xpath.internal.operations.Bool
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
@@ -36,7 +37,7 @@ abstract class XyoRelayNode (storageProvider : XyoStorageProviderInterface,
         }
 
         override fun onBoundWitnessEndSucess(boundWitness: XyoBoundWitness) {
-            async {
+            GlobalScope.async {
                 originBlocksToBridge.addBlock(boundWitness.getHash(hashingProvider).await().typed)
             }
         }
@@ -44,7 +45,7 @@ abstract class XyoRelayNode (storageProvider : XyoStorageProviderInterface,
 
     private val bridgeQueueListener = object : XyoBridgeQueue.Companion.XyoBridgeQueueListener {
         override fun onRemove(boundWitnessHash: ByteArray) {
-            async {
+            GlobalScope.async {
                 originBlocks.removeOriginBlock(boundWitnessHash)
             }
         }
@@ -101,7 +102,7 @@ abstract class XyoRelayNode (storageProvider : XyoStorageProviderInterface,
         return XyoProcedureCatalogue.BOUND_WITNESS
     }
 
-    private fun doConnection() = async {
+    private fun doConnection() = GlobalScope.async {
         val connectionToOtherPartyFrom = findSomeoneToTalkTo()
         if (!running) return@async
 
@@ -118,7 +119,7 @@ abstract class XyoRelayNode (storageProvider : XyoStorageProviderInterface,
     }
 
     private fun loop () {
-        launch {
+        GlobalScope.launch {
             while (running) {
                 doConnection().await()
             }

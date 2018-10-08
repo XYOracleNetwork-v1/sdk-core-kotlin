@@ -1,6 +1,7 @@
 package network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k
 
 import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.signing.XyoSigner
@@ -13,7 +14,7 @@ import java.security.Signature
  */
 class XyoSha1WithSecp256K : XyoEcSecp256K() {
     override fun signData(byteArray: ByteArray): Deferred<XyoObject> {
-        return async {
+        return GlobalScope.async {
             return@async XyoSecp256k1Sha1WithEcdsaSignature(signatureInstance.run {
                 initSign(keyPair.private)
                 update(byteArray)

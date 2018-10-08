@@ -1,6 +1,7 @@
 package network.xyo.sdkcorekotlin.storage
 
 import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
 import java.io.*
 import java.nio.charset.Charset
@@ -14,12 +15,12 @@ import java.util.*
  * @param basePath The base path for storing files.
  */
 class XyoFileStorage(private val basePath : File) : XyoStorageProviderInterface {
-    override fun containsKey(key: ByteArray): Deferred<Boolean> = async {
+    override fun containsKey(key: ByteArray): Deferred<Boolean> = GlobalScope.async {
         val file = File(basePath, encodeFileName(key)).absoluteFile
         return@async file.exists()
     }
 
-    override fun delete(key: ByteArray): Deferred<Exception?> = async {
+    override fun delete(key: ByteArray): Deferred<Exception?> = GlobalScope.async {
         try {
             File(basePath, encodeFileName(key)).delete()
             return@async null
@@ -28,12 +29,12 @@ class XyoFileStorage(private val basePath : File) : XyoStorageProviderInterface 
         }
     }
 
-    override fun getAllKeys(): Deferred<Array<ByteArray>> = async {
+    override fun getAllKeys(): Deferred<Array<ByteArray>> = GlobalScope.async {
         val listOfFiles = basePath.listFiles()
-        return@async Array(listOfFiles.size, { i -> decodeFileName(listOfFiles[i].name)})
+        return@async Array(listOfFiles.size) { i -> decodeFileName(listOfFiles[i].name)}
     }
 
-    override fun read(key: ByteArray): Deferred<ByteArray?>  = async {
+    override fun read(key: ByteArray): Deferred<ByteArray?>  = GlobalScope.async {
         try {
             val inputFile = File(basePath, encodeFileName(key))
             return@async readFileFromDisk(inputFile).await()
@@ -43,7 +44,7 @@ class XyoFileStorage(private val basePath : File) : XyoStorageProviderInterface 
     }
 
 
-    override fun write(key: ByteArray, value: ByteArray): Deferred<Exception?> = async {
+    override fun write(key: ByteArray, value: ByteArray): Deferred<Exception?> = GlobalScope.async {
         try {
             val file = File(basePath, encodeFileName(key))
             writeFileToDisk(file, value).await()
@@ -61,7 +62,7 @@ class XyoFileStorage(private val basePath : File) : XyoStorageProviderInterface 
         return Base64.getUrlDecoder().decode(name)
     }
 
-    private fun writeFileToDisk (file : File, value : ByteArray) = async {
+    private fun writeFileToDisk (file : File, value : ByteArray) = GlobalScope.async {
         val pathField = FileOutputStream(file)
         pathField.write(value)
         pathField.flush()
@@ -69,7 +70,7 @@ class XyoFileStorage(private val basePath : File) : XyoStorageProviderInterface 
         return@async null
     }
 
-    private fun readFileFromDisk (file : File) = async {
+    private fun readFileFromDisk (file : File) = GlobalScope.async {
         val data = ByteArray(file.length().toInt())
         val inputStream = FileInputStream(file)
         inputStream.read(data, 0, data.size)

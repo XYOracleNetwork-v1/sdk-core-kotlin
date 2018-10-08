@@ -1,5 +1,6 @@
 package network.xyo.sdkcorekotlin.node
 
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
 import kotlinx.coroutines.experimental.selects.selectUnbiased
@@ -38,7 +39,7 @@ class XyoBridgingOption (private val originBlocks: XyoStorageProviderInterface):
     }
 
 
-    private fun updateOriginChain(bridgeHashSet : XyoBridgeHashSet) = async {
+    private fun updateOriginChain(bridgeHashSet : XyoBridgeHashSet) = GlobalScope.async {
         hashOfOriginBlocks = bridgeHashSet
         val blocks = ArrayList<XyoObject>()
         if (hashOfOriginBlocks != null) {
