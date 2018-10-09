@@ -3,6 +3,7 @@ package network.xyo.sdkcorekotlin.hashing
 import kotlinx.coroutines.experimental.runBlocking
 import network.xyo.sdkcorekotlin.XyoTestBase
 import network.xyo.sdkcorekotlin.hashing.basic.*
+import network.xyo.sdkcorekotlin.hashing.bouncy.XyoSha3
 import org.junit.Assert.assertArrayEquals
 import org.junit.Test
 
@@ -13,6 +14,7 @@ class XyoBulkTestHashes : XyoTestBase() {
     @Test
     fun bulkTestHashes () {
         runBlocking {
+            testHash(XyoSha3, "FD1780A6FC9EE0DAB26CEB4B3941AB03E66CCD970D1DB91612C66DF4515B0A0A".hexStringToByteArray())
             testHash(XyoMd2, "30BD026F5B88B4719B563BDDB68917BE".hexStringToByteArray())
             testHash(XyoMd5, "5289DF737DF57326FCDD22597AFB1FAC".hexStringToByteArray())
             testHash(XyoSha1, "7037807198C22A7D2B0807371D763779A84FDFCF".hexStringToByteArray())
