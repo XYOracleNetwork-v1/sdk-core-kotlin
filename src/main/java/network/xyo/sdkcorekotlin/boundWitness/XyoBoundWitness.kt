@@ -208,7 +208,9 @@ abstract class XyoBoundWitness : XyoObject() {
                     for (keyNum in 0 until keys.size) {
                         val key = keys[keyNum]
                         val signature = signatures[keyNum]
+
                         val verify = XyoSigner.verify(key, signature, signingData).await()
+
                         if (XyoSigner.verify(key, signature, signingData).await() != true) {
                             return@async verify
                         }

@@ -83,12 +83,22 @@ abstract class XyoSigner {
         }
 
 
-
         /**
          * Removes the signer provider to the mapping.
          */
         fun disable () {
             signingCreators.remove(key)
+
+            for (key in supportedKeys) {
+                for (sig in supportedSignatures) {
+                    verifiers[key.contentHashCode()] ?: return
+                    verifiers[key.contentHashCode()]?.remove(sig.contentHashCode())
+
+                    if (verifiers[key.contentHashCode()]?.size == 0) {
+                        verifiers.remove(key.contentHashCode())
+                    }
+                }
+            }
         }
     }
 

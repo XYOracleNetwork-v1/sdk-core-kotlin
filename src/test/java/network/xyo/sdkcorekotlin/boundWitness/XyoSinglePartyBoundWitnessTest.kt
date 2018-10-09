@@ -8,6 +8,7 @@ import network.xyo.sdkcorekotlin.data.array.multi.XyoMultiTypeArrayInt
 import network.xyo.sdkcorekotlin.data.heuristics.number.signed.XyoRssi
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.XyoSha256WithSecp256K
 import network.xyo.sdkcorekotlin.signing.algorithms.rsa.XyoRsaWithSha256
+import org.junit.Assert
 import org.junit.Test
 
 class XyoSinglePartyBoundWitnessTest : XyoTestBase() {
@@ -18,6 +19,8 @@ class XyoSinglePartyBoundWitnessTest : XyoTestBase() {
     @Test
     fun testSinglePartyBoundWitness () {
         runBlocking {
+            XyoSha256WithSecp256K.enable()
+            XyoRsaWithSha256.enable()
             val alicePayload = XyoPayload(aliceSignedPayload, aliceUnsignedPayload)
             val aliceBoundWitness = XyoZigZagBoundWitness(aliceSigners, alicePayload)
             aliceBoundWitness.incomingData(null, true).await()
@@ -25,6 +28,7 @@ class XyoSinglePartyBoundWitnessTest : XyoTestBase() {
             assertEquals(1, aliceBoundWitness.payloads.size)
             assertEquals(1, aliceBoundWitness.publicKeys.size)
             assertEquals(1, aliceBoundWitness.signatures.size)
+            Assert.assertEquals(true, XyoBoundWitness.verify(aliceBoundWitness).await())
         }
     }
 }
