@@ -7,6 +7,9 @@ import network.xyo.sdkcorekotlin.data.XyoPayload
 import network.xyo.sdkcorekotlin.data.array.multi.XyoKeySet
 import network.xyo.sdkcorekotlin.signing.XyoSignatureSet
 import network.xyo.sdkcorekotlin.signing.XyoSigner
+import java.util.*
+import java.util.concurrent.ConcurrentLinkedDeque
+import java.util.concurrent.ConcurrentLinkedQueue
 
 /**
  * A zig-zag bound witness protocol.
@@ -56,8 +59,9 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
             hasSentKeysAndPayload = true
         }
 
+
         if (signatures.size != publicKeys.size) {
-            if (signatures.size == 0 && !endPoint) {
+            if (signatures.isEmpty() && !endPoint) {
                 for (key in publicKeys) {
                     keysToSend.add(key)
                 }
@@ -67,18 +71,18 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
                 }
             } else {
                 signForSelf().await()
-
-                for (i in signatureReceivedSize + 1..publicKeys.size - 1) {
+                for (i in signatureReceivedSize + 1 until publicKeys.size ) {
                     keysToSend.add(publicKeys[i])
                 }
 
-                for (i in signatureReceivedSize + 1..payloads.size - 1) {
+                for (i in signatureReceivedSize + 1 until payloads.size) {
                     payloadsToSend.add(payloads[i])
                 }
 
-                for (i in signatureReceivedSize..signatures.size - 1) {
+                for (i in 0 until signatures.size) {
                     signatureToSend.add(signatures[i])
                 }
+
             }
         }
 
@@ -92,7 +96,7 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
     }
 
     private fun addIncomingKeys(incomingKeySets : Array<XyoObject>) {
-        for (i in 0..incomingKeySets.size - 1) {
+        for (i in 0 until incomingKeySets.size) {
             val incomingKeySet = incomingKeySets[i] as? XyoKeySet
             if (incomingKeySet != null) {
                 dynamicPublicKeys.add(incomingKeySet)
@@ -101,7 +105,7 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
     }
 
     private fun addIncomingPayload(incomingPayloads : Array<XyoObject>) {
-        for (i in 0..incomingPayloads.size - 1) {
+        for (i in 0 until incomingPayloads.size) {
             val incomingPayload = incomingPayloads[i] as? XyoPayload
             if (incomingPayload != null) {
                 dynamicPayloads.add(incomingPayload)
@@ -110,9 +114,13 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
     }
 
     private fun addIncomingSignatures(incomingSignatures : Array<XyoObject>) {
-        for (i in 0..incomingSignatures.size - 1) {
+        for (i in 0 until incomingSignatures.size) {
             val incomingSignatureSet = incomingSignatures[i] as? XyoSignatureSet
             if (incomingSignatureSet != null) {
+                if (dynamicSignatureSets.size != 0) {
+                    dynamicSignatureSets.add(0, incomingSignatureSet)
+                    return
+                }
                 dynamicSignatureSets.add(incomingSignatureSet)
             }
         }
@@ -132,6 +140,6 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
 
     private fun signForSelf () = GlobalScope.async {
         val signatureSet = signBoundWitness().await()
-        dynamicSignatureSets.add(signatureSet)
+        addIncomingSignatures(arrayOf(signatureSet))
     }
 }
