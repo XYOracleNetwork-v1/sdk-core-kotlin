@@ -1,6 +1,7 @@
 package network.xyo.sdkcorekotlin.signing
 
 import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.async
 import network.xyo.sdkcorekotlin.data.XyoObject
 
 /**
@@ -57,11 +58,31 @@ abstract class XyoSigner {
         abstract val key : Byte
 
         /**
+         * The keys types the signer supports
+         */
+        abstract val supportedKeys : Array<ByteArray>
+
+        /**
+         * The signatures types the signer supports
+         */
+        abstract val supportedSignatures : Array<ByteArray>
+
+        /**
          * Adds the signer provider to the mapping.
          */
         fun enable () {
             signingCreators[key] = this
+
+            for (key in supportedKeys) {
+                for (sig in supportedSignatures) {
+                    val map = verifiers[key.contentHashCode()] ?: HashMap()
+                    map[sig.contentHashCode()] = this
+                    verifiers[key.contentHashCode()] = map
+                }
+            }
         }
+
+
 
         /**
          * Removes the signer provider to the mapping.
@@ -72,6 +93,10 @@ abstract class XyoSigner {
     }
 
     companion object {
+        /**
+         * [major and minor of key (content hash code)][major and minor of sig (content hash code)]
+         */
+        private val verifiers = HashMap<Int, HashMap<Int, XyoSignerProvider>>()
         private val signingCreators = HashMap<Byte, XyoSignerProvider>()
 
         /**
@@ -82,6 +107,16 @@ abstract class XyoSigner {
          */
         fun getCreator (byte : Byte) : XyoSignerProvider? {
             return signingCreators[byte]
+        }
+
+        fun verify (publicKey: XyoObject, signature: XyoObject, data : ByteArray) : Deferred<Boolean?> = async {
+            val creator = verifiers[publicKey.id.contentHashCode()]?.get(signature.id.contentHashCode())
+
+            if (creator != null) {
+                return@async creator.verifySign(signature, data, publicKey).await()
+            }
+
+            return@async null
         }
     }
 }

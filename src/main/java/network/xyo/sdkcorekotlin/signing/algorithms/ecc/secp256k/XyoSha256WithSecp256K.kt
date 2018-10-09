@@ -6,6 +6,8 @@ import kotlinx.coroutines.experimental.async
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.signing.XyoSigner
 import network.xyo.sdkcorekotlin.signing.XyoSigningObjectCreatorVerify
+import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.keys.XyoSecp256K1UnCompressedPublicKey
+import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.signatures.XyoSecp256k1Sha1WithEcdsaSignature
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.signatures.XyoSecp256k1Sha256WithEcdsaSignature
 import java.security.Signature
 
@@ -30,5 +32,8 @@ class XyoSha256WithSecp256K : XyoEcSecp256K() {
         override fun newInstance(): XyoSigner {
             return XyoSha256WithSecp256K()
         }
+
+        override val supportedKeys: Array<ByteArray> = arrayOf(XyoSecp256K1UnCompressedPublicKey.id)
+        override val supportedSignatures: Array<ByteArray> = arrayOf(XyoSecp256k1Sha256WithEcdsaSignature.id)
     }
 }

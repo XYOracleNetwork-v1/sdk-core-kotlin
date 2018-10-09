@@ -1,5 +1,6 @@
 package network.xyo.sdkcorekotlin.boundWitness
 
+import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
 import network.xyo.sdkcorekotlin.data.*
@@ -177,6 +178,65 @@ abstract class XyoBoundWitness : XyoObject() {
 
         override fun readSize(byteArray: ByteArray): Int {
             return XyoUnsignedHelper.readUnsignedInt(byteArray)
+        }
+
+        /**
+         * Will verify a single bound witness.
+         *
+         * @param boundWitness The bound witness to verify
+         * @return If the bound witness was successful and null if does not have the capability to
+         * verify (cant find verify method)
+         */
+        fun verify (boundWitness: XyoBoundWitness) : Deferred<Boolean?> = async {
+            if (!boundWitness.completed) {
+                return@async false
+            }
+
+            val numberOfParties = getNumberOfParties(boundWitness)
+
+            if (numberOfParties != null) {
+                val signingData  = boundWitness.getSigningData()
+
+                for (partyNum in 0 until numberOfParties) {
+                    val keys = boundWitness.publicKeys[partyNum].array
+                    val signatures = boundWitness.signatures[partyNum].array
+
+                    if (keys.size != signatures.size) {
+                        return@async false
+                    }
+
+                    for (keyNum in 0 until keys.size) {
+                        val key = keys[keyNum]
+                        val signature = signatures[keyNum]
+                        val verify = XyoSigner.verify(key, signature, signingData).await()
+                        if (XyoSigner.verify(key, signature, signingData).await() != true) {
+                            return@async verify
+                        }
+                    }
+                }
+
+                return@async true
+            }
+
+            return@async false
+        }
+
+        /**
+         * Will get the number of parties in a bound witness.
+         *
+         * @param boundWitness The boundWitness to check
+         * @return The number of parties, if null, there is a inconsistent amount of parties.
+         */
+        fun getNumberOfParties (boundWitness: XyoBoundWitness) : Int? {
+            val keySetNumber = boundWitness.publicKeys.size
+            val payloadNumber = boundWitness.payloads.size
+            val signatureNumber = boundWitness.signatures.size
+
+            if (keySetNumber == payloadNumber &&  keySetNumber == signatureNumber) {
+                return keySetNumber
+            }
+
+            return null
         }
     }
 }

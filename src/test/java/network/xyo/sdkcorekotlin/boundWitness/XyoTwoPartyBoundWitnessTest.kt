@@ -38,6 +38,8 @@ class XyoTwoPartyBoundWitnessTest : XyoTestBase() {
             XyoRssi.enable()
             XyoSecp256K1UnCompressedPublicKey.enable()
             XyoRsaPublicKey.enable()
+            XyoSha256WithSecp256K.enable()
+            XyoRsaWithSha256.enable()
 
             val payloadAlice = XyoPayload(signedPayloadAlice, unsignedPayloadAlice)
             val payloadBob = XyoPayload(signedPayloadBob, unsignedPayloadBob)
@@ -56,6 +58,7 @@ class XyoTwoPartyBoundWitnessTest : XyoTestBase() {
 
             Assert.assertArrayEquals(packedBoundWitness, recreated.untyped)
 
+            Assert.assertEquals(true, XyoBoundWitness.verify(boundWitnessAlice).await())
         }
     }
 }
