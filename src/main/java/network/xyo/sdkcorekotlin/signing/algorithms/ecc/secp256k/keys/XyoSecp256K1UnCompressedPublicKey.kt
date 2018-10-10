@@ -1,20 +1,10 @@
 package network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.keys
 
-import network.xyo.sdkcorekotlin.signing.algorithms.ecc.XyoSecp256k1
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.XyoUncompressedEcPublicKey
-import org.bouncycastle.asn1.sec.SECNamedCurves
-import org.bouncycastle.jce.ECNamedCurveTable
 import org.bouncycastle.jce.provider.BouncyCastleProvider
-import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec
 import java.security.AlgorithmParameters
-import java.security.KeyPairGenerator
-import java.security.Security
 import java.security.spec.ECGenParameterSpec
 import java.security.spec.ECParameterSpec
-import java.security.Security.addProvider
-import org.bouncycastle.jce.spec.ECNamedCurveSpec
-import java.security.interfaces.ECPublicKey
-import java.security.spec.ECPublicKeySpec
 
 
 /**
