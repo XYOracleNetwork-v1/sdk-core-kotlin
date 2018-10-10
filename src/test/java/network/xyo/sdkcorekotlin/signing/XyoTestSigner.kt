@@ -11,4 +11,7 @@ class XyoTestSigner : XyoSigner() {
     override fun signData(byteArray: ByteArray) = GlobalScope.async {
         return@async XyoTestPlaceholder() as XyoObject
     }
+
+    override val privateKey: ByteArray
+        get() = byteArrayOf()
 }

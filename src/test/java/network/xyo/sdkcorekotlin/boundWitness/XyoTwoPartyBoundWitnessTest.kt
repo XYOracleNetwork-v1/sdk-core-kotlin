@@ -18,11 +18,11 @@ import org.junit.Assert
 import org.junit.Test
 
 class XyoTwoPartyBoundWitnessTest : XyoTestBase() {
-    private val signersAlice = arrayOf<XyoSigner>(XyoSha256WithSecp256K())
+    private val signersAlice = arrayOf<XyoSigner>(XyoSha256WithSecp256K(null))
     private val signedPayloadAlice = XyoMultiTypeArrayInt(arrayOf(XyoRssi(5)))
     private val unsignedPayloadAlice = XyoMultiTypeArrayInt(arrayOf(XyoRssi(5)))
 
-    private val signersBob = arrayOf<XyoSigner>(XyoRsaWithSha256())
+    private val signersBob = arrayOf<XyoSigner>(XyoRsaWithSha256(null))
     private val signedPayloadBob= XyoMultiTypeArrayInt(arrayOf(XyoRssi(10)))
     private val unsignedPayloadBob= XyoMultiTypeArrayInt(arrayOf(XyoRssi(10)))
 

@@ -14,7 +14,7 @@ import java.security.Signature
 /**
  * A Xyo Signer using EC with the Secp256K curve with SHA256.
  */
-class XyoSha256WithSecp256K : XyoEcSecp256K() {
+class XyoSha256WithSecp256K (privateKey : ByteArray?) : XyoEcSecp256K(privateKey) {
     override fun signData(byteArray: ByteArray): Deferred<XyoObject> {
         return GlobalScope.async {
             return@async XyoSecp256k1Sha256WithEcdsaSignature(signatureInstance.run {
@@ -29,11 +29,15 @@ class XyoSha256WithSecp256K : XyoEcSecp256K() {
         override val signatureInstance: Signature = Signature.getInstance("SHA256withECDSA")
         override val key: Byte = 0x01
 
-        override fun newInstance(): XyoSigner {
-            return XyoSha256WithSecp256K()
-        }
-
         override val supportedKeys: Array<ByteArray> = arrayOf(XyoSecp256K1UnCompressedPublicKey.id)
         override val supportedSignatures: Array<ByteArray> = arrayOf(XyoSecp256k1Sha256WithEcdsaSignature.id)
+
+        override fun newInstance(): XyoSigner {
+            return XyoSha256WithSecp256K(null)
+        }
+
+        override fun newInstance(privateKey: ByteArray): XyoSigner {
+            return XyoSha256WithSecp256K(privateKey)
+        }
     }
 }

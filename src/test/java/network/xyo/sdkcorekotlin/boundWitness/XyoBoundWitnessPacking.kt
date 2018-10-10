@@ -17,7 +17,7 @@ import org.junit.Assert.assertArrayEquals
 import org.junit.Test
 
 class XyoBoundWitnessPacking : XyoTestBase() {
-    private val aliceSigners = arrayOf<XyoSigner>(XyoRsaWithSha256())
+    private val aliceSigners = arrayOf<XyoSigner>(XyoRsaWithSha256(null))
     private val aliceSignedPayload = XyoMultiTypeArrayInt(arrayOf(XyoRssi(-32)))
     private val aliceUnsignedPayload = XyoMultiTypeArrayInt(arrayOf(XyoRssi(-52)))
 

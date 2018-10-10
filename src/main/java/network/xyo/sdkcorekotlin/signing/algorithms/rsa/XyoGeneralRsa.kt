@@ -2,8 +2,11 @@ package network.xyo.sdkcorekotlin.signing.algorithms.rsa
 
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.signing.XyoSigner
+import java.math.BigInteger
 import java.security.*
+import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
+import java.security.spec.RSAPublicKeySpec
 
 /**
  * A base class for a all RSA cryptography.
@@ -11,8 +14,7 @@ import java.security.interfaces.RSAPublicKey
  * @param keySize The size of the keypair to generate.
  */
 
-abstract class XyoGeneralRsa(private val keySize : Int) : XyoSigner() {
-    private val keyGenerator: KeyPairGenerator = KeyPairGenerator.getInstance("RSA")
+abstract class XyoGeneralRsa(private val keySize : Int, privateKey: ByteArray?) : XyoSigner() {
 
     /**
      * The Java Signature object when creating signatures. This is used when switching between
@@ -29,17 +31,38 @@ abstract class XyoGeneralRsa(private val keySize : Int) : XyoSigner() {
             throw Exception("Key can not be casted!")
         }
 
-    open val keyPair: KeyPair = generateKeyPair()
+    open val keyPair: KeyPair = generateKeyPair(privateKey)
 
-    private fun generateKeyPair(): KeyPair {
-        keyGenerator.initialize(keySize)
-        val standardKeyPair = keyGenerator.genKeyPair()
-        val publicKey = standardKeyPair.public as? RSAPublicKey
+    override val privateKey: ByteArray
+        get() = keyPair.private.encoded
 
-        if (publicKey != null) {
-            return KeyPair(XyoRsaPublicKey(publicKey.modulus), standardKeyPair.private)
+    private fun generateKeyPair(privateKey: ByteArray?): KeyPair {
+        if (privateKey != null) {
+            return generateKeyPairFromPrivate(privateKey)
         }
+        return generateNewKeyPair()
+    }
 
-        throw Exception()
+    private fun generateKeyPairFromPrivate (encodedPrivateKey: ByteArray) : KeyPair {
+        val keyGenerator: KeyFactory = KeyFactory.getInstance("RSA")
+        val privateKey = XyoRsaPrivateKey.createFromPacked(encodedPrivateKey) as XyoRsaPrivateKey
+        val publicKey = keyGenerator.generatePrivate(getSpecFromPrivateKey(privateKey)) as RSAPublicKey
+
+        return KeyPair(XyoRsaPublicKey(publicKey.modulus), privateKey)
+    }
+
+    private fun generateNewKeyPair () : KeyPair {
+        val keyGenerator: KeyPairGenerator = KeyPairGenerator.getInstance("RSA")
+        keyGenerator.initialize(keySize)
+
+        val standardKeyPair = keyGenerator.genKeyPair()
+        val publicKey = standardKeyPair.public as RSAPublicKey
+        val privateKey = standardKeyPair.private as RSAPrivateKey
+
+        return KeyPair(XyoRsaPublicKey(publicKey.modulus), XyoRsaPrivateKey(privateKey.modulus, privateKey.privateExponent))
+    }
+
+    private fun getSpecFromPrivateKey (encodedPrivateKey: XyoRsaPrivateKey) : RSAPublicKeySpec {
+        return RSAPublicKeySpec(BigInteger(byteArrayOf(0x01, 0x00, 0x01)), encodedPrivateKey.modulus)
     }
 }

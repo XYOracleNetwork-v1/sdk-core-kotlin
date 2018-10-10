@@ -17,6 +17,11 @@ abstract class XyoSigner {
     abstract val publicKey : XyoObject
 
     /**
+     * The private key of the XyoSigner, this can be used to restore signer state.
+     */
+    abstract val privateKey : ByteArray
+
+    /**
      * Cryptographically signs a given ByteArray so that it can verified with verify().
      *
      * @param byteArray The data to cryptographically sign using the private key of the
@@ -31,9 +36,15 @@ abstract class XyoSigner {
      */
     abstract class XyoSignerProvider {
         /**
-         * Provides a new instance of a XyoSigner for the given algorithm.
+         * Provides a new instance of a XyoSigner for the given algorithm and generates a keypair.
          */
         abstract fun newInstance () : XyoSigner
+
+        /**
+         * Provides a new instance of a XyoSigner for the given algorithm and generates a keypair with the given
+         * private key.
+         */
+        abstract fun newInstance (privateKey : ByteArray) : XyoSigner
 
         /**
          * Cryptographically verify a signature given data, a signature, and a public
