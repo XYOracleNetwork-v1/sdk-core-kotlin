@@ -2,95 +2,20 @@ package network.xyo.sdkcorekotlin.origin
 
 import kotlinx.coroutines.experimental.runBlocking
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
+import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.heuristics.number.unsigned.XyoIndex
 import network.xyo.sdkcorekotlin.data.heuristics.number.unsigned.XyoNumberUnsigned
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.hashing.XyoPreviousHash
-import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 class XyoOriginVerify (boundWitnesses : ArrayList<XyoBoundWitness>, hashProvider: XyoHash.XyoHashProvider) {
     private val mapping = createMapping(boundWitnesses.toTypedArray(), hashProvider)
-    private val chain = ArrayList<XyoOriginBlock>()
 
-//    fun verify () : Boolean {
-//        originBlocks.sortWith(sorter)
-//        return true
-//    }
+//    private fun getEndpoint (boundWitness: XyoBoundWitness, party: Int) : XyoOriginBlock {
 //
-//    private fun findFirsyBlock () : XyoOriginBlock {
-//        val list = LinkedList<XyoOriginBlock>()
-//        val keys = mapping.keys.toTypedArray()
-//        val indexStartPoint = keys[0]
 //    }
-
-    private fun goDown (originBlock: XyoOriginBlock) : LinkedList<XyoOriginBlock> {
-        val list = LinkedList<XyoOriginBlock>()
-        var found = false
-        var child : XyoOriginBlock? = originBlock
-
-        while (!found) {
-            if (child != null) {
-                val subBlocks = getSubBlocks(child)
-
-                if (subBlocks.size == 1) {
-                    child = subBlocks[0]
-                    list.addFirst(child)
-                } else {
-                    found = true
-                }
-            } else {
-                found = true
-            }
-        }
-
-        return list
-    }
-
-
-    private fun goUp (originBlock: XyoOriginBlock) : LinkedList<XyoOriginBlock> {
-        val list = LinkedList<XyoOriginBlock>()
-        var found = false
-        var parent : XyoOriginBlock? = originBlock
-
-        while (!found) {
-            if (parent != null) {
-                parent = getParentBlock(parent)
-
-                if (parent != null) {
-                    list.add(parent)
-                }
-
-            } else {
-                found = true
-            }
-        }
-
-        return list
-    }
-
-    private fun getParentBlock (originBlock: XyoOriginBlock) : XyoOriginBlock? {
-        return mapping[XyoPreviousHash(originBlock.hash).typed.contentHashCode()]
-    }
-
-    private fun getSubBlocks (originBlock: XyoOriginBlock) : ArrayList<XyoOriginBlock> {
-        val list = ArrayList<XyoOriginBlock>()
-
-        for (hash in originBlock.hashes) {
-            val hashValue = hash?.typed
-
-            if (hashValue != null) {
-                val subBlock = mapping[hashValue.contentHashCode()]
-
-                if (subBlock != null) {
-                    list.add(subBlock)
-                }
-            }
-        }
-
-        return list
-    }
 
     private fun createMapping (boundWitnesses: Array<XyoBoundWitness>, hashProvider: XyoHash.XyoHashProvider) : HashMap<Int, XyoOriginBlock> {
         val map = HashMap<Int, XyoOriginBlock>()
@@ -111,7 +36,7 @@ class XyoOriginVerify (boundWitnesses : ArrayList<XyoBoundWitness>, hashProvider
         return map
     }
 
-    inner class XyoOriginBlock (val boundWitness: XyoBoundWitness, hashProvider: XyoHash.XyoHashProvider) {
+    inner open class XyoOriginBlock (val boundWitness: XyoBoundWitness, protected val hashProvider: XyoHash.XyoHashProvider) {
         val hash : XyoHash = getHashBlocking(hashProvider)
 
         val indexes : Array<Int?>
@@ -140,4 +65,97 @@ class XyoOriginVerify (boundWitnesses : ArrayList<XyoBoundWitness>, hashProvider
             }
         }
     }
+
+    inner class XyoPartyOriginBlock (boundWitness: XyoBoundWitness, hashProvider: XyoHash.XyoHashProvider, val party : Int) : XyoOriginBlock(boundWitness, hashProvider) {
+        val index : Int?
+            get() = (boundWitness.payloads[party].signedPayloadMapping[XyoIndex.id.contentHashCode()] as? XyoNumberUnsigned)?.number
+
+        val previousHash : XyoPreviousHash?
+            get() = boundWitness.payloads[party].signedPayloadMapping[XyoIndex.id.contentHashCode()] as? XyoPreviousHash
+
+//        fun getPrevious () : XyoPartyOriginBlock? {
+//            val originBlock = mapping[previousHash?.hash?.typed?.contentHashCode()]
+//            return XyoPartyOriginBlock(originBlock!!.boundWitness, hashProvider, getPartyNumber(publicKey, boundWitness)!!)
+//        }
+//
+//        fun getNext () : XyoPartyOriginBlock? {
+//            val block = mapping[XyoPreviousHash(previousHash!!.hash).typed.contentHashCode()]
+//            return XyoPartyOriginBlock(block.boundWitness, hashProvider, getPartyNumber(publicKey, boundWitness)!!)
+//        }
+    }
+
+    private fun getPartyNumber (publicKey: XyoObject, boundWitness: XyoBoundWitness) : Int? {
+        for (i in 0 until boundWitness.publicKeys.size)
+            for (key in boundWitness.publicKeys[i].array) {
+                if (key.typed.contentHashCode() == publicKey.typed.contentHashCode() ) {
+                    return i
+                }
+            }
+
+        return null
+    }
 }
+
+
+//private fun goDown (originBlock: XyoPartyOriginBlock) : LinkedList<XyoPartyOriginBlock> {
+//    val list = LinkedList<XyoPartyOriginBlock>()
+//    var found = false
+//    var child : XyoPartyOriginBlock? = originBlock
+//
+//    while (!found) {
+//        if (child != null) {
+//            val subBlocks = getSubBlocks(child)
+//
+//            if (subBlocks.size == 1) {
+//                child = subBlocks[0]
+//                list.addFirst(child)
+//            } else {
+//                found = true
+//            }
+//        } else {
+//            found = true
+//        }
+//    }
+//
+//    return list
+//}
+//
+//
+//private fun goUp (originBlock: XyoPartyOriginBlock) : LinkedList<XyoPartyOriginBlock> {
+//    val list = LinkedList<XyoPartyOriginBlock>()
+//    var found = false
+//    var parent : XyoPartyOriginBlock? = originBlock
+//
+//    while (!found) {
+//        if (parent != null) {
+//            parent = getParentBlock(parent)
+//
+//            if (parent != null) {
+//                list.add(parent)
+//            }
+//
+//        } else {
+//            found = true
+//        }
+//    }
+//
+//    return list
+//}
+//
+//private fun getSubBlocks (originBlock: XyoPartyOriginBlock) : ArrayList<XyoPartyOriginBlock> {
+//    val list = ArrayList<XyoPartyOriginBlock>()
+//
+//    for (hash in originBlock.hashes) {
+//        val hashValue = hash?.typed
+//
+//        if (hashValue != null) {
+//            val subBlock = mapping[hashValue.contentHashCode()]
+//
+//            if (subBlock != null) {
+//                list.add(subBlock)
+//            }
+//        }
+//    }
+//
+//    return list
+// }

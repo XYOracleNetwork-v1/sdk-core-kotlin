@@ -9,7 +9,7 @@ interface XyoGetOriginBlockByHash {
      *
      * @param originBlockHash The previous hash of the origin block the function is looking
      * to find.
-     * @return a deferred XyoOriginBlock that is has the previous hash.
+     * @return a deferred XyoPartyOriginBlock that is has the previous hash.
      */
     fun getOriginBlockByBlockHash (originBlockHash: ByteArray) : Deferred<XyoBoundWitness?>
 }
