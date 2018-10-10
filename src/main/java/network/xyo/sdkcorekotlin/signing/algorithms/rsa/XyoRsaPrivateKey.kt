@@ -63,16 +63,5 @@ class XyoRsaPrivateKey (private val mod : BigInteger, private val privateExponen
         override fun readSize(byteArray: ByteArray): Int {
             return XyoUnsignedHelper.readUnsignedShort(byteArray)
         }
-
-        fun ByteArray.toHexString(): String {
-            val builder = StringBuilder()
-            val it = this.iterator()
-            builder.append("0x")
-            while (it.hasNext()) {
-                builder.append(String.format("%02X ", it.next()))
-            }
-
-            return builder.toString()
-        }
     }
 }
