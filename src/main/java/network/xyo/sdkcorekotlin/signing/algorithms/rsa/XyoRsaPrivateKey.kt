@@ -53,15 +53,26 @@ class XyoRsaPrivateKey (private val mod : BigInteger, private val privateExponen
 
         override fun createFromPacked(byteArray: ByteArray): XyoObject {
             val reader = XyoByteArrayReader(byteArray)
-            val sizeOfPrivateExponent = XyoUnsignedHelper.readUnsignedByte(byteArrayOf(byteArray[0])) - 1
-            val privateExponent = reader.read(1, sizeOfPrivateExponent)
-            val modulus = reader.read(1 + sizeOfPrivateExponent, byteArray.size - 1)
+            val sizeOfPrivateExponent = XyoUnsignedHelper.readUnsignedByte(byteArrayOf(byteArray[2])) - 1
+            val privateExponent = reader.read(3, sizeOfPrivateExponent)
+            val modulus = reader.read(3 + sizeOfPrivateExponent, byteArray.size - (3 + sizeOfPrivateExponent))
 
-            return XyoRsaPrivateKey(BigInteger(privateExponent), BigInteger(modulus))
+            return XyoRsaPrivateKey(BigInteger(modulus), BigInteger(privateExponent))
         }
 
         override fun readSize(byteArray: ByteArray): Int {
             return XyoUnsignedHelper.readUnsignedShort(byteArray)
+        }
+
+        fun ByteArray.toHexString(): String {
+            val builder = StringBuilder()
+            val it = this.iterator()
+            builder.append("0x")
+            while (it.hasNext()) {
+                builder.append(String.format("%02X ", it.next()))
+            }
+
+            return builder.toString()
         }
     }
 }

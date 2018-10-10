@@ -12,8 +12,14 @@ import java.security.KeyPair
 import java.security.KeyPairGenerator
 import java.security.interfaces.ECPrivateKey
 import java.security.interfaces.ECPublicKey
-import java.security.spec.ECPrivateKeySpec
-import java.security.spec.KeySpec
+import sun.jvm.hotspot.code.CompressedStream.H
+import javax.swing.text.html.HTML.Attribute.N
+import org.bouncycastle.crypto.params.ECDomainParameters
+import org.bouncycastle.asn1.x9.X9ECParameters
+import org.bouncycastle.crypto.tls.NamedCurve
+import org.bouncycastle.jce.ECNamedCurveTable
+import java.security.spec.*
+
 
 /**
  * A base class for all EC operations using the Secp256K curve.
@@ -28,7 +34,7 @@ abstract class XyoEcSecp256K (private val encodedPrivateKey: ByteArray?) : XyoGe
         get() = keyPair.public as XyoSecp256K1UnCompressedPublicKey
 
     override val privateKey: ByteArray
-        get() = keyPair.private.encoded
+        get() = (keyPair.private as XyoEcPrivateKey).untyped
 
     private fun generateKeyPair(encodedPrivateKey: ByteArray?): KeyPair {
         if (encodedPrivateKey != null) {
@@ -70,7 +76,13 @@ abstract class XyoEcSecp256K (private val encodedPrivateKey: ByteArray?) : XyoGe
             }, privateKey)
     }
 
-    private fun getSpecFromPrivateKey (privateKey: XyoEcPrivateKey) : KeySpec {
-        return ECPrivateKeySpec(privateKey.s, privateKey.params)
+    private fun getSpecFromPrivateKey (privateKey: XyoEcPrivateKey) : ECPublicKeySpec {
+        val curve = ECNamedCurveTable.getParameterSpec("secp256k1")
+        val domain = ECDomainParameters(curve.curve, curve.g, curve.n, curve.h)
+
+        val q = domain.g.multiply(privateKey.s)
+        val point = ECPoint(q.x.toBigInteger(), q.y.toBigInteger())
+
+        return ECPublicKeySpec(point,  privateKey.params)
     }
 }

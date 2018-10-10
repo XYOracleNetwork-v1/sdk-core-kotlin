@@ -6,6 +6,8 @@ import java.math.BigInteger
 import java.security.*
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
+import java.security.spec.RSAPrivateCrtKeySpec
+import java.security.spec.RSAPrivateKeySpec
 import java.security.spec.RSAPublicKeySpec
 
 /**
@@ -17,7 +19,7 @@ import java.security.spec.RSAPublicKeySpec
 abstract class XyoGeneralRsa(private val keySize : Int, privateKey: ByteArray?) : XyoSigner() {
 
     /**
-     * The Java Signature object when creating signatures. This is used when switching between
+     * The Java Signature object when creating signaturePacking. This is used when switching between
      * SHA1withRSA, SHA256withRSA ect.
      */
     abstract val signature : Signature
@@ -34,7 +36,7 @@ abstract class XyoGeneralRsa(private val keySize : Int, privateKey: ByteArray?) 
     open val keyPair: KeyPair = generateKeyPair(privateKey)
 
     override val privateKey: ByteArray
-        get() = keyPair.private.encoded
+        get() = (keyPair.private as XyoRsaPrivateKey).untyped
 
     private fun generateKeyPair(privateKey: ByteArray?): KeyPair {
         if (privateKey != null) {
@@ -46,7 +48,7 @@ abstract class XyoGeneralRsa(private val keySize : Int, privateKey: ByteArray?) 
     private fun generateKeyPairFromPrivate (encodedPrivateKey: ByteArray) : KeyPair {
         val keyGenerator: KeyFactory = KeyFactory.getInstance("RSA")
         val privateKey = XyoRsaPrivateKey.createFromPacked(encodedPrivateKey) as XyoRsaPrivateKey
-        val publicKey = keyGenerator.generatePrivate(getSpecFromPrivateKey(privateKey)) as RSAPublicKey
+        val publicKey = keyGenerator.generatePublic(getSpecFromPrivateKey(privateKey)) as RSAPublicKey
 
         return KeyPair(XyoRsaPublicKey(publicKey.modulus), privateKey)
     }
@@ -63,6 +65,6 @@ abstract class XyoGeneralRsa(private val keySize : Int, privateKey: ByteArray?) 
     }
 
     private fun getSpecFromPrivateKey (encodedPrivateKey: XyoRsaPrivateKey) : RSAPublicKeySpec {
-        return RSAPublicKeySpec(BigInteger(byteArrayOf(0x01, 0x00, 0x01)), encodedPrivateKey.modulus)
+        return RSAPublicKeySpec(encodedPrivateKey.modulus, BigInteger(byteArrayOf(0x01, 0x00, 0x01)))
     }
 }

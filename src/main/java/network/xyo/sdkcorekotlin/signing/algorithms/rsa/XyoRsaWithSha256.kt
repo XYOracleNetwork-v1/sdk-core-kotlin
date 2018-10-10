@@ -14,7 +14,7 @@ import java.security.Signature
 /**
  *
  */
-class XyoRsaWithSha256 (privateKey: ByteArray?) : XyoGeneralRsa (512, privateKey) {
+class XyoRsaWithSha256 (privateKey: ByteArray?) : XyoGeneralRsa (1024, privateKey) {
     override val signature: Signature = signatureInstance
 
     override fun signData(byteArray: ByteArray): Deferred<XyoObject> {

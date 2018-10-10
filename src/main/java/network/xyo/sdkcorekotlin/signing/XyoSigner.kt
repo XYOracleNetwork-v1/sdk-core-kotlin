@@ -74,7 +74,7 @@ abstract class XyoSigner {
         abstract val supportedKeys : Array<ByteArray>
 
         /**
-         * The signatures types the signer supports
+         * The signaturePacking types the signer supports
          */
         abstract val supportedSignatures : Array<ByteArray>
 

@@ -6,7 +6,7 @@ import network.xyo.sdkcorekotlin.data.array.multi.XyoMultiTypeArrayBase
 import java.nio.ByteBuffer
 
 /**
- * An array of signatures for a given party.
+ * An array of signaturePacking for a given party.
  *
  * @major 0x02
  * @minor 0x03

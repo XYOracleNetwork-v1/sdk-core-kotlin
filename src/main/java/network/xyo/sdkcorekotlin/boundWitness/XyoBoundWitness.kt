@@ -29,7 +29,7 @@ abstract class XyoBoundWitness : XyoObject() {
     abstract val payloads: Array<XyoPayload>
 
     /**
-     * All of the signatures in the bound witness.
+     * All of the signaturePacking in the bound witness.
      */
     abstract val signatures: Array<XyoSignatureSet>
 

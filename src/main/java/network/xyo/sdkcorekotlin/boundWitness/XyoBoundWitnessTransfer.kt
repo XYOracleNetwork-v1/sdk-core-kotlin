@@ -14,7 +14,7 @@ import network.xyo.sdkcorekotlin.signing.XyoSignatureSet
  *
  * @param keysToSend The keys to send to the other party.
  * @param payloadsToSend The payloads to send to the other party.
- * @param signatureToSend The signatures to send to the other party.
+ * @param signatureToSend The signaturePacking to send to the other party.
  */
 class XyoBoundWitnessTransfer(val keysToSend : Array<XyoObject>,
                               val payloadsToSend : Array<XyoObject>,

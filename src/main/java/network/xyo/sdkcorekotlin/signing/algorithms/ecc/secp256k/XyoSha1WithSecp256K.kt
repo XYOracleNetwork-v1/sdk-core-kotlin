@@ -28,6 +28,9 @@ class XyoSha1WithSecp256K (privateKey : ByteArray?) : XyoEcSecp256K(privateKey) 
         override val signatureInstance: Signature = Signature.getInstance("SHA1withECDSA")
         override val key: Byte = 0x02
 
+        override val supportedKeys: Array<ByteArray> = arrayOf(XyoSecp256K1UnCompressedPublicKey.id)
+        override val supportedSignatures: Array<ByteArray> = arrayOf(XyoSecp256k1Sha1WithEcdsaSignature.id)
+
         override fun newInstance(): XyoSigner {
             return XyoSha256WithSecp256K(null)
         }
@@ -35,8 +38,5 @@ class XyoSha1WithSecp256K (privateKey : ByteArray?) : XyoEcSecp256K(privateKey) 
         override fun newInstance(privateKey: ByteArray): XyoSigner {
             return XyoSha256WithSecp256K(privateKey)
         }
-
-        override val supportedKeys: Array<ByteArray> = arrayOf(XyoSecp256K1UnCompressedPublicKey.id)
-        override val supportedSignatures: Array<ByteArray> = arrayOf(XyoSecp256k1Sha1WithEcdsaSignature.id)
     }
 }

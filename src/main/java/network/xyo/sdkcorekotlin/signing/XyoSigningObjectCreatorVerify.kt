@@ -8,7 +8,7 @@ import java.security.PublicKey
 import java.security.Signature
 
 /**
- * A base class for verifying signatures that comply to the standard Java Signature object.
+ * A base class for verifying signaturePacking that comply to the standard Java Signature object.
  */
 abstract class XyoSigningObjectCreatorVerify : XyoSigner.XyoSignerProvider() {
     /**
