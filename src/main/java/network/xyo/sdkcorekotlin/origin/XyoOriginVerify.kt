@@ -7,8 +7,6 @@ import network.xyo.sdkcorekotlin.data.heuristics.number.unsigned.XyoIndex
 import network.xyo.sdkcorekotlin.data.heuristics.number.unsigned.XyoNumberUnsigned
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.hashing.XyoPreviousHash
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 class XyoOriginVerify (boundWitnesses : ArrayList<XyoBoundWitness>, hashProvider: XyoHash.XyoHashProvider) {
     private val mapping = createMapping(boundWitnesses.toTypedArray(), hashProvider)

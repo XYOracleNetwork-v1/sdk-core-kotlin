@@ -4,13 +4,10 @@ import network.xyo.sdkcorekotlin.data.XyoByteArrayReader
 import network.xyo.sdkcorekotlin.data.XyoByteArraySetter
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.XyoObjectProvider
-import java.lang.annotation.ElementType
 import java.math.BigInteger
 import java.security.interfaces.ECPublicKey
-import java.security.spec.ECField
 import java.security.spec.ECParameterSpec
 import java.security.spec.ECPoint
-import java.security.spec.EllipticCurve
 
 /**
  * A base class for all uncompressed EC public keys.

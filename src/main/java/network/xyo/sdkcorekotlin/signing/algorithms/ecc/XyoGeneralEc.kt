@@ -6,9 +6,4 @@ import java.security.*
 /**
  * A base class for all EC crypto operations.
  */
-abstract class XyoGeneralEc : XyoSigner() {
-
-
-}
-
-
+abstract class XyoGeneralEc : XyoSigner()

@@ -1,9 +1,5 @@
 package network.xyo.sdkcorekotlin.node
 
-import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
-import network.xyo.sdkcorekotlin.data.XyoObject
-import network.xyo.sdkcorekotlin.data.array.single.XyoSingleTypeArrayInt
-
 /**
  * A class to manage outgoing origin blocks for bridges and sentinels.
  */
