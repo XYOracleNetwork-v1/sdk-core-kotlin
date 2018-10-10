@@ -14,6 +14,8 @@ import java.security.spec.ECParameterSpec
  *
  * @param s the private key.
  * @param ecSpec the Java ECParameterSpec to understand the private key.
+ * @major 0x0a
+ * @minor 0x02
  */
 class XyoEcPrivateKey(private val s : BigInteger,
                       private val ecSpec: ECParameterSpec) : ECPrivateKey, XyoObject() {
@@ -44,8 +46,7 @@ class XyoEcPrivateKey(private val s : BigInteger,
     override val objectInBytes: ByteArray
         get() = encoded
 
-    override val sizeIdentifierSize: Int?
-        get() = 2
+    override val sizeIdentifierSize: Int? = sizeOfBytesToGetSize
 
 
     companion object : XyoObjectProvider() {

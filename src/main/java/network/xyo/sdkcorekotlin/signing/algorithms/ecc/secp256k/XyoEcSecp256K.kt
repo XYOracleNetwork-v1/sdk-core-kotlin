@@ -19,7 +19,7 @@ import java.security.spec.ECPublicKeySpec
 /**
  * A base class for all EC operations using the Secp256K curve.
  */
-abstract class XyoEcSecp256K (private val encodedPrivateKey: ByteArray?) : XyoGeneralEc() {
+abstract class XyoEcSecp256K (encodedPrivateKey: XyoObject?) : XyoGeneralEc() {
     /**
      * The generated public key.
      */
@@ -28,12 +28,12 @@ abstract class XyoEcSecp256K (private val encodedPrivateKey: ByteArray?) : XyoGe
     override val publicKey: XyoObject
         get() = keyPair.public as XyoSecp256K1UnCompressedPublicKey
 
-    override val privateKey: ByteArray
-        get() = (keyPair.private as XyoEcPrivateKey).untyped
+    override val privateKey: XyoObject
+        get() = keyPair.private as XyoEcPrivateKey
 
-    private fun generateKeyPair(encodedPrivateKey: ByteArray?): KeyPair {
+    private fun generateKeyPair(encodedPrivateKey: XyoObject?): KeyPair {
         if (encodedPrivateKey != null) {
-            return generateKeyFromPrivate(XyoEcPrivateKey.createFromPacked(encodedPrivateKey) as XyoEcPrivateKey)
+            return generateKeyFromPrivate(encodedPrivateKey as XyoEcPrivateKey)
         }
         return generateNewKeyPair()
     }

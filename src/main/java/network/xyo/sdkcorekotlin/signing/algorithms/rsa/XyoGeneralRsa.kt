@@ -16,7 +16,7 @@ import java.security.spec.RSAPublicKeySpec
  * @param keySize The size of the keypair to generate.
  */
 
-abstract class XyoGeneralRsa(private val keySize : Int, privateKey: ByteArray?) : XyoSigner() {
+abstract class XyoGeneralRsa(private val keySize : Int, privateKey: XyoObject?) : XyoSigner() {
 
     /**
      * The Java Signature object when creating signaturePacking. This is used when switching between
@@ -35,19 +35,19 @@ abstract class XyoGeneralRsa(private val keySize : Int, privateKey: ByteArray?) 
 
     open val keyPair: KeyPair = generateKeyPair(privateKey)
 
-    override val privateKey: ByteArray
-        get() = (keyPair.private as XyoRsaPrivateKey).untyped
+    override val privateKey: XyoObject
+        get() = (keyPair.private as XyoRsaPrivateKey)
 
-    private fun generateKeyPair(privateKey: ByteArray?): KeyPair {
+    private fun generateKeyPair(privateKey: XyoObject?): KeyPair {
         if (privateKey != null) {
             return generateKeyPairFromPrivate(privateKey)
         }
         return generateNewKeyPair()
     }
 
-    private fun generateKeyPairFromPrivate (encodedPrivateKey: ByteArray) : KeyPair {
+    private fun generateKeyPairFromPrivate (encodedPrivateKey: XyoObject) : KeyPair {
         val keyGenerator: KeyFactory = KeyFactory.getInstance("RSA")
-        val privateKey = XyoRsaPrivateKey.createFromPacked(encodedPrivateKey) as XyoRsaPrivateKey
+        val privateKey = encodedPrivateKey as XyoRsaPrivateKey
         val publicKey = keyGenerator.generatePublic(getSpecFromPrivateKey(privateKey)) as RSAPublicKey
 
         return KeyPair(XyoRsaPublicKey(publicKey.modulus), privateKey)

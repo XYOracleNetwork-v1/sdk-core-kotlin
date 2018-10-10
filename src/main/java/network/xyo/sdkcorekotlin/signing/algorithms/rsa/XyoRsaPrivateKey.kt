@@ -5,13 +5,19 @@ import java.math.BigInteger
 import java.security.interfaces.RSAPrivateKey
 import java.security.spec.RSAPublicKeySpec
 
+/**
+ * A Xyo Encoded RSA Private key.
+ *
+ * @major 0x0a
+ * @minor 0x01
+ */
 class XyoRsaPrivateKey (private val mod : BigInteger, private val privateExponent : BigInteger) : RSAPrivateKey, XyoObject() {
-    override val id: ByteArray = byteArrayOf(0x0a, 0x01)
+
+    override val id: ByteArray = byteArrayOf(major, minor)
 
     override val objectInBytes: ByteArray = encoded
 
-    override val sizeIdentifierSize: Int?
-        get() = 2
+    override val sizeIdentifierSize: Int? = sizeOfBytesToGetSize
 
     override fun getAlgorithm(): String {
         return "RSA"
@@ -42,14 +48,11 @@ class XyoRsaPrivateKey (private val mod : BigInteger, private val privateExponen
     }
 
     companion object : XyoObjectProvider() {
-        override val major: Byte
-            get() = 0x0a
+        override val major: Byte = 0x0a
 
-        override val minor: Byte
-            get() = 0x01
+        override val minor: Byte = 0x01
 
-        override val sizeOfBytesToGetSize: Int?
-            get() = 2
+        override val sizeOfBytesToGetSize: Int? = 2
 
         override fun createFromPacked(byteArray: ByteArray): XyoObject {
             val reader = XyoByteArrayReader(byteArray)
