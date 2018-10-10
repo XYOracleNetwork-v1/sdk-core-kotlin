@@ -2,14 +2,12 @@ package network.xyo.sdkcorekotlin.signing.algorithms.ecc
 
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.signing.XyoSigner
-import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.keys.XyoSecp256K1UnCompressedPublicKey
 import org.bouncycastle.crypto.params.ECDomainParameters
-import org.bouncycastle.jce.ECNamedCurveTable
-import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec
+import org.bouncycastle.jce.provider.BouncyCastleProvider
+import org.bouncycastle.jce.spec.ECParameterSpec
 import java.security.*
 import java.security.interfaces.ECPrivateKey
 import java.security.interfaces.ECPublicKey
-import java.security.spec.ECParameterSpec
 import java.security.spec.ECPoint
 import java.security.spec.ECPublicKeySpec
 
@@ -22,9 +20,17 @@ abstract class XyoGeneralEc (privateKey: XyoObject?) : XyoSigner() {
      */
     val keyPair: KeyPair = generateKeyPair(privateKey)
 
-
-    abstract val curve : ECNamedCurveParameterSpec
+    /**
+     * The spec and curve
+     */
     abstract val spec : ECParameterSpec
+
+    /**
+     * Turn ec public and private keys into XyoObject based keys. This is used for packing and unpacking.
+     *
+     * @param ecPublicKey The public key to convert
+     * @param ecPrivateKey The private key to convert
+     */
     abstract fun ecKeyPairToXyoKeyPair (ecPublicKey : ECPublicKey, ecPrivateKey : ECPrivateKey) : KeyPair
 
     private fun generateKeyFromPrivate (privateKey: XyoEcPrivateKey) : KeyPair {
@@ -35,7 +41,7 @@ abstract class XyoGeneralEc (privateKey: XyoObject?) : XyoSigner() {
     }
 
     private fun getSpecFromPrivateKey (privateKey: XyoEcPrivateKey) : ECPublicKeySpec {
-        val domain = ECDomainParameters(curve.curve, curve.g, curve.n, curve.h)
+        val domain = ECDomainParameters(spec.curve, spec.g, spec.n, spec.h)
 
         val q = domain.g.multiply(privateKey.s)
         val point = ECPoint(q.x.toBigInteger(), q.y.toBigInteger())
@@ -51,7 +57,7 @@ abstract class XyoGeneralEc (privateKey: XyoObject?) : XyoSigner() {
     }
 
     private fun generateNewKeyPair () : KeyPair {
-        val keyGenerator : KeyPairGenerator = KeyPairGenerator.getInstance("EC")
+        val keyGenerator : KeyPairGenerator = KeyPairGenerator.getInstance("EC", BouncyCastleProvider())
         keyGenerator.initialize(spec)
 
         val generatedKeyPair = keyGenerator.genKeyPair()

@@ -7,26 +7,21 @@ import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.keys.XyoSecp256
 import org.bouncycastle.crypto.params.ECDomainParameters
 import org.bouncycastle.jce.ECNamedCurveTable
 import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec
+import org.bouncycastle.jce.spec.ECParameterSpec
 import java.math.BigInteger
 import java.security.KeyFactory
 import java.security.KeyPair
 import java.security.KeyPairGenerator
 import java.security.interfaces.ECPrivateKey
 import java.security.interfaces.ECPublicKey
-import java.security.spec.ECParameterSpec
-import java.security.spec.ECPoint
-import java.security.spec.ECPublicKeySpec
 
 
 /**
  * A base class for all EC operations using the Secp256K curve.
  */
 abstract class XyoEcSecp256K (privateKey: XyoObject?) : XyoGeneralEc(privateKey) {
-    override val curve: ECNamedCurveParameterSpec
-        get() = ECNamedCurveTable.getParameterSpec("secp256k1")
-
     override val spec: ECParameterSpec
-        get() = XyoSecp256K1UnCompressedPublicKey.ecPramSpec
+        get() = ECNamedCurveTable.getParameterSpec("secp256k1")
 
     override val publicKey: XyoObject
         get() = keyPair.public as XyoSecp256K1UnCompressedPublicKey
