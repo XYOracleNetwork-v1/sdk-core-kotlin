@@ -10,8 +10,10 @@ import network.xyo.sdkcorekotlin.data.XyoPayload
 import network.xyo.sdkcorekotlin.data.XyoUnsignedHelper
 import network.xyo.sdkcorekotlin.data.array.multi.XyoMultiTypeArrayInt
 import network.xyo.sdkcorekotlin.data.array.single.XyoBridgeBlockSet
+import network.xyo.sdkcorekotlin.data.heuristics.number.unsigned.XyoIndex
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.network.XyoNetworkPipe
+import network.xyo.sdkcorekotlin.origin.XyoIndexableOriginBlockRepository
 import network.xyo.sdkcorekotlin.origin.XyoOriginChainStateManager
 import network.xyo.sdkcorekotlin.origin.XyoStorageOriginBlockRepository
 import network.xyo.sdkcorekotlin.storage.XyoStorageProviderInterface
@@ -41,7 +43,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
     /**
      * All of the origin blocks that the node contains.
      */
-    open val originBlocks = XyoStorageOriginBlockRepository(storageProvider, hashingProvider)
+    open val originBlocks : XyoIndexableOriginBlockRepository = XyoIndexableOriginBlockRepository(hashingProvider, storageProvider)
 
     /**
      * The current origin state of the origin node.
@@ -167,23 +169,21 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
     }
 
     private fun loadCreatedBoundWitness (boundWitness: XyoBoundWitness) = GlobalScope.async {
-        if (boundWitness != null) {
-            val hash = boundWitness.getHash(hashingProvider).await()
+        val hash = boundWitness.getHash(hashingProvider).await()
 
-            if (!originBlocks.containsOriginBlock(hash.typed).await()) {
-                val subBlocks = getBridgedBlocks(boundWitness)
-                boundWitness.removeAllUnsigned()
-                originBlocks.addBoundWitness(boundWitness).await()
+        if (!originBlocks.containsOriginBlock(hash.typed).await()) {
+            val subBlocks = getBridgedBlocks(boundWitness)
+            boundWitness.removeAllUnsigned()
+            originBlocks.addBoundWitness(boundWitness).await()
 
-                for ((_, listener) in listeners) {
-                    listener.onBoundWitnessDiscovered(boundWitness)
-                }
+            for ((_, listener) in listeners) {
+                listener.onBoundWitnessDiscovered(boundWitness)
+            }
 
-                for (subBlock in subBlocks) {
-                    val subBlockBoundWitness = subBlock as? XyoBoundWitness
-                    if (subBlockBoundWitness != null) {
-                        loadCreatedBoundWitness(subBlockBoundWitness)
-                    }
+            for (subBlock in subBlocks) {
+                val subBlockBoundWitness = subBlock as? XyoBoundWitness
+                if (subBlockBoundWitness != null) {
+                    loadCreatedBoundWitness(subBlockBoundWitness)
                 }
             }
         }

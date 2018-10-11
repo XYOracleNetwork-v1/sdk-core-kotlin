@@ -12,7 +12,7 @@ import network.xyo.sdkcorekotlin.data.XyoObjectProvider
  *
  * @param publicKey the public key that is the next public key.
  */
-class XyoNextPublicKey (publicKey: XyoObject): XyoObject() {
+class XyoNextPublicKey (val publicKey: XyoObject): XyoObject() {
     override val objectInBytes: ByteArray = publicKey.typed
     override val id: ByteArray = byteArrayOf(major, minor)
     override val sizeIdentifierSize: Int? = null
