@@ -52,34 +52,38 @@ class XyoPublicKeyIndexer (private val storageProviderInterface: XyoStorageProvi
     }
 
     private fun indexState (state : XyoBlockState, key : ByteArray) =  GlobalScope.async {
+        if (state.rootKey == null) {
+            createNewIndex(state, key).await()
+        } else {
+            updateIndex(state, key)
+        }
+    }
+
+    private fun createNewIndex (state : XyoBlockState, key : ByteArray) = GlobalScope.async {
         val nextPub = state.nextPublicKey
-        if (nextPub != null) {
-            println("HAS NEXT PUBLIC KEY")
+
+        val root = XyoOriginRoot()
+        val rootKey = createOriginRootIndexKey(state.keySet.array[0], key).await()
+        root.hashes.add(XyoGenericItem(key))
+
+        for (publicKey in state.keySet.array) {
+            root.publicKeys.add(publicKey)
+            storageProviderInterface.write(createPublicKeyIndexKey(publicKey), XyoGenericItem(rootKey).untyped).await()
         }
 
-        if (state.rootKey == null) {
-            try {
-                println("a")
-                val root = XyoOriginRoot()
-                val rootKey = createOriginRootIndexKey(state.keySet.array[0], key).await()
-                println("c")
-                root.hashes.add(XyoGenericItem(key))
+        if (nextPub != null) {
+            storageProviderInterface.write(createPublicKeyIndexKey(nextPub.publicKey), XyoGenericItem(rootKey).untyped).await()
+        }
 
-                for (publicKey in state.keySet.array) {
-                    root.publicKeys.add(publicKey)
-                    storageProviderInterface.write(createPublicKeyIndexKey(publicKey), XyoGenericItem(rootKey).untyped).await()
-                }
+        storageProviderInterface.write(rootKey, root.untyped).await()
+        return@async
 
-                if (nextPub != null) {
-                    storageProviderInterface.write(createPublicKeyIndexKey(nextPub.publicKey), XyoGenericItem(rootKey).untyped).await()
-                }
-                storageProviderInterface.write(rootKey, root.untyped).await()
-                return@async
-            } catch (e : Exception) {
-                e.printStackTrace()
-                throw e
-            }
-        } else {
+    }
+
+    private fun updateIndex (state: XyoBlockState, key: ByteArray) = GlobalScope.async {
+        val nextPub = state.nextPublicKey
+
+        if (state.rootKey != null) {
             val encodedRoot = storageProviderInterface.read(state.rootKey).await()
 
             if (encodedRoot != null) {
