@@ -63,32 +63,46 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
     }
 
     private fun getReturnFromIncoming (signatureReceivedSize : Int, endPoint: Boolean) : Deferred<XyoBoundWitnessTransfer> = GlobalScope.async {
+
+        if (signatures.isEmpty() && !endPoint) {
+            return@async passOnNoSign()
+        }
+
+        return@async passAndSign(signatureReceivedSize).await()
+    }
+
+    private fun passOnNoSign () : XyoBoundWitnessTransfer {
         val keysToSend = ArrayList<XyoObject>()
         val payloadsToSend = ArrayList<XyoObject>()
         val signatureToSend = ArrayList<XyoObject>()
 
-        if (signatures.isEmpty() && !endPoint) {
-            for (key in publicKeys) {
-                keysToSend.add(key)
-            }
+        for (key in publicKeys) {
+            keysToSend.add(key)
+        }
 
-            for (payload in payloads) {
-                payloadsToSend.add(payload)
-            }
-        } else {
-            signForSelf().await()
-            for (i in signatureReceivedSize + 1 until publicKeys.size ) {
-                keysToSend.add(publicKeys[i])
-            }
+        for (payload in payloads) {
+            payloadsToSend.add(payload)
+        }
 
-            for (i in signatureReceivedSize + 1 until payloads.size) {
-                payloadsToSend.add(payloads[i])
-            }
+        return XyoBoundWitnessTransfer(keysToSend.toTypedArray(), payloadsToSend.toTypedArray(), signatureToSend.toTypedArray())
+    }
 
-            for (i in 0 until signatures.size) {
-                signatureToSend.add(signatures[i])
-            }
+    private fun passAndSign (signatureReceivedSize: Int) : Deferred<XyoBoundWitnessTransfer> = GlobalScope.async {
+        val keysToSend = ArrayList<XyoObject>()
+        val payloadsToSend = ArrayList<XyoObject>()
+        val signatureToSend = ArrayList<XyoObject>()
 
+        signForSelf().await()
+        for (i in signatureReceivedSize + 1 until publicKeys.size ) {
+            keysToSend.add(publicKeys[i])
+        }
+
+        for (i in signatureReceivedSize + 1 until payloads.size) {
+            payloadsToSend.add(payloads[i])
+        }
+
+        for (i in 0 until signatures.size) {
+            signatureToSend.add(signatures[i])
         }
 
         return@async XyoBoundWitnessTransfer(keysToSend.toTypedArray(), payloadsToSend.toTypedArray(), signatureToSend.toTypedArray())
