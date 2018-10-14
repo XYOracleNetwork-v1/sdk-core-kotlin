@@ -45,16 +45,11 @@ open class XyoOriginRoot : XyoObject() {
         override fun createFromPacked(byteArray: ByteArray): XyoObject {
             val reader = XyoByteArrayReader(byteArray)
             val totalSize = XyoUnsignedHelper.readUnsignedInt(reader.read(0, 4)) - 4
-            println("totalSize $totalSize")
             val publicKeysArraySize = XyoUnsignedHelper.readUnsignedInt(reader.read(4, 4))
-            println("publicKeysArraySize $publicKeysArraySize")
             val hashArraySize = XyoUnsignedHelper.readUnsignedInt(reader.read(4 + publicKeysArraySize, 4))
-            println("hashArraySize $hashArraySize")
 
             val publicKeyArray = XyoMultiTypeArrayInt.createFromPacked(reader.read(8, publicKeysArraySize - 4)) as XyoMultiTypeArrayInt
-            println("publicKeyArray")
             val hashArray = XyoMultiTypeArrayInt.createFromPacked(reader.read(4 + publicKeysArraySize, hashArraySize)) as XyoMultiTypeArrayInt
-            println("hashArray")
 
             return object : XyoOriginRoot () {
                 override val hashes: LinkedList<XyoObject> = LinkedList(hashArray.array.asList())

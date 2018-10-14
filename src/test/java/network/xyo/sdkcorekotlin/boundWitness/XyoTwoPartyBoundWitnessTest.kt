@@ -58,7 +58,7 @@ class XyoTwoPartyBoundWitnessTest : XyoTestBase() {
 
             Assert.assertArrayEquals(packedBoundWitness, recreated.untyped)
 
-            Assert.assertEquals(true, XyoBoundWitness.verify(boundWitnessAlice).await())
+            Assert.assertEquals(true, XyoBoundWitnessVerify(false).verify(boundWitnessAlice).await())
         }
     }
 }

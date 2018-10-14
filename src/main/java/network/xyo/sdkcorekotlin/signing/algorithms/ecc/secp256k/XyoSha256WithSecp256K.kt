@@ -8,6 +8,7 @@ import network.xyo.sdkcorekotlin.signing.XyoSigner
 import network.xyo.sdkcorekotlin.signing.XyoSigningObjectCreatorVerify
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.keys.XyoSecp256K1UnCompressedPublicKey
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.signatures.XyoSecp256k1Sha256WithEcdsaSignature
+import org.bouncycastle.jce.provider.BouncyCastleProvider
 import java.security.Signature
 
 /**

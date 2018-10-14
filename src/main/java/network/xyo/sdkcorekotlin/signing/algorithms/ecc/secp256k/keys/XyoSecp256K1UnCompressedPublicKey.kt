@@ -14,17 +14,27 @@ import java.security.spec.ECParameterSpec
  * @minor 0x01
  */
 abstract class XyoSecp256K1UnCompressedPublicKey : XyoUncompressedEcPublicKey() {
-    override val ecSpec: ECParameterSpec = ecPramSpec
+    override val ecSpec: ECParameterSpec
+        get() = ecPramSpec
+
     override val id: ByteArray = byteArrayOf(major, minor)
 
     companion object : XyoUncompressedEcPublicKeyProvider() {
         override val minor: Byte = 0x01
 
-        override val ecPramSpec: ECParameterSpec
-            get() {
-                val parameters = AlgorithmParameters.getInstance("EC", BouncyCastleProvider())
-                parameters.init(ECGenParameterSpec("secp256k1"))
-                return parameters.getParameterSpec(ECParameterSpec::class.java)
-            }
+        override val ecPramSpec: ECParameterSpec = getSpec()
+
+//        override val ecPramSpec: ECParameterSpec
+//            get() {
+//                val parameters = AlgorithmParameters.getInstance("EC", BouncyCastleProvider())
+//                parameters.init(ECGenParameterSpec("secp256k1"))
+//                return parameters.getParameterSpec(ECParameterSpec::class.java)
+//            }
+
+        private fun getSpec() : ECParameterSpec {
+            val parameters = AlgorithmParameters.getInstance("EC", BouncyCastleProvider())
+            parameters.init(ECGenParameterSpec("secp256k1"))
+            return parameters.getParameterSpec(ECParameterSpec::class.java)
+        }
     }
 }

@@ -1,6 +1,7 @@
 package network.xyo.sdkcorekotlin.signing
 
 import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
 import network.xyo.sdkcorekotlin.data.XyoObject
 
@@ -130,7 +131,7 @@ abstract class XyoSigner {
             return signingCreators[byte]
         }
 
-        fun verify (publicKey: XyoObject, signature: XyoObject, data : ByteArray) : Deferred<Boolean?> = async {
+        fun verify (publicKey: XyoObject, signature: XyoObject, data : ByteArray) : Deferred<Boolean?> = GlobalScope.async {
             val creator = verifiers[publicKey.id.contentHashCode()]?.get(signature.id.contentHashCode())
 
             if (creator != null) {

@@ -34,7 +34,7 @@ class XyoOriginVerify (boundWitnesses : ArrayList<XyoBoundWitness>, hashProvider
         return map
     }
 
-    inner open class XyoOriginBlock (val boundWitness: XyoBoundWitness, protected val hashProvider: XyoHash.XyoHashProvider) {
+    open inner class XyoOriginBlock (val boundWitness: XyoBoundWitness, protected val hashProvider: XyoHash.XyoHashProvider) {
         val hash : XyoHash = getHashBlocking(hashProvider)
 
         val indexes : Array<Int?>

@@ -25,7 +25,6 @@ import kotlin.collections.ArrayList
 class XyoPublicKeyIndexer (private val storageProviderInterface: XyoStorageProviderInterface) : XyoGetOriginBlocksByPublicKey {
     override fun createIndex(blockKey: ByteArray, block: XyoBoundWitness) {
         GlobalScope.async {
-            println("async")
             val states = getBlockState(block).await()
 
             for (state in states) {
@@ -53,22 +52,33 @@ class XyoPublicKeyIndexer (private val storageProviderInterface: XyoStorageProvi
     }
 
     private fun indexState (state : XyoBlockState, key : ByteArray) =  GlobalScope.async {
+        val nextPub = state.nextPublicKey
+        if (nextPub != null) {
+            println("HAS NEXT PUBLIC KEY")
+        }
+
         if (state.rootKey == null) {
-            val root = XyoOriginRoot()
-            val rootKey = createOriginRootIndexKey(state.keySet.array[0], key).await()
-            root.hashes.add(XyoGenericItem(key))
+            try {
+                println("a")
+                val root = XyoOriginRoot()
+                val rootKey = createOriginRootIndexKey(state.keySet.array[0], key).await()
+                println("c")
+                root.hashes.add(XyoGenericItem(key))
 
-            for (publicKey in state.keySet.array) {
-                root.publicKeys.add(publicKey)
-                storageProviderInterface.write(createPublicKeyIndexKey(publicKey), XyoGenericItem(rootKey).untyped).await()
+                for (publicKey in state.keySet.array) {
+                    root.publicKeys.add(publicKey)
+                    storageProviderInterface.write(createPublicKeyIndexKey(publicKey), XyoGenericItem(rootKey).untyped).await()
+                }
+
+                if (nextPub != null) {
+                    storageProviderInterface.write(createPublicKeyIndexKey(nextPub.publicKey), XyoGenericItem(rootKey).untyped).await()
+                }
+                storageProviderInterface.write(rootKey, root.untyped).await()
+                return@async
+            } catch (e : Exception) {
+                e.printStackTrace()
+                throw e
             }
-
-            if (state.nextPublicKey != null) {
-                storageProviderInterface.write(createPublicKeyIndexKey(state.nextPublicKey.publicKey), XyoGenericItem(rootKey).untyped).await()
-            }
-
-            storageProviderInterface.write(rootKey, root.untyped).await()
-            return@async
         } else {
             val encodedRoot = storageProviderInterface.read(state.rootKey).await()
 
@@ -77,29 +87,20 @@ class XyoPublicKeyIndexer (private val storageProviderInterface: XyoStorageProvi
                 root.hashes.add(XyoGenericItem(key))
 
                 for (publicKey in state.keySet.array) {
-                    root.publicKeys.add(publicKey)
-                    storageProviderInterface.write(createPublicKeyIndexKey(publicKey), XyoGenericItem(state.rootKey).untyped).await()
+                    if (!root.publicKeys.contains(publicKey)) {
+                        root.publicKeys.add(publicKey)
+                        storageProviderInterface.write(createPublicKeyIndexKey(publicKey), XyoGenericItem(state.rootKey).untyped).await()
+                    }
                 }
 
-                if (state.nextPublicKey != null) {
-                    storageProviderInterface.write(createPublicKeyIndexKey(state.nextPublicKey.publicKey), XyoGenericItem(state.rootKey).untyped).await()
+                if (nextPub != null) {
+                    storageProviderInterface.write(createPublicKeyIndexKey(nextPub.publicKey), XyoGenericItem(state.rootKey).untyped).await()
                 }
 
                 root.updateObjectCache()
                 storageProviderInterface.write(state.rootKey, root.untyped).await()
             }
         }
-    }
-
-    protected fun ByteArray.toHexString(): String {
-        val builder = StringBuilder()
-        val it = this.iterator()
-        builder.append("0x")
-        while (it.hasNext()) {
-            builder.append(String.format("%02X", it.next()))
-        }
-
-        return builder.toString()
     }
 
     private fun createOriginRootIndexKey (publicKey: XyoObject, key : ByteArray) = GlobalScope.async {
@@ -123,9 +124,10 @@ class XyoPublicKeyIndexer (private val storageProviderInterface: XyoStorageProvi
 
             var rootKey : ByteArray? = null
             val keySet = block.publicKeys[i]
-            val nextPublicKey = block.payloads[i].signedPayloadMapping[XyoIndex.id.contentHashCode()] as? XyoNextPublicKey
+            val nextPublicKey = block.payloads[i].signedPayloadMapping[XyoNextPublicKey.id.contentHashCode()] as? XyoNextPublicKey
             val index = block.payloads[i].signedPayloadMapping[XyoIndex.id.contentHashCode()] as? XyoIndex
             val previousHash = block.payloads[i].signedPayloadMapping[XyoPreviousHash.id.contentHashCode()] as? XyoPreviousHash
+
 
             for (key in keySet.array) {
                 val keyIndex = storageProviderInterface.read(createPublicKeyIndexKey(key)).await()

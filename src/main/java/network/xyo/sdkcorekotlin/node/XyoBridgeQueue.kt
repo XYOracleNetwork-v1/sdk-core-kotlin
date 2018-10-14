@@ -110,7 +110,7 @@ open class XyoBridgeQueue {
         /**
          * The maximum number of blocks to send at a given time.
          */
-        private const val SENT_LIMIT = 5
+        private const val SENT_LIMIT = 8
 
         /**
          * The point at witch blocks should be removed from the queue.

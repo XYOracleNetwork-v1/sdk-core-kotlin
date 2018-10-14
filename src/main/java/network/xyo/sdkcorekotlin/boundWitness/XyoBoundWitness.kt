@@ -181,49 +181,6 @@ abstract class XyoBoundWitness : XyoObject() {
         }
 
         /**
-         * Will verify a single bound witness.
-         *
-         * @param boundWitness The bound witness to verify
-         * @return If the bound witness was successful and null if does not have the capability to
-         * verify (cant find verify method)
-         */
-        fun verify (boundWitness: XyoBoundWitness) : Deferred<Boolean?> = async {
-            if (!boundWitness.completed) {
-                return@async false
-            }
-
-            val numberOfParties = getNumberOfParties(boundWitness)
-
-            if (numberOfParties != null) {
-                val signingData  = boundWitness.getSigningData()
-
-                for (partyNum in 0 until numberOfParties) {
-                    val keys = boundWitness.publicKeys[partyNum].array
-                    val signatures = boundWitness.signatures[partyNum].array
-
-                    if (keys.size != signatures.size) {
-                        return@async false
-                    }
-
-                    for (keyNum in 0 until keys.size) {
-                        val key = keys[keyNum]
-                        val signature = signatures[keyNum]
-
-                        val verify = XyoSigner.verify(key, signature, signingData).await()
-
-                        if (XyoSigner.verify(key, signature, signingData).await() != true) {
-                            return@async verify
-                        }
-                    }
-                }
-
-                return@async true
-            }
-
-            return@async false
-        }
-
-        /**
          * Will get the number of parties in a bound witness.
          *
          * @param boundWitness The boundWitness to check
