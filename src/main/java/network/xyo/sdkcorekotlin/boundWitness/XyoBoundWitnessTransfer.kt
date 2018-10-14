@@ -87,34 +87,27 @@ class XyoBoundWitnessTransfer(val keysToSend : Array<XyoObject>,
             var payloadArray : XyoSingleTypeArrayInt? = null
             var signatureArray :  XyoSingleTypeArrayShort? = null
 
-            val shortArrayReadSize = XyoSingleTypeArrayShort.sizeOfBytesToGetSize ?: 0
-            val intArrayReadSize = XyoSingleTypeArrayInt.sizeOfBytesToGetSize ?: 0
+            val shortArrayReadSize = XyoSingleTypeArrayShort.sizeOfBytesToGetSize ?: throw Exception("Size cant be zero!")
+            val intArrayReadSize = XyoSingleTypeArrayInt.sizeOfBytesToGetSize ?: throw Exception("Size cant be zero!")
 
 
             if (type == 0x01.toByte() || type == 0x02.toByte()) {
                 val keySetArraySize  = XyoSingleTypeArrayShort.readSize(byteReader.read(currentOffset, shortArrayReadSize))
-                val keySetArrayResult = XyoSingleTypeArrayShort.createFromPacked(byteReader.read(currentOffset, keySetArraySize))
-                keySetArray = keySetArrayResult as? XyoSingleTypeArrayShort
+                keySetArray = XyoSingleTypeArrayShort.createFromPacked(byteReader.read(currentOffset, keySetArraySize)) as? XyoSingleTypeArrayShort
                 currentOffset += keySetArraySize
 
                 val payloadArraySize  = XyoSingleTypeArrayInt.readSize(byteReader.read(currentOffset, intArrayReadSize))
-                val payloadArrayResult = XyoSingleTypeArrayInt.createFromPacked(byteReader.read(currentOffset, payloadArraySize))
-                payloadArray = payloadArrayResult as?  XyoSingleTypeArrayInt
+                payloadArray = XyoSingleTypeArrayInt.createFromPacked(byteReader.read(currentOffset, payloadArraySize)) as? XyoSingleTypeArrayInt
                 currentOffset += payloadArraySize
             }
 
             if (type == 0x02.toByte() || type == 0x03.toByte()) {
                 val signatureArraySize  = XyoSingleTypeArrayShort.readSize(byteReader.read(currentOffset, shortArrayReadSize))
-                val signatureArrayResult = XyoSingleTypeArrayShort.createFromPacked(byteReader.read(currentOffset, signatureArraySize))
-                signatureArray = signatureArrayResult as? XyoSingleTypeArrayShort
+                signatureArray = XyoSingleTypeArrayShort.createFromPacked(byteReader.read(currentOffset, signatureArraySize)) as? XyoSingleTypeArrayShort
                 currentOffset += signatureArraySize
             }
 
-            val keySetArrayValue = keySetArray?.array ?: arrayOf()
-            val payloadArrayValue = payloadArray?.array ?: arrayOf()
-            val signatureArrayValue = signatureArray?.array ?: arrayOf()
-
-            return XyoBoundWitnessTransfer(keySetArrayValue, payloadArrayValue, signatureArrayValue)
+            return XyoBoundWitnessTransfer(keySetArray?.array ?: arrayOf(), payloadArray?.array ?: arrayOf(), signatureArray?.array ?: arrayOf())
         }
 
         override fun readSize(byteArray: ByteArray): Int {
