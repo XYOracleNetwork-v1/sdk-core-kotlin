@@ -59,14 +59,11 @@ class XyoBoundWitnessVerify (private val allowUnknown : Boolean) {
 
             val verify = XyoSigner.verify(key, signature, signingData).await()
 
-            if (verify == null && !allowUnknown) {
-                return@async false
-            }
-
-            if (verify == false) {
+            if ((verify == null && !allowUnknown) || verify == false) {
                 return@async false
             }
         }
+
         return@async true
     }
 }
