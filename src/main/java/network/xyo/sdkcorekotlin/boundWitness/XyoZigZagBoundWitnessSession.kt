@@ -6,6 +6,7 @@ import network.xyo.sdkcorekotlin.data.XyoByteArraySetter
 import network.xyo.sdkcorekotlin.data.XyoPayload
 import network.xyo.sdkcorekotlin.data.XyoUnsignedHelper
 import network.xyo.sdkcorekotlin.exceptions.XyoCorruptDataException
+import network.xyo.sdkcorekotlin.exceptions.XyoException
 import network.xyo.sdkcorekotlin.exceptions.XyoNoObjectException
 import network.xyo.sdkcorekotlin.network.XyoNetworkPipe
 import network.xyo.sdkcorekotlin.signing.XyoSigner
@@ -26,7 +27,7 @@ class XyoZigZagBoundWitnessSession(private val pipe : XyoNetworkPipe,
                     transfer = XyoBoundWitnessTransfer.createFromPacked(data) as XyoBoundWitnessTransfer
                 }
 
-                val response = sendAndRecive(data != null, transfer).await()
+                val response = sendAndReceive(data != null, transfer).await()
 
                 if (cycles == 0 && data != null && response != null) {
                     val inComingTransfer = XyoBoundWitnessTransfer.createFromPacked(response) as XyoBoundWitnessTransfer
@@ -38,22 +39,13 @@ class XyoZigZagBoundWitnessSession(private val pipe : XyoNetworkPipe,
             }
 
             return null
-        } catch (corruptDataException : XyoCorruptDataException) {
+        } catch (exception : XyoException) {
 
-            return corruptDataException
-
-        } catch (noObjectException : XyoNoObjectException) {
-
-            return noObjectException
-
-        } catch (boundWitnessException : XyoBoundWitnessCreationException) {
-
-            return boundWitnessException
-
+            return exception
         }
     }
 
-    private fun sendAndRecive (didHaveData : Boolean, transfer : XyoBoundWitnessTransfer?) = GlobalScope.async {
+    private fun sendAndReceive (didHaveData : Boolean, transfer : XyoBoundWitnessTransfer?) = GlobalScope.async {
         val response : ByteArray?
         val returnData = incomingData(transfer, cycles == 0 && didHaveData).await()
         val returnDataEncoded = returnData.untyped
