@@ -1,5 +1,7 @@
 package network.xyo.sdkcorekotlin.boundWitness
 
+import kotlinx.coroutines.experimental.GlobalScope
+import kotlinx.coroutines.experimental.async
 import network.xyo.sdkcorekotlin.data.XyoByteArraySetter
 import network.xyo.sdkcorekotlin.data.XyoPayload
 import network.xyo.sdkcorekotlin.data.XyoUnsignedHelper
@@ -24,28 +26,9 @@ class XyoZigZagBoundWitnessSession(private val pipe : XyoNetworkPipe,
                     transfer = XyoBoundWitnessTransfer.createFromPacked(data) as XyoBoundWitnessTransfer
                 }
 
-                val returnData = incomingData(transfer, cycles == 0 && data != null).await()
-                val returnDataEncoded = returnData.untyped
-                val response : ByteArray
+                val response = sendAndRecive(data != null, transfer).await()
 
-                if (cycles == 0 && data == null) {
-                    val merger = XyoByteArraySetter(3)
-                    merger.add(XyoUnsignedHelper.createUnsignedByte(choice.size), 0)
-                    merger.add(choice, 1)
-                    merger.add(returnDataEncoded, 2)
-
-                    response = pipe.send(merger.merge(), true).await() ?: throw XyoBoundWitnessCreationException("Response is null!")
-                } else {
-                    val responseFromReturnDataEncode = pipe.send(returnDataEncoded, cycles == 0).await()
-
-                    if (cycles == 0 && responseFromReturnDataEncode == null) {
-                        throw XyoBoundWitnessCreationException("Response is null!")
-                    }
-
-                    response = responseFromReturnDataEncode ?: return null
-                }
-
-                if (cycles == 0 && data != null) {
+                if (cycles == 0 && data != null && response != null) {
                     val inComingTransfer = XyoBoundWitnessTransfer.createFromPacked(response) as XyoBoundWitnessTransfer
                     incomingData(inComingTransfer, false).await()
                 } else {
@@ -70,11 +53,29 @@ class XyoZigZagBoundWitnessSession(private val pipe : XyoNetworkPipe,
             boundWitnessException.printStackTrace()
             return boundWitnessException
 
-        } catch (exception : Exception) {
-
-            exception.printStackTrace()
-            throw exception
-
         }
+    }
+
+    private fun sendAndRecive (didHaveData : Boolean, transfer : XyoBoundWitnessTransfer?) = GlobalScope.async {
+        val response : ByteArray?
+        val returnData = incomingData(transfer, cycles == 0 && didHaveData).await()
+        val returnDataEncoded = returnData.untyped
+
+        if (cycles == 0 && !didHaveData) {
+            val merger = XyoByteArraySetter(3)
+            merger.add(XyoUnsignedHelper.createUnsignedByte(choice.size), 0)
+            merger.add(choice, 1)
+            merger.add(returnDataEncoded, 2)
+
+            response = pipe.send(merger.merge(), true).await() ?: throw XyoBoundWitnessCreationException("Response is null!")
+        } else {
+            response = pipe.send(returnDataEncoded, cycles == 0).await()
+
+            if (cycles == 0 && response == null) {
+                throw XyoBoundWitnessCreationException("Response is null!")
+            }
+        }
+
+        return@async response
     }
 }
