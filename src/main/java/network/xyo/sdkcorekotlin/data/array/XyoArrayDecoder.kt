@@ -69,42 +69,43 @@ class XyoArrayDecoder (private val data : ByteArray,
                 if (globalCurrentPosition + 2 < data.size) {
                     arrayType = getMajorMinor()
                 } else {
-                   throw XyoCorruptDataException("Array out of size!")
+                    throw XyoCorruptDataException("Array out of size!")
                 }
             }
 
-            val sizeOfElement = readCurrentSizeFromType(arrayType[0], arrayType[1])
-            if (sizeOfElement != null) {
-                val field = ByteArray(sizeOfElement)
-                var position = 0
-
-                if (globalCurrentPosition + (sizeOfElement - 1) < data.size) {
-                    for (i in globalCurrentPosition..globalCurrentPosition + (sizeOfElement - 1)) {
-                        val byte = data[i]
-                        field[position] = byte
-                        position++
-                    }
-                } else {
-                   throw XyoCorruptDataException("Array out of size!")
-                }
-
-                globalCurrentPosition += sizeOfElement
-
-                val merger = XyoByteArraySetter(3)
-                merger.add(byteArrayOf(arrayType[0]), 0)
-                merger.add(byteArrayOf(arrayType[1]), 1)
-                merger.add(field, 2)
-
-                val createdObject = XyoObjectProvider.create(merger.merge())
-                if (createdObject != null) {
-                    items.add(createdObject)
-                }
-            } else {
-                throw XyoNoObjectException("Cant find size of element!, ${arrayType[0]}, ${arrayType[1]}")
-            }
+            items.add(getNextElement(arrayType))
         }
 
         return items
+    }
+
+    private fun getNextElement (arrayType : ByteArray) : XyoObject {
+        val sizeOfElement = readCurrentSizeFromType(arrayType[0], arrayType[1])
+        if (sizeOfElement != null) {
+            val field = ByteArray(sizeOfElement)
+            var position = 0
+
+            if (globalCurrentPosition + (sizeOfElement - 1) < data.size) {
+                for (i in globalCurrentPosition..globalCurrentPosition + (sizeOfElement - 1)) {
+                    val byte = data[i]
+                    field[position] = byte
+                    position++
+                }
+            } else {
+                throw XyoCorruptDataException("Array out of size!")
+            }
+
+            globalCurrentPosition += sizeOfElement
+
+            val merger = XyoByteArraySetter(3)
+            merger.add(byteArrayOf(arrayType[0]), 0)
+            merger.add(byteArrayOf(arrayType[1]), 1)
+            merger.add(field, 2)
+
+            return XyoObjectProvider.create(merger.merge()) ?: throw XyoCorruptDataException("Cant Unpack: ${arrayType[0]}, ${arrayType[1]}")
+        } else {
+            throw XyoNoObjectException("Cant find size of element!, ${arrayType[0]}, ${arrayType[1]}")
+        }
     }
 
     private fun getSize (sizeSize : Int) : Int? {
