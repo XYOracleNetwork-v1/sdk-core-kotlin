@@ -40,17 +40,14 @@ class XyoZigZagBoundWitnessSession(private val pipe : XyoNetworkPipe,
             return null
         } catch (corruptDataException : XyoCorruptDataException) {
 
-            corruptDataException.printStackTrace()
             return corruptDataException
 
         } catch (noObjectException : XyoNoObjectException) {
 
-            noObjectException.printStackTrace()
             return noObjectException
 
         } catch (boundWitnessException : XyoBoundWitnessCreationException) {
 
-            boundWitnessException.printStackTrace()
             return boundWitnessException
 
         }
