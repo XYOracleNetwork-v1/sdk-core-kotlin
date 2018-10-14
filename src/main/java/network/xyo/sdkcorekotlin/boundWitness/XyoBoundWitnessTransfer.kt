@@ -37,40 +37,35 @@ class XyoBoundWitnessTransfer(val keysToSend : Array<XyoObject>,
         }
 
     private fun makeWithEverything() : ByteArray {
-        var elementCount = 1
-        var currentElementIndex = 1
-        var keySetArray : ByteArray? = null
-        var payloadArray : ByteArray? = null
-        var signatureArray :  ByteArray? = null
-
-        if (stage == 0x01.toByte() || stage == 0x02.toByte()) {
-            elementCount += 2
-            keySetArray = XyoSingleTypeArrayShort(XyoKeySet.major, XyoKeySet.minor, keysToSend).untyped
-            payloadArray = XyoSingleTypeArrayInt(XyoPayload.major, XyoPayload.minor, payloadsToSend).untyped
+        when (stage) {
+            0x01.toByte() -> return makeWithJustData()
+            0x02.toByte() -> return makeWithDataAndSignatures()
+            0x03.toByte() -> return makeWithJustSignatures()
         }
+        throw Exception("Invalid stage!")
+    }
 
-        if (stage == 0x02.toByte() || stage == 0x03.toByte()) {
-            elementCount += 1
-            signatureArray= XyoSingleTypeArrayShort(XyoSignatureSet.major, XyoSignatureSet.minor, signatureToSend).untyped
-        }
+    private fun makeWithJustSignatures () : ByteArray {
+        val setter = XyoByteArraySetter(2)
+        setter.add(byteArrayOf(0x03), 0)
+        setter.add(XyoSingleTypeArrayShort(XyoSignatureSet.major, XyoSignatureSet.minor, signatureToSend).untyped, 1)
+        return setter.merge()
+    }
 
-        val setter = XyoByteArraySetter(elementCount)
-        setter.add(byteArrayOf(stage), 0)
+    private fun makeWithJustData () : ByteArray {
+        val setter = XyoByteArraySetter(3)
+        setter.add(byteArrayOf(0x01), 0)
+        setter.add(XyoSingleTypeArrayShort(XyoKeySet.major, XyoKeySet.minor, keysToSend).untyped, 1)
+        setter.add(XyoSingleTypeArrayInt(XyoPayload.major, XyoPayload.minor, payloadsToSend).untyped, 2)
+        return setter.merge()
+    }
 
-        if (keySetArray != null) {
-           setter.add(keySetArray, currentElementIndex)
-            currentElementIndex++
-        }
-
-        if (payloadArray != null) {
-            setter.add(payloadArray, currentElementIndex)
-            currentElementIndex++
-        }
-
-        if (signatureArray != null) {
-            setter.add(signatureArray, currentElementIndex)
-        }
-
+    private fun makeWithDataAndSignatures () : ByteArray {
+        val setter = XyoByteArraySetter(4)
+        setter.add(byteArrayOf(0x02), 0)
+        setter.add(XyoSingleTypeArrayShort(XyoKeySet.major, XyoKeySet.minor, keysToSend).untyped, 1)
+        setter.add(XyoSingleTypeArrayInt(XyoPayload.major, XyoPayload.minor, payloadsToSend).untyped, 2)
+        setter.add(XyoSingleTypeArrayShort(XyoSignatureSet.major, XyoSignatureSet.minor, signatureToSend).untyped, 3)
         return setter.merge()
     }
 
