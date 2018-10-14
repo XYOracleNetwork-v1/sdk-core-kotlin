@@ -1,5 +1,6 @@
 package network.xyo.sdkcorekotlin.boundWitness
 
+import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
 import network.xyo.sdkcorekotlin.data.XyoObject
@@ -42,10 +43,6 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
      */
     fun incomingData (transfer : XyoBoundWitnessTransfer?, endPoint : Boolean) = GlobalScope.async {
         updateObjectCache()
-        val keysToSend = ArrayList<XyoObject>()
-        val payloadsToSend = ArrayList<XyoObject>()
-        val signatureToSend = ArrayList<XyoObject>()
-        val signatureReceivedSize = transfer?.signatureToSend?.size ?: 0
 
         if (transfer != null) {
             addTransfer(transfer).await()
@@ -57,31 +54,41 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
             hasSentKeysAndPayload = true
         }
 
-
         if (signatures.size != publicKeys.size) {
-            if (signatures.isEmpty() && !endPoint) {
-                for (key in publicKeys) {
-                    keysToSend.add(key)
-                }
+            val signatureReceivedSize = transfer?.signatureToSend?.size ?: 0
+            return@async getReturnFromIncoming(signatureReceivedSize, endPoint).await()
+        }
 
-                for (payload in payloads) {
-                    payloadsToSend.add(payload)
-                }
-            } else {
-                signForSelf().await()
-                for (i in signatureReceivedSize + 1 until publicKeys.size ) {
-                    keysToSend.add(publicKeys[i])
-                }
+        return@async XyoBoundWitnessTransfer(arrayOf(), arrayOf(), arrayOf())
+    }
 
-                for (i in signatureReceivedSize + 1 until payloads.size) {
-                    payloadsToSend.add(payloads[i])
-                }
+    private fun getReturnFromIncoming (signatureReceivedSize : Int, endPoint: Boolean) : Deferred<XyoBoundWitnessTransfer> = GlobalScope.async {
+        val keysToSend = ArrayList<XyoObject>()
+        val payloadsToSend = ArrayList<XyoObject>()
+        val signatureToSend = ArrayList<XyoObject>()
 
-                for (i in 0 until signatures.size) {
-                    signatureToSend.add(signatures[i])
-                }
-
+        if (signatures.isEmpty() && !endPoint) {
+            for (key in publicKeys) {
+                keysToSend.add(key)
             }
+
+            for (payload in payloads) {
+                payloadsToSend.add(payload)
+            }
+        } else {
+            signForSelf().await()
+            for (i in signatureReceivedSize + 1 until publicKeys.size ) {
+                keysToSend.add(publicKeys[i])
+            }
+
+            for (i in signatureReceivedSize + 1 until payloads.size) {
+                payloadsToSend.add(payloads[i])
+            }
+
+            for (i in 0 until signatures.size) {
+                signatureToSend.add(signatures[i])
+            }
+
         }
 
         return@async XyoBoundWitnessTransfer(keysToSend.toTypedArray(), payloadsToSend.toTypedArray(), signatureToSend.toTypedArray())
