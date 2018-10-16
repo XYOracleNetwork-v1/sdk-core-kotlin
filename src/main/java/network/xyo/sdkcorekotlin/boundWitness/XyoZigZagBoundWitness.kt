@@ -57,6 +57,7 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
         if (signatures.size != publicKeys.size) {
             val signatureReceivedSize = transfer?.signatureToSend?.size ?: 0
             return@async getReturnFromIncoming(signatureReceivedSize, endPoint).await()
+
         }
 
         return@async XyoBoundWitnessTransfer(arrayOf(), arrayOf(), arrayOf())
@@ -93,6 +94,7 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
         val signatureToSend = ArrayList<XyoObject>()
 
         signForSelf().await()
+
         for (i in signatureReceivedSize + 1 until publicKeys.size ) {
             keysToSend.add(publicKeys[i])
         }
@@ -101,9 +103,9 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
             payloadsToSend.add(payloads[i])
         }
 
-        for (i in 0 until signatures.size) {
-            signatureToSend.add(signatures[i])
-        }
+
+        signatureToSend.add(signatures.first())
+
 
         return@async XyoBoundWitnessTransfer(keysToSend.toTypedArray(), payloadsToSend.toTypedArray(), signatureToSend.toTypedArray())
     }

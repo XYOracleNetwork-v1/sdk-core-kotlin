@@ -14,10 +14,15 @@ import network.xyo.sdkcorekotlin.signing.XyoSigner
  * @param indexOffset This value is used to create a state manager where the index does not doBoundWitness
  * at 0. This is used when re-starting a origin chain.
  */
-class XyoOriginChainStateManager (private val indexOffset : Int) : XyoOriginStateRepository {
-    private val currentSigners = ArrayList<XyoSigner>()
-    private val waitingSigners = ArrayList<XyoSigner>()
+open class XyoOriginChainStateManager (private val indexOffset : Int) : XyoOriginStateRepository {
+    private var currentSigners = ArrayList<XyoSigner>()
+    private var waitingSigners = ArrayList<XyoSigner>()
     private var latestHash : XyoHash? = null
+
+    constructor(indexOffset: Int, signers : Array<XyoSigner>, previousHash: XyoPreviousHash): this(indexOffset) {
+        latestHash = previousHash.hash
+        currentSigners = ArrayList(signers.toList())
+    }
 
     /**
      * The total number of elements since creation, NOT including the indexOffset.

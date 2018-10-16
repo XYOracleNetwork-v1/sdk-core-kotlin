@@ -23,8 +23,8 @@ abstract class XyoRelayNode (storageProvider : XyoStorageProviderInterface,
                              private val hashingProvider : XyoHash.XyoHashProvider) : XyoNodeBase(storageProvider, hashingProvider) {
 
     private val selfToOtherQueue = XyoBridgingOption(storageProvider)
-    private val originBlocksToBridge = XyoBridgeQueue()
     private var running = false
+    val originBlocksToBridge = XyoBridgeQueue()
 
     private val mainBoundWitnessListener = object : XyoNodeListener {
         override fun onBoundWitnessEndFailure(error: Exception?) {}

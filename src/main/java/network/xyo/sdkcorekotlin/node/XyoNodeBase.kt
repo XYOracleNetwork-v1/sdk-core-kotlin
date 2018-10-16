@@ -48,7 +48,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
     /**
      * The current origin state of the origin node.
      */
-    open val originState = XyoOriginChainStateManager(0)
+    open var originState = XyoOriginChainStateManager(0)
 
     /**
      * Adds a heuristic to be used when creating bound witnesses.

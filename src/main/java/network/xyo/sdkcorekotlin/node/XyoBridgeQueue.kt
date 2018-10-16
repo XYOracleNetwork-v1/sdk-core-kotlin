@@ -8,6 +8,16 @@ open class XyoBridgeQueue {
     private val blocksToBridge = ArrayList<XyoBridgeQueueItem>()
 
     /**
+     * The maximum number of blocks to send at a given time.
+     */
+    var sendLimit = 8
+
+    /**
+     * The point at witch blocks should be removed from the queue.
+     */
+    var removeWeight = 10
+
+    /**
      * Adds a listener to the queue.
      *
      * @param key The key of the listener to add.
@@ -77,12 +87,12 @@ open class XyoBridgeQueue {
         val toRemove = ArrayList<XyoBridgeQueueItem>()
         val toBridge = ArrayList<ByteArray>()
 
-        for (i in 0 until Math.min(SENT_LIMIT, blocksToBridge.size)) {
+        for (i in 0 until Math.min(sendLimit, blocksToBridge.size)) {
             val block = blocksToBridge[i]
             toBridge.add(block.boundWitnessHash)
             block.weight++
 
-            if (block.weight >= REMOVE_WEIGHT) {
+            if (block.weight >= removeWeight) {
                 toRemove.add(block)
             }
         }
@@ -107,15 +117,6 @@ open class XyoBridgeQueue {
     }
 
     companion object {
-        /**
-         * The maximum number of blocks to send at a given time.
-         */
-        private const val SENT_LIMIT = 8
-
-        /**
-         * The point at witch blocks should be removed from the queue.
-         */
-        private const val REMOVE_WEIGHT = 100
 
         /**
          * A Listener for a XyoBridgeQueue
