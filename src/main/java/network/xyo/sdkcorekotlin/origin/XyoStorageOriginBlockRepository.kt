@@ -5,6 +5,7 @@ import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
 import network.xyo.sdkcorekotlin.data.XyoObject
+import network.xyo.sdkcorekotlin.data.XyoObjectProvider
 import network.xyo.sdkcorekotlin.data.array.multi.XyoMultiTypeArrayInt
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.storage.XyoStorageProviderInterface
@@ -22,6 +23,7 @@ open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoSto
 
 
     override fun removeOriginBlock(originBlockHash: ByteArray) = GlobalScope.async {
+        removeIndex(XyoObjectProvider.create(originBlockHash)!!).await()
         return@async storageProvider.delete(originBlockHash).await()
     }
 
@@ -62,6 +64,22 @@ open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoSto
         if (currentIndex != null) {
             for (hash in currentIndex) {
                 newIndex.add(hash)
+            }
+        }
+
+        val newIndexEncoded = XyoMultiTypeArrayInt(newIndex.toTypedArray())
+        storageProvider.write(BLOCKS_INDEX_KEY, newIndexEncoded.untyped)
+    }
+
+    private fun removeIndex (blockHash: XyoObject) = async {
+        val newIndex = ArrayList<XyoObject>()
+        val currentIndex = getHashIndex().await()?.array
+
+        if (currentIndex != null) {
+            for (hash in currentIndex) {
+                if (blockHash != hash) {
+                    newIndex.add(hash)
+                }
             }
         }
 

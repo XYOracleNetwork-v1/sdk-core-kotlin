@@ -10,12 +10,10 @@ import network.xyo.sdkcorekotlin.data.XyoPayload
 import network.xyo.sdkcorekotlin.data.XyoUnsignedHelper
 import network.xyo.sdkcorekotlin.data.array.multi.XyoMultiTypeArrayInt
 import network.xyo.sdkcorekotlin.data.array.single.XyoBridgeBlockSet
-import network.xyo.sdkcorekotlin.data.heuristics.number.unsigned.XyoIndex
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.network.XyoNetworkPipe
 import network.xyo.sdkcorekotlin.origin.XyoIndexableOriginBlockRepository
 import network.xyo.sdkcorekotlin.origin.XyoOriginChainStateManager
-import network.xyo.sdkcorekotlin.origin.XyoStorageOriginBlockRepository
 import network.xyo.sdkcorekotlin.storage.XyoStorageProviderInterface
 
 /**
@@ -98,7 +96,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
         val boundWitness = XyoZigZagBoundWitness(originState.getSigners(), makePayload(bitFlag).await())
         boundWitness.incomingData(null, true)
         updateOriginState(boundWitness).await()
-        onBoundWitnessEndSucess(boundWitness).await()
+        onBoundWitnessEndSuccess(boundWitness).await()
     }
 
     fun addBoundWitnessOption (boundWitnessOption: XyoBoundWitnessOption) {
@@ -160,7 +158,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
         }
     }
 
-    private fun onBoundWitnessEndSucess (boundWitness: XyoBoundWitness) = GlobalScope.async {
+    private fun onBoundWitnessEndSuccess (boundWitness: XyoBoundWitness) = GlobalScope.async {
         loadCreatedBoundWitness(boundWitness).await()
 
         for ((_, listener) in listeners) {
@@ -224,7 +222,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
 
         if (currentBoundWitnessSession?.completed == true && error == null) {
             updateOriginState(currentBoundWitnessSession!!)
-            onBoundWitnessEndSucess(currentBoundWitnessSession!!).await()
+            onBoundWitnessEndSuccess(currentBoundWitnessSession!!).await()
             currentBoundWitnessSession = null
         } else {
             onBoundWitnessEndFailure(error)
