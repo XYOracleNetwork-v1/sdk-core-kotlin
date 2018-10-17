@@ -42,7 +42,7 @@ class XyoOriginVerify (boundWitnesses : ArrayList<XyoBoundWitness>, hashProvider
                 val dynamicIndexes = ArrayList<Int?>()
                 for (payload in boundWitness.payloads) {
                     val index = payload.signedPayloadMapping[XyoIndex.id.contentHashCode()] as? XyoNumberUnsigned
-                    dynamicIndexes.add(index?.number)
+                    dynamicIndexes.add(index?.number?.toInt())
                 }
                 return dynamicIndexes.toTypedArray()
             }
@@ -66,7 +66,7 @@ class XyoOriginVerify (boundWitnesses : ArrayList<XyoBoundWitness>, hashProvider
 
     inner class XyoPartyOriginBlock (boundWitness: XyoBoundWitness, hashProvider: XyoHash.XyoHashProvider, val party : Int) : XyoOriginBlock(boundWitness, hashProvider) {
         val index : Int?
-            get() = (boundWitness.payloads[party].signedPayloadMapping[XyoIndex.id.contentHashCode()] as? XyoNumberUnsigned)?.number
+            get() = (boundWitness.payloads[party].signedPayloadMapping[XyoIndex.id.contentHashCode()] as? XyoNumberUnsigned)?.number?.toInt()
 
         val previousHash : XyoPreviousHash?
             get() = boundWitness.payloads[party].signedPayloadMapping[XyoIndex.id.contentHashCode()] as? XyoPreviousHash
