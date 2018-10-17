@@ -8,14 +8,24 @@ import network.xyo.sdkcorekotlin.data.heuristics.number.XyoNumberTypes
 /**
  * A unix time heuristic.
  *
- * @param number The current unix time
+ * @param unixTime Pass null for current unix time on get and
  * @major 0x0d
  * @minor 0x0f
  */
-class XyoUnixTime(override val number: Long) : XyoNumberUnsigned() {
-    override val size: XyoNumberTypes = XyoNumberTypes.INT
+open class XyoUnixTime(private val unixTime : Long?) : XyoNumberUnsigned() {
+    override val size: XyoNumberTypes = XyoNumberTypes.LONG
     override val id: ByteArray = byteArrayOf(major, minor)
     override val sizeIdentifierSize: Int? = null
+
+    override val number: Number
+        get() {
+            if (unixTime != null) {
+                return unixTime
+            }
+
+            updateObjectCache()
+            return System.currentTimeMillis()
+        }
 
     companion object : XyoObjectProvider() {
         override val major: Byte = 0x0d
