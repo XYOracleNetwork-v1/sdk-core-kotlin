@@ -1,11 +1,13 @@
 package network.xyo.sdkcorekotlin.node
 
+import com.sun.corba.se.impl.encoding.CodeSetConversion
+
 /**
  * A class to manage outgoing origin blocks for bridges and sentinels.
  */
 open class XyoBridgeQueue {
-    private val blocksToBridge = ArrayList<XyoBridgeQueueItem>()
-    private val removed = ArrayList<ByteArray>()
+    private var blocksToBridge = ArrayList<XyoBridgeQueueItem>()
+    private var removed = ArrayList<ByteArray>()
 
     /**
      * The maximum number of blocks to send at a given time.
@@ -69,7 +71,6 @@ open class XyoBridgeQueue {
             toBridge.add(block.boundWitnessHash)
             block.weight++
 
-            println(blocksToBridge.size)
 
             if (block.weight >= removeWeight) {
                 toRemove.add(block)
@@ -97,18 +98,19 @@ open class XyoBridgeQueue {
         return result
     }
 
+    fun setQueue (blocks : Array<ByteArray>, weights: Array<Int>) {
+        blocksToBridge = ArrayList(Array(blocks.size, { i -> XyoBridgeQueueItem(blocks[i], weights[i]) }).asList())
+    }
+
+    fun getAllBlocks () : Array<ByteArray> {
+        return Array(blocksToBridge.size, { i -> blocksToBridge[i].boundWitnessHash })
+    }
+
+    fun getAllWeights () : Array<Int> {
+        return Array(blocksToBridge.size, { i -> blocksToBridge[i].weight })
+    }
 
     companion object {
-        /**
-         * A Listener for a XyoBridgeQueue
-         */
-        interface XyoBridgeQueueListener {
-            /**
-             * This function gets called evey time a block gets removed from the queue.
-             */
-            fun onRemove(boundWitnessHash: ByteArray)
-        }
-
         private class XyoBridgeQueueItem (val boundWitnessHash: ByteArray, var weight: Int) : Comparable<XyoBridgeQueueItem> {
             override fun compareTo(other: XyoBridgeQueueItem): Int {
                 return weight.compareTo(other.weight)
