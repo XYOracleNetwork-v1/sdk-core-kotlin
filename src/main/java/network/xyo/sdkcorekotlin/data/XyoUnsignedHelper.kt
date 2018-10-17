@@ -1,5 +1,6 @@
 package network.xyo.sdkcorekotlin.data
 
+import java.math.BigInteger
 import java.nio.ByteBuffer
 import kotlin.experimental.and
 
@@ -32,6 +33,10 @@ object XyoUnsignedHelper {
         byteBuffer.putShort((value and 0xffff).toShort())
     }
 
+    fun getUnsignedLong (byteBuffer: ByteBuffer) : Long {
+        return byteBuffer.long
+    }
+
     fun getUnsignedShort(byteBuffer: ByteBuffer, position: Int): Int {
         return byteBuffer.getShort(position).toInt() and 0xffff
     }
@@ -56,6 +61,10 @@ object XyoUnsignedHelper {
         byteBuffer.putInt(position, (value and 0xffffffffL).toInt())
     }
 
+    fun putUnsignedLong (byteBuffer: ByteBuffer, value: Long) {
+        byteBuffer.putLong(value)
+    }
+
     fun createUnsignedByte(number: Int) : ByteArray {
         val signed = ByteBuffer.allocate(1)
         XyoUnsignedHelper.putUnsignedByte(signed, number)
@@ -74,6 +83,12 @@ object XyoUnsignedHelper {
         return signed.array()
     }
 
+    fun createUnsignedLong(number: Long) : ByteArray {
+        val signed = ByteBuffer.allocate(8)
+        XyoUnsignedHelper.createUnsignedLong(number)
+        return signed.array()
+    }
+
     fun readUnsignedByte(bytes : ByteArray) : Int {
         val byteBuffer = ByteBuffer.wrap(bytes)
         return getUnsignedByte(byteBuffer).toInt()
@@ -88,4 +103,9 @@ object XyoUnsignedHelper {
         val byteBuffer = ByteBuffer.wrap(bytes)
         return getUnsignedInt(byteBuffer).toInt()
     }
- }
+
+    fun readUnsignedLong(bytes : ByteArray) : Long {
+        val byteBuffer = ByteBuffer.wrap(bytes)
+        return getUnsignedLong(byteBuffer)
+    }
+}
