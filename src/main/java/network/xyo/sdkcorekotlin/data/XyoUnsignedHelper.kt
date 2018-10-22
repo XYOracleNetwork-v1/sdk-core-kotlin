@@ -85,7 +85,7 @@ object XyoUnsignedHelper {
 
     fun createUnsignedLong(number: Long) : ByteArray {
         val signed = ByteBuffer.allocate(8)
-        XyoUnsignedHelper.createUnsignedLong(number)
+        XyoUnsignedHelper.putUnsignedLong(signed, number)
         return signed.array()
     }
 
