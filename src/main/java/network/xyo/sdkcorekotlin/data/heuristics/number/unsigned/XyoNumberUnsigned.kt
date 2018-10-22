@@ -21,14 +21,14 @@ abstract class XyoNumberUnsigned : XyoObject() {
 
     override val objectInBytes: ByteArray
         get() {
-            when (size) {
-                XyoNumberTypes.BYTE -> return XyoUnsignedHelper.createUnsignedByte(number.toInt())
+            return when (size) {
+                XyoNumberTypes.BYTE -> XyoUnsignedHelper.createUnsignedByte(number.toInt())
 
-                XyoNumberTypes.SHORT -> return XyoUnsignedHelper.createUnsignedShort(number.toInt())
+                XyoNumberTypes.SHORT -> XyoUnsignedHelper.createUnsignedShort(number.toInt())
 
-                XyoNumberTypes.INT -> return XyoUnsignedHelper.createUnsignedInt(number.toInt())
+                XyoNumberTypes.INT -> XyoUnsignedHelper.createUnsignedInt(number.toInt())
 
-                XyoNumberTypes.LONG -> return XyoUnsignedHelper.createUnsignedLong(number.toLong())
+                XyoNumberTypes.LONG -> XyoUnsignedHelper.createUnsignedLong(number.toLong())
 
                 else -> {
                     throw Exception("Not a valid size!")

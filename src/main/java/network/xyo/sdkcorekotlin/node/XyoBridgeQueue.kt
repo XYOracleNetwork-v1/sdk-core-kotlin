@@ -99,15 +99,15 @@ open class XyoBridgeQueue {
     }
 
     fun setQueue (blocks : Array<ByteArray>, weights: Array<Int>) {
-        blocksToBridge = ArrayList(Array(blocks.size, { i -> XyoBridgeQueueItem(blocks[i], weights[i]) }).asList())
+        blocksToBridge = ArrayList(Array(blocks.size) { i -> XyoBridgeQueueItem(blocks[i], weights[i]) }.asList())
     }
 
     fun getAllBlocks () : Array<ByteArray> {
-        return Array(blocksToBridge.size, { i -> blocksToBridge[i].boundWitnessHash })
+        return Array(blocksToBridge.size) { i -> blocksToBridge[i].boundWitnessHash }
     }
 
     fun getAllWeights () : Array<Int> {
-        return Array(blocksToBridge.size, { i -> blocksToBridge[i].weight })
+        return Array(blocksToBridge.size) { i -> blocksToBridge[i].weight }
     }
 
     companion object {

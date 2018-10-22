@@ -37,7 +37,7 @@ open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoSto
         if (encodedIndex != null) {
             val index = (XyoMultiTypeArrayInt.createFromPacked(encodedIndex) as XyoMultiTypeArrayInt).array
 
-            return@async Array(index.size, { i -> index[i].typed })
+            return@async Array(index.size) { i -> index[i].typed }
         }
 
         return@async arrayOf<ByteArray>()
@@ -71,7 +71,7 @@ open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoSto
         storageProvider.write(BLOCKS_INDEX_KEY, newIndexEncoded.untyped)
     }
 
-    private fun removeIndex (blockHash: XyoObject) = async {
+    private fun removeIndex (blockHash: XyoObject) = GlobalScope.async {
         val newIndex = ArrayList<XyoObject>()
         val currentIndex = getHashIndex().await()?.array
 

@@ -112,15 +112,15 @@ abstract class XyoBoundWitness : XyoObject() {
     }
 
     private fun makePublicKeys(): XyoSingleTypeArrayShort {
-        return XyoSingleTypeArrayShort(XyoKeySet.major, XyoKeySet.minor, Array(publicKeys.size, { i -> publicKeys[i] as XyoObject }))
+        return XyoSingleTypeArrayShort(XyoKeySet.major, XyoKeySet.minor, Array(publicKeys.size) { i -> publicKeys[i] as XyoObject })
     }
 
     private fun makePayloads(): XyoSingleTypeArrayInt {
-        return XyoSingleTypeArrayInt(XyoPayload.major, XyoPayload.minor, Array(payloads.size, { i -> payloads[i] as XyoObject }))
+        return XyoSingleTypeArrayInt(XyoPayload.major, XyoPayload.minor, Array(payloads.size) { i -> payloads[i] as XyoObject })
     }
 
     private fun makeSignatures(): XyoSingleTypeArrayShort {
-        return XyoSingleTypeArrayShort(XyoSignatureSet.major, XyoSignatureSet.minor, Array(signatures.size, { i -> signatures[i] as XyoObject }))
+        return XyoSingleTypeArrayShort(XyoSignatureSet.major, XyoSignatureSet.minor, Array(signatures.size) { i -> signatures[i] as XyoObject })
     }
 
 
@@ -155,17 +155,17 @@ abstract class XyoBoundWitness : XyoObject() {
 
         private fun getKeySetsArray(bytes: ByteArray): Array<XyoKeySet> {
             val keySetArray = XyoSingleTypeArrayShort.createFromPacked(bytes) as XyoSingleTypeArrayShort
-            return Array(keySetArray.size, { i -> keySetArray.array[i] as XyoKeySet })
+            return Array(keySetArray.size) { i -> keySetArray.array[i] as XyoKeySet }
         }
 
         private fun getPayloadsArray(bytes: ByteArray): Array<XyoPayload> {
             val payloadArray = XyoSingleTypeArrayInt.createFromPacked(bytes) as XyoSingleTypeArrayInt
-            return Array(payloadArray.size, { i -> payloadArray.array[i] as XyoPayload })
+            return Array(payloadArray.size) { i -> payloadArray.array[i] as XyoPayload }
         }
 
         private fun getSignatureArray(bytes: ByteArray): Array<XyoSignatureSet> {
             val signatureArray = XyoSingleTypeArrayShort.createFromPacked(bytes) as XyoSingleTypeArrayShort
-            return Array(signatureArray.size, { i -> signatureArray.array[i] as XyoSignatureSet })
+            return Array(signatureArray.size) { i -> signatureArray.array[i] as XyoSignatureSet }
         }
 
         private fun unpackFromArrays(keysets: Array<XyoKeySet>, payloads: Array<XyoPayload>, signatures: Array<XyoSignatureSet>): XyoObject {

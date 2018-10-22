@@ -12,7 +12,7 @@ interface XyoGetOriginBlocksByPublicKey : XyoIndexableOriginBlockRepository.Comp
     /**
      * Gets a group of origin blocks that belong to a given party by public key.
      *
-     * @param publicKey The public key to search by
+     * @param key The public key to search by
      * @return A deferred array of origin blocks found
      */
     fun getOriginChainByPublicKey (key: ByteArray) : Deferred<XyoOriginRoot?>
