@@ -12,20 +12,11 @@ import network.xyo.sdkcorekotlin.data.heuristics.number.XyoNumberTypes
  * @major 0x0d
  * @minor 0x0f
  */
-open class XyoUnixTime(private val unixTime : Long?) : XyoNumberUnsigned() {
+open class XyoUnixTime(private val unixTime : Long) : XyoNumberUnsigned() {
     override val size: XyoNumberTypes = XyoNumberTypes.LONG
     override val id: ByteArray = byteArrayOf(major, minor)
     override val sizeIdentifierSize: Int? = null
-
-    override val number: Number
-        get() {
-            if (unixTime != null) {
-                return unixTime
-            }
-
-            updateObjectCache()
-            return System.currentTimeMillis()
-        }
+    override val number: Number = unixTime
 
     companion object : XyoObjectProvider() {
         override val major: Byte = 0x0d
