@@ -15,6 +15,7 @@ import network.xyo.sdkcorekotlin.network.XyoNetworkPipe
 import network.xyo.sdkcorekotlin.origin.XyoIndexableOriginBlockRepository
 import network.xyo.sdkcorekotlin.origin.XyoOriginChainStateManager
 import network.xyo.sdkcorekotlin.storage.XyoStorageProviderInterface
+import java.util.*
 
 /**
  * A base class for all things creating an managing an origin chain (e.g. Sentinel, Bridge).
@@ -26,7 +27,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
                             private val hashingProvider : XyoHash.XyoHashProvider) {
 
     private val boundWitnessOptions = HashMap<Int, XyoBoundWitnessOption>()
-    private val heuristics = HashMap<String, XyoObject>()
+    private val heuristics = HashMap<String, XyoHeuristicGetter>()
     private val listeners = HashMap<String, XyoNodeListener>()
     private var currentBoundWitnessSession : XyoZigZagBoundWitnessSession? = null
 
@@ -54,7 +55,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
      * @param key The key for the heuristic.
      * @param heuristic The heuristic to use in  bound witnesses.
      */
-    fun addHeuristic (key: String, heuristic : XyoObject) {
+    fun addHeuristic (key: String, heuristic : XyoHeuristicGetter) {
         heuristics[key] = heuristic
     }
 
@@ -149,7 +150,18 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
 
 
     private fun getHeuristics () : Array<XyoObject> {
-        return heuristics.values.toTypedArray()
+        val list = LinkedList<XyoObject>()
+
+        for ((_, getter) in heuristics) {
+            val heuristic = getter.getHeuristic()
+
+            if (heuristic != null) {
+                list.add(heuristic)
+            }
+
+        }
+
+       return list.toTypedArray()
     }
 
     private fun onBoundWitnessStart () {
