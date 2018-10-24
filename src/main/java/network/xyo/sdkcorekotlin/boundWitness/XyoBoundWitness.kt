@@ -123,6 +123,17 @@ abstract class XyoBoundWitness : XyoObject() {
         return XyoSingleTypeArrayShort(XyoSignatureSet.major, XyoSignatureSet.minor, Array(signatures.size) { i -> signatures[i] as XyoObject })
     }
 
+    /**
+     * Removes a type from the unsigned payload
+     *
+     * @param id The id of the type to removepeer
+     */
+    fun removeTypeFromUnsigned (id : ByteArray) {
+        for (payload in payloads) {
+            payload.removeTypeFromUnsigned(id)
+            payload.updateObjectCache()
+        }
+    }
 
     companion object : XyoObjectProvider() {
         override val major: Byte = 0x02

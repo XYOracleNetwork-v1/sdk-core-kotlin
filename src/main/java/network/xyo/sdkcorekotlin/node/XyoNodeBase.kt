@@ -183,7 +183,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
 
         if (!originBlocks.containsOriginBlock(hash.typed).await()) {
             val subBlocks = getBridgedBlocks(boundWitness)
-            boundWitness.removeAllUnsigned()
+            boundWitness.removeTypeFromUnsigned(XyoBridgeBlockSet.id)
             originBlocks.addBoundWitness(boundWitness).await()
 
             for ((_, listener) in listeners) {
