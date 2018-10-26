@@ -1,6 +1,8 @@
 package network.xyo.sdkcorekotlin.signing
 
 import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.GlobalScope
+import kotlinx.coroutines.experimental.async
 import network.xyo.sdkcorekotlin.data.XyoObject
 
 /**
@@ -14,6 +16,11 @@ abstract class XyoSigner {
      * The public key of the XyoSigner.
      */
     abstract val publicKey : XyoObject
+
+    /**
+     * The private key of the XyoSigner, this can be used to restore signer state.
+     */
+    abstract val privateKey : XyoObject
 
     /**
      * Cryptographically signs a given ByteArray so that it can verified with verify().
@@ -30,9 +37,15 @@ abstract class XyoSigner {
      */
     abstract class XyoSignerProvider {
         /**
-         * Provides a new instance of a XyoSigner for the given algorithm.
+         * Provides a new instance of a XyoSigner for the given algorithm and generates a keypair.
          */
         abstract fun newInstance () : XyoSigner
+
+        /**
+         * Provides a new instance of a XyoSigner for the given algorithm and generates a keypair with the given
+         * private key.
+         */
+        abstract fun newInstance (privateKey : XyoObject) : XyoSigner
 
         /**
          * Cryptographically verify a signature given data, a signature, and a public
@@ -57,21 +70,55 @@ abstract class XyoSigner {
         abstract val key : Byte
 
         /**
+         * The keys types the signer supports
+         */
+        abstract val supportedKeys : Array<ByteArray>
+
+        /**
+         * The signaturePacking types the signer supports
+         */
+        abstract val supportedSignatures : Array<ByteArray>
+
+        /**
          * Adds the signer provider to the mapping.
          */
         fun enable () {
             signingCreators[key] = this
+
+            for (key in supportedKeys) {
+                for (sig in supportedSignatures) {
+                    val map = verifiers[key.contentHashCode()] ?: HashMap()
+                    map[sig.contentHashCode()] = this
+                    verifiers[key.contentHashCode()] = map
+                }
+            }
         }
+
 
         /**
          * Removes the signer provider to the mapping.
          */
         fun disable () {
             signingCreators.remove(key)
+
+            for (key in supportedKeys) {
+                for (sig in supportedSignatures) {
+                    verifiers[key.contentHashCode()] ?: return
+                    verifiers[key.contentHashCode()]?.remove(sig.contentHashCode())
+
+                    if (verifiers[key.contentHashCode()]?.size == 0) {
+                        verifiers.remove(key.contentHashCode())
+                    }
+                }
+            }
         }
     }
 
     companion object {
+        /**
+         * [major and minor of key (content hash code)][major and minor of sig (content hash code)]
+         */
+        private val verifiers = HashMap<Int, HashMap<Int, XyoSignerProvider>>()
         private val signingCreators = HashMap<Byte, XyoSignerProvider>()
 
         /**
@@ -82,6 +129,16 @@ abstract class XyoSigner {
          */
         fun getCreator (byte : Byte) : XyoSignerProvider? {
             return signingCreators[byte]
+        }
+
+        fun verify (publicKey: XyoObject, signature: XyoObject, data : ByteArray) : Deferred<Boolean?> = GlobalScope.async {
+            val creator = verifiers[publicKey.id.contentHashCode()]?.get(signature.id.contentHashCode())
+
+            if (creator != null) {
+                return@async creator.verifySign(signature, data, publicKey).await()
+            }
+
+            return@async null
         }
     }
 }

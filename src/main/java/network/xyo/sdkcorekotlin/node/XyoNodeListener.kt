@@ -12,7 +12,7 @@ interface XyoNodeListener {
     fun onBoundWitnessStart()
 
     /**
-     * This function will be called on evey time a bound witness ended successfully.
+     * This function will be called on evey time a bound witness discovered for the first time successfully.
      */
     fun onBoundWitnessDiscovered(boundWitness : XyoBoundWitness)
 
@@ -20,4 +20,9 @@ interface XyoNodeListener {
      * This function will be called on evey time a bound witness did not end successfully.
      */
     fun onBoundWitnessEndFailure(error : Exception?)
+
+    /**
+     * This function will be called every time a bound witness is completed successfully.
+     */
+    fun onBoundWitnessEndSucess (boundWitness: XyoBoundWitness)
 }

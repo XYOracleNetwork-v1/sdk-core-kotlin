@@ -6,6 +6,7 @@ import network.xyo.sdkcorekotlin.data.XyoPayload
 import network.xyo.sdkcorekotlin.data.array.multi.XyoKeySet
 import network.xyo.sdkcorekotlin.signing.XyoSignatureSet
 import org.junit.Assert.assertArrayEquals
+import java.security.Security
 
 open class XyoTestBase {
     fun String.hexStringToByteArray() : ByteArray {
@@ -23,15 +24,15 @@ open class XyoTestBase {
         return result
     }
 
-    fun bytesToString(bytes: ByteArray?): String {
-        val sb = StringBuilder()
-        val it = bytes!!.iterator()
-        sb.append("0x")
+    fun ByteArray.toHexString(): String {
+        val builder = StringBuilder()
+        val it = this.iterator()
+        builder.append("0x")
         while (it.hasNext()) {
-            sb.append(String.format("%02X ", it.next()))
+            builder.append(String.format("%02X ", it.next()))
         }
 
-        return sb.toString()
+        return builder.toString()
     }
 
     fun assertArrayOfXyoObjects(expected: Array<XyoObject>, actual:  Array<XyoObject>) {
@@ -59,22 +60,22 @@ open class XyoTestBase {
         for (publicKeySet in boundWitness.publicKeys) {
             println("--Key Set")
             for (publicKey in publicKeySet.array) {
-                println("----" + bytesToString(publicKey.typed))
+                println("----" + publicKey.typed.toHexString())
             }
         }
 
         println("Payloads")
         for (payload in boundWitness.payloads) {
             println("--Payload")
-            println("----Signed: " + bytesToString(payload.signedPayload.typed))
-            println("----Unsigned: " + bytesToString(payload.unsignedPayload.typed))
+            println("----Signed: " + payload.signedPayload.typed.toHexString())
+            println("----Unsigned: " + payload.unsignedPayload.typed.toHexString())
         }
 
         println("Signatures")
         for (signaturesSet in boundWitness.signatures) {
             println("--Signatures Set")
             for (signature in signaturesSet.array) {
-                println("----" + bytesToString(signature.typed))
+                println("----" + signature.typed.toHexString())
             }
         }
     }

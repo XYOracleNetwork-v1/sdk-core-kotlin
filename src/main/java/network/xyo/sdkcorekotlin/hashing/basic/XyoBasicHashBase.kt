@@ -1,6 +1,7 @@
 package network.xyo.sdkcorekotlin.hashing.basic
 
 import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
 import network.xyo.sdkcorekotlin.data.XyoByteArrayReader
 import network.xyo.sdkcorekotlin.data.XyoObject
@@ -26,7 +27,7 @@ abstract class XyoBasicHashBase (override val hash : ByteArray): XyoHash() {
         override val sizeOfBytesToGetSize: Int? = 0
 
         override fun createHash (data: ByteArray) : Deferred<XyoHash> {
-            return async {
+            return GlobalScope.async {
                 return@async object : XyoBasicHashBase(hash(data)) {
                     override val id: ByteArray
                         get() = byteArrayOf(major, minor)

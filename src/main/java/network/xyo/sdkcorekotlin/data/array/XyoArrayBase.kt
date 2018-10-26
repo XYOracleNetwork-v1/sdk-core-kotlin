@@ -1,7 +1,7 @@
 package network.xyo.sdkcorekotlin.data.array
 
-import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.XyoByteArraySetter
+import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.XyoObjectProvider
 
 /**
@@ -49,12 +49,12 @@ abstract class XyoArrayBase : XyoObject() {
         get() = makeArray()
 
     private fun makeArray () : ByteArray {
-        if (typedId == null) {
+        return if (typedId == null) {
             val merger = XyoByteArraySetter(array.size)
             for (i in 0..array.size - 1) {
                 merger.add(array[i].typed, i)
             }
-            return merger.merge()
+            merger.merge()
         } else {
             val merger = XyoByteArraySetter(array.size + 1)
             val typeIdValue = typedId ?: throw Exception("Type is null!")
@@ -62,7 +62,7 @@ abstract class XyoArrayBase : XyoObject() {
             for (i in 0..array.size - 1) {
                 merger.add(array[i].untyped, i + 1)
             }
-            return merger.merge()
+            merger.merge()
         }
     }
 

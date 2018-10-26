@@ -1,11 +1,14 @@
 package network.xyo.sdkcorekotlin.boundWitness
 
+import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.XyoPayload
 import network.xyo.sdkcorekotlin.data.array.multi.XyoKeySet
 import network.xyo.sdkcorekotlin.signing.XyoSignatureSet
 import network.xyo.sdkcorekotlin.signing.XyoSigner
+import java.util.*
 
 /**
  * A zig-zag bound witness protocol.
@@ -38,12 +41,8 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
      * @param endPoint If not already turned around, decide if what to send sign and send back.
      * @return A XyoBoundWitnessTransfer to send to the other party.
      */
-    fun incomingData (transfer : XyoBoundWitnessTransfer?, endPoint : Boolean) = async {
+    fun incomingData (transfer : XyoBoundWitnessTransfer?, endPoint : Boolean) = GlobalScope.async {
         updateObjectCache()
-        val keysToSend = ArrayList<XyoObject>()
-        val payloadsToSend = ArrayList<XyoObject>()
-        val signatureToSend = ArrayList<XyoObject>()
-        val signatureReceivedSize = transfer?.signatureToSend?.size ?: 0
 
         if (transfer != null) {
             addTransfer(transfer).await()
@@ -56,42 +55,69 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
         }
 
         if (signatures.size != publicKeys.size) {
-            if (signatures.size == 0 && !endPoint) {
-                for (key in publicKeys) {
-                    keysToSend.add(key)
-                }
+            val signatureReceivedSize = transfer?.signatureToSend?.size ?: 0
+            return@async getReturnFromIncoming(signatureReceivedSize, endPoint).await()
 
-                for (payload in payloads) {
-                    payloadsToSend.add(payload)
-                }
-            } else {
-                signForSelf().await()
-
-                for (i in signatureReceivedSize + 1..publicKeys.size - 1) {
-                    keysToSend.add(publicKeys[i])
-                }
-
-                for (i in signatureReceivedSize + 1..payloads.size - 1) {
-                    payloadsToSend.add(payloads[i])
-                }
-
-                for (i in signatureReceivedSize..signatures.size - 1) {
-                    signatureToSend.add(signatures[i])
-                }
-            }
         }
+
+        return@async XyoBoundWitnessTransfer(arrayOf(), arrayOf(), arrayOf())
+    }
+
+    private fun getReturnFromIncoming (signatureReceivedSize : Int, endPoint: Boolean) : Deferred<XyoBoundWitnessTransfer> = GlobalScope.async {
+
+        if (signatures.isEmpty() && !endPoint) {
+            return@async passOnNoSign()
+        }
+
+        return@async passAndSign(signatureReceivedSize).await()
+    }
+
+    private fun passOnNoSign () : XyoBoundWitnessTransfer {
+        val keysToSend = ArrayList<XyoObject>()
+        val payloadsToSend = ArrayList<XyoObject>()
+        val signatureToSend = ArrayList<XyoObject>()
+
+        for (key in publicKeys) {
+            keysToSend.add(key)
+        }
+
+        for (payload in payloads) {
+            payloadsToSend.add(payload)
+        }
+
+        return XyoBoundWitnessTransfer(keysToSend.toTypedArray(), payloadsToSend.toTypedArray(), signatureToSend.toTypedArray())
+    }
+
+    private fun passAndSign (signatureReceivedSize: Int) : Deferred<XyoBoundWitnessTransfer> = GlobalScope.async {
+        val keysToSend = ArrayList<XyoObject>()
+        val payloadsToSend = ArrayList<XyoObject>()
+        val signatureToSend = ArrayList<XyoObject>()
+
+        signForSelf().await()
+
+        for (i in signatureReceivedSize + 1 until publicKeys.size ) {
+            keysToSend.add(publicKeys[i])
+        }
+
+        for (i in signatureReceivedSize + 1 until payloads.size) {
+            payloadsToSend.add(payloads[i])
+        }
+
+
+        signatureToSend.add(signatures.first())
+
 
         return@async XyoBoundWitnessTransfer(keysToSend.toTypedArray(), payloadsToSend.toTypedArray(), signatureToSend.toTypedArray())
     }
 
-    private fun addTransfer (transfer : XyoBoundWitnessTransfer) = async {
+    private fun addTransfer (transfer : XyoBoundWitnessTransfer) = GlobalScope.async {
         addIncomingKeys(transfer.keysToSend)
         addIncomingPayload(transfer.payloadsToSend)
         addIncomingSignatures(transfer.signatureToSend)
     }
 
     private fun addIncomingKeys(incomingKeySets : Array<XyoObject>) {
-        for (i in 0..incomingKeySets.size - 1) {
+        for (i in 0 until incomingKeySets.size) {
             val incomingKeySet = incomingKeySets[i] as? XyoKeySet
             if (incomingKeySet != null) {
                 dynamicPublicKeys.add(incomingKeySet)
@@ -100,7 +126,7 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
     }
 
     private fun addIncomingPayload(incomingPayloads : Array<XyoObject>) {
-        for (i in 0..incomingPayloads.size - 1) {
+        for (i in 0 until incomingPayloads.size) {
             val incomingPayload = incomingPayloads[i] as? XyoPayload
             if (incomingPayload != null) {
                 dynamicPayloads.add(incomingPayload)
@@ -109,9 +135,13 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
     }
 
     private fun addIncomingSignatures(incomingSignatures : Array<XyoObject>) {
-        for (i in 0..incomingSignatures.size - 1) {
+        for (i in 0 until incomingSignatures.size) {
             val incomingSignatureSet = incomingSignatures[i] as? XyoSignatureSet
             if (incomingSignatureSet != null) {
+                if (dynamicSignatureSets.size != 0) {
+                    dynamicSignatureSets.add(0, incomingSignatureSet)
+                    return
+                }
                 dynamicSignatureSets.add(incomingSignatureSet)
             }
         }
@@ -125,12 +155,12 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
         return XyoKeySet(publicKeys.toTypedArray())
     }
 
-    private fun signBoundWitness () = async {
-        return@async XyoSignatureSet(Array(signers.size, { i -> signCurrent(signers[i]).await() }))
+    private fun signBoundWitness () = GlobalScope.async {
+        return@async XyoSignatureSet(Array(signers.size) { i -> signCurrent(signers[i]).await() })
     }
 
-    private fun signForSelf () = async {
+    private fun signForSelf () = GlobalScope.async {
         val signatureSet = signBoundWitness().await()
-        dynamicSignatureSets.add(signatureSet)
+        addIncomingSignatures(arrayOf(signatureSet))
     }
 }

@@ -67,6 +67,13 @@ abstract class XyoObject {
         isChanged = true
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (other is XyoObject) {
+            return other.bytes.contentHashCode() == bytes.contentHashCode()
+        }
+        return false
+    }
+
     private fun makeTyped () : ByteArray {
         val buffer = ByteBuffer.allocate(totalSize + encodedSize.size + 2)
         buffer.put(id)

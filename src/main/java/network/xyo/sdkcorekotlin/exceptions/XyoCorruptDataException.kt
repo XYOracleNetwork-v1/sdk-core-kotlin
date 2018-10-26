@@ -5,4 +5,4 @@ package network.xyo.sdkcorekotlin.exceptions
  *
  * @param message The message to show the Exception.
  */
-class XyoCorruptDataException(override val message: String) : Exception()
+class XyoCorruptDataException(override val message: String) : XyoException()

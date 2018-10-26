@@ -16,16 +16,19 @@ abstract class XyoNumberUnsigned : XyoObject() {
     /**
      * The number to encode.
      */
-    abstract val number : Int
+    abstract val number : Number
+
 
     override val objectInBytes: ByteArray
         get() {
-            when (size) {
-                XyoNumberTypes.BYTE -> return XyoUnsignedHelper.createUnsignedByte(number)
+            return when (size) {
+                XyoNumberTypes.BYTE -> XyoUnsignedHelper.createUnsignedByte(number.toInt())
 
-                XyoNumberTypes.SHORT -> return XyoUnsignedHelper.createUnsignedShort(number)
+                XyoNumberTypes.SHORT -> XyoUnsignedHelper.createUnsignedShort(number.toInt())
 
-                XyoNumberTypes.INT -> return XyoUnsignedHelper.createUnsignedInt(number)
+                XyoNumberTypes.INT -> XyoUnsignedHelper.createUnsignedInt(number.toInt())
+
+                XyoNumberTypes.LONG -> XyoUnsignedHelper.createUnsignedLong(number.toLong())
 
                 else -> {
                     throw Exception("Not a valid size!")

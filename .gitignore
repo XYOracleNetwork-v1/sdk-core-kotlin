@@ -14,3 +14,4 @@ google-services.json
 core-android-sample/local.properties
 gradle/
 /xyo
+/out

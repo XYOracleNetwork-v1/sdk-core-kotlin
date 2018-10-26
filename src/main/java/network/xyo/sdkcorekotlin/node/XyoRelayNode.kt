@@ -1,10 +1,10 @@
 package network.xyo.sdkcorekotlin.node
 
-import com.sun.org.apache.xpath.internal.operations.Bool
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.runBlocking
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
-import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.XyoObjectProvider
 import network.xyo.sdkcorekotlin.data.XyoUnsignedHelper
 import network.xyo.sdkcorekotlin.data.array.multi.XyoBridgeHashSet
@@ -23,31 +23,30 @@ import network.xyo.sdkcorekotlin.storage.XyoStorageProviderInterface
 abstract class XyoRelayNode (storageProvider : XyoStorageProviderInterface,
                              private val hashingProvider : XyoHash.XyoHashProvider) : XyoNodeBase(storageProvider, hashingProvider) {
 
-    private val selfToOtherQueue = XyoBridgingOption(storageProvider)
-    private val originBlocksToBridge = XyoBridgeQueue()
+    val originBlocksToBridge = XyoBridgeQueue()
+    private val selfToOtherQueue = XyoBridgingOption(storageProvider, originBlocksToBridge)
     private var running = false
 
     private val mainBoundWitnessListener = object : XyoNodeListener {
         override fun onBoundWitnessEndFailure(error: Exception?) {}
-        override fun onBoundWitnessStart() {
-            val toBridge = originBlocksToBridge.getBlocksToBridge()
-            selfToOtherQueue.addHashSet(XyoBridgeHashSet(XyoObjectProvider.encodedToDecodedArray(toBridge)))
+
+        override fun onBoundWitnessEndSucess(boundWitness: XyoBoundWitness) {
+            for (hash in originBlocksToBridge.getToRemove()) {
+                runBlocking {
+                    originBlocks.removeOriginBlock(hash).await()
+                }
+            }
         }
 
         override fun onBoundWitnessDiscovered(boundWitness: XyoBoundWitness) {
-            async {
+            GlobalScope.async {
                 originBlocksToBridge.addBlock(boundWitness.getHash(hashingProvider).await().typed)
             }
         }
+
+        override fun onBoundWitnessStart() {}
     }
 
-    private val bridgeQueueListener = object : XyoBridgeQueue.Companion.XyoBridgeQueueListener {
-        override fun onRemove(boundWitnessHash: ByteArray) {
-            async {
-                originBlocks.removeOriginBlock(boundWitnessHash)
-            }
-        }
-    }
 
     /**
      * The nodes procedureCatalogue to advertise when it makes connections.
@@ -100,7 +99,7 @@ abstract class XyoRelayNode (storageProvider : XyoStorageProviderInterface,
         return XyoProcedureCatalogue.BOUND_WITNESS
     }
 
-    private fun doConnection() = async {
+    private fun doConnection() = GlobalScope.async {
         val connectionToOtherPartyFrom = findSomeoneToTalkTo()
         if (!running) return@async
 
@@ -117,7 +116,7 @@ abstract class XyoRelayNode (storageProvider : XyoStorageProviderInterface,
     }
 
     private fun loop () {
-        launch {
+        GlobalScope.launch {
             while (running) {
                 doConnection().await()
             }
@@ -127,6 +126,5 @@ abstract class XyoRelayNode (storageProvider : XyoStorageProviderInterface,
     init {
         addListener(this.toString(), mainBoundWitnessListener)
         addBoundWitnessOption(selfToOtherQueue)
-        originBlocksToBridge.addListener(this.toString(), bridgeQueueListener)
     }
 }

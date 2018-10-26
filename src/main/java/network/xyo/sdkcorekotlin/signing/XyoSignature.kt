@@ -3,7 +3,7 @@ package network.xyo.sdkcorekotlin.signing
 import network.xyo.sdkcorekotlin.data.XyoObject
 
 /**
- * A base class for cryptographic signatures.
+ * A base class for cryptographic signaturePacking.
  */
 abstract class XyoSignature : XyoObject() {
     /**

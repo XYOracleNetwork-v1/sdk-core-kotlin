@@ -28,10 +28,6 @@ class XyoMultiPartyBoundWitnessTest : XyoTestBase() {
             }
 
             boundWitnesses[numberOfSigners - 1].incomingData(currentCacheData, false).await()
-
-            for (i in 0..numberOfSigners - 1) {
-                printBoundWitness(boundWitnesses[i])
-            }
         }
     }
 }

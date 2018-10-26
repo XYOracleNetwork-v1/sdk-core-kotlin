@@ -7,8 +7,8 @@ package network.xyo.sdkcorekotlin.data
  */
 class XyoByteArraySetter (size: Int) {
     private val numberOfByteArrays = size
-    private var byteArrays = Array(numberOfByteArrays, { defaultValue })
-    private val sizes = Array(numberOfByteArrays, { defaultValue.size })
+    private var byteArrays = Array(numberOfByteArrays) { defaultValue }
+    private val sizes = Array(numberOfByteArrays) { defaultValue.size }
     private var totalSize = defaultValue.size * numberOfByteArrays
 
     /**

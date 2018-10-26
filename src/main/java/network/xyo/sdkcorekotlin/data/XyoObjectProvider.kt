@@ -48,10 +48,7 @@ abstract class XyoObjectProvider : XyoType() {
      * Removes the current object from the mapping from major and minor to the creator.
      */
     fun disable (major : Byte, minor: Byte) {
-        val minorMap = creators[major]
-        if (minorMap != null) {
-            minorMap.remove(minor)
-        }
+        creators[major]?.remove(minor)
     }
 
     companion object {

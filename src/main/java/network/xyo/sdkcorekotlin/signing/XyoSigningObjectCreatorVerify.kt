@@ -1,13 +1,14 @@
 package network.xyo.sdkcorekotlin.signing
 
 import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
 import network.xyo.sdkcorekotlin.data.XyoObject
 import java.security.PublicKey
 import java.security.Signature
 
 /**
- * A base class for verifying signatures that comply to the standard Java Signature object.
+ * A base class for verifying signaturePacking that comply to the standard Java Signature object.
  */
 abstract class XyoSigningObjectCreatorVerify : XyoSigner.XyoSignerProvider() {
     /**
@@ -19,7 +20,7 @@ abstract class XyoSigningObjectCreatorVerify : XyoSigner.XyoSignerProvider() {
                             byteArray: ByteArray,
                             publicKey: XyoObject): Deferred<Boolean> {
 
-        return async {
+        return GlobalScope.async {
             val encodedPublicKey = publicKey as? PublicKey
             val encodedSignature = signature as? XyoSignature
 

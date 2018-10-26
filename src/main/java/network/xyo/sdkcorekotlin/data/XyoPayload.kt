@@ -2,6 +2,7 @@ package network.xyo.sdkcorekotlin.data
 
 import network.xyo.sdkcorekotlin.data.array.multi.XyoMultiTypeArrayInt
 import java.nio.ByteBuffer
+import java.util.*
 
 /**
  * A Xyo Payload used in a bound witness.
@@ -13,7 +14,7 @@ import java.nio.ByteBuffer
  * @param unsignedPayload The payload not to be signed.
  */
 class XyoPayload(val signedPayload : XyoMultiTypeArrayInt,
-                 val unsignedPayload : XyoMultiTypeArrayInt) : XyoObject() {
+                 var unsignedPayload : XyoMultiTypeArrayInt) : XyoObject() {
 
     override val objectInBytes: ByteArray
         get() = makeEncoded()
@@ -32,6 +33,25 @@ class XyoPayload(val signedPayload : XyoMultiTypeArrayInt,
      */
     val unsignedPayloadMapping : HashMap<Int, XyoObject>
             get() = getMappingOfElements(unsignedPayload.array)
+
+    /**
+     * Removes a type from the unsigned payload
+     *
+     * @param id The id of the type to remove
+     */
+    fun removeTypeFromUnsigned (id : ByteArray) {
+        if (unsignedPayloadMapping.containsKey(id.contentHashCode())) {
+            val newArray = LinkedList<XyoObject>()
+
+            for (item in unsignedPayload.array) {
+                if (item.id.contentHashCode() != id.contentHashCode()) {
+                    newArray.add(item)
+                }
+            }
+
+            unsignedPayload = XyoMultiTypeArrayInt(newArray.toTypedArray())
+        }
+    }
 
     private fun getMappingOfElements (objects : Array<XyoObject>) : HashMap<Int, XyoObject> {
         val mapping = HashMap<Int, XyoObject>()

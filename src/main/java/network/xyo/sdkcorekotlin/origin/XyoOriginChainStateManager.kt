@@ -7,17 +7,22 @@ import network.xyo.sdkcorekotlin.hashing.XyoPreviousHash
 import network.xyo.sdkcorekotlin.signing.XyoNextPublicKey
 import network.xyo.sdkcorekotlin.signing.XyoSigner
 
+
 /**
- * This class is used to keep track of the state when creating an origin chain. This includes
- * the previous hash, index, and the current/next key-pairs to sign with.
+ * An implementation of the XyoOriginStateRepository.
  *
  * @param indexOffset This value is used to create a state manager where the index does not doBoundWitness
  * at 0. This is used when re-starting a origin chain.
  */
-class XyoOriginChainStateManager (private val indexOffset : Int) {
-    private val currentSigners = ArrayList<XyoSigner>()
-    private val waitingSigners = ArrayList<XyoSigner>()
+open class XyoOriginChainStateManager (private val indexOffset : Int) : XyoOriginStateRepository {
+    private var currentSigners = ArrayList<XyoSigner>()
+    private var waitingSigners = ArrayList<XyoSigner>()
     private var latestHash : XyoHash? = null
+
+    constructor(indexOffset: Int, signers : Array<XyoSigner>, previousHash: XyoPreviousHash): this(indexOffset) {
+        latestHash = previousHash.hash
+        currentSigners = ArrayList(signers.toList())
+    }
 
     /**
      * The total number of elements since creation, NOT including the indexOffset.
@@ -34,21 +39,13 @@ class XyoOriginChainStateManager (private val indexOffset : Int) {
      */
     val allPublicKeys = ArrayList<XyoObject>()
 
-    /**
-     * The next public key to be used in the origin chain.
-     */
-    var nextPublicKey : XyoNextPublicKey? = null
+    override var nextPublicKey : XyoNextPublicKey? = null
 
-    /**
-     * The index of the origin chain.
-     */
-    val index : XyoIndex
+    override val index : XyoIndex
         get() = XyoIndex(count + indexOffset)
 
-    /**
-     * The previous hash to be included in the next origin block.
-     */
-    val previousHash : XyoPreviousHash?
+
+    override val previousHash : XyoPreviousHash?
         get() {
             val latestHashValue = latestHash
             if (latestHashValue != null) {
@@ -57,39 +54,22 @@ class XyoOriginChainStateManager (private val indexOffset : Int) {
             return null
         }
 
-    /**
-     * Gets the all of signers to use when creating the next origin block.
-     *
-     * @return all of the signers.
-     */
-    fun getSigners () : Array<XyoSigner>{
+
+    override fun getSigners () : Array<XyoSigner> {
         return currentSigners.toTypedArray()
     }
 
-    /**
-     * Adds a signer to the queue to be used in the origin chain.
-     *
-     * @param signer The signer to be added to the queue.
-     */
-    fun addSigner (signer : XyoSigner) {
+    override fun addSigner (signer : XyoSigner) {
         nextPublicKey = XyoNextPublicKey(signer.publicKey)
         waitingSigners.add(signer)
         allPublicKeys.add(signer.publicKey)
     }
 
-    /**
-     * Removes the oldest signer so that a party can rotate keys when creating an origin chain.
-     */
-    fun removeOldestSigner () {
+    override fun removeOldestSigner () {
         currentSigners.removeAt(0)
     }
 
-    /**
-     * This function should be called whenever a new block is added to a origin chain.
-     *
-     * @param hash the hash of the origin block just created.
-     */
-    fun newOriginBlock (hash : XyoHash) {
+    override fun newOriginBlock (hash : XyoHash) {
         nextPublicKey = null
         allHashes.add(hash)
         latestHash = hash

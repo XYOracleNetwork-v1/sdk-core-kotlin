@@ -24,7 +24,7 @@ class XyoRsaPublicKey(private val modulus : BigInteger) : RSAPublicKey, XyoObjec
     override val objectInBytes: ByteArray
         get() = encoded
 
-    override val sizeIdentifierSize: Int? = 2
+    override val sizeIdentifierSize: Int? = sizeOfBytesToGetSize
 
     override fun getAlgorithm(): String {
         return "RSA"

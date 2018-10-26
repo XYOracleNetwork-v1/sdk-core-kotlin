@@ -1,34 +1,23 @@
 package network.xyo.sdkcorekotlin.node
 
-import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
-import network.xyo.sdkcorekotlin.data.XyoObject
-import network.xyo.sdkcorekotlin.data.array.single.XyoSingleTypeArrayInt
+import com.sun.corba.se.impl.encoding.CodeSetConversion
 
 /**
  * A class to manage outgoing origin blocks for bridges and sentinels.
  */
 open class XyoBridgeQueue {
-    private val listeners = HashMap<String, XyoBridgeQueueListener>()
-    private val blocksToBridge = ArrayList<XyoBridgeQueueItem>()
+    private var blocksToBridge = ArrayList<XyoBridgeQueueItem>()
+    private var removed = ArrayList<ByteArray>()
 
     /**
-     * Adds a listener to the queue.
-     *
-     * @param key The key of the listener to add.
-     * @param listener The listener to add.
+     * The maximum number of blocks to send at a given time.
      */
-    fun addListener (key : String, listener : XyoBridgeQueueListener) {
-        listeners[key] = listener
-    }
+    var sendLimit = 10
 
     /**
-     * Removes a listener from the queue.
-     *
-     * @param key The key of the listener to remove.
+     * The point at witch blocks should be removed from the queue.
      */
-    fun removeListiner (key : String) {
-        listeners.remove(key)
-    }
+    var removeWeight = 3
 
     /**
      * Adds an origin block into the bridge queue.
@@ -58,16 +47,10 @@ open class XyoBridgeQueue {
      * @param mask The weight to remove.
      */
     fun purgeQueue (mask : Int) {
-        val toRemove = ArrayList<XyoBridgeQueueItem>()
-
         for (block in blocksToBridge) {
             if (block.weight >= mask) {
-                toRemove.add(block)
+                removed.add(block.boundWitnessHash)
             }
-        }
-
-        for (block in toRemove) {
-            removeBlock(block)
         }
     }
 
@@ -78,21 +61,25 @@ open class XyoBridgeQueue {
      */
     fun getBlocksToBridge () : Array<ByteArray> {
         sortQueue ()
+
         val toRemove = ArrayList<XyoBridgeQueueItem>()
         val toBridge = ArrayList<ByteArray>()
 
-        for (i in 0 until Math.min(SENT_LIMIT, blocksToBridge.size)) {
+        for (i in 0 until Math.min(sendLimit, blocksToBridge.size)) {
             val block = blocksToBridge[i]
+
             toBridge.add(block.boundWitnessHash)
             block.weight++
 
-            if (block.weight >= REMOVE_WEIGHT) {
+
+            if (block.weight >= removeWeight) {
                 toRemove.add(block)
             }
         }
 
         for (block in toRemove) {
-            removeBlock(block)
+            blocksToBridge.remove(block)
+            removed.add(block.boundWitnessHash)
         }
 
         return toBridge.toTypedArray()
@@ -102,35 +89,28 @@ open class XyoBridgeQueue {
         blocksToBridge.sort()
     }
 
-    private fun removeBlock (block: XyoBridgeQueueItem) {
-        blocksToBridge.remove(block)
+    /**
+     * Get the blocks that have exceeded the removeWeight and are out of the queue
+     */
+    fun getToRemove () : Array<ByteArray> {
+        val result = removed.toTypedArray()
+        removed.clear()
+        return result
+    }
 
-        for ((_, listener) in listeners) {
-            listener.onRemove(block.boundWitnessHash)
-        }
+    fun setQueue (blocks : Array<ByteArray>, weights: Array<Int>) {
+        blocksToBridge = ArrayList(Array(blocks.size) { i -> XyoBridgeQueueItem(blocks[i], weights[i]) }.asList())
+    }
+
+    fun getAllBlocks () : Array<ByteArray> {
+        return Array(blocksToBridge.size) { i -> blocksToBridge[i].boundWitnessHash }
+    }
+
+    fun getAllWeights () : Array<Int> {
+        return Array(blocksToBridge.size) { i -> blocksToBridge[i].weight }
     }
 
     companion object {
-        /**
-         * The maximum number of blocks to send at a given time.
-         */
-        private const val SENT_LIMIT = 50
-
-        /**
-         * The point at witch blocks should be removed from the queue.
-         */
-        private const val REMOVE_WEIGHT = 100
-
-        /**
-         * A Listener for a XyoBridgeQueue
-         */
-        interface XyoBridgeQueueListener {
-            /**
-             * This function gets called evey time a block gets removed from the queue.
-             */
-            fun onRemove(boundWitnessHash: ByteArray)
-        }
-
         private class XyoBridgeQueueItem (val boundWitnessHash: ByteArray, var weight: Int) : Comparable<XyoBridgeQueueItem> {
             override fun compareTo(other: XyoBridgeQueueItem): Int {
                 return weight.compareTo(other.weight)
