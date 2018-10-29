@@ -19,14 +19,10 @@ open class XyoSingleTypeArrayInt(override val elementMajor : Byte,
                                  override val elementMinor : Byte,
                                  override var array: Array<XyoObject>) : XyoSingleTypeArrayBase() {
 
-    override val id: ByteArray = byteArrayOf(XyoSingleTypeArrayShort.major, minor)
+    override val id: ByteArray = byteArrayOf(major, minor)
     override val sizeIdentifierSize: Int? = sizeOfBytesToGetSize
 
-    override val typedId: ByteArray?
-        get() = byteArrayOf(elementMajor, elementMinor)
-
-
-    companion object : XyoArrayProvider() {
+    companion object : XyoSingleTypeCreator() {
         override val minor: Byte = 0x03
         override val sizeOfBytesToGetSize: Int? = 4
 
@@ -34,12 +30,8 @@ open class XyoSingleTypeArrayInt(override val elementMajor : Byte,
             return XyoUnsignedHelper.readUnsignedInt(byteArray)
         }
 
-        override fun createFromPacked(byteArray: ByteArray): XyoObject {
-            val unpackedArray = XyoArrayDecoder(byteArray, true, 4)
-            val array = unpackedArray.array
-            val majorType = unpackedArray.majorType ?: throw XyoCorruptDataException("No Major")
-            val minorType = unpackedArray.minorType ?: throw XyoCorruptDataException("No Minor")
-            return XyoSingleTypeArrayInt(majorType, minorType, array.toTypedArray())
+        override fun newInstance(majorType: Byte, minorType: Byte, array: Array<XyoObject>): XyoSingleTypeArrayBase {
+            return XyoSingleTypeArrayInt(majorType, minorType, array)
         }
     }
 }

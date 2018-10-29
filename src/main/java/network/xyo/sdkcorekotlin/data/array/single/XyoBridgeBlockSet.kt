@@ -37,7 +37,7 @@ open class XyoBridgeBlockSet(override var array: Array<XyoObject>) : XyoSingleTy
         return@async XyoBridgeHashSet(hashes.toTypedArray())
     }
 
-    companion object : XyoArrayProvider() {
+    companion object : XyoSingleTypeCreator() {
         override val major: Byte = 0x02
         override val minor: Byte = 0x09
         override val sizeOfBytesToGetSize: Int? = 4
@@ -46,9 +46,8 @@ open class XyoBridgeBlockSet(override var array: Array<XyoObject>) : XyoSingleTy
             return XyoUnsignedHelper.readUnsignedInt(byteArray)
         }
 
-        override fun createFromPacked(byteArray: ByteArray): XyoObject {
-            val unpackedArray = XyoArrayDecoder(byteArray, true, 4).array
-            return XyoBridgeBlockSet(unpackedArray.toTypedArray())
+        override fun newInstance(majorType: Byte, minorType: Byte, array: Array<XyoObject>): XyoSingleTypeArrayBase {
+            return XyoBridgeBlockSet(array)
         }
     }
 }

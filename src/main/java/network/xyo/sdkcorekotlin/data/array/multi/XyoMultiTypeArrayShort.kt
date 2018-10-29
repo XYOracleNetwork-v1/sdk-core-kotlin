@@ -16,7 +16,7 @@ open class XyoMultiTypeArrayShort(override var array: Array<XyoObject>) : XyoMul
     override val id: ByteArray = byteArrayOf(major, minor)
     override val sizeIdentifierSize: Int? = sizeOfBytesToGetSize
 
-    companion object : XyoArrayProvider() {
+    companion object : XyoMultiTypeArrayBaseCreator() {
         override val minor: Byte = 0x05
         override val sizeOfBytesToGetSize: Int? = 2
 
@@ -24,10 +24,8 @@ open class XyoMultiTypeArrayShort(override var array: Array<XyoObject>) : XyoMul
             return XyoUnsignedHelper.readUnsignedShort(byteArray)
         }
 
-        override fun createFromPacked(byteArray: ByteArray): XyoObject {
-            val unpackedArray = XyoArrayDecoder(byteArray, false, 2)
-            val array = unpackedArray.array
-            return XyoMultiTypeArrayShort(array.toTypedArray())
+        override fun newInstance(array: Array<XyoObject>): XyoMultiTypeArrayBase {
+            return XyoMultiTypeArrayShort(array)
         }
     }
 }

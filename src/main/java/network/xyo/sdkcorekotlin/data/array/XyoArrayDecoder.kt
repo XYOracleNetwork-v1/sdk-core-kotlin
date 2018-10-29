@@ -17,7 +17,7 @@ import java.nio.ByteBuffer
  */
 class XyoArrayDecoder (private val data : ByteArray,
                        private val typed: Boolean,
-                       private val sizeOfSize: Int) {
+                       private val sizeOfSize: Int) : Iterator<XyoObject> {
 
     private var globalCurrentPosition = 0
 
@@ -53,10 +53,23 @@ class XyoArrayDecoder (private val data : ByteArray,
         return null
     }
 
+    override fun hasNext(): Boolean {
+        return globalCurrentPosition < data.size
+    }
+
+    override fun next(): XyoObject {
+        if (typed) {
+            return getNextElement(byteArrayOf(majorType!!, minorType!!))
+        }
+        return getNextElement(getMajorMinor())
+    }
+
     private fun unpack () : ArrayList<XyoObject> {
         val expectedSize = getSize(sizeOfSize)
+        if (expectedSize != data.size) throw XyoCorruptDataException("Invalid size.")
         val items = ArrayList<XyoObject>()
         var arrayType : ByteArray = byteArrayOf()
+
         if (typed) {
             arrayType = getMajorMinor()
             majorType = arrayType[0]
@@ -78,6 +91,7 @@ class XyoArrayDecoder (private val data : ByteArray,
 
         return items
     }
+
 
     private fun getNextElement (arrayType : ByteArray) : XyoObject {
         val sizeOfElement = readCurrentSizeFromType(arrayType[0], arrayType[1])
@@ -122,6 +136,7 @@ class XyoArrayDecoder (private val data : ByteArray,
             return null
         }
 
+
         when (sizeSize) {
             1 -> return XyoUnsignedHelper.readUnsignedByte(size)
             2 -> return XyoUnsignedHelper.readUnsignedShort(size)
@@ -141,5 +156,12 @@ class XyoArrayDecoder (private val data : ByteArray,
         }
 
         return readBytes
+    }
+
+    init {
+        if (!typed) {
+            majorType = data[0]
+            minorType = data[1]
+        }
     }
 }
