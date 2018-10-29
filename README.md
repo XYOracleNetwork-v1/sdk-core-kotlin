@@ -16,16 +16,67 @@ This includes creating an origin chain, maintaining an origin chain, negotiation
 The library has heavily abstracted modules so that all operations will work with any crypto, storage, networking, ect.
 
 ## Installing
-You can add sdk-core-kotlin to your existing app by cloning the project and manually adding it to your build.gradle or by using JitPack:
+You can add sdk-core-kotlin to your existing app by cloning the project and manually adding it to your build.gradle or by using JitPack.
 
+### Build From Source
+
+#### Clone from github
 ```
 git clone git@github.com:XYOracleNetwork/sdk-core-kotlin.git
+```
+
+#### Add project to settings.gradle
+```
+include ':sdk-core-kotlin'
+project(':mod-tcp-kotlin').projectDir = new File('../mod-tcp-kotlin')
+```
+
+#### Include in project
+```
+implementation project (':sdk-core-kotlin')
 ```
 
 ```gradle
 dependencies {
     implementation 'com.github.XYOracleNetwork:sdk-core-kotlin:v0.1.0-beta'
 }
+```
+
+### Using JitPack with Gitpack
+[![](https://jitpack.io/v/XYOracleNetwork/sdk-core-kotlin.svg)](https://jitpack.io/#XYOracleNetwork/sdk-core-kotlin)
+
+#### With Gradle
+```gradle
+allprojects {
+		repositories {
+			...
+			maven { url 'https://jitpack.io' }
+		}
+	}
+```
+
+```gradle
+dependencies {
+	        implementation 'com.github.XYOracleNetwork:sdk-core-kotlin:Tag'
+	}
+```
+
+#### With Maven
+```maven
+<repositories>
+		<repository>
+		    <id>jitpack.io</id>
+		    <url>https://jitpack.io</url>
+		</repository>
+	</repositories>
+```
+
+```maven
+<dependency>
+	    <groupId>com.github.XYOracleNetwork</groupId>
+	    <artifactId>sdk-core-kotlin</artifactId>
+	    <version>Tag</version>
+	</dependency>
 ```
 
 #### Prerequisites
