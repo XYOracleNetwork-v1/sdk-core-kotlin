@@ -48,35 +48,35 @@ dependencies {
 #### With Gradle
 ```gradle
 allprojects {
-		repositories {
-			...
-			maven { url 'https://jitpack.io' }
-		}
+	repositories {
+		...
+		maven { url 'https://jitpack.io' }
 	}
+}
 ```
 
 ```gradle
 dependencies {
-	        implementation 'com.github.XYOracleNetwork:sdk-core-kotlin:Tag'
-	}
+	implementation 'com.github.XYOracleNetwork:sdk-core-kotlin:Tag'
+}
 ```
 
 #### With Maven
 ```maven
 <repositories>
-		<repository>
-		    <id>jitpack.io</id>
-		    <url>https://jitpack.io</url>
-		</repository>
-	</repositories>
+	<repository>
+	    <id>jitpack.io</id>
+	    <url>https://jitpack.io</url>
+	</repository>
+</repositories>
 ```
 
 ```maven
 <dependency>
-	    <groupId>com.github.XYOracleNetwork</groupId>
-	    <artifactId>sdk-core-kotlin</artifactId>
-	    <version>Tag</version>
-	</dependency>
+    <groupId>com.github.XYOracleNetwork</groupId>
+    <artifactId>sdk-core-kotlin</artifactId>
+    <version>Tag</version>
+</dependency>
 ```
 
 #### Prerequisites
