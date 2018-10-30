@@ -1,8 +1,7 @@
 package network.xyo.sdkcorekotlin.node
 
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
+import kotlinx.coroutines.experimental.GlobalScope
+import kotlinx.coroutines.experimental.async
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
 import network.xyo.sdkcorekotlin.boundWitness.XyoZigZagBoundWitness
 import network.xyo.sdkcorekotlin.boundWitness.XyoZigZagBoundWitnessSession
@@ -179,11 +178,11 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
         }
     }
 
-    private fun loadCreatedBoundWitness (boundWitness: XyoBoundWitness) : Deferred<Unit> = GlobalScope.async {
+    private fun loadCreatedBoundWitness (boundWitness: XyoBoundWitness) = GlobalScope.async {
         val hash = boundWitness.getHash(hashingProvider).await()
 
         if (!originBlocks.containsOriginBlock(hash.typed).await()) {
-            val subBlocks : Array<XyoObject> = getBridgedBlocks(boundWitness)
+            val subBlocks = getBridgedBlocks(boundWitness)
             boundWitness.removeTypeFromUnsigned(XyoBridgeBlockSet.id)
             originBlocks.addBoundWitness(boundWitness).await()
 
@@ -192,24 +191,12 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
             }
 
             for (subBlock in subBlocks) {
-                val subBlockBoundWitness : XyoBoundWitness? = subBlock as? XyoBoundWitness
+                val subBlockBoundWitness = subBlock as? XyoBoundWitness
                 if (subBlockBoundWitness != null) {
-                    loadCreatedBoundWitness(subBlockBoundWitness).await()
+                    loadCreatedBoundWitness(subBlockBoundWitness)
                 }
             }
         }
-
-    }
-
-    fun ByteArray.toHexString(): String {
-        val builder = StringBuilder()
-        val it = this.iterator()
-        builder.append("0x")
-        while (it.hasNext()) {
-            builder.append(String.format("%02X ", it.next()))
-        }
-
-        return builder.toString()
     }
 
     private fun getBridgedBlocks (boundWitness: XyoBoundWitness) : Array<XyoObject> {

@@ -1,6 +1,6 @@
 package network.xyo.sdkcorekotlin.hashing
 
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.experimental.runBlocking
 import network.xyo.sdkcorekotlin.XyoTestBase
 import network.xyo.sdkcorekotlin.hashing.basic.*
 import network.xyo.sdkcorekotlin.hashing.bouncy.XyoSha3

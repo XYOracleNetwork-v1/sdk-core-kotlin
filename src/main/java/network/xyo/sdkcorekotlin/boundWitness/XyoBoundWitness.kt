@@ -1,8 +1,8 @@
 package network.xyo.sdkcorekotlin.boundWitness
 
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
+import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.GlobalScope
+import kotlinx.coroutines.experimental.async
 import network.xyo.sdkcorekotlin.data.*
 import network.xyo.sdkcorekotlin.data.array.XyoArrayBase
 import network.xyo.sdkcorekotlin.data.array.multi.XyoKeySet

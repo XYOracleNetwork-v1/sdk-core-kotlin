@@ -1,6 +1,6 @@
 package network.xyo.sdkcorekotlin.data.array
 
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.experimental.runBlocking
 import network.xyo.sdkcorekotlin.XyoTestBase
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.array.multi.XyoMultiTypeArrayByte

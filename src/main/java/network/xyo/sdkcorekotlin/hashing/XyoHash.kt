@@ -1,6 +1,6 @@
 package network.xyo.sdkcorekotlin.hashing
 
-import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.experimental.Deferred
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.XyoObjectProvider
 

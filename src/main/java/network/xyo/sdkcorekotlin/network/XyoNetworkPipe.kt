@@ -1,6 +1,6 @@
 package network.xyo.sdkcorekotlin.network
 
-import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.experimental.Deferred
 
 /**
  * A network abstraction to communicate with another peer.

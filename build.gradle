@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.jetbrains.kotlin.jvm'
+    id 'org.jetbrains.kotlin.jvm' version '1.2.71'
 }
 
 group 'com.github.XYOracleNetwork'
@@ -14,7 +14,7 @@ repositories {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.0"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:0.26.0"
     implementation "org.rocksdb:rocksdbjni:5.5.1"
     implementation "org.bouncycastle:bcpkix-jdk15on:1.58"
     testCompile group: 'junit', name: 'junit', version: '4.12'
