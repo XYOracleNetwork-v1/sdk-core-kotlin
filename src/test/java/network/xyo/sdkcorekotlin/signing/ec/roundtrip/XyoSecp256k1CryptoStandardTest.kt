@@ -20,7 +20,6 @@ class XyoSecp256k1CryptoStandardTest : XyoTestBase() {
             val ec = XyoSha256WithSecp256K(XyoEcPrivateKey.createFromPacked(assertedPrivate))
             val sig = ec.signData(dataToSign).await()
 
-
             Assert.assertArrayEquals(assertedPublic, ec.publicKey.untyped)
             Assert.assertArrayEquals(assertedPrivate, ec.privateKey.untyped)
             Assert.assertTrue(XyoSha256WithSecp256K.verifySign(sig, dataToSign, XyoSecp256K1UnCompressedPublicKey.createFromPacked(ec.publicKey.untyped)).await())

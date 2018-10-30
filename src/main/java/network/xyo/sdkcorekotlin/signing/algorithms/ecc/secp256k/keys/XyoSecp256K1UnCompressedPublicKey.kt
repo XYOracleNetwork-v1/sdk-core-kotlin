@@ -19,38 +19,15 @@ abstract class XyoSecp256K1UnCompressedPublicKey : XyoUncompressedEcPublicKey() 
 
     override val id: ByteArray = byteArrayOf(major, minor)
 
-    init {
-        println ("X: " + x.toByteArray().toHexString())
-        println ("X: " + y.toByteArray().toHexString())
-    }
-
     companion object : XyoUncompressedEcPublicKeyProvider() {
         override val minor: Byte = 0x01
 
         override val ecPramSpec: ECParameterSpec = getSpec()
-
-//        override val ecPramSpec: ECParameterSpec
-//            get() {
-//                val parameters = AlgorithmParameters.getInstance("EC", BouncyCastleProvider())
-//                parameters.init(ECGenParameterSpec("secp256k1"))
-//                return parameters.getParameterSpec(ECParameterSpec::class.java)
-//            }
 
         private fun getSpec() : ECParameterSpec {
             val parameters = AlgorithmParameters.getInstance("EC", BouncyCastleProvider())
             parameters.init(ECGenParameterSpec("secp256k1"))
             return parameters.getParameterSpec(ECParameterSpec::class.java)
         }
-    }
-
-    fun ByteArray.toHexString(): String {
-        val builder = StringBuilder()
-        val it = this.iterator()
-        builder.append("0x")
-        while (it.hasNext()) {
-            builder.append(String.format("%02X ", it.next()))
-        }
-
-        return builder.toString()
     }
 }

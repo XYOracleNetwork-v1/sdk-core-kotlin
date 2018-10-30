@@ -26,11 +26,6 @@ abstract class XyoSigningObjectCreatorVerify : XyoSigner.XyoSignerProvider() {
             val encodedSignature = signature as? XyoSignature
 
             if (encodedPublicKey != null && encodedSignature != null) {
-                val test = encodedPublicKey as ECPublicKey
-
-
-
-
                 signatureInstance.initVerify(encodedPublicKey)
                 signatureInstance.update(byteArray)
                 return@async signatureInstance.verify(encodedSignature.encodedSignature)

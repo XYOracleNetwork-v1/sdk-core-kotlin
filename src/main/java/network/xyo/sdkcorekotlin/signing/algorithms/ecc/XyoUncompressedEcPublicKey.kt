@@ -5,6 +5,7 @@ import network.xyo.sdkcorekotlin.data.XyoByteArraySetter
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.XyoObjectProvider
 import java.math.BigInteger
+import java.nio.ByteBuffer
 import java.security.interfaces.ECPublicKey
 import java.security.spec.ECParameterSpec
 import java.security.spec.ECPoint
@@ -61,6 +62,17 @@ abstract class XyoUncompressedEcPublicKey : ECPublicKey, XyoObject() {
         val encodedPoint = point.toByteArray()
         if (encodedPoint.size == 32) {
             return encodedPoint
+        } else if (encodedPoint.size < 32) {
+            val biggerPoint = ByteArray(32)
+            val difference = biggerPoint.size - encodedPoint.size
+
+            for (i in 0 until biggerPoint.size) {
+                if (i > difference - 1) {
+                    biggerPoint[i] = encodedPoint[i - difference]
+                }
+            }
+
+            return biggerPoint
         }
         return encodedPoint.copyOfRange(1, 33)
     }
@@ -82,7 +94,7 @@ abstract class XyoUncompressedEcPublicKey : ECPublicKey, XyoObject() {
 
         override fun createFromPacked(byteArray: ByteArray): XyoObject {
             val xPoint = BigInteger(1, byteArray.copyOfRange(0, 32))
-            val yPoint = BigInteger(byteArray.copyOfRange(32, 64))
+            val yPoint = BigInteger(1, byteArray.copyOfRange(32, 64))
 
             return object : XyoUncompressedEcPublicKey() {
                 override val ecSpec: ECParameterSpec = ecPramSpec
