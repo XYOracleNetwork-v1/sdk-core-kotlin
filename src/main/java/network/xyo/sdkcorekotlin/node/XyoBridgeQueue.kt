@@ -17,7 +17,7 @@ open class XyoBridgeQueue {
     /**
      * The point at witch blocks should be removed from the queue.
      */
-    var removeWeight = 3
+    var removeWeight = 300
 
     /**
      * Adds an origin block into the bridge queue.
