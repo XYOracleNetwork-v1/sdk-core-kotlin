@@ -1,6 +1,6 @@
 package network.xyo.sdkcorekotlin.queries
 
-import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.experimental.Deferred
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
 
 interface XyoGetOriginBlockByHash {

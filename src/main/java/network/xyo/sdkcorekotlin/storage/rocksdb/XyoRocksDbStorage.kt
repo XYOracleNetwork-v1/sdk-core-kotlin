@@ -1,8 +1,8 @@
 package network.xyo.sdkcorekotlin.storage.rocksdb
 
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
+import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.GlobalScope
+import kotlinx.coroutines.experimental.async
 import network.xyo.sdkcorekotlin.storage.XyoStorageProviderInterface
 import org.rocksdb.Options
 import org.rocksdb.RocksDB

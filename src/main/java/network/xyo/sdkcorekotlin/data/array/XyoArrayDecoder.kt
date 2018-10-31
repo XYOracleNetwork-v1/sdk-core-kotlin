@@ -118,7 +118,7 @@ class XyoArrayDecoder (private val data : ByteArray,
 
             return XyoObjectProvider.create(merger.merge()) ?: throw XyoCorruptDataException("Cant Unpack: ${arrayType[0]}, ${arrayType[1]}")
         } else {
-            throw XyoCorruptDataException("Cant find size of element!, ${arrayType[0]}, ${arrayType[1]}")
+            throw XyoNoObjectException("Cant find size of element!, ${arrayType[0]}, ${arrayType[1]}")
         }
     }
 

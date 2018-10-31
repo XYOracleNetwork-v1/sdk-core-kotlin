@@ -1,6 +1,6 @@
 package network.xyo.sdkcorekotlin.network
 
-import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.experimental.Deferred
 
 /**
  * A network provider that allows components to talk to other parties.
