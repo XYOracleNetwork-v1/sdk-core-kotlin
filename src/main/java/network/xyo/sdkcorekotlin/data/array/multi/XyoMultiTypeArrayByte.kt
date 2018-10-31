@@ -13,10 +13,10 @@ import network.xyo.sdkcorekotlin.data.array.XyoArrayDecoder
  * @param array The in-memory array to start off the Xyo array with.
  */
 open class XyoMultiTypeArrayByte(override var array : Array<XyoObject>) : XyoMultiTypeArrayBase() {
-    override val id: ByteArray = byteArrayOf(XyoMultiTypeArrayShort.major, minor)
+    override val id: ByteArray = byteArrayOf(major, minor)
     override val sizeIdentifierSize: Int? = sizeOfBytesToGetSize
 
-    companion object : XyoArrayProvider() {
+    companion object : XyoMultiTypeArrayBaseCreator() {
         override val minor: Byte = 0x04
         override val sizeOfBytesToGetSize: Int? = 1
 
@@ -24,10 +24,8 @@ open class XyoMultiTypeArrayByte(override var array : Array<XyoObject>) : XyoMul
             return XyoUnsignedHelper.readUnsignedByte(byteArray)
         }
 
-        override fun createFromPacked(byteArray: ByteArray): XyoObject {
-            val unpackedArray = XyoArrayDecoder(byteArray, false, 1)
-            val array = unpackedArray.array
-            return XyoMultiTypeArrayByte(array.toTypedArray())
+        override fun newInstance(array: Array<XyoObject>): XyoMultiTypeArrayBase {
+            return XyoMultiTypeArrayByte(array)
         }
     }
 }

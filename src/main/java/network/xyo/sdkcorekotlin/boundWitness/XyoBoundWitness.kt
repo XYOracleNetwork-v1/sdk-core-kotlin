@@ -1,9 +1,10 @@
 package network.xyo.sdkcorekotlin.boundWitness
 
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.GlobalScope
-import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.data.*
+import network.xyo.sdkcorekotlin.data.array.XyoArrayBase
 import network.xyo.sdkcorekotlin.data.array.multi.XyoKeySet
 import network.xyo.sdkcorekotlin.data.array.single.XyoSingleTypeArrayInt
 import network.xyo.sdkcorekotlin.data.array.single.XyoSingleTypeArrayShort
@@ -165,17 +166,17 @@ abstract class XyoBoundWitness : XyoObject() {
 
 
         private fun getKeySetsArray(bytes: ByteArray): Array<XyoKeySet> {
-            val keySetArray = XyoSingleTypeArrayShort.createFromPacked(bytes) as XyoSingleTypeArrayShort
+            val keySetArray = XyoSingleTypeArrayShort.createFromPacked(bytes) as XyoArrayBase
             return Array(keySetArray.size) { i -> keySetArray.array[i] as XyoKeySet }
         }
 
         private fun getPayloadsArray(bytes: ByteArray): Array<XyoPayload> {
-            val payloadArray = XyoSingleTypeArrayInt.createFromPacked(bytes) as XyoSingleTypeArrayInt
+            val payloadArray = XyoSingleTypeArrayInt.createFromPacked(bytes) as XyoArrayBase
             return Array(payloadArray.size) { i -> payloadArray.array[i] as XyoPayload }
         }
 
         private fun getSignatureArray(bytes: ByteArray): Array<XyoSignatureSet> {
-            val signatureArray = XyoSingleTypeArrayShort.createFromPacked(bytes) as XyoSingleTypeArrayShort
+            val signatureArray = XyoSingleTypeArrayShort.createFromPacked(bytes) as XyoArrayBase
             return Array(signatureArray.size) { i -> signatureArray.array[i] as XyoSignatureSet }
         }
 

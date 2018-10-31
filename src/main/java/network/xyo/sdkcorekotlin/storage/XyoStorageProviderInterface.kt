@@ -1,6 +1,6 @@
 package network.xyo.sdkcorekotlin.storage
 
-import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.Deferred
 
 /**
  * A XyoStorageProviderInterface is meant to provide a persistence layer. It abstracts exactly

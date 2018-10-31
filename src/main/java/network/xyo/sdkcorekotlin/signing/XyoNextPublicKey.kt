@@ -34,10 +34,7 @@ class XyoNextPublicKey (val publicKey: XyoObject): XyoObject() {
             val publicKeyCreator = XyoObjectProvider.getCreator(byteArray[0], byteArray[1])
             if (publicKeyCreator != null) {
                 val sizeToRead = publicKeyCreator.sizeOfBytesToGetSize ?: 0
-                val publicKeyCreatorSize = publicKeyCreator.readSize(XyoByteArrayReader(byteArray).read(
-                        2,
-                        sizeToRead
-                ))
+                val publicKeyCreatorSize = publicKeyCreator.readSize(XyoByteArrayReader(byteArray).read(2, sizeToRead))
                 return publicKeyCreatorSize + 2
             }
             throw Exception("Can not find creator!")

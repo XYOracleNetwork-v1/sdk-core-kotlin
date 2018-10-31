@@ -1,6 +1,6 @@
 package network.xyo.sdkcorekotlin.originChain
 
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.runBlocking
 import network.xyo.sdkcorekotlin.origin.XyoOriginChainStateManager
 import network.xyo.sdkcorekotlin.XyoTestBase
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness

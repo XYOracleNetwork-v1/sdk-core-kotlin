@@ -24,13 +24,6 @@ abstract class XyoSecp256K1UnCompressedPublicKey : XyoUncompressedEcPublicKey() 
 
         override val ecPramSpec: ECParameterSpec = getSpec()
 
-//        override val ecPramSpec: ECParameterSpec
-//            get() {
-//                val parameters = AlgorithmParameters.getInstance("EC", BouncyCastleProvider())
-//                parameters.init(ECGenParameterSpec("secp256k1"))
-//                return parameters.getParameterSpec(ECParameterSpec::class.java)
-//            }
-
         private fun getSpec() : ECParameterSpec {
             val parameters = AlgorithmParameters.getInstance("EC", BouncyCastleProvider())
             parameters.init(ECGenParameterSpec("secp256k1"))
