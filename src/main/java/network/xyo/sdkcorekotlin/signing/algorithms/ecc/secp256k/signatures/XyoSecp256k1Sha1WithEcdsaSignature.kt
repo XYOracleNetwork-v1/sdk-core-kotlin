@@ -10,7 +10,7 @@ import java.math.BigInteger
  * @major 0x05
  * @minor 0x02
  */
-class XyoSecp256k1Sha1WithEcdsaSignature(r : BigInteger, s : BigInteger) : XyoEcdsaSignature(r, s) {
+class XyoSecp256k1Sha1WithEcdsaSignature(val r : BigInteger, val s : BigInteger) : XyoEcdsaSignature(r, s) {
     override val id: ByteArray = byteArrayOf(major, minor)
 
     companion object : XyoEcdsaSignatureProvider() {
@@ -18,7 +18,7 @@ class XyoSecp256k1Sha1WithEcdsaSignature(r : BigInteger, s : BigInteger) : XyoEc
 
         override fun createFromPacked(byteArray: ByteArray): XyoObject {
             val rAndS = getRAndS(byteArray)
-            return XyoSecp256k1Sha256WithEcdsaSignature(rAndS.r, rAndS.s)
+            return XyoSecp256k1Sha1WithEcdsaSignature(rAndS.r, rAndS.s)
         }
     }
 }

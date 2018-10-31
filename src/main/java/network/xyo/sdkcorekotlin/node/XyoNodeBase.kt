@@ -201,17 +201,6 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
 
     }
 
-    fun ByteArray.toHexString(): String {
-        val builder = StringBuilder()
-        val it = this.iterator()
-        builder.append("0x")
-        while (it.hasNext()) {
-            builder.append(String.format("%02X ", it.next()))
-        }
-
-        return builder.toString()
-    }
-
     private fun getBridgedBlocks (boundWitness: XyoBoundWitness) : Array<XyoObject> {
         for (payload in boundWitness.payloads) {
             val bridgeSet = payload.unsignedPayloadMapping[XyoBridgeBlockSet.id.contentHashCode()] as? XyoBridgeBlockSet
