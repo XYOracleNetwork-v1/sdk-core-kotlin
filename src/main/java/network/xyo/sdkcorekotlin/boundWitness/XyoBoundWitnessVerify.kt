@@ -52,6 +52,7 @@ class XyoBoundWitnessVerify (private val allowUnknown : Boolean) {
         return@async true
     }
 
+
     private fun checkSinglePartySignatures (keys: Array<XyoObject>, signatures : Array<XyoObject>, signingData : ByteArray) : Deferred<Boolean> = GlobalScope.async {
         for (keyNum in 0 until keys.size) {
             val key = keys[keyNum]

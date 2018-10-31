@@ -39,11 +39,10 @@ class XyoBoundWitnessTransferTest : XyoTestBase() {
 
     private val expectedSignatures = arrayOf<XyoObject>(
             XyoSignatureSet(arrayOf(
-                    XyoSecp256k1Sha256WithEcdsaSignature(byteArrayOf(0x00)),
                     XyoRsaWithSha256Signature(byteArrayOf(0x00))
             )),
             XyoSignatureSet(arrayOf(
-                    XyoSecp256k1Sha256WithEcdsaSignature(byteArrayOf(0x00))
+                    XyoRsaWithSha256Signature(byteArrayOf(0x00))
             ))
     )
 

@@ -1,6 +1,8 @@
 package network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.signatures
 
+import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.XyoEcdsaSignature
+import java.math.BigInteger
 
 /**
  * A Xyo Signature made using EC with the Secp256K1 curve with SHA1.
@@ -8,10 +10,15 @@ import network.xyo.sdkcorekotlin.signing.algorithms.ecc.XyoEcdsaSignature
  * @major 0x05
  * @minor 0x02
  */
-class XyoSecp256k1Sha1WithEcdsaSignature(rawSignature : ByteArray) : XyoEcdsaSignature(rawSignature) {
+class XyoSecp256k1Sha1WithEcdsaSignature(r : BigInteger, s : BigInteger) : XyoEcdsaSignature(r, s) {
     override val id: ByteArray = byteArrayOf(major, minor)
 
     companion object : XyoEcdsaSignatureProvider() {
         override val minor: Byte = 0x02
+
+        override fun createFromPacked(byteArray: ByteArray): XyoObject {
+            val rAndS = getRAndS(byteArray)
+            return XyoSecp256k1Sha256WithEcdsaSignature(rAndS.r, rAndS.s)
+        }
     }
 }

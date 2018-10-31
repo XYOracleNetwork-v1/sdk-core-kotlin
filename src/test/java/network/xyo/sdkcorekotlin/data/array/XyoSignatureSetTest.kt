@@ -15,7 +15,7 @@ class XyoSignatureSetTest : XyoTestBase() {
 
         val expected = XyoSignatureSet(
                 arrayOf(
-                        XyoSecp256k1Sha256WithEcdsaSignature(byteArrayOf(0x00, 0x01, 0x02))
+                        XyoRsaWithSha256Signature(byteArrayOf(0x00))
 
                 )
         )
