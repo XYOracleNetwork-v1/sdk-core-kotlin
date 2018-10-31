@@ -1,9 +1,9 @@
 package network.xyo.sdkcorekotlin.node
 
-import kotlinx.coroutines.experimental.GlobalScope
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
 import network.xyo.sdkcorekotlin.data.XyoObjectProvider
 import network.xyo.sdkcorekotlin.data.XyoUnsignedHelper
@@ -108,7 +108,7 @@ abstract class XyoRelayNode (storageProvider : XyoStorageProviderInterface,
             if (procedureCatalogue.canDo(whatTheOtherPartyWantsToDo)) {
                 doBoundWitness(null, connectionToOtherPartyFrom)
             } else {
-                connectionToOtherPartyFrom.close()
+                connectionToOtherPartyFrom.close().await()
             }
         } else {
             doBoundWitness(connectionToOtherPartyFrom.initiationData, connectionToOtherPartyFrom)

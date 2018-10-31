@@ -1,7 +1,7 @@
 package network.xyo.sdkcorekotlin.storage
 
-import kotlinx.coroutines.experimental.GlobalScope
-import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 
 /**
  * A simple in-memory storage implementation of the XyoStorageProviderInterface.

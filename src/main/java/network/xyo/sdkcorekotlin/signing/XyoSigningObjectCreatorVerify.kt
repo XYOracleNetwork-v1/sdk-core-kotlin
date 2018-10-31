@@ -1,11 +1,12 @@
 package network.xyo.sdkcorekotlin.signing
 
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.GlobalScope
-import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.data.XyoObject
 import java.security.PublicKey
 import java.security.Signature
+import java.security.interfaces.ECPublicKey
 
 /**
  * A base class for verifying signaturePacking that comply to the standard Java Signature object.
@@ -25,6 +26,11 @@ abstract class XyoSigningObjectCreatorVerify : XyoSigner.XyoSignerProvider() {
             val encodedSignature = signature as? XyoSignature
 
             if (encodedPublicKey != null && encodedSignature != null) {
+                val test = encodedPublicKey as ECPublicKey
+
+
+
+
                 signatureInstance.initVerify(encodedPublicKey)
                 signatureInstance.update(byteArray)
                 return@async signatureInstance.verify(encodedSignature.encodedSignature)

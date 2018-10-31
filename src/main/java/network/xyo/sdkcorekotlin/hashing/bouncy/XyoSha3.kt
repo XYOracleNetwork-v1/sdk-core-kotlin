@@ -1,8 +1,8 @@
 package network.xyo.sdkcorekotlin.hashing.bouncy
 
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.GlobalScope
-import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import org.bouncycastle.jcajce.provider.digest.SHA3

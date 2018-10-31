@@ -1,6 +1,6 @@
 package network.xyo.sdkcorekotlin.signing.ec.roundtrip
 
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.runBlocking
 import network.xyo.sdkcorekotlin.XyoTestBase
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.XyoEcPrivateKey
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.XyoSha256WithSecp256K
