@@ -60,6 +60,11 @@ open class XyoOriginChainStateManager (private val indexOffset : Int) : XyoOrigi
     }
 
     override fun addSigner (signer : XyoSigner) {
+        if (index.number == 0) {
+            currentSigners.add(signer)
+            return
+        }
+
         nextPublicKey = XyoNextPublicKey(signer.publicKey)
         waitingSigners.add(signer)
         allPublicKeys.add(signer.publicKey)

@@ -84,7 +84,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
      *
      * @param key The key of the listener to remove.
      */
-    fun removeListiner (key : String) {
+    fun removeListener (key : String) {
         listeners.remove(key)
     }
 
@@ -96,7 +96,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
     fun selfSignOriginChain (flag: Int?) = GlobalScope.async {
         val bitFlag = flag ?: 0
         val boundWitness = XyoZigZagBoundWitness(originState.getSigners(), makePayload(bitFlag).await())
-        boundWitness.incomingData(null, true)
+        boundWitness.incomingData(null, true).await()
         updateOriginState(boundWitness).await()
         onBoundWitnessEndSuccess(boundWitness).await()
     }
@@ -235,7 +235,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
         pipe.close().await()
 
         if (currentBoundWitnessSession?.completed == true && error == null) {
-            updateOriginState(currentBoundWitnessSession!!)
+            updateOriginState(currentBoundWitnessSession!!).await()
             onBoundWitnessEndSuccess(currentBoundWitnessSession!!).await()
             currentBoundWitnessSession = null
         } else {
