@@ -3,7 +3,6 @@ package network.xyo.sdkcorekotlin.data.heuristics.number.signed
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.XyoObjectProvider
 import network.xyo.sdkcorekotlin.data.heuristics.number.XyoNumberTypes
-import network.xyo.sdkcorekotlin.data.heuristics.number.unsigned.XyoNumberSigned
 
 /**
  * The Xyo Rssi heuristic.
