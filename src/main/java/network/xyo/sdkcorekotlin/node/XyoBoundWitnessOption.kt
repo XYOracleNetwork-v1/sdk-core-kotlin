@@ -1,5 +1,6 @@
 package network.xyo.sdkcorekotlin.node
 
+import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
 import network.xyo.sdkcorekotlin.data.XyoObject
 
 /**
@@ -25,4 +26,14 @@ abstract class XyoBoundWitnessOption {
      * @return The option unsigned data.
      */
     abstract suspend fun getUnsignedPayload() : XyoObject?
+
+    /**
+     * This function will be called after the current bound witness has been completed. If the bound witness is null,
+     * there was an error creating the bound witness.
+     *
+     * @param boundWitness The bound witness just
+     */
+    open fun onCompleted (boundWitness: XyoBoundWitness?) {
+
+    }
 }

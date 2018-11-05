@@ -11,8 +11,19 @@ import network.xyo.sdkcorekotlin.network.XyoProcedureCatalogue
 import network.xyo.sdkcorekotlin.storage.XyoStorageProviderInterface
 import java.lang.ref.WeakReference
 
-class XyoBridgingOption (private val originBlocks: XyoStorageProviderInterface, private val bridgeQueue: XyoBridgeQueue): XyoBoundWitnessOption() {
+/**
+ * A bound witness options where when the XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN flag is set will call the bridge queue
+ * to get the latest bridge blocks.
+ *
+ * @param originBlocks Where the origin blocks are stored to get from the bridge queue. The bridge queue should provide
+ * compatible keys.
+ *
+ * @param bridgeQueue The queue to talk to when the XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN flag is set.
+ *
+ */
+open class XyoBridgingOption (private val originBlocks: XyoStorageProviderInterface, private val bridgeQueue: XyoBridgeQueue): XyoBoundWitnessOption() {
     private var hashOfOriginBlocks : XyoBridgeHashSet? = null
+    private var currentBridgingOption : XyoBridgeQueue.XyoBridgeJob? = null
     private var originBlocksToSend : WeakReference<XyoObject?> = WeakReference(null)
 
     override val flag: Int = XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN
@@ -26,11 +37,22 @@ class XyoBridgingOption (private val originBlocks: XyoStorageProviderInterface, 
         return originBlocksToSend.get()
     }
 
+    override fun onCompleted(boundWitness: XyoBoundWitness?) {
+        super.onCompleted(boundWitness)
+
+        if (boundWitness != null) {
+            currentBridgingOption?.onSucceed()
+        }
+    }
+
     private fun updateOriginChain() = GlobalScope.async {
-        val blockHashes = bridgeQueue.getBlocksToBridge()
+        val job = bridgeQueue.getBlocksToBridge()
+        currentBridgingOption = job
+        val blockHashes = Array(job.blocks.size) { i ->
+            job.blocks[i].boundWitnessHash
+        }
         val blocks = ArrayList<XyoObject>()
         hashOfOriginBlocks = XyoBridgeHashSet(XyoObjectProvider.encodedToDecodedArray(blockHashes))
-
 
         if (hashOfOriginBlocks != null) {
             for (hash in blockHashes) {

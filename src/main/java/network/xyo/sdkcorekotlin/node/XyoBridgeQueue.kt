@@ -17,7 +17,7 @@ open class XyoBridgeQueue {
     /**
      * The point at witch blocks should be removed from the queue.
      */
-    var removeWeight = 300
+    var removeWeight = 3
 
     /**
      * Adds an origin block into the bridge queue.
@@ -59,30 +59,17 @@ open class XyoBridgeQueue {
      *
      * @return An array of blocks to send to the bridge.
      */
-    fun getBlocksToBridge () : Array<ByteArray> {
-        sortQueue ()
+    fun getBlocksToBridge () : XyoBridgeJob {
+        sortQueue()
 
-        val toRemove = ArrayList<XyoBridgeQueueItem>()
-        val toBridge = ArrayList<ByteArray>()
+        println(blocksToBridge.size)
+        val toBridge = ArrayList<XyoBridgeQueueItem>()
 
         for (i in 0 until Math.min(sendLimit, blocksToBridge.size)) {
-            val block = blocksToBridge[i]
-
-            toBridge.add(block.boundWitnessHash)
-            block.weight++
-
-
-            if (block.weight >= removeWeight) {
-                toRemove.add(block)
-            }
+            toBridge.add(blocksToBridge[i])
         }
 
-        for (block in toRemove) {
-            blocksToBridge.remove(block)
-            removed.add(block.boundWitnessHash)
-        }
-
-        return toBridge.toTypedArray()
+        return XyoBridgeJob(toBridge.toTypedArray())
     }
 
     private fun sortQueue () {
@@ -102,18 +89,58 @@ open class XyoBridgeQueue {
         blocksToBridge = ArrayList(Array(blocks.size) { i -> XyoBridgeQueueItem(blocks[i], weights[i]) }.asList())
     }
 
+    /**
+     * Get all block hashes in the origin block queue. This aligns with getAllBlocks()
+     *
+     * @return An array of origin block hashes
+     */
     fun getAllBlocks () : Array<ByteArray> {
         return Array(blocksToBridge.size) { i -> blocksToBridge[i].boundWitnessHash }
     }
 
+    /**
+     * Get all of the wrights in the queue. This aligns with getAllBlocks()
+     *
+     * @return an array of Ints that are the weights in the queue.
+     */
     fun getAllWeights () : Array<Int> {
         return Array(blocksToBridge.size) { i -> blocksToBridge[i].weight }
     }
 
+    /**
+     * This object is returned from the function getBlocksToBridge()
+     *
+     * @param blocks The blocks to bridge
+     */
+    open inner class XyoBridgeJob (val blocks: Array<XyoBridgeQueueItem>) {
+
+        /**
+         * The function onSucceed() should be called if bridge job succeed
+         */
+        open fun onSucceed () {
+           for (block in blocks) {
+               block.weight++
+
+               if (block.weight >= removeWeight) {
+                   blocksToBridge.remove(block)
+                   removed.add(block.boundWitnessHash)
+               }
+           }
+        }
+    }
+
     companion object {
-        private class XyoBridgeQueueItem (val boundWitnessHash: ByteArray, var weight: Int) : Comparable<XyoBridgeQueueItem> {
+        class XyoBridgeQueueItem (val boundWitnessHash: ByteArray, var weight: Int) : Comparable<XyoBridgeQueueItem> {
             override fun compareTo(other: XyoBridgeQueueItem): Int {
                 return weight.compareTo(other.weight)
+            }
+
+            override fun equals(other: Any?): Boolean {
+                return boundWitnessHash.contentEquals((other as XyoBridgeQueueItem).boundWitnessHash)
+            }
+
+            override fun hashCode(): Int {
+                return boundWitnessHash.contentHashCode()
             }
         }
     }
