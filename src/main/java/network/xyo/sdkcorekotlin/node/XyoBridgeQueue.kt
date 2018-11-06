@@ -62,7 +62,6 @@ open class XyoBridgeQueue {
     fun getBlocksToBridge () : XyoBridgeJob {
         sortQueue()
 
-        println(blocksToBridge.size)
         val toBridge = ArrayList<XyoBridgeQueueItem>()
 
         for (i in 0 until Math.min(sendLimit, blocksToBridge.size)) {

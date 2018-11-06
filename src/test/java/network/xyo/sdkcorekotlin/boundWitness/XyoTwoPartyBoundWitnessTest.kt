@@ -22,7 +22,7 @@ class XyoTwoPartyBoundWitnessTest : XyoTestBase() {
     private val signedPayloadAlice = XyoMultiTypeArrayInt(arrayOf(XyoRssi(5)))
     private val unsignedPayloadAlice = XyoMultiTypeArrayInt(arrayOf(XyoRssi(5)))
 
-    private val signersBob = arrayOf<XyoSigner>(XyoRsaWithSha256(null))
+    private val signersBob = arrayOf<XyoSigner>(XyoSha256WithSecp256K(null))
     private val signedPayloadBob= XyoMultiTypeArrayInt(arrayOf(XyoRssi(10)))
     private val unsignedPayloadBob= XyoMultiTypeArrayInt(arrayOf(XyoRssi(10)))
 
@@ -47,8 +47,11 @@ class XyoTwoPartyBoundWitnessTest : XyoTestBase() {
             val boundWitnessBob = XyoZigZagBoundWitness(signersBob, payloadBob)
 
             val aliceToBobOne = boundWitnessAlice.incomingData(null, false).await()
+            println(aliceToBobOne.untyped.toHexString())
             val bobToAliceOne = boundWitnessBob.incomingData(aliceToBobOne, true).await()
+            println(bobToAliceOne.untyped.toHexString())
             val aliceToBobTwo = boundWitnessAlice.incomingData(bobToAliceOne, false).await()
+            println(aliceToBobTwo.untyped.toHexString())
             boundWitnessBob.incomingData(aliceToBobTwo, false).await()
 
             assertBoundWitness(boundWitnessAlice, boundWitnessBob)
