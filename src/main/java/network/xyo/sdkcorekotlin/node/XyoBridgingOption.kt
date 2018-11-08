@@ -7,6 +7,7 @@ import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.XyoObjectProvider
 import network.xyo.sdkcorekotlin.data.array.multi.XyoBridgeHashSet
 import network.xyo.sdkcorekotlin.data.array.single.XyoBridgeBlockSet
+import network.xyo.sdkcorekotlin.data.heuristics.number.unsigned.XyoIndex
 import network.xyo.sdkcorekotlin.network.XyoProcedureCatalogue
 import network.xyo.sdkcorekotlin.storage.XyoStorageProviderInterface
 import java.lang.ref.WeakReference
@@ -54,12 +55,15 @@ open class XyoBridgingOption (private val originBlocks: XyoStorageProviderInterf
         val blocks = ArrayList<XyoObject>()
         hashOfOriginBlocks = XyoBridgeHashSet(XyoObjectProvider.encodedToDecodedArray(blockHashes))
 
+
         if (hashOfOriginBlocks != null) {
             for (hash in blockHashes) {
                 val blockEncoded = originBlocks.read(hash).await()
                 if (blockEncoded != null) {
                     try {
-                        blocks.add(XyoBoundWitness.createFromPacked(blockEncoded))
+                        val block = XyoBoundWitness.createFromPacked(blockEncoded) as XyoBoundWitness
+                        blocks.add(block)
+
                     } catch (exception : Exception) {
                         originBlocks.delete(hash).await()
                     }

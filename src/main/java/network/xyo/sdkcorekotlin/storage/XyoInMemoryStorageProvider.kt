@@ -6,8 +6,7 @@ import kotlinx.coroutines.async
 /**
  * A simple in-memory storage implementation of the XyoStorageProviderInterface.
  */
-class
-XyoInMemoryStorageProvider : XyoStorageProviderInterface {
+class XyoInMemoryStorageProvider : XyoStorageProviderInterface {
     private val keys = ArrayList<ByteArray>()
     private val storageHashMap = HashMap<Int, ByteArray>()
 

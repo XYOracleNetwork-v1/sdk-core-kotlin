@@ -10,7 +10,6 @@ import network.xyo.sdkcorekotlin.signing.XyoSigningObjectCreatorVerify
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.XyoEcPrivateKey
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.XyoUncompressedEcPublicKey
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.keys.XyoSecp256K1UnCompressedPublicKey
-import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.signatures.XyoSecp256k1Sha1WithEcdsaSignature
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.signatures.XyoSecp256k1Sha256WithEcdsaSignature
 import org.bouncycastle.asn1.x9.ECNamedCurveTable
 import org.bouncycastle.crypto.params.ECDomainParameters
@@ -18,10 +17,7 @@ import org.bouncycastle.crypto.params.ECPrivateKeyParameters
 import org.bouncycastle.crypto.signers.ECDSASigner
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import java.security.Signature
-import org.bouncycastle.asn1.x509.ObjectDigestInfo.publicKey
-import org.bouncycastle.jcajce.provider.asymmetric.util.EC5Util.getCurve
 import org.bouncycastle.crypto.params.ECPublicKeyParameters
-
 
 
 /**
@@ -30,7 +26,7 @@ import org.bouncycastle.crypto.params.ECPublicKeyParameters
 class XyoSha256WithSecp256K (privateKey : XyoObject?) : XyoEcSecp256K(privateKey) {
     override fun signData(byteArray: ByteArray): Deferred<XyoObject> {
         return GlobalScope.async {
-            val ecDomainParameters = ECDomainParameters(ecCurve.getCurve(), ecCurve.getG(), ecCurve.getN())
+            val ecDomainParameters = ECDomainParameters(ecCurve.curve, ecCurve.g, ecCurve.n)
             signatureInstance.initSign(keyPair.private)
             signatureInstance.update(byteArray)
             signatureInstance.sign()
