@@ -1,12 +1,29 @@
 plugins {
     id 'java'
-    id 'org.jetbrains.kotlin.jvm' version '1.3.0'
+    id 'org.jetbrains.kotlin.jvm'
 }
 
 group 'com.github.XYOracleNetwork'
 version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
+
+/**
+ * If set to true, will build with local versions of the dependencies.
+ */
+def buildWithLocalProjects = false
+
+ext {
+    if (!project.hasProperty('local')) {
+        local = buildWithLocalProjects
+    }
+}
+
+subprojects {
+    ext {
+        local=this.ext.local
+    }
+}
 
 repositories {
     mavenCentral()
