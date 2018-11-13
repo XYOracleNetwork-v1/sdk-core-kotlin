@@ -5,6 +5,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.data.XyoByteArrayReader
 import network.xyo.sdkcorekotlin.data.XyoObject
+import network.xyo.sdkcorekotlin.exceptions.XyoCorruptDataException
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import java.security.MessageDigest
 
@@ -40,6 +41,10 @@ abstract class XyoBasicHashBase (override val hash : ByteArray): XyoHash() {
         }
 
         override fun createFromPacked(byteArray: ByteArray): XyoObject {
+            if (readSize(byteArray) != byteArray.size) {
+                throw XyoCorruptDataException("Invalid size!")
+            }
+
             val hash = XyoByteArrayReader(byteArray).read(0, byteArray.size)
             return object : XyoBasicHashBase(hash) {
                 override val id: ByteArray

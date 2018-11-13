@@ -51,7 +51,6 @@ class XyoRocksDbStorage (path: String) : XyoStorageProviderInterface {
             val options = Options().setCreateIfMissing(true)
             return RocksDB.open(options, path)
         } catch (e : RocksDBException) {
-            println(e)
             throw e
         }
     }

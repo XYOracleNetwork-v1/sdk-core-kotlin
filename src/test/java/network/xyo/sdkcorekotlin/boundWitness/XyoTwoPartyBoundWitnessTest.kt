@@ -47,11 +47,8 @@ class XyoTwoPartyBoundWitnessTest : XyoTestBase() {
             val boundWitnessBob = XyoZigZagBoundWitness(signersBob, payloadBob)
 
             val aliceToBobOne = boundWitnessAlice.incomingData(null, false).await()
-            println(aliceToBobOne.untyped.toHexString())
             val bobToAliceOne = boundWitnessBob.incomingData(aliceToBobOne, true).await()
-            println(bobToAliceOne.untyped.toHexString())
             val aliceToBobTwo = boundWitnessAlice.incomingData(bobToAliceOne, false).await()
-            println(aliceToBobTwo.untyped.toHexString())
             boundWitnessBob.incomingData(aliceToBobTwo, false).await()
 
             assertBoundWitness(boundWitnessAlice, boundWitnessBob)
