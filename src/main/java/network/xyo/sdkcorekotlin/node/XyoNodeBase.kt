@@ -17,7 +17,9 @@ import network.xyo.sdkcorekotlin.origin.XyoIndexableOriginBlockRepository
 import network.xyo.sdkcorekotlin.origin.XyoOriginChainStateManager
 import network.xyo.sdkcorekotlin.storage.XyoStorageProviderInterface
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 /**
  * A base class for all things creating an managing an origin chain (e.g. Sentinel, Bridge).
@@ -28,9 +30,9 @@ import kotlin.collections.ArrayList
 abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
                             private val hashingProvider : XyoHash.XyoHashProvider) {
 
-    private val boundWitnessOptions = HashMap<Int, XyoBoundWitnessOption>()
-    private val heuristics = HashMap<String, XyoHeuristicGetter>()
-    private val listeners = HashMap<String, XyoNodeListener>()
+    private val boundWitnessOptions = ConcurrentHashMap<Int, XyoBoundWitnessOption>()
+    private val heuristics = ConcurrentHashMap<String, XyoHeuristicGetter>()
+    private val listeners = ConcurrentHashMap<String, XyoNodeListener>()
     private var currentBoundWitnessSession : XyoZigZagBoundWitnessSession? = null
 
     /**
