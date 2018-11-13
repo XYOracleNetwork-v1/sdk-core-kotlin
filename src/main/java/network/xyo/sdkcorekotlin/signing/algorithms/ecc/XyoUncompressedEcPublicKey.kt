@@ -4,6 +4,7 @@ import network.xyo.sdkcorekotlin.data.XyoByteArrayReader
 import network.xyo.sdkcorekotlin.data.XyoByteArraySetter
 import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.XyoObjectProvider
+import network.xyo.sdkcorekotlin.exceptions.XyoCorruptDataException
 import java.math.BigInteger
 import java.nio.ByteBuffer
 import java.security.interfaces.ECPublicKey
@@ -93,15 +94,19 @@ abstract class XyoUncompressedEcPublicKey : ECPublicKey, XyoObject() {
         }
 
         override fun createFromPacked(byteArray: ByteArray): XyoObject {
-            val xPoint = BigInteger(1, byteArray.copyOfRange(0, 32))
-            val yPoint = BigInteger(1, byteArray.copyOfRange(32, 64))
+            if (byteArray.size == 64) {
+                val xPoint = BigInteger(1, byteArray.copyOfRange(0, 32))
+                val yPoint = BigInteger(1, byteArray.copyOfRange(32, 64))
 
-            return object : XyoUncompressedEcPublicKey() {
-                override val ecSpec: ECParameterSpec = ecPramSpec
-                override val x: BigInteger = xPoint
-                override val y: BigInteger = yPoint
-                override val id: ByteArray = byteArrayOf(major, minor)
+                return object : XyoUncompressedEcPublicKey() {
+                    override val ecSpec: ECParameterSpec = ecPramSpec
+                    override val x: BigInteger = xPoint
+                    override val y: BigInteger = yPoint
+                    override val id: ByteArray = byteArrayOf(major, minor)
+                }
             }
+
+            throw XyoCorruptDataException("Invalid size of XyoUncompressedEcPublicKey!")
         }
     }
 }
