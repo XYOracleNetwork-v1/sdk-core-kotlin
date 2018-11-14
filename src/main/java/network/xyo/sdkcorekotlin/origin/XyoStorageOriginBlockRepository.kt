@@ -23,7 +23,9 @@ open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoSto
 
 
     override fun removeOriginBlock(originBlockHash: ByteArray) = GlobalScope.async {
-        XyoObjectProvider.create(originBlockHash)?.let { removeIndex(it).await() }
+        XyoObjectProvider.create(originBlockHash)?.let {
+            removeIndex(it).await()
+        }?.await()
         return@async storageProvider.delete(originBlockHash).await()
     }
 

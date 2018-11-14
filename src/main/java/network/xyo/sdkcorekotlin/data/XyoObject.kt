@@ -9,6 +9,7 @@ import java.nio.ByteBuffer
 abstract class XyoObject {
     private var dataCache : WeakReference<ByteArray?> = WeakReference(null)
     private var isChanged = true
+
     private val bytes : ByteArray
         get() {
             val cache = dataCache.get()
@@ -72,6 +73,10 @@ abstract class XyoObject {
             return other.bytes.contentHashCode() == bytes.contentHashCode()
         }
         return false
+    }
+
+    override fun hashCode(): Int {
+        return typed.contentHashCode()
     }
 
     private fun makeTyped () : ByteArray {
