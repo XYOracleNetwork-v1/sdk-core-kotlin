@@ -11,7 +11,7 @@ import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
  */
 object XyoSha512 : XyoBasicHashBase.XyoBasicHashBaseProvider() {
     override val standardDigestKey: String
-        get() = "SHA512"
+        get() = "SHA-512"
 
     @ExperimentalUnsignedTypes
     override val schema: XyoObjectSchema
