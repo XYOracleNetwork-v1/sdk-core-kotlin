@@ -57,10 +57,10 @@ open class XyoRsaPrivateKey (private val mod : BigInteger, private val privateEx
 
         @ExperimentalUnsignedTypes
         override fun getInstance(byteArray: ByteArray): XyoRsaPrivateKey {
-
-            val sizeOfPrivateExponent = byteArray[2].toInt() - 1
-            val privateExponent = XyoObjectCreator.getObjectValue(byteArray).copyOfRange(3, sizeOfPrivateExponent)
-            val modulus = XyoObjectCreator.getObjectValue(byteArray).copyOfRange((3 + sizeOfPrivateExponent), byteArray.size - (3 + sizeOfPrivateExponent))
+            val value = XyoObjectCreator.getObjectValue(byteArray)
+            val sizeOfPrivateExponent = value[0].toUByte().toInt()
+            val privateExponent = value.copyOfRange(1, sizeOfPrivateExponent)
+            val modulus = value.copyOfRange((sizeOfPrivateExponent), value.size)
 
             return XyoRsaPrivateKey(BigInteger(modulus), BigInteger(privateExponent))
         }

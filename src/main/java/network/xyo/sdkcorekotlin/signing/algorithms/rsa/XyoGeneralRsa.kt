@@ -50,7 +50,7 @@ abstract class XyoGeneralRsa(private val keySize : Int, privateKey: XyoRsaPrivat
         val keyGenerator: KeyFactory = KeyFactory.getInstance("RSA")
         val publicKey = keyGenerator.generatePublic(getSpecFromPrivateKey(encodedPrivateKey)) as RSAPublicKey
 
-        return KeyPair(XyoRsaPublicKey(publicKey.modulus), privateKey)
+        return KeyPair(XyoRsaPublicKey(publicKey.modulus), encodedPrivateKey)
     }
 
     private fun generateNewKeyPair () : KeyPair {

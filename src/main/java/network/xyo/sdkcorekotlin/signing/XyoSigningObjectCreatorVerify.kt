@@ -3,6 +3,7 @@ package network.xyo.sdkcorekotlin.signing
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import network.xyo.sdkobjectmodelkotlin.objects.XyoObjectCreator
 import java.security.PublicKey
 import java.security.Signature
 
@@ -22,7 +23,7 @@ abstract class XyoSigningObjectCreatorVerify : XyoSigner.XyoSignerProvider() {
         return GlobalScope.async {
             signatureInstance.initVerify(publicKey)
             signatureInstance.update(byteArray)
-            return@async signatureInstance.verify(signature)
+            return@async signatureInstance.verify(XyoObjectCreator.getObjectValue(signature))
         }
     }
 }

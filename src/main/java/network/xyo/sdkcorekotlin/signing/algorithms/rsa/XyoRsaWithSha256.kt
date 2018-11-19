@@ -32,12 +32,12 @@ class XyoRsaWithSha256 (privateKey: XyoRsaPrivateKey?) : XyoGeneralRsa (1024, pr
         override val signatureInstance: Signature = Signature.getInstance("SHA256withRSA", BouncyCastleProvider())
         override val key: Byte = 0x08
 
-        override fun newInstance(): XyoSigner {
+        override fun newInstance(): XyoRsaWithSha256 {
             return XyoRsaWithSha256(null)
         }
 
         @ExperimentalUnsignedTypes
-        override fun newInstance(privateKey: ByteArray): XyoSigner {
+        override fun newInstance(privateKey: ByteArray): XyoRsaWithSha256 {
             return XyoRsaWithSha256(XyoRsaPrivateKey.getInstance(privateKey))
         }
 

@@ -4,6 +4,7 @@ import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.runBlocking
 import network.xyo.sdkcorekotlin.XyoTestBase
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
+import network.xyo.sdkcorekotlin.signing.XyoSigner
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.XyoSha256WithSecp256K
 import network.xyo.sdkcorekotlin.signing.algorithms.rsa.XyoRsaWithSha256
 import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectIterator
@@ -12,7 +13,7 @@ import org.junit.Assert
 import org.junit.Test
 
 class XyoSinglePartyBoundWitnessTest : XyoTestBase() {
-    private val aliceSigners = arrayOf(XyoRsaWithSha256.newInstance(), XyoRsaWithSha256.newInstance())
+    private val aliceSigners = arrayOf<XyoSigner>(XyoRsaWithSha256.newInstance(), XyoRsaWithSha256.newInstance())
     private val aliceSignedPayload = XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY, arrayOf())
     private val aliceUnsignedPayload = XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY, arrayOf())
 

@@ -37,10 +37,10 @@ open class XyoEcdsaSignature(val r : BigInteger, val s : BigInteger) : XyoInterp
         class XyoRAndS(val r : BigInteger, val s : BigInteger)
 
         protected fun getRAndS(byteArray: ByteArray) : XyoRAndS {
-            val sizeOfR = byteArray[1].toInt()
-            val sizeOfS = (byteArray[1 + sizeOfR + 1]).toInt()
-            val r = BigInteger(byteArray.copyOfRange(2, sizeOfR + 2))
-            val s = BigInteger(byteArray.copyOfRange(sizeOfR + 3, sizeOfS + sizeOfR + 3))
+            val sizeOfR = byteArray[0].toInt()
+            val sizeOfS = (byteArray[sizeOfR + 1]).toInt()
+            val r = BigInteger(byteArray.copyOfRange(1, sizeOfR + 1))
+            val s = BigInteger(byteArray.copyOfRange(sizeOfR + 2, sizeOfS + sizeOfR + 2))
 
             return XyoRAndS(r, s)
         }
