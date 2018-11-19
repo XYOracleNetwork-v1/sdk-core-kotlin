@@ -57,7 +57,7 @@ class XyoRsaPublicKey(private val modulus : BigInteger) : RSAPublicKey, XyoPubli
     companion object : XyoFromSelf {
 
         @ExperimentalUnsignedTypes
-        override fun getInstance(byteArray: ByteArray): XyoInterpreter {
+        override fun getInstance(byteArray: ByteArray): XyoRsaPublicKey {
             val value = XyoObjectCreator.getObjectValue(byteArray)
             return  XyoRsaPublicKey(BigInteger(value))
         }
