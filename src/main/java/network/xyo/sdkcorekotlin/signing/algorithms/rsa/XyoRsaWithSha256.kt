@@ -42,9 +42,9 @@ class XyoRsaWithSha256 (privateKey: XyoRsaPrivateKey?) : XyoGeneralRsa (1024, pr
         }
 
         @ExperimentalUnsignedTypes
-        override val supportedKeys: Array<ByteArray> = arrayOf(XyoSchemas.RSA_PUBLIC_KEY.header.toByteArray())
+        override val supportedKeys: Array<ByteArray> = arrayOf(XyoSchemas.RSA_PUBLIC_KEY.header)
 
         @ExperimentalUnsignedTypes
-        override val supportedSignatures: Array<ByteArray> = arrayOf(XyoSchemas.RSA_SIGNATURE.header.toByteArray())
+        override val supportedSignatures: Array<ByteArray> = arrayOf(XyoSchemas.RSA_SIGNATURE.header)
     }
 }

@@ -49,10 +49,10 @@ class XyoSha256WithSecp256K (privateKey : ECPrivateKey?) : XyoEcSecp256K(private
         override val key: Byte = 0x01
 
         @ExperimentalUnsignedTypes
-        override val supportedKeys: Array<ByteArray> = arrayOf(XyoSchemas.EC_PUBLIC_KEY.header.toByteArray())
+        override val supportedKeys: Array<ByteArray> = arrayOf(XyoSchemas.EC_PUBLIC_KEY.header)
 
         @ExperimentalUnsignedTypes
-        override val supportedSignatures: Array<ByteArray> = arrayOf(XyoSchemas.EC_PRIVATE_KEY.header.toByteArray())
+        override val supportedSignatures: Array<ByteArray> = arrayOf(XyoSchemas.EC_PRIVATE_KEY.header)
 
         override fun newInstance(): XyoSigner {
             return XyoSha256WithSecp256K(null)

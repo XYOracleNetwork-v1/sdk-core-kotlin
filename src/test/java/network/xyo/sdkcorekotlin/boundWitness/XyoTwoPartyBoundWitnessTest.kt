@@ -5,6 +5,7 @@ import network.xyo.sdkcorekotlin.XyoTestBase
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.signing.XyoSigner
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.XyoSha256WithSecp256K
+import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectIterator
 import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectSetCreator
 import org.junit.Assert
 import org.junit.Test
@@ -31,13 +32,7 @@ class XyoTwoPartyBoundWitnessTest : XyoTestBase() {
             val aliceToBobTwo = boundWitnessAlice.incomingData(bobToAliceOne, false).await()
             boundWitnessBob.incomingData(aliceToBobTwo, false).await()
 
-//            assertBoundWitness(boundWitnessAlice, boundWitnessBob)
-//
-//            val packedBoundWitness = boundWitnessAlice.untyped
-//            val recreated = XyoBoundWitness.createFromPacked(packedBoundWitness)
-//
-//            Assert.assertArrayEquals(packedBoundWitness, recreated.untyped)
-//            Assert.assertEquals(true, XyoBoundWitnessVerify(false).verify(boundWitnessAlice).await())
+            Assert.assertArrayEquals(boundWitnessAlice.self, boundWitnessBob.self)
         }
     }
 }

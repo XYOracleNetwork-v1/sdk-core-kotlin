@@ -7,6 +7,7 @@ import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.signing.XyoSigner
 import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectIterator
 import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectSetCreator
+import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 import java.util.*
 
 /**
@@ -25,13 +26,13 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
     private val dynamicSignatureSets = ArrayList<ByteArray>()
 
     override val payloads: ByteArray
-        get() = XyoObjectSetCreator.createTypedIterableObject(XyoSchemas.ARRAY, dynamicPayloads.toTypedArray())
+        get() = XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY, dynamicPayloads.toTypedArray())
 
     override val publicKeys: ByteArray
-        get() = XyoObjectSetCreator.createTypedIterableObject(XyoSchemas.ARRAY, dynamicPublicKeys.toTypedArray())
+        get() = XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY, dynamicPublicKeys.toTypedArray())
 
     override val signatures: ByteArray
-        get() = XyoObjectSetCreator.createTypedIterableObject(XyoSchemas.ARRAY, dynamicSignatureSets.toTypedArray())
+        get() = XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY, dynamicSignatureSets.toTypedArray())
 
     private var hasSentKeysAndPayload = false
 
@@ -53,12 +54,12 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
             hasSentKeysAndPayload = true
         }
 
-        if (signatures.size != publicKeys.size) {
+        if (XyoObjectIterator(signatures).size != XyoObjectIterator(publicKeys).size) {
             return@async getReturnFromIncoming(getNumberOfSignaturesFromTransfer(transfer), endPoint).await()
 
         }
 
-        return@async XyoObjectSetCreator.createTypedIterableObject(XyoSchemas.ARRAY, arrayOf())
+        return@async XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY, arrayOf())
     }
 
     private fun getNumberOfSignaturesFromTransfer (transfer: ByteArray?) : Int {
@@ -71,7 +72,7 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
 
     private fun getReturnFromIncoming (signatureReceivedSize : Int, endPoint: Boolean) : Deferred<ByteArray> = GlobalScope.async {
 
-        if (signatures.isEmpty() && !endPoint) {
+        if (XyoObjectIterator(signatures).size == 0 && !endPoint) {
             return@async self
         }
 
@@ -97,7 +98,6 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
 
         val signatureIt =  XyoObjectIterator(signatures)
         signatureToSend.add(signatureIt.next())
-
 
         return@async XyoObjectSetCreator.createUntypedIterableObject(
                 schema,
@@ -164,13 +164,11 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
     }
 
     private fun signBoundWitness () = GlobalScope.async {
-        return@async Array(signers.size) { i ->
-            signCurrent(signers[i]).await()
-        }
+        return@async createSignatures(Array(signers.size) { i -> signCurrent(signers[i]).await() })
     }
 
     private fun signForSelf () = GlobalScope.async {
         val signatureSet = signBoundWitness().await()
-        addIncomingSignatures(signatureSet.iterator())
+        addIncomingSignatures(arrayOf(signatureSet).iterator())
     }
 }
