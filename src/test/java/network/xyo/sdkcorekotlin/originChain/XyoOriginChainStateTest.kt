@@ -7,10 +7,17 @@ import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
 import network.xyo.sdkcorekotlin.boundWitness.XyoZigZagBoundWitness
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.hashing.basic.XyoSha256
+import network.xyo.sdkcorekotlin.schemas.XyoSchemas.ARRAY
+import network.xyo.sdkcorekotlin.schemas.XyoSchemas.PAYLOAD
+import network.xyo.sdkcorekotlin.signing.XyoNextPublicKey
 import network.xyo.sdkcorekotlin.signing.XyoSigner
+import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.XyoSha256WithSecp256K
+import network.xyo.sdkobjectmodelkotlin.objects.XyoObjectCreator
+import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectSetCreator
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import java.nio.ByteBuffer
 
 
 class XyoOriginChainStateTest : XyoTestBase() {
@@ -18,49 +25,52 @@ class XyoOriginChainStateTest : XyoTestBase() {
     private val hashCreator = XyoSha256
     private val originChainState = XyoOriginChainStateManager(0)
     private var lastHash : XyoHash? = null
-    //private var nextKey : XyoObject? = null
+    private var nextKey : XyoNextPublicKey? = null
 
     @Test
     fun testOriginChainTest () {
-//        XyoSha1WithSecp256K.enable()
-//        val startingSigner = XyoSigner.getCreator(0x02)!!.newInstance()
-//        runBlocking {
-//            val originBlocks = ArrayList<XyoBoundWitness>()
-//            originChainState.addSigner(startingSigner)
-//            for (i in 0..numberOfBlocks) {
-//                val elementsInSignedPayload = ArrayList<XyoObject>()
-//                val elementsInUnsignedPayload = arrayOf<XyoObject>(XyoRssi(-65))
-//
-//                elementsInSignedPayload.add(originChainState.index)
-//
-//                if (originChainState.nextPublicKey != null) {
-//                    nextKey = originChainState.nextPublicKey!!
-//                    elementsInSignedPayload.add(originChainState.nextPublicKey!!)
-//                }
-//
-//                if (originChainState.previousHash != null) {
-//                    elementsInSignedPayload.add(originChainState.previousHash!!)
-//                }
-//
-//                val signedPayload = XyoMultiTypeArrayInt(elementsInSignedPayload.toTypedArray())
-//                val unsignedPayload = XyoMultiTypeArrayInt(elementsInUnsignedPayload)
-//                val alicePayload = XyoPayload(signedPayload, unsignedPayload)
-//                val aliceBoundWitness = XyoZigZagBoundWitness(originChainState.getSigners(), alicePayload)
-//
-//                aliceBoundWitness.incomingData(null, true).await()
-//                originChainState.newOriginBlock(aliceBoundWitness.getHash(hashCreator).await())
-//                originBlocks.add(aliceBoundWitness)
-//
-//                originChainState.addSigner(XyoSigner.getCreator(0x02)!!.newInstance())
-//                lastHash = aliceBoundWitness.getHash(hashCreator).await()
-//
-//                if (i != 0) {
-//                    assertArrayEquals(lastHash!!.hash, originChainState.previousHash!!.hash.hash)
-//                    originChainState.removeOldestSigner()
-//                }
-//
-//                assertEquals(i, originChainState.index.number - 1)
-//            }
-//        }
+        val startingSigner = XyoSha256WithSecp256K.newInstance()
+        runBlocking {
+            val originBlocks = ArrayList<XyoBoundWitness>()
+            originChainState.addSigner(startingSigner)
+            for (i in 0..numberOfBlocks) {
+                val elementsInSignedPayload = ArrayList<ByteArray>()
+                val elementsInUnsignedPayload = arrayOf<ByteArray>()
+
+
+                elementsInSignedPayload.add(originChainState.index)
+
+                val nextPublicKey = originChainState.nextPublicKey
+                if (nextPublicKey != null) {
+                    nextKey = nextPublicKey
+                    elementsInSignedPayload.add(nextPublicKey.self)
+                }
+
+                val hash = originChainState.previousHash?.self
+                if (hash != null) {
+                    elementsInSignedPayload.add(hash)
+                }
+
+                val signedPayload = XyoObjectSetCreator.createUntypedIterableObject(ARRAY, elementsInSignedPayload.toTypedArray())
+                val unsignedPayload = XyoObjectSetCreator.createUntypedIterableObject(ARRAY, elementsInUnsignedPayload)
+
+                val alicePayload =  XyoObjectSetCreator.createUntypedIterableObject(PAYLOAD, arrayOf(signedPayload, unsignedPayload))
+                val aliceBoundWitness = XyoZigZagBoundWitness(originChainState.getSigners(), alicePayload)
+
+                aliceBoundWitness.incomingData(null, true).await()
+                originChainState.newOriginBlock(aliceBoundWitness.getHash(hashCreator).await())
+                originBlocks.add(aliceBoundWitness)
+
+                originChainState.addSigner(XyoSha256WithSecp256K.newInstance())
+                lastHash = aliceBoundWitness.getHash(hashCreator).await()
+
+                if (i != 0) {
+                    assertArrayEquals(lastHash?.hash, XyoObjectCreator.getObjectValue(originChainState.previousHash!!.previousHash))
+                    originChainState.removeOldestSigner()
+                }
+
+                assertEquals(i, ByteBuffer.wrap(XyoObjectCreator.getObjectValue(originChainState.index)).int - 1 )
+            }
+        }
     }
 }
