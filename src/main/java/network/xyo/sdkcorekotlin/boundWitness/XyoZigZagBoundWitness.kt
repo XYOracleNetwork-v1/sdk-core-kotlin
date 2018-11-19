@@ -26,13 +26,13 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
     private val dynamicSignatureSets = ArrayList<ByteArray>()
 
     override val payloads: ByteArray
-        get() = XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY, dynamicPayloads.toTypedArray())
+        get() = XyoObjectSetCreator.createTypedIterableObject(XyoSchemas.ARRAY_TYPED, dynamicPayloads.toTypedArray())
 
     override val publicKeys: ByteArray
-        get() = XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY, dynamicPublicKeys.toTypedArray())
+        get() = XyoObjectSetCreator.createTypedIterableObject(XyoSchemas.ARRAY_TYPED, dynamicPublicKeys.toTypedArray())
 
     override val signatures: ByteArray
-        get() = XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY, dynamicSignatureSets.toTypedArray())
+        get() = XyoObjectSetCreator.createTypedIterableObject(XyoSchemas.ARRAY_TYPED, dynamicSignatureSets.toTypedArray())
 
     private var hasSentKeysAndPayload = false
 
@@ -59,7 +59,7 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
 
         }
 
-        return@async XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY, arrayOf())
+        return@async XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, arrayOf())
     }
 
     private fun getNumberOfSignaturesFromTransfer (transfer: ByteArray?) : Int {
@@ -113,8 +113,8 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
     }
 
     private fun createPayloads (payloads : Array<ByteArray>) : ByteArray {
-        return XyoObjectSetCreator.createUntypedIterableObject(
-                XyoSchemas.ARRAY,
+        return XyoObjectSetCreator.createTypedIterableObject(
+                XyoSchemas.ARRAY_TYPED,
                 payloads
         )
     }

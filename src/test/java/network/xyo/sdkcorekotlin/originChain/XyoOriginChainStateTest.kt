@@ -7,7 +7,7 @@ import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
 import network.xyo.sdkcorekotlin.boundWitness.XyoZigZagBoundWitness
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.hashing.basic.XyoSha256
-import network.xyo.sdkcorekotlin.schemas.XyoSchemas.ARRAY
+import network.xyo.sdkcorekotlin.schemas.XyoSchemas.ARRAY_UNTYPED
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas.PAYLOAD
 import network.xyo.sdkcorekotlin.signing.XyoNextPublicKey
 import network.xyo.sdkcorekotlin.signing.XyoSigner
@@ -51,8 +51,8 @@ class XyoOriginChainStateTest : XyoTestBase() {
                     elementsInSignedPayload.add(hash)
                 }
 
-                val signedPayload = XyoObjectSetCreator.createUntypedIterableObject(ARRAY, elementsInSignedPayload.toTypedArray())
-                val unsignedPayload = XyoObjectSetCreator.createUntypedIterableObject(ARRAY, elementsInUnsignedPayload)
+                val signedPayload = XyoObjectSetCreator.createUntypedIterableObject(ARRAY_UNTYPED, elementsInSignedPayload.toTypedArray())
+                val unsignedPayload = XyoObjectSetCreator.createUntypedIterableObject(ARRAY_UNTYPED, elementsInUnsignedPayload)
 
                 val alicePayload =  XyoObjectSetCreator.createUntypedIterableObject(PAYLOAD, arrayOf(signedPayload, unsignedPayload))
                 val aliceBoundWitness = XyoZigZagBoundWitness(originChainState.getSigners(), alicePayload)

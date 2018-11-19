@@ -10,7 +10,7 @@ import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.network.XyoNetworkPipe
 import network.xyo.sdkcorekotlin.origin.XyoIndexableOriginBlockRepository
 import network.xyo.sdkcorekotlin.origin.XyoOriginChainStateManager
-import network.xyo.sdkcorekotlin.schemas.XyoSchemas.ARRAY
+import network.xyo.sdkcorekotlin.schemas.XyoSchemas.ARRAY_UNTYPED
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas.BRIDGE_BLOCK_SET
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas.PAYLOAD
 import network.xyo.sdkcorekotlin.storage.XyoStorageProviderInterface
@@ -301,8 +301,8 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
         unsignedPayloads.addAll(getUnSignedPayloads(options).await())
 
         return@async XyoObjectSetCreator.createTypedIterableObject(PAYLOAD, arrayOf(
-                XyoObjectSetCreator.createTypedIterableObject(ARRAY, signedPayloads.toTypedArray()),
-                XyoObjectSetCreator.createTypedIterableObject(ARRAY, unsignedPayloads.toTypedArray())
+                XyoObjectSetCreator.createUntypedIterableObject(ARRAY_UNTYPED, signedPayloads.toTypedArray()),
+                XyoObjectSetCreator.createUntypedIterableObject(ARRAY_UNTYPED, unsignedPayloads.toTypedArray())
         ))
     }
 }

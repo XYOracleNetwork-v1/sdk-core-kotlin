@@ -8,6 +8,7 @@ import network.xyo.sdkcorekotlin.XyoInterpreter
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.signing.XyoSigner
+import network.xyo.sdkobjectmodelkotlin.objects.XyoObjectCreator
 import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectIterator
 import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectSetCreator
 import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
@@ -17,6 +18,7 @@ import java.nio.ByteBuffer
  * A Xyo Bound Witness Object
  */
 
+@ExperimentalUnsignedTypes
 abstract class XyoBoundWitness : XyoInterpreter {
     /**
      * All of the public keys in the bound witness.
@@ -32,6 +34,21 @@ abstract class XyoBoundWitness : XyoInterpreter {
      * All of the signaturePacking in the bound witness.
      */
     abstract val signatures: ByteArray
+
+    val encodedRssi = XyoObjectCreator.createObject(object : XyoObjectSchema() {
+        override val id: Byte
+            get() = 0x02
+        override val isIterable: Boolean
+            get() = false
+        override val isTyped: Boolean
+            get() = false
+        override val meta: XyoObjectSchemaMeta?
+            get() = null
+        override val sizeIdentifier: Int
+            get() = 1
+    }, byteArrayOf(-42))
+
+    val decodedRssi = XyoObjectCreator.getObjectValue(encodedRssi)[0].toInt()
 
     /**
      * If the bound witness is completed or not.

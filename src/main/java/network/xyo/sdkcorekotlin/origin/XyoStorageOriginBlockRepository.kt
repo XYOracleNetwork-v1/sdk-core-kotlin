@@ -68,7 +68,7 @@ open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoSto
             }
         }
 
-        val newIndexEncoded = XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY, newIndex.toTypedArray())
+        val newIndexEncoded = XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, newIndex.toTypedArray())
         storageProvider.write(BLOCKS_INDEX_KEY, newIndexEncoded)
     }
 
@@ -82,7 +82,7 @@ open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoSto
             }
         }
 
-        val newIndexEncoded = XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY, newIndex.toTypedArray())
+        val newIndexEncoded = XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, newIndex.toTypedArray())
         storageProvider.write(BLOCKS_INDEX_KEY, newIndexEncoded)
     }
 

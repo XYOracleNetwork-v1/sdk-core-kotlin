@@ -6,7 +6,7 @@ import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 object XyoSchemas {
     val BW : XyoObjectSchema = object : XyoObjectSchema() {
         override val id: Byte
-            get() = 0x01
+            get() = 0x02
 
         override val isIterable: Boolean
             get() = true
@@ -21,9 +21,26 @@ object XyoSchemas {
             get() = 4
     }
 
-    val ARRAY : XyoObjectSchema = object : XyoObjectSchema() {
+    val ARRAY_TYPED : XyoObjectSchema = object : XyoObjectSchema() {
         override val id: Byte
-            get() = 0x02
+            get() = 0x01
+
+        override val isIterable: Boolean
+            get() = true
+
+        override val isTyped: Boolean
+            get() = true
+
+        override val meta: XyoObjectSchemaMeta?
+            get() = null
+
+        override val sizeIdentifier: Int
+            get() = 4
+    }
+
+    val ARRAY_UNTYPED : XyoObjectSchema = object : XyoObjectSchema() {
+        override val id: Byte
+            get() = 0x01
 
         override val isIterable: Boolean
             get() = true

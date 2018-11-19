@@ -64,7 +64,6 @@ abstract class XyoUncompressedEcPublicKey : ECPublicKey, XyoPublicKey {
         return ECPoint(x, y)
     }
 
-
     private fun get32ByteEcPoint(point : BigInteger) : ByteArray {
         val encodedPoint = point.toByteArray()
         if (encodedPoint.size == 32) {

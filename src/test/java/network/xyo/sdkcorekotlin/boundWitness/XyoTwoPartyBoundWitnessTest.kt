@@ -12,12 +12,12 @@ import org.junit.Test
 
 class XyoTwoPartyBoundWitnessTest : XyoTestBase() {
     private val signersAlice = arrayOf<XyoSigner>(XyoSha256WithSecp256K(null))
-    private val signedPayloadAlice = XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY, arrayOf())
-    private val unsignedPayloadAlice = XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY, arrayOf())
+    private val signedPayloadAlice = XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, arrayOf())
+    private val unsignedPayloadAlice = XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, arrayOf())
 
     private val signersBob = arrayOf<XyoSigner>(XyoSha256WithSecp256K(null))
-    private val signedPayloadBob = XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY, arrayOf())
-    private val unsignedPayloadBob= XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY, arrayOf())
+    private val signedPayloadBob = XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, arrayOf())
+    private val unsignedPayloadBob= XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, arrayOf())
 
     @Test
     fun testTwoPartyBoundWitness () {
@@ -35,6 +35,8 @@ class XyoTwoPartyBoundWitnessTest : XyoTestBase() {
             Assert.assertArrayEquals(boundWitnessAlice.self, boundWitnessBob.self)
             Assert.assertTrue(boundWitnessAlice.completed)
             Assert.assertTrue(boundWitnessBob.completed)
+            Assert.assertEquals(2, XyoBoundWitness.getNumberOfParties(boundWitnessAlice))
+            Assert.assertEquals(2, XyoBoundWitness.getNumberOfParties(boundWitnessBob))
         }
     }
 }
