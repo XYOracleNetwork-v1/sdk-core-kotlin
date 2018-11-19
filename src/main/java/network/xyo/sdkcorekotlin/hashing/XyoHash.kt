@@ -1,26 +1,23 @@
 package network.xyo.sdkcorekotlin.hashing
 
 import kotlinx.coroutines.Deferred
-import network.xyo.sdkcorekotlin.data.XyoObject
-import network.xyo.sdkcorekotlin.data.XyoObjectProvider
+import network.xyo.sdkcorekotlin.XyoFromSelf
+import network.xyo.sdkcorekotlin.XyoInterpreter
 
 /**
  * A base class for containing and encoding hashes.
  */
-abstract class XyoHash : XyoObject() {
+abstract class XyoHash : XyoInterpreter {
     /**
      * The encoded hash.
      */
     abstract val hash : ByteArray
 
-    override val objectInBytes: ByteArray
-        get() = hash
 
     /**
      * A base class for creating hashes.
      */
-    abstract class XyoHashProvider : XyoObjectProvider() {
-        override val major: Byte = 0x03
+    abstract class XyoHashProvider : XyoFromSelf {
 
         /**
          * Creates a hash given a ByteArray.

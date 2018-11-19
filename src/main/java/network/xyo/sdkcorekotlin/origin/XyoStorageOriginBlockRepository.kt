@@ -4,11 +4,11 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
-import network.xyo.sdkcorekotlin.data.XyoObject
-import network.xyo.sdkcorekotlin.data.XyoObjectProvider
-import network.xyo.sdkcorekotlin.data.array.multi.XyoMultiTypeArrayInt
 import network.xyo.sdkcorekotlin.hashing.XyoHash
+import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.storage.XyoStorageProviderInterface
+import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectIterator
+import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectSetCreator
 
 
 /**
@@ -23,9 +23,7 @@ open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoSto
 
 
     override fun removeOriginBlock(originBlockHash: ByteArray) = GlobalScope.async {
-        XyoObjectProvider.create(originBlockHash)?.let {
-            removeIndex(it).await()
-        }?.await()
+        removeIndex(originBlockHash).await()
         return@async storageProvider.delete(originBlockHash).await()
     }
 
@@ -33,35 +31,36 @@ open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoSto
         return@async storageProvider.containsKey(originBlockHash).await()
     }
 
+    @ExperimentalUnsignedTypes
     override fun getAllOriginBlockHashes() = GlobalScope.async {
         val encodedIndex = storageProvider.read(BLOCKS_INDEX_KEY).await()
 
         if (encodedIndex != null) {
-            val index = (XyoMultiTypeArrayInt.createFromPacked(encodedIndex) as XyoMultiTypeArrayInt).array
-
-            return@async Array(index.size) { i -> index[i].typed }
+            return@async XyoObjectIterator(encodedIndex)
         }
 
-        return@async arrayOf<ByteArray>()
+        return@async null
     }
 
+    @ExperimentalUnsignedTypes
     override fun addBoundWitness(originBlock: XyoBoundWitness) = GlobalScope.async {
-        val blockData = originBlock.untyped
+        val blockData = originBlock.self
         val blockHash = originBlock.getHash(hashingObject).await()
         updateIndex(blockHash).await()
-        return@async storageProvider.write(blockHash.typed, blockData).await()
+        return@async storageProvider.write(blockHash.self, blockData).await()
     }
 
+    @ExperimentalUnsignedTypes
     override fun getOriginBlockByBlockHash(originBlockHash: ByteArray) = GlobalScope.async {
         val packedOriginBlock = storageProvider.read(originBlockHash).await()
                 ?: return@async null
-        return@async XyoBoundWitness.createFromPacked(packedOriginBlock) as XyoBoundWitness
+        return@async XyoBoundWitness.getInstance(packedOriginBlock)
     }
 
     private fun updateIndex (blockHash : XyoHash) = GlobalScope.async {
-        val newIndex = ArrayList<XyoObject>()
-        newIndex.add(blockHash)
-        val currentIndex = getHashIndex().await()?.array
+        val newIndex = ArrayList<ByteArray>()
+        newIndex.add(blockHash.self)
+        val currentIndex = getHashIndex().await()
 
         if (currentIndex != null) {
             for (hash in currentIndex) {
@@ -69,31 +68,30 @@ open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoSto
             }
         }
 
-        val newIndexEncoded = XyoMultiTypeArrayInt(newIndex.toTypedArray())
-        storageProvider.write(BLOCKS_INDEX_KEY, newIndexEncoded.untyped)
+        val newIndexEncoded = XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY, newIndex.toTypedArray())
+        storageProvider.write(BLOCKS_INDEX_KEY, newIndexEncoded)
     }
 
-    private fun removeIndex (blockHash: XyoObject) = GlobalScope.async {
-        val newIndex = ArrayList<XyoObject>()
-        val currentIndex = getHashIndex().await()?.array
+    private fun removeIndex (blockHash: ByteArray) = GlobalScope.async {
+        val newIndex = ArrayList<ByteArray>()
+        val currentIndex = getHashIndex().await()
 
         if (currentIndex != null) {
             for (hash in currentIndex) {
-                if (blockHash != hash) {
-                    newIndex.add(hash)
-                }
+                newIndex.add(hash)
             }
         }
 
-        val newIndexEncoded = XyoMultiTypeArrayInt(newIndex.toTypedArray())
-        storageProvider.write(BLOCKS_INDEX_KEY, newIndexEncoded.untyped)
+        val newIndexEncoded = XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY, newIndex.toTypedArray())
+        storageProvider.write(BLOCKS_INDEX_KEY, newIndexEncoded)
     }
 
-    private fun getHashIndex () : Deferred<XyoMultiTypeArrayInt?> = GlobalScope.async{
+    @ExperimentalUnsignedTypes
+    private fun getHashIndex () : Deferred<Iterator<ByteArray>?> = GlobalScope.async{
         val encodedIndex = storageProvider.read(BLOCKS_INDEX_KEY).await()
 
         if (encodedIndex != null) {
-            return@async XyoMultiTypeArrayInt.createFromPacked(encodedIndex) as XyoMultiTypeArrayInt
+            return@async XyoObjectIterator(encodedIndex)
         }
         return@async null
     }

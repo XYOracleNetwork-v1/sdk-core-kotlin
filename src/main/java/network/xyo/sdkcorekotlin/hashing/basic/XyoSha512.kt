@@ -1,20 +1,19 @@
 package network.xyo.sdkcorekotlin.hashing.basic
 
+import network.xyo.sdkcorekotlin.schemas.XyoSchemas
+import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
+
 /**
  * A Xyo Encoded Sha512 hash
  *
  * @major 0x03
  * @minor 0x07
  */
-class XyoSha512 (pastHash : ByteArray): XyoBasicHashBase(pastHash) {
-    override val id: ByteArray = byteArrayOf(major, minor)
+object XyoSha512 : XyoBasicHashBase.XyoBasicHashBaseProvider() {
+    override val standardDigestKey: String
+        get() = "SHA512"
 
-    companion object : XyoBasicHashBaseProvider() {
-        override val standardDigestKey: String = "SHA-512"
-        override val minor: Byte = 0x07
-
-        override fun readSize(byteArray: ByteArray): Int {
-            return 64
-        }
-    }
+    @ExperimentalUnsignedTypes
+    override val schema: XyoObjectSchema
+        get() = XyoSchemas.SHA512
 }

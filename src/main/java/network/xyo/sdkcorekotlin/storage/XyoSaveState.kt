@@ -3,56 +3,29 @@ package network.xyo.sdkcorekotlin.storage
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import network.xyo.sdkcorekotlin.data.XyoObject
-import network.xyo.sdkcorekotlin.data.array.multi.XyoMultiTypeArrayInt
-import network.xyo.sdkcorekotlin.data.heuristics.number.unsigned.XyoIndex
-import network.xyo.sdkcorekotlin.hashing.XyoPreviousHash
 
 class XyoSaveState (private val storageProvider: XyoStorageProviderInterface) {
-    fun saveIndex (index : XyoIndex) {
-        storageProvider.write("index".toByteArray(), index.untyped)
+    fun saveIndex (index : ByteArray) = GlobalScope.async {
+        storageProvider.write("index".toByteArray(), index).await()
     }
 
-    fun saveSigners (privateKeys: Array<XyoObject>) {
-        storageProvider.write("privateKeys".toByteArray(), XyoMultiTypeArrayInt(privateKeys).untyped)
+    fun saveSigners (privateKeys: ByteArray) = GlobalScope.async {
+        storageProvider.write("privateKeys".toByteArray(), privateKeys).await()
     }
 
-    fun savePreviousHash (hash : XyoPreviousHash) {
-        storageProvider.write("prevHash".toByteArray(), hash.untyped)
+    fun savePreviousHash (hash : ByteArray) = GlobalScope.async {
+        storageProvider.write("prevHash".toByteArray(), hash).await()
     }
 
-    fun getIndex () : Deferred<XyoIndex?> = GlobalScope.async {
-        val encodedIndex = storageProvider.read("index".toByteArray()).await()
-        if (encodedIndex != null) {
-            return@async XyoIndex.createFromPacked(encodedIndex) as? XyoIndex
-        }
-        return@async null
+    fun getIndex () : Deferred<ByteArray?> = GlobalScope.async {
+        return@async storageProvider.read("index".toByteArray()).await()
     }
 
-    fun getSigners () : Deferred<Array<XyoObject>?> = GlobalScope.async {
-        val encodedKeys = storageProvider.read("privateKeys".toByteArray()).await()
-        if (encodedKeys != null) {
-            return@async (XyoMultiTypeArrayInt.createFromPacked(encodedKeys) as? XyoMultiTypeArrayInt)?.array
-        }
-        return@async null
+    fun getSigners () : Deferred<ByteArray?> = GlobalScope.async {
+        return@async storageProvider.read("privateKeys".toByteArray()).await()
     }
 
-    fun getPreviousHash () : Deferred<XyoPreviousHash?> = GlobalScope.async {
-        val encodedHash = storageProvider.read("prevHash".toByteArray()).await()
-        if (encodedHash != null) {
-            return@async XyoPreviousHash.createFromPacked(encodedHash) as? XyoPreviousHash
-        }
-        return@async null
-    }
-
-    protected fun ByteArray.toHexString(): String {
-        val builder = StringBuilder()
-        val it = this.iterator()
-        builder.append("0x")
-        while (it.hasNext()) {
-            builder.append(String.format("%02X", it.next()))
-        }
-
-        return builder.toString()
+    fun getPreviousHash () : Deferred<ByteArray?> = GlobalScope.async {
+        return@async storageProvider.read("prevHash".toByteArray()).await()
     }
 }

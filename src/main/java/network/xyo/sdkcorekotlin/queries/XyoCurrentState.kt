@@ -1,6 +1,5 @@
 package network.xyo.sdkcorekotlin.queries
 
-import network.xyo.sdkcorekotlin.data.heuristics.number.unsigned.XyoIndex
 import network.xyo.sdkcorekotlin.hashing.XyoPreviousHash
 import network.xyo.sdkcorekotlin.signing.XyoNextPublicKey
 import network.xyo.sdkcorekotlin.signing.XyoSigner
@@ -21,7 +20,7 @@ interface XyoCurrentState {
     /**
      * The index of the origin chain.
      */
-    val index : XyoIndex
+    val index : ByteArray
 
     /**
      * The next public key to be used in the origin chain.

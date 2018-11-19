@@ -1,12 +1,7 @@
 package network.xyo.sdkcorekotlin
 
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
-import network.xyo.sdkcorekotlin.data.XyoObject
-import network.xyo.sdkcorekotlin.data.XyoPayload
-import network.xyo.sdkcorekotlin.data.array.multi.XyoKeySet
-import network.xyo.sdkcorekotlin.signing.XyoSignatureSet
 import org.junit.Assert.assertArrayEquals
-import java.security.Security
 
 open class XyoTestBase {
     fun String.hexStringToByteArray() : ByteArray {

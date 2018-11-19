@@ -3,20 +3,19 @@ package network.xyo.sdkcorekotlin.hashing.basic
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import network.xyo.sdkcorekotlin.data.XyoByteArrayReader
-import network.xyo.sdkcorekotlin.data.XyoObject
+import network.xyo.sdkcorekotlin.XyoInterpreter
 import network.xyo.sdkcorekotlin.exceptions.XyoCorruptDataException
 import network.xyo.sdkcorekotlin.hashing.XyoHash
+import network.xyo.sdkobjectmodelkotlin.objects.XyoObjectCreator
+import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectSetCreator
+import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
+import java.nio.ByteBuffer
 import java.security.MessageDigest
 
 /**
  * A base class for fixed size hashes.
- *
- * @param hash, the created hash.
  */
-abstract class XyoBasicHashBase (override val hash : ByteArray): XyoHash() {
-    override val sizeIdentifierSize: Int? = null
-
+abstract class XyoBasicHashBase : XyoHash() {
     /**
      * A base class for creating Standard Java hashes supported by MessageDigest.
      */
@@ -25,13 +24,20 @@ abstract class XyoBasicHashBase (override val hash : ByteArray): XyoHash() {
          * The MessageDigest instance key. e.g. "SHA-256"
          */
         abstract val standardDigestKey : String
-        override val sizeOfBytesToGetSize: Int? = 0
 
+        @ExperimentalUnsignedTypes
+        abstract val schema : XyoObjectSchema
+
+        @ExperimentalUnsignedTypes
         override fun createHash (data: ByteArray) : Deferred<XyoHash> {
             return GlobalScope.async {
-                return@async object : XyoBasicHashBase(hash(data)) {
-                    override val id: ByteArray
-                        get() = byteArrayOf(major, minor)
+            val hash = hash(data)
+            val item = XyoObjectCreator.createObject(schema, hash)
+
+                return@async object : XyoBasicHashBase() {
+                    override val self: ByteArray = item
+                    override val schema: XyoObjectSchema = this@XyoBasicHashBaseProvider.schema
+                    override val hash: ByteArray = hash
                 }
             }
         }
@@ -40,15 +46,16 @@ abstract class XyoBasicHashBase (override val hash : ByteArray): XyoHash() {
             return MessageDigest.getInstance(standardDigestKey).digest(data)
         }
 
-        override fun createFromPacked(byteArray: ByteArray): XyoObject {
-            if (readSize(byteArray) != byteArray.size) {
-                throw XyoCorruptDataException("Invalid size!")
-            }
+        override fun getInstance(byteArray: ByteArray): XyoInterpreter {
+            return object : XyoBasicHashBase() {
+                override val self: ByteArray = byteArray
 
-            val hash = XyoByteArrayReader(byteArray).read(0, byteArray.size)
-            return object : XyoBasicHashBase(hash) {
-                override val id: ByteArray
-                    get() = byteArrayOf(major, minor)
+                @ExperimentalUnsignedTypes
+                override val schema: XyoObjectSchema = this@XyoBasicHashBaseProvider.schema
+
+                override val hash: ByteArray
+                    get() = self.copyOfRange(2, self.size)
+
             }
         }
     }

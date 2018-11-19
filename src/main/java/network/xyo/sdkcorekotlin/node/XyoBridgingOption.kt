@@ -3,13 +3,10 @@ package network.xyo.sdkcorekotlin.node
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
-import network.xyo.sdkcorekotlin.data.XyoObject
-import network.xyo.sdkcorekotlin.data.XyoObjectProvider
-import network.xyo.sdkcorekotlin.data.array.multi.XyoBridgeHashSet
-import network.xyo.sdkcorekotlin.data.array.single.XyoBridgeBlockSet
-import network.xyo.sdkcorekotlin.data.heuristics.number.unsigned.XyoIndex
 import network.xyo.sdkcorekotlin.network.XyoProcedureCatalogue
+import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.storage.XyoStorageProviderInterface
+import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectSetCreator
 import java.lang.ref.WeakReference
 
 /**
@@ -23,18 +20,18 @@ import java.lang.ref.WeakReference
  *
  */
 open class XyoBridgingOption (private val originBlocks: XyoStorageProviderInterface, private val bridgeQueue: XyoBridgeQueue): XyoBoundWitnessOption() {
-    private var hashOfOriginBlocks : XyoBridgeHashSet? = null
+    private var hashOfOriginBlocks : ByteArray? = null
     private var currentBridgingOption : XyoBridgeQueue.XyoBridgeJob? = null
-    private var originBlocksToSend : WeakReference<XyoObject?> = WeakReference(null)
+    private var originBlocksToSend : WeakReference<ByteArray?> = WeakReference(null)
 
     override val flag: Int = XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN
 
-    override suspend fun getSignedPayload(): XyoObject? {
+    override suspend fun getSignedPayload(): ByteArray? {
         updateOriginChain().await()
         return hashOfOriginBlocks
     }
 
-    override suspend fun getUnsignedPayload(): XyoObject? {
+    override suspend fun getUnsignedPayload(): ByteArray? {
         return originBlocksToSend.get()
     }
 
@@ -52,25 +49,19 @@ open class XyoBridgingOption (private val originBlocks: XyoStorageProviderInterf
         val blockHashes = Array(job.blocks.size) { i ->
             job.blocks[i].boundWitnessHash
         }
-        val blocks = ArrayList<XyoObject>()
-        hashOfOriginBlocks = XyoBridgeHashSet(XyoObjectProvider.encodedToDecodedArray(blockHashes))
 
+        val blocks = ArrayList<ByteArray>()
+        hashOfOriginBlocks = XyoObjectSetCreator.createTypedIterableObject(XyoSchemas.BRIDGE_HASH_SET, blockHashes)
 
         if (hashOfOriginBlocks != null) {
             for (hash in blockHashes) {
                 val blockEncoded = originBlocks.read(hash).await()
                 if (blockEncoded != null) {
-                    try {
-                        val block = XyoBoundWitness.createFromPacked(blockEncoded) as XyoBoundWitness
-                        blocks.add(block)
-
-                    } catch (exception : Exception) {
-                        originBlocks.delete(hash).await()
-                    }
+                    blocks.add(blockEncoded)
                 }
             }
         }
 
-        originBlocksToSend = WeakReference(XyoBridgeBlockSet(blocks.toTypedArray()))
+        originBlocksToSend = WeakReference(XyoObjectSetCreator.createTypedIterableObject(XyoSchemas.BRIDGE_BLOCK_SET, blocks.toTypedArray()))
     }
 }

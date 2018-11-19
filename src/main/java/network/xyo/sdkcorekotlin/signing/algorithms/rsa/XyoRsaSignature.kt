@@ -1,40 +1,40 @@
 package network.xyo.sdkcorekotlin.signing.algorithms.rsa
 
-import network.xyo.sdkcorekotlin.data.XyoByteArrayReader
-import network.xyo.sdkcorekotlin.data.XyoObject
-import network.xyo.sdkcorekotlin.data.XyoObjectProvider
-import network.xyo.sdkcorekotlin.data.XyoUnsignedHelper
-import network.xyo.sdkcorekotlin.signing.XyoSignature
+import network.xyo.sdkcorekotlin.XyoFromSelf
+import network.xyo.sdkcorekotlin.XyoInterpreter
+import network.xyo.sdkcorekotlin.schemas.XyoSchemas
+import network.xyo.sdkobjectmodelkotlin.objects.XyoObjectCreator
+import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 import java.nio.ByteBuffer
 
 /**
- * The base class for RSA Signatures
- *
- * @param signature the RAW RSA signature to be encoded.
+ * The base class for RSA Signature
  */
-abstract class XyoRsaSignature (signature: ByteArray) : XyoSignature() {
-    override val objectInBytes: ByteArray = signature
-    override val sizeIdentifierSize: Int? = 2
-    override val encodedSignature: ByteArray = signature
+abstract class XyoRsaSignature : XyoInterpreter {
+
+    abstract val signature : ByteArray
+
+    @ExperimentalUnsignedTypes
+    override val schema: XyoObjectSchema
+        get() = XyoSchemas.RSA_SIGNATURE
+
+    @ExperimentalUnsignedTypes
+    override val self: ByteArray
+        get() = XyoObjectCreator.createObject(schema, signature)
 
     /**
      * The base class for creating RSA Signatures.
      */
-    abstract class XyoRsaSignatureProvider : XyoObjectProvider () {
-        override val major: Byte = 0x05
+    companion object : XyoFromSelf {
 
-        override val sizeOfBytesToGetSize: Int? = 2
+        @ExperimentalUnsignedTypes
+        override fun getInstance(byteArray: ByteArray): XyoInterpreter {
+            return object : XyoRsaSignature() {
+                override val signature: ByteArray
+                    get() = XyoObjectCreator.getObjectValue(byteArray)
 
-        override fun readSize(byteArray: ByteArray): Int {
-            return ByteBuffer.wrap(byteArray).short.toInt()
-        }
-
-        override fun createFromPacked(byteArray: ByteArray): XyoObject {
-            val size = XyoUnsignedHelper.readUnsignedShort(byteArray)
-
-            return object : XyoRsaSignature(XyoByteArrayReader(byteArray).read(2, size - 2)) {
-                override val id: ByteArray
-                    get() = byteArrayOf(major, minor)
+                override val self: ByteArray
+                    get() = byteArray
             }
         }
     }

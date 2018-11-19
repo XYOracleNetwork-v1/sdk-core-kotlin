@@ -1,7 +1,12 @@
 package network.xyo.sdkcorekotlin.signing.algorithms.rsa
 
-import network.xyo.sdkcorekotlin.data.*
+import network.xyo.sdkcorekotlin.XyoFromSelf
+import network.xyo.sdkcorekotlin.XyoInterpreter
+import network.xyo.sdkcorekotlin.schemas.XyoSchemas
+import network.xyo.sdkobjectmodelkotlin.objects.XyoObjectCreator
+import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 import java.math.BigInteger
+import java.nio.ByteBuffer
 import java.security.interfaces.RSAPrivateKey
 
 /**
@@ -10,13 +15,7 @@ import java.security.interfaces.RSAPrivateKey
  * @major 0x0a
  * @minor 0x01
  */
-class XyoRsaPrivateKey (private val mod : BigInteger, private val privateExponent : BigInteger) : RSAPrivateKey, XyoObject() {
-
-    override val id: ByteArray = byteArrayOf(major, minor)
-
-    override val objectInBytes: ByteArray = encoded
-
-    override val sizeIdentifierSize: Int? = sizeOfBytesToGetSize
+open class XyoRsaPrivateKey (private val mod : BigInteger, private val privateExponent : BigInteger) : RSAPrivateKey, XyoInterpreter {
 
     override fun getAlgorithm(): String {
         return "RSA"
@@ -26,12 +25,12 @@ class XyoRsaPrivateKey (private val mod : BigInteger, private val privateExponen
         val encodedPrivateExponent = getPrivateExponent().toByteArray()
         val encodedModulus = modulus.toByteArray()
 
-        val setter = XyoByteArraySetter(3)
-        setter.add(XyoUnsignedHelper.createUnsignedByte(encodedPrivateExponent.size + 1), 0)
-        setter.add(encodedPrivateExponent, 1)
-        setter.add(encodedModulus, 2)
+        val buffer = ByteBuffer.allocate(1 + encodedPrivateExponent.size + encodedModulus.size)
+        buffer.put((encodedPrivateExponent.size + 1).toByte())
+        buffer.put(encodedPrivateExponent)
+        buffer.put(encodedModulus)
 
-        return setter.merge()
+        return buffer.array()
     }
 
     override fun getFormat(): String {
@@ -46,24 +45,24 @@ class XyoRsaPrivateKey (private val mod : BigInteger, private val privateExponen
         return privateExponent
     }
 
-    companion object : XyoObjectProvider() {
-        override val major: Byte = 0x0a
+    @ExperimentalUnsignedTypes
+    override val schema: XyoObjectSchema
+        get() = XyoSchemas.RSA_PRIVATE_KEY
 
-        override val minor: Byte = 0x01
+    @ExperimentalUnsignedTypes
+    override val self: ByteArray
+        get() = XyoObjectCreator.createObject(schema, encoded)
 
-        override val sizeOfBytesToGetSize: Int? = 2
+    companion object : XyoFromSelf {
 
-        override fun createFromPacked(byteArray: ByteArray): XyoObject {
-            val reader = XyoByteArrayReader(byteArray)
-            val sizeOfPrivateExponent = XyoUnsignedHelper.readUnsignedByte(byteArrayOf(byteArray[2])) - 1
-            val privateExponent = reader.read(3, sizeOfPrivateExponent)
-            val modulus = reader.read(3 + sizeOfPrivateExponent, byteArray.size - (3 + sizeOfPrivateExponent))
+        @ExperimentalUnsignedTypes
+        override fun getInstance(byteArray: ByteArray): XyoRsaPrivateKey {
+
+            val sizeOfPrivateExponent = byteArray[2].toInt() - 1
+            val privateExponent = XyoObjectCreator.getObjectValue(byteArray).copyOfRange(3, sizeOfPrivateExponent)
+            val modulus = XyoObjectCreator.getObjectValue(byteArray).copyOfRange((3 + sizeOfPrivateExponent), byteArray.size - (3 + sizeOfPrivateExponent))
 
             return XyoRsaPrivateKey(BigInteger(modulus), BigInteger(privateExponent))
-        }
-
-        override fun readSize(byteArray: ByteArray): Int {
-            return XyoUnsignedHelper.readUnsignedShort(byteArray)
         }
     }
 }

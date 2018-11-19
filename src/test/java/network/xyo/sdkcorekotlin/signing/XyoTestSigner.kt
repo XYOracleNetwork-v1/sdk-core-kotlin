@@ -2,7 +2,6 @@ package network.xyo.sdkcorekotlin.signing
 
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.heuristics.number.signed.XyoRssi
 
 class XyoTestSigner : XyoSigner() {

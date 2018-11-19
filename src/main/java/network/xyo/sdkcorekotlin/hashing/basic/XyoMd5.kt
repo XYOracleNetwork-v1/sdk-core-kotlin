@@ -1,20 +1,19 @@
 package network.xyo.sdkcorekotlin.hashing.basic
 
+import network.xyo.sdkcorekotlin.schemas.XyoSchemas
+import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
+
 /**
  * A Xyo Encoded Md5 hash
  *
  * @major 0x03
  * @minor 0x02
  */
-class XyoMd5 (pastHash : ByteArray): XyoBasicHashBase(pastHash) {
-    override val id: ByteArray = byteArrayOf(major, minor)
+object XyoMd5 : XyoBasicHashBase.XyoBasicHashBaseProvider() {
+    override val standardDigestKey: String
+        get() = "MD5"
 
-    companion object : XyoBasicHashBaseProvider() {
-        override val minor: Byte = 0x02
-        override val standardDigestKey: String = "MD5"
-
-        override fun readSize(byteArray: ByteArray): Int {
-            return 16
-        }
-    }
+    @ExperimentalUnsignedTypes
+    override val schema: XyoObjectSchema
+        get() = XyoSchemas.MD5
 }

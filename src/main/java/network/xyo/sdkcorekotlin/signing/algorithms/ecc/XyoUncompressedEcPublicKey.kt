@@ -1,10 +1,12 @@
 package network.xyo.sdkcorekotlin.signing.algorithms.ecc
 
-import network.xyo.sdkcorekotlin.data.XyoByteArrayReader
-import network.xyo.sdkcorekotlin.data.XyoByteArraySetter
-import network.xyo.sdkcorekotlin.data.XyoObject
-import network.xyo.sdkcorekotlin.data.XyoObjectProvider
+import network.xyo.sdkcorekotlin.XyoFromSelf
+import network.xyo.sdkcorekotlin.XyoInterpreter
 import network.xyo.sdkcorekotlin.exceptions.XyoCorruptDataException
+import network.xyo.sdkcorekotlin.schemas.XyoSchemas
+import network.xyo.sdkcorekotlin.signing.XyoPublicKey
+import network.xyo.sdkobjectmodelkotlin.objects.XyoObjectCreator
+import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 import java.math.BigInteger
 import java.nio.ByteBuffer
 import java.security.interfaces.ECPublicKey
@@ -14,7 +16,8 @@ import java.security.spec.ECPoint
 /**
  * A base class for all uncompressed EC public keys.
  */
-abstract class XyoUncompressedEcPublicKey : ECPublicKey, XyoObject() {
+@ExperimentalUnsignedTypes
+abstract class XyoUncompressedEcPublicKey : ECPublicKey, XyoPublicKey {
     /**
      * The Java ECParameterSpec to understand the public key (x and y).
      */
@@ -23,22 +26,30 @@ abstract class XyoUncompressedEcPublicKey : ECPublicKey, XyoObject() {
     /**
      * The X point of the public key.
      */
-    abstract val x : BigInteger
+    open val x : BigInteger
+        get() = BigInteger(1, XyoObjectCreator.getObjectValue(self).copyOfRange(0, 32))
 
     /**
      * The Y point of the public key.
      */
-    abstract val y : BigInteger
+    open val y : BigInteger
+        get() = BigInteger(1, XyoObjectCreator.getObjectValue(self).copyOfRange(32, 64))
 
     override fun getAlgorithm(): String {
         return "EC"
     }
 
+    override val schema: XyoObjectSchema
+        get() = XyoSchemas.EC_PUBLIC_KEY
+
+    override val self: ByteArray
+        get() = XyoObjectCreator.createObject(schema, encoded)
+
     override fun getEncoded(): ByteArray {
-        val uncompressedEcPublicKey = XyoByteArraySetter(2)
-        uncompressedEcPublicKey.add(get32ByteEcPoint(x), 0)
-        uncompressedEcPublicKey.add(get32ByteEcPoint(y), 1)
-        return uncompressedEcPublicKey.merge()
+        val buffer = ByteBuffer.allocate(64)
+        buffer.put(get32ByteEcPoint(x))
+        buffer.put(get32ByteEcPoint(y))
+        return buffer.array()
     }
 
     override fun getFormat(): String {
@@ -53,11 +64,6 @@ abstract class XyoUncompressedEcPublicKey : ECPublicKey, XyoObject() {
         return ECPoint(x, y)
     }
 
-    override val objectInBytes: ByteArray
-        get() = encoded
-
-    override val sizeIdentifierSize: Int?
-        get() = null
 
     private fun get32ByteEcPoint(point : BigInteger) : ByteArray {
         val encodedPoint = point.toByteArray()
@@ -81,32 +87,20 @@ abstract class XyoUncompressedEcPublicKey : ECPublicKey, XyoObject() {
     /**
      * A base class for creating uncompressed EC public keys.
      */
-    abstract class XyoUncompressedEcPublicKeyProvider : XyoObjectProvider () {
+    abstract class XyoUncompressedEcPublicKeyProvider : XyoFromSelf {
         /**
          * The Java ECParameterSpec to understand the public key (x and y).
          */
         abstract val ecPramSpec : ECParameterSpec
-        override val major: Byte = 0x04
-        override val sizeOfBytesToGetSize: Int? = 0
 
-        override fun readSize(byteArray: ByteArray): Int {
-            return 64
-        }
-
-        override fun createFromPacked(byteArray: ByteArray): XyoObject {
-            if (byteArray.size == 64) {
-                val xPoint = BigInteger(1, byteArray.copyOfRange(0, 32))
-                val yPoint = BigInteger(1, byteArray.copyOfRange(32, 64))
-
-                return object : XyoUncompressedEcPublicKey() {
-                    override val ecSpec: ECParameterSpec = ecPramSpec
-                    override val x: BigInteger = xPoint
-                    override val y: BigInteger = yPoint
-                    override val id: ByteArray = byteArrayOf(major, minor)
-                }
+        @ExperimentalUnsignedTypes
+        override fun getInstance(byteArray: ByteArray): XyoInterpreter {
+            return object : XyoUncompressedEcPublicKey() {
+                override val ecSpec: ECParameterSpec = ecPramSpec
+                override val self: ByteArray
+                    get() = byteArray
             }
 
-            throw XyoCorruptDataException("Invalid size of XyoUncompressedEcPublicKey!")
         }
     }
 }

@@ -1,7 +1,5 @@
 package network.xyo.sdkcorekotlin.node
 
-import network.xyo.sdkcorekotlin.data.XyoObject
-
 interface XyoHeuristicGetter {
 
     /**
@@ -10,5 +8,5 @@ interface XyoHeuristicGetter {
      *
      * @return the Heuristic
      */
-    fun getHeuristic() : XyoObject?
+    fun getHeuristic() : ByteArray?
 }

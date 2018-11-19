@@ -5,7 +5,6 @@ import network.xyo.sdkcorekotlin.XyoTestBase
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.XyoEcPrivateKey
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.XyoSha256WithSecp256K
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.keys.XyoSecp256K1UnCompressedPublicKey
-import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.signatures.XyoSecp256k1Sha256WithEcdsaSignature
 import org.junit.Assert
 import org.junit.Test
 

@@ -3,25 +3,28 @@ package network.xyo.sdkcorekotlin.signing.algorithms.rsa
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import network.xyo.sdkcorekotlin.data.XyoObject
+import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.signing.XyoSigner
 import network.xyo.sdkcorekotlin.signing.XyoSigningObjectCreatorVerify
-import network.xyo.sdkcorekotlin.signing.algorithms.rsa.signatures.XyoRsaWithSha256Signature
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import java.security.Signature
 
 /**
  *
  */
-class XyoRsaWithSha256 (privateKey: XyoObject?) : XyoGeneralRsa (1024, privateKey) {
+class XyoRsaWithSha256 (privateKey: XyoRsaPrivateKey?) : XyoGeneralRsa (1024, privateKey) {
     override val signature: Signature
         get() = signatureInstance
 
-    override fun signData(byteArray: ByteArray): Deferred<XyoObject> {
+    @ExperimentalUnsignedTypes
+    override fun signData(byteArray: ByteArray): Deferred<ByteArray> {
         return GlobalScope.async {
             signature.initSign(keyPair.private)
             signature.update(byteArray)
-            return@async XyoRsaWithSha256Signature(signature.sign())
+            return@async object : XyoRsaSignature() {
+                override val signature: ByteArray
+                    get() = this@XyoRsaWithSha256.signature.sign()
+            }.self
         }
     }
 
@@ -33,11 +36,15 @@ class XyoRsaWithSha256 (privateKey: XyoObject?) : XyoGeneralRsa (1024, privateKe
             return XyoRsaWithSha256(null)
         }
 
-        override fun newInstance(privateKey: XyoObject): XyoSigner {
-            return XyoRsaWithSha256(privateKey)
+        @ExperimentalUnsignedTypes
+        override fun newInstance(privateKey: ByteArray): XyoSigner {
+            return XyoRsaWithSha256(XyoRsaPrivateKey.getInstance(privateKey))
         }
 
-        override val supportedKeys: Array<ByteArray> = arrayOf(XyoRsaPublicKey.id)
-        override val supportedSignatures: Array<ByteArray> = arrayOf(XyoRsaWithSha256Signature.id)
+        @ExperimentalUnsignedTypes
+        override val supportedKeys: Array<ByteArray> = arrayOf(XyoSchemas.RSA_PUBLIC_KEY.header.toByteArray())
+
+        @ExperimentalUnsignedTypes
+        override val supportedSignatures: Array<ByteArray> = arrayOf(XyoSchemas.RSA_SIGNATURE.header.toByteArray())
     }
 }

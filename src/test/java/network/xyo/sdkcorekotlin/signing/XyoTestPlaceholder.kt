@@ -1,8 +1,5 @@
 package network.xyo.sdkcorekotlin.signing
 
-import network.xyo.sdkcorekotlin.data.XyoObject
-import network.xyo.sdkcorekotlin.data.XyoObjectProvider
-
 class XyoTestPlaceholder : XyoObject() {
     override val objectInBytes: ByteArray
         get() = byteArrayOf(0x00)

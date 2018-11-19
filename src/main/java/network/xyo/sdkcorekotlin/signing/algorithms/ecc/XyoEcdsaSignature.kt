@@ -1,52 +1,57 @@
 package network.xyo.sdkcorekotlin.signing.algorithms.ecc
 
-import network.xyo.sdkcorekotlin.data.*
-import network.xyo.sdkcorekotlin.signing.XyoSignature
+import network.xyo.sdkcorekotlin.XyoFromSelf
+import network.xyo.sdkcorekotlin.XyoInterpreter
+import network.xyo.sdkcorekotlin.schemas.XyoSchemas
+import network.xyo.sdkobjectmodelkotlin.objects.XyoObjectCreator
+import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 import java.math.BigInteger
+import java.nio.ByteBuffer
 
 /**
  * A base class for all EC signature operations.
  *
  * @param rawSignature the encoded EC signature.
  */
-abstract class XyoEcdsaSignature(private val r : BigInteger, private val s : BigInteger) : XyoSignature() {
-    override val objectInBytes: ByteArray
-        get() = encodedSignature
+open class XyoEcdsaSignature(val r : BigInteger, val s : BigInteger) : XyoInterpreter {
 
-    override val sizeIdentifierSize: Int? = 1
-
-    override val encodedSignature: ByteArray
-        get() = encode()
+    @ExperimentalUnsignedTypes
+    override val self: ByteArray
+        get() = XyoObjectCreator.createObject(schema, encode())
 
     private fun encode () : ByteArray {
         val encodedR = r.toByteArray()
         val encodedS = s.toByteArray()
-        val merger = XyoByteArraySetter(4)
-        merger.add(XyoUnsignedHelper.createUnsignedByte(encodedR.size), 0)
-        merger.add(encodedR, 1)
-        merger.add(XyoUnsignedHelper.createUnsignedByte(encodedS.size), 2)
-        merger.add(encodedS, 3)
-        return merger.merge()
+        val buffer = ByteBuffer.allocate(2 + encodedR.size + encodedS.size)
+        buffer.put(encodedR.size.toByte())
+        buffer.put(encodedR)
+        buffer.put(encodedS.size.toByte())
+        buffer.put(encodedS)
+        return buffer.array()
     }
 
-    abstract class XyoEcdsaSignatureProvider : XyoObjectProvider() {
+    @ExperimentalUnsignedTypes
+    override val schema: XyoObjectSchema = XyoSchemas.EC_SIGNATURE
+
+    companion object : XyoFromSelf {
         class XyoRAndS(val r : BigInteger, val s : BigInteger)
 
-        override val major: Byte = 0x05
-        override val sizeOfBytesToGetSize: Int = 1
-
-        override fun readSize(byteArray: ByteArray): Int {
-            return XyoUnsignedHelper.readUnsignedByte(byteArray)
-        }
-
         protected fun getRAndS(byteArray: ByteArray) : XyoRAndS {
-            val totalSize = XyoUnsignedHelper.readUnsignedByte(byteArray)
-            val sizeOfR = XyoUnsignedHelper.readUnsignedByte(byteArrayOf(byteArray[1]))
-            val sizeOfS = XyoUnsignedHelper.readUnsignedByte(byteArrayOf(byteArray[1 + sizeOfR + 1]))
+            val sizeOfR = byteArray[1].toInt()
+            val sizeOfS = (byteArray[1 + sizeOfR + 1]).toInt()
             val r = BigInteger(byteArray.copyOfRange(2, sizeOfR + 2))
             val s = BigInteger(byteArray.copyOfRange(sizeOfR + 3, sizeOfS + sizeOfR + 3))
 
             return XyoRAndS(r, s)
+        }
+
+        @ExperimentalUnsignedTypes
+        override fun getInstance(byteArray: ByteArray): XyoInterpreter {
+            val rAndS = getRAndS(XyoObjectCreator.getObjectValue(byteArray))
+            return object : XyoEcdsaSignature(rAndS.r, rAndS.s) {
+                override val self: ByteArray
+                    get() = byteArray
+            }
         }
     }
 }

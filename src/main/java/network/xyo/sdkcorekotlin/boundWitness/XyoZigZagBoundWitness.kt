@@ -3,11 +3,10 @@ package network.xyo.sdkcorekotlin.boundWitness
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import network.xyo.sdkcorekotlin.data.XyoObject
-import network.xyo.sdkcorekotlin.data.XyoPayload
-import network.xyo.sdkcorekotlin.data.array.multi.XyoKeySet
-import network.xyo.sdkcorekotlin.signing.XyoSignatureSet
+import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.signing.XyoSigner
+import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectIterator
+import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectSetCreator
 import java.util.*
 
 /**
@@ -16,21 +15,23 @@ import java.util.*
  * @param signers the signers to sign the bound witness with.
  * @param payload the payload to pur in the bound witness.
  */
+
+@ExperimentalUnsignedTypes
 open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
-                                 private val payload : XyoPayload) : XyoBoundWitness() {
+                                 private val payload : ByteArray) : XyoBoundWitness() {
 
-    private val dynamicPayloads = ArrayList<XyoPayload>()
-    private val dynamicPublicKeys = ArrayList<XyoKeySet>()
-    private val dynamicSignatureSets = ArrayList<XyoSignatureSet>()
+    private val dynamicPayloads = ArrayList<ByteArray>()
+    private val dynamicPublicKeys = ArrayList<ByteArray>()
+    private val dynamicSignatureSets = ArrayList<ByteArray>()
 
-    override val payloads: Array<XyoPayload>
-        get() = dynamicPayloads.toTypedArray()
+    override val payloads: ByteArray
+        get() = XyoObjectSetCreator.createTypedIterableObject(XyoSchemas.ARRAY, dynamicPayloads.toTypedArray())
 
-    override val publicKeys: Array<XyoKeySet>
-        get() = dynamicPublicKeys.toTypedArray()
+    override val publicKeys: ByteArray
+        get() = XyoObjectSetCreator.createTypedIterableObject(XyoSchemas.ARRAY, dynamicPublicKeys.toTypedArray())
 
-    override val signatures: Array<XyoSignatureSet>
-        get() = dynamicSignatureSets.toTypedArray()
+    override val signatures: ByteArray
+        get() = XyoObjectSetCreator.createTypedIterableObject(XyoSchemas.ARRAY, dynamicSignatureSets.toTypedArray())
 
     private var hasSentKeysAndPayload = false
 
@@ -41,9 +42,7 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
      * @param endPoint If not already turned around, decide if what to send sign and send back.
      * @return A XyoBoundWitnessTransfer to send to the other party.
      */
-    fun incomingData (transfer : XyoBoundWitnessTransfer?, endPoint : Boolean) = GlobalScope.async {
-        updateObjectCache()
-
+    fun incomingData (transfer : ByteArray?, endPoint : Boolean) : Deferred<ByteArray> = GlobalScope.async {
         if (transfer != null) {
             addTransfer(transfer).await()
         }
@@ -55,112 +54,123 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
         }
 
         if (signatures.size != publicKeys.size) {
-            val signatureReceivedSize = transfer?.signatureToSend?.size ?: 0
-            return@async getReturnFromIncoming(signatureReceivedSize, endPoint).await()
+            return@async getReturnFromIncoming(getNumberOfSignaturesFromTransfer(transfer), endPoint).await()
 
         }
 
-        return@async XyoBoundWitnessTransfer(arrayOf(), arrayOf(), arrayOf())
+        return@async XyoObjectSetCreator.createTypedIterableObject(XyoSchemas.ARRAY, arrayOf())
     }
 
-    private fun getReturnFromIncoming (signatureReceivedSize : Int, endPoint: Boolean) : Deferred<XyoBoundWitnessTransfer> = GlobalScope.async {
+    private fun getNumberOfSignaturesFromTransfer (transfer: ByteArray?) : Int {
+        if (transfer == null) {
+            return 0
+        }
+
+        return XyoObjectIterator((XyoObjectIterator(transfer).getAtIndex(2))).size
+    }
+
+    private fun getReturnFromIncoming (signatureReceivedSize : Int, endPoint: Boolean) : Deferred<ByteArray> = GlobalScope.async {
 
         if (signatures.isEmpty() && !endPoint) {
-            return@async passOnNoSign()
+            return@async self
         }
 
         return@async passAndSign(signatureReceivedSize).await()
     }
 
-    private fun passOnNoSign () : XyoBoundWitnessTransfer {
-        val keysToSend = ArrayList<XyoObject>()
-        val payloadsToSend = ArrayList<XyoObject>()
-        val signatureToSend = ArrayList<XyoObject>()
-
-        for (key in publicKeys) {
-            keysToSend.add(key)
-        }
-
-        for (payload in payloads) {
-            payloadsToSend.add(payload)
-        }
-
-        return XyoBoundWitnessTransfer(keysToSend.toTypedArray(), payloadsToSend.toTypedArray(), signatureToSend.toTypedArray())
-    }
-
-    private fun passAndSign (signatureReceivedSize: Int) : Deferred<XyoBoundWitnessTransfer> = GlobalScope.async {
-        val keysToSend = ArrayList<XyoObject>()
-        val payloadsToSend = ArrayList<XyoObject>()
-        val signatureToSend = ArrayList<XyoObject>()
+    private fun passAndSign (signatureReceivedSize: Int) : Deferred<ByteArray> = GlobalScope.async {
+        val keysToSend = ArrayList<ByteArray>()
+        val payloadsToSend = ArrayList<ByteArray>()
+        val signatureToSend = ArrayList<ByteArray>()
 
         signForSelf().await()
 
-        for (i in signatureReceivedSize + 1 until publicKeys.size ) {
-            keysToSend.add(publicKeys[i])
+        val publicKeyIt = XyoObjectIterator(publicKeys)
+        for (i in signatureReceivedSize + 1 until publicKeyIt.size ) {
+            keysToSend.add(publicKeyIt.getAtIndex(i))
         }
 
-        for (i in signatureReceivedSize + 1 until payloads.size) {
-            payloadsToSend.add(payloads[i])
+        val payloadIt = XyoObjectIterator(payloads)
+        for (i in signatureReceivedSize + 1 until payloadIt.size) {
+            payloadsToSend.add(payloadIt.getAtIndex(i))
         }
 
+        val signatureIt =  XyoObjectIterator(signatures)
+        signatureToSend.add(signatureIt.next())
 
-        signatureToSend.add(signatures.first())
 
-
-        return@async XyoBoundWitnessTransfer(keysToSend.toTypedArray(), payloadsToSend.toTypedArray(), signatureToSend.toTypedArray())
+        return@async XyoObjectSetCreator.createUntypedIterableObject(
+                schema,
+                arrayOf(createKeySet(keysToSend.toTypedArray()), createPayloads(payloadsToSend.toTypedArray()), createSignatures(signatureToSend.toTypedArray()))
+        )
     }
 
-    private fun addTransfer (transfer : XyoBoundWitnessTransfer) = GlobalScope.async {
-        addIncomingKeys(transfer.keysToSend)
-        addIncomingPayload(transfer.payloadsToSend)
-        addIncomingSignatures(transfer.signatureToSend)
+    private fun createKeySet (keys : Array<ByteArray>) : ByteArray {
+        return XyoObjectSetCreator.createUntypedIterableObject(
+                XyoSchemas.KEY_SET,
+                keys
+        )
     }
 
-    private fun addIncomingKeys(incomingKeySets : Array<XyoObject>) {
-        for (i in 0 until incomingKeySets.size) {
-            val incomingKeySet = incomingKeySets[i] as? XyoKeySet
-            if (incomingKeySet != null) {
-                dynamicPublicKeys.add(incomingKeySet)
-            }
+    private fun createPayloads (payloads : Array<ByteArray>) : ByteArray {
+        return XyoObjectSetCreator.createUntypedIterableObject(
+                XyoSchemas.ARRAY,
+                payloads
+        )
+    }
+
+    private fun createSignatures (signatures : Array<ByteArray>) : ByteArray {
+        return XyoObjectSetCreator.createUntypedIterableObject(
+                XyoSchemas.SIGNATURE_SET,
+                signatures
+        )
+    }
+
+    private fun addTransfer (transfer : ByteArray) : Deferred<Unit> = GlobalScope.async {
+        val it = XyoObjectIterator(transfer)
+        addIncomingKeys(XyoObjectIterator(it.getAtIndex(0)))
+        addIncomingPayload(XyoObjectIterator(it.getAtIndex(1)))
+        addIncomingSignatures(XyoObjectIterator(it.getAtIndex(2)))
+    }
+
+    private fun addIncomingKeys(incomingKeySets : Iterator<ByteArray>) {
+        for (item in incomingKeySets) {
+            dynamicPublicKeys.add(item)
         }
     }
 
-    private fun addIncomingPayload(incomingPayloads : Array<XyoObject>) {
-        for (i in 0 until incomingPayloads.size) {
-            val incomingPayload = incomingPayloads[i] as? XyoPayload
-            if (incomingPayload != null) {
-                dynamicPayloads.add(incomingPayload)
-            }
+    private fun addIncomingPayload(incomingPayloads : Iterator<ByteArray>) {
+        for (item in incomingPayloads) {
+            dynamicPayloads.add(item)
         }
     }
 
-    private fun addIncomingSignatures(incomingSignatures : Array<XyoObject>) {
-        for (i in 0 until incomingSignatures.size) {
-            val incomingSignatureSet = incomingSignatures[i] as? XyoSignatureSet
-            if (incomingSignatureSet != null) {
-                if (dynamicSignatureSets.size != 0) {
-                    dynamicSignatureSets.add(0, incomingSignatureSet)
-                    return
-                }
-                dynamicSignatureSets.add(incomingSignatureSet)
-            }
-        }
+    private fun addIncomingSignatures(incomingSignatures : Iterator<ByteArray>) {
+       for (item in incomingSignatures) {
+           if (dynamicSignatureSets.size != 0) {
+               dynamicSignatureSets.add(0, item)
+               return
+           }
+           dynamicSignatureSets.add(item)
+       }
     }
 
-    private fun makeSelfKeySet() : XyoKeySet {
-        val publicKeys = ArrayList<XyoObject>()
+    private fun makeSelfKeySet() : ByteArray {
+        val publicKeys = ArrayList<ByteArray>()
         for (signer in signers) {
-            publicKeys.add(signer.publicKey)
+            publicKeys.add(signer.publicKey.self)
         }
-        return XyoKeySet(publicKeys.toTypedArray())
+        return XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.KEY_SET, publicKeys.toTypedArray())
     }
 
     private fun signBoundWitness () = GlobalScope.async {
-        return@async XyoSignatureSet(Array(signers.size) { i -> signCurrent(signers[i]).await() })
+        return@async Array(signers.size) { i ->
+            signCurrent(signers[i]).await()
+        }
     }
 
     private fun signForSelf () = GlobalScope.async {
         val signatureSet = signBoundWitness().await()
-        addIncomingSignatures(arrayOf(signatureSet))
+        addIncomingSignatures(signatureSet.iterator())
     }
 }

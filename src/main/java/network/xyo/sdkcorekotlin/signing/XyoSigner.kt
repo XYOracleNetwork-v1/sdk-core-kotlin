@@ -3,7 +3,9 @@ package network.xyo.sdkcorekotlin.signing
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import network.xyo.sdkcorekotlin.data.XyoObject
+import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
+import java.security.PrivateKey
+import java.security.PublicKey
 
 /**
  * Performs public key cryptographic operations. A XyoSigner is obtained from a
@@ -15,12 +17,12 @@ abstract class XyoSigner {
     /**
      * The public key of the XyoSigner.
      */
-    abstract val publicKey : XyoObject
+    abstract val publicKey : XyoPublicKey
 
     /**
      * The private key of the XyoSigner, this can be used to restore signer state.
      */
-    abstract val privateKey : XyoObject
+    abstract val privateKey : PrivateKey
 
     /**
      * Cryptographically signs a given ByteArray so that it can verified with verify().
@@ -30,7 +32,7 @@ abstract class XyoSigner {
      * @return A deferred cryptographic signature of the data field, that was
      * created with the private key, in form of a XyoObject
      */
-    abstract fun signData (byteArray: ByteArray) : Deferred<XyoObject>
+    abstract fun signData (byteArray: ByteArray) : Deferred<ByteArray>
 
     /**
      * Gives access to a XyoSigner that can preform public key cryptographic functions.
@@ -45,7 +47,7 @@ abstract class XyoSigner {
          * Provides a new instance of a XyoSigner for the given algorithm and generates a keypair with the given
          * private key.
          */
-        abstract fun newInstance (privateKey : XyoObject) : XyoSigner
+        abstract fun newInstance (privateKey : ByteArray) : XyoSigner
 
         /**
          * Cryptographically verify a signature given data, a signature, and a public
@@ -60,9 +62,9 @@ abstract class XyoSigner {
          * @return If the signature is valid, the deferred Boolean will be true, if it
          * is invalid the deferred <Boolean will be false.
          */
-        abstract fun verifySign (signature: XyoObject,
+        abstract fun verifySign (signature: ByteArray,
                                  byteArray: ByteArray,
-                                 publicKey : XyoObject) : Deferred<Boolean>
+                                 publicKey : PublicKey) : Deferred<Boolean>
 
         /**
          * The key to identify the signer provider by so it can be added to a mapping.
@@ -131,8 +133,11 @@ abstract class XyoSigner {
             return signingCreators[byte]
         }
 
-        fun verify (publicKey: XyoObject, signature: XyoObject, data : ByteArray) : Deferred<Boolean?> = GlobalScope.async {
-            val creator = verifiers[publicKey.id.contentHashCode()]?.get(signature.id.contentHashCode())
+        @ExperimentalUnsignedTypes
+        fun verify (publicKey: XyoPublicKey, signature: ByteArray, data : ByteArray) : Deferred<Boolean?> = GlobalScope.async {
+            val headerPublicKey = publicKey.schema.header
+            val headerSignature = XyoObjectSchema.createFromHeader(signature.copyOfRange(0, 2)).header
+            val creator = verifiers[headerPublicKey.contentHashCode()]?.get(headerSignature.contentHashCode())
 
             if (creator != null) {
                 return@async creator.verifySign(signature, data, publicKey).await()

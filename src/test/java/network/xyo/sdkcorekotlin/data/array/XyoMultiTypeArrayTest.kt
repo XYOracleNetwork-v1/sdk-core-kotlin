@@ -2,16 +2,11 @@ package network.xyo.sdkcorekotlin.data.array
 
 import kotlinx.coroutines.runBlocking
 import network.xyo.sdkcorekotlin.XyoTestBase
-import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.data.array.multi.XyoMultiTypeArrayByte
 import network.xyo.sdkcorekotlin.data.array.multi.XyoMultiTypeArrayInt
 import network.xyo.sdkcorekotlin.data.array.multi.XyoMultiTypeArrayShort
-import network.xyo.sdkcorekotlin.data.array.single.XyoSingleTypeArrayByte
-import network.xyo.sdkcorekotlin.data.array.single.XyoSingleTypeArrayInt
-import network.xyo.sdkcorekotlin.data.array.single.XyoSingleTypeArrayShort
 import network.xyo.sdkcorekotlin.data.heuristics.number.signed.XyoRssi
 import network.xyo.sdkcorekotlin.hashing.basic.XyoMd2
-import network.xyo.sdkcorekotlin.hashing.basic.XyoSha256
 import org.junit.Assert.assertArrayEquals
 import org.junit.Test
 

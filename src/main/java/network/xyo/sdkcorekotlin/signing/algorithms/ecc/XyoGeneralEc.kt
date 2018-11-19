@@ -1,6 +1,5 @@
 package network.xyo.sdkcorekotlin.signing.algorithms.ecc
 
-import network.xyo.sdkcorekotlin.data.XyoObject
 import network.xyo.sdkcorekotlin.signing.XyoSigner
 import org.bouncycastle.crypto.params.ECDomainParameters
 import org.bouncycastle.jce.provider.BouncyCastleProvider
@@ -14,7 +13,7 @@ import java.security.spec.ECPublicKeySpec
 /**
  * A base class for all EC crypto operations.
  */
-abstract class XyoGeneralEc (privateKey: XyoObject?) : XyoSigner() {
+abstract class XyoGeneralEc (privateKey: ECPrivateKey?) : XyoSigner() {
     /**
      * The generated public key.
      */
@@ -49,7 +48,7 @@ abstract class XyoGeneralEc (privateKey: XyoObject?) : XyoSigner() {
         return ECPublicKeySpec(point,  privateKey.params)
     }
 
-    private fun generateKeyPair(encodedPrivateKey: XyoObject?): KeyPair {
+    private fun generateKeyPair(encodedPrivateKey: ECPrivateKey?): KeyPair {
         if (encodedPrivateKey != null) {
             return generateKeyFromPrivate(encodedPrivateKey as XyoEcPrivateKey)
         }

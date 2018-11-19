@@ -4,6 +4,7 @@ import network.xyo.sdkcorekotlin.XyoTestBase
 import network.xyo.sdkcorekotlin.data.heuristics.number.XyoGps
 import org.junit.Assert
 import org.junit.Test
+import java.math.BigInteger
 
 class XyoGpsTest : XyoTestBase() {
     private val lat = 17.232
