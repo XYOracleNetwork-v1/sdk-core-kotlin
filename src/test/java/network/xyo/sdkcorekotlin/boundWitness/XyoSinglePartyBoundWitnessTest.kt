@@ -27,6 +27,7 @@ class XyoSinglePartyBoundWitnessTest : XyoTestBase() {
             assertEquals(1, XyoObjectIterator(aliceBoundWitness.payloads).size)
             assertEquals(1, XyoObjectIterator(aliceBoundWitness.publicKeys).size)
             assertEquals(1, XyoObjectIterator(aliceBoundWitness.signatures).size)
+            Assert.assertTrue(aliceBoundWitness.completed)
         }
     }
 }

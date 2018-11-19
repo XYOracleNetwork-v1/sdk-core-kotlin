@@ -33,6 +33,8 @@ class XyoTwoPartyBoundWitnessTest : XyoTestBase() {
             boundWitnessBob.incomingData(aliceToBobTwo, false).await()
 
             Assert.assertArrayEquals(boundWitnessAlice.self, boundWitnessBob.self)
+            Assert.assertTrue(boundWitnessAlice.completed)
+            Assert.assertTrue(boundWitnessBob.completed)
         }
     }
 }

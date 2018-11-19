@@ -65,7 +65,7 @@ open class XyoOriginChainStateManager (private val indexOffset : Int) : XyoOrigi
 
     @ExperimentalUnsignedTypes
     override fun addSigner (signer : XyoSigner) {
-        if (ByteBuffer.wrap(index).int == 0) {
+        if (ByteBuffer.wrap(XyoObjectCreator.getObjectValue(index)).int == 0) {
             currentSigners.add(signer)
             return
         }

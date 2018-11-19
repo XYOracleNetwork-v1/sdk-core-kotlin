@@ -11,6 +11,7 @@ import network.xyo.sdkcorekotlin.signing.XyoSigner
 import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectIterator
 import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectSetCreator
 import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
+import java.nio.ByteBuffer
 
 /**
  * A Xyo Bound Witness Object
@@ -37,7 +38,8 @@ abstract class XyoBoundWitness : XyoInterpreter {
      */
     val completed: Boolean
         get() {
-            if (publicKeys.size == signatures.size && publicKeys.isNotEmpty()) {
+            if ((XyoObjectIterator(publicKeys).size == XyoObjectIterator(signatures).size)
+                    && (XyoObjectIterator(signatures).size == XyoObjectIterator(payloads).size)) {
                 return true
             }
             return false
@@ -76,8 +78,26 @@ abstract class XyoBoundWitness : XyoInterpreter {
     }
 
     fun getSigningData(): ByteArray {
-        // todo
-        return byteArrayOf(0x00)
+        val signedPayloadsToSign = ArrayList<ByteArray>()
+        var signingDataSize = 0
+
+        for (payload in XyoObjectIterator(payloads)) {
+            val signedPayload = XyoObjectIterator(payload).getAtIndex(0)
+            signingDataSize += signedPayload.size
+            signedPayloadsToSign.add(signedPayload)
+        }
+
+        signingDataSize += publicKeys.size
+
+        val buffer = ByteBuffer.allocate(signingDataSize)
+
+        buffer.put(publicKeys)
+
+        for (signedPayload in signedPayloadsToSign) {
+            buffer.put(signedPayload)
+        }
+
+        return buffer.array()
     }
 
     companion object : XyoFromSelf {
