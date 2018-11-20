@@ -84,7 +84,7 @@ abstract class XyoBoundWitness : XyoInterpreter {
         var signingDataSize = 0
 
         for (payload in XyoObjectIterator(payloads)) {
-            val signedPayload = XyoObjectIterator(payload).getAtIndex(0)
+            val signedPayload = XyoObjectIterator(payload)[0]
             signingDataSize += signedPayload.size
             signedPayloadsToSign.add(signedPayload)
         }
@@ -112,17 +112,17 @@ abstract class XyoBoundWitness : XyoInterpreter {
 
                 override val publicKeys: ByteArray
                     get() {
-                        return XyoObjectIterator(byteArray).getAtIndex(0)
+                        return XyoObjectIterator(byteArray)[0]
                     }
 
                 override val payloads: ByteArray
                     get() {
-                        return XyoObjectIterator(byteArray).getAtIndex(1)
+                        return XyoObjectIterator(byteArray)[1]
                     }
 
                 override val signatures: ByteArray
                     get() {
-                        return XyoObjectIterator(byteArray).getAtIndex(2)
+                        return XyoObjectIterator(byteArray)[2]
                     }
             }
         }
