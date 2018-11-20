@@ -1,4 +1,4 @@
-package network.xyo.sdkcorekotlin.boundWitness
+package network.xyo.sdkcorekotlin.exceptions
 
 import network.xyo.sdkcorekotlin.exceptions.XyoException
 

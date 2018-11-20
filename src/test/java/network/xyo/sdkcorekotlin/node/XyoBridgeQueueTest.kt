@@ -6,17 +6,10 @@ import org.junit.Test
 
 class XyoBridgeQueueTest : XyoTestBase() {
 
-    /**
-     * If remove weight is larger than send size, the queue will never empty.
-     */
     @Test
     fun testQueueWhenRemoveWeightIsSmallerThanSendSize () {
         val queue = XyoBridgeQueue()
         val numberOfBlocks = 1000
-        val blocksToOffload = Array(numberOfBlocks) { i ->
-            i.toByte()
-        }
-
         queue.removeWeight = 3
         queue.sendLimit = 10
 
@@ -29,7 +22,6 @@ class XyoBridgeQueueTest : XyoTestBase() {
 
         while (queue.getAllBlocks().isNotEmpty()) {
 
-            // todo Add asserts for every value
             val blocksToBridge = queue.getBlocksToBridge()
             payloadsSent++
             numberOfBlocksOffloaded += blocksToBridge.blocks.size

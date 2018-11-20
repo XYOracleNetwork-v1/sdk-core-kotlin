@@ -35,21 +35,6 @@ abstract class XyoBoundWitness : XyoInterpreter {
      */
     abstract val signatures: ByteArray
 
-    val encodedRssi = XyoObjectCreator.createObject(object : XyoObjectSchema() {
-        override val id: Byte
-            get() = 0x02
-        override val isIterable: Boolean
-            get() = false
-        override val isTyped: Boolean
-            get() = false
-        override val meta: XyoObjectSchemaMeta?
-            get() = null
-        override val sizeIdentifier: Int
-            get() = 1
-    }, byteArrayOf(-42))
-
-    val decodedRssi = XyoObjectCreator.getObjectValue(encodedRssi)[0].toInt()
-
     /**
      * If the bound witness is completed or not.
      */
@@ -127,17 +112,17 @@ abstract class XyoBoundWitness : XyoInterpreter {
 
                 override val publicKeys: ByteArray
                     get() {
-                        return XyoObjectIterator(self).getAtIndex(0)
+                        return XyoObjectIterator(byteArray).getAtIndex(0)
                     }
 
                 override val payloads: ByteArray
                     get() {
-                        return XyoObjectIterator(self).getAtIndex(1)
+                        return XyoObjectIterator(byteArray).getAtIndex(1)
                     }
 
                 override val signatures: ByteArray
                     get() {
-                        return XyoObjectIterator(self).getAtIndex(2)
+                        return XyoObjectIterator(byteArray).getAtIndex(2)
                     }
             }
         }

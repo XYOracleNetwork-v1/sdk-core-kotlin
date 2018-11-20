@@ -30,6 +30,7 @@ class XyoOriginChainStateTest : XyoTestBase() {
     @Test
     fun testOriginChainTest () {
         val startingSigner = XyoSha256WithSecp256K.newInstance()
+        
         runBlocking {
             val originBlocks = ArrayList<XyoBoundWitness>()
             originChainState.addSigner(startingSigner)
