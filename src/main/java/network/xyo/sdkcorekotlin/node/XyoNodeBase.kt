@@ -113,44 +113,27 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
         boundWitnessOptions[boundWitnessOption.flag] = boundWitnessOption
     }
 
-    /**
-     * Gets all of the unsigned payloads for a given set of bound witness options.
-     *
-     * @param options The options to get the unsigned payload from.
-     * @return All of the options that comply to that filter.
-     */
-    private fun getUnSignedPayloads (options: Array<XyoBoundWitnessOption>) = GlobalScope.async {
+
+    private class XyoOptionPayload (val unsignedOptions : Array<ByteArray>, val signedOptions : Array<ByteArray> )
+
+    private fun getBoundWitnessOptionPayloads (options: Array<XyoBoundWitnessOption>) : Deferred<XyoOptionPayload> = GlobalScope.async {
+        val signedPayloads =  ArrayList<ByteArray>()
         val unsignedPayloads = ArrayList<ByteArray>()
 
         for (option in options) {
             val unsignedPayload = option.getUnsignedPayload()
+            val signedPayload = option.getSignedPayload()
 
             if (unsignedPayload != null) {
                 unsignedPayloads.add(unsignedPayload)
             }
-        }
-
-        return@async unsignedPayloads
-    }
-
-    /**
-     * Gets all of the signed payloads for a given set of bound witness options.
-     *
-     * @param options The options to get the signed payload from.
-     * @return All of the options that comply to that filter.
-     */
-    private fun getSignedPayloads (options: Array<XyoBoundWitnessOption>) = GlobalScope.async {
-        val signedPayloads = ArrayList<ByteArray>()
-
-        for (option in options) {
-            val signedPayload = option.getSignedPayload()
 
             if (signedPayload != null) {
                 signedPayloads.add(signedPayload)
             }
         }
 
-        return@async signedPayloads
+        return@async XyoOptionPayload(signedPayloads.toTypedArray(), unsignedPayloads.toTypedArray())
     }
 
     private fun getBoundWitnessOptions (bitFlag: Int) = GlobalScope.async {
@@ -282,6 +265,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
 
     private fun makePayload (options: Array<XyoBoundWitnessOption>) = GlobalScope.async {
         val unsignedPayloads = ArrayList<ByteArray>(getHeuristics().asList())
+        val payloads = getBoundWitnessOptionPayloads(options).await()
         val signedPayloads = ArrayList<ByteArray>()
         val previousHash = originState.previousHash
         val index = originState.index
@@ -297,8 +281,8 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
 
         signedPayloads.add(index)
 
-        signedPayloads.addAll(getSignedPayloads(options).await())
-        unsignedPayloads.addAll(getUnSignedPayloads(options).await())
+        signedPayloads.addAll(payloads.signedOptions)
+        unsignedPayloads.addAll(payloads.unsignedOptions)
 
         return@async XyoObjectSetCreator.createTypedIterableObject(PAYLOAD, arrayOf(
                 XyoObjectSetCreator.createUntypedIterableObject(ARRAY_UNTYPED, signedPayloads.toTypedArray()),
