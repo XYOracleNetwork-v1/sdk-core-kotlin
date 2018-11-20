@@ -50,27 +50,17 @@ jobs:
       - run:
           name: Generate code coverage
           command: |
-                    mkdir -p ~/junit/
-                    find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} ~/junit/ \;
+            mkdir -p ~/junit/
+            find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} ~/junit/ \;
+            gradle jacocoTestReport
+            JACOCO_SOURCE_PATH=src/main/java ./cc-test-reporter \
+            format-coverage ./build/reports/jacoco/test/jacocoTestReport.xml     \
+            --input-type jacoco
+            ./cc-test-reporter upload-coverage
       - store_artifacts:
           path: ~/junit
       - store_test_results:
           path: ~/junit
-      - run:
-          name: Setup Code Climate test-reporter
-          command: |
-            # download test reporter as a static binary
-              curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-              chmod +x ./cc-test-reporter
-          - run:
-              name: Run tests
-              command: |
-                sudo docker-php-ext-enable xdebug
-                # notify Code Climate of a pending test report using `before-build`
-                ./cc-test-reporter before-build
-                sudo vendor/bin/phpunit --coverage-clover clover.xml
-                # upload test report to Code Climate using `after-build`
-                ./cc-test-reporter after-build --coverage-input-type clover --exit-code $?
 
 workflows:
   version: 2

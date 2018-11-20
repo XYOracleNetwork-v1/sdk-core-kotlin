@@ -2,6 +2,7 @@ apply plugin: 'kotlin'
 
 group 'com.github.XYOracleNetwork'
 version '1.0-SNAPSHOT'
+apply plugin: "jacoco"
 
 sourceCompatibility = 1.8
 
@@ -33,6 +34,13 @@ buildscript {
     }
 }
 
+jacocoTestReport {
+    reports {
+        xml.enabled=true
+        html.enabled=false
+    }
+}
+
 repositories {
     mavenCentral()
 }
@@ -42,7 +50,8 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.0"
     implementation "org.rocksdb:rocksdbjni:5.5.1"
     implementation "org.bouncycastle:bcpkix-jdk15on:1.58"
-    implementation project(":sdk-objectmodel-kotlin")
+    implementation 'com.github.XYOracleNetwork:sdk-objectmodel-kotlin:v0.1.0-beta.1'
+    // implementation project(":sdk-objectmodel-kotlin")
     testImplementation "junit:junit:4.11"
 }
 
