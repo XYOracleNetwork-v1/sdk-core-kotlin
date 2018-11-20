@@ -56,7 +56,6 @@ jobs:
           path: ~/junit
       - store_test_results:
           path: ~/junit
-
       - run:
           name: Setup Code Climate test-reporter
           command: |
