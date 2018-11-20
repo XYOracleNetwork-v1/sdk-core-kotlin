@@ -3,7 +3,7 @@ package network.xyo.sdkcorekotlin.hashing
 import kotlinx.coroutines.runBlocking
 import network.xyo.sdkcorekotlin.XyoTestBase
 import network.xyo.sdkcorekotlin.hashing.basic.*
-import network.xyo.sdkcorekotlin.hashing.bouncy.XyoSha3
+import network.xyo.sdkcorekotlin.hashing.basic.XyoSha3
 import org.junit.Assert.assertArrayEquals
 import org.junit.Test
 

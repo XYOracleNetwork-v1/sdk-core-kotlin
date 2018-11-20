@@ -21,9 +21,6 @@ abstract class XyoHash : XyoInterpreter {
 
         /**
          * Creates a hash given a ByteArray.
-         *
-         * @param data The data to hash.
-         * @return A deferred XyoHash.
          */
         abstract fun createHash (data: ByteArray) : Deferred<XyoHash>
     }
