@@ -9,16 +9,16 @@ import network.xyo.sdkcorekotlin.data.heuristics.number.unsigned.XyoIndex
 import network.xyo.sdkcorekotlin.hashing.XyoPreviousHash
 
 class XyoSaveState (private val storageProvider: XyoStorageProviderInterface) {
-    fun saveIndex (index : XyoIndex) {
-        storageProvider.write("index".toByteArray(), index.untyped)
+    fun saveIndex (index : XyoIndex) = GlobalScope.async {
+        storageProvider.write("index".toByteArray(), index.untyped).await()
     }
 
-    fun saveSigners (privateKeys: Array<XyoObject>) {
-        storageProvider.write("privateKeys".toByteArray(), XyoMultiTypeArrayInt(privateKeys).untyped)
+    fun saveSigners (privateKeys: Array<XyoObject>) = GlobalScope.async {
+        storageProvider.write("privateKeys".toByteArray(), XyoMultiTypeArrayInt(privateKeys).untyped).await()
     }
 
-    fun savePreviousHash (hash : XyoPreviousHash) {
-        storageProvider.write("prevHash".toByteArray(), hash.untyped)
+    fun savePreviousHash (hash : XyoPreviousHash) = GlobalScope.async {
+        storageProvider.write("prevHash".toByteArray(), hash.untyped).await()
     }
 
     fun getIndex () : Deferred<XyoIndex?> = GlobalScope.async {
@@ -43,16 +43,5 @@ class XyoSaveState (private val storageProvider: XyoStorageProviderInterface) {
             return@async XyoPreviousHash.createFromPacked(encodedHash) as? XyoPreviousHash
         }
         return@async null
-    }
-
-    protected fun ByteArray.toHexString(): String {
-        val builder = StringBuilder()
-        val it = this.iterator()
-        builder.append("0x")
-        while (it.hasNext()) {
-            builder.append(String.format("%02X", it.next()))
-        }
-
-        return builder.toString()
     }
 }
