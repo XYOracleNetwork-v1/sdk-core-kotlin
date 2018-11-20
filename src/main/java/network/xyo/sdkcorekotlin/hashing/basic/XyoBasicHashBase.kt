@@ -59,4 +59,14 @@ abstract class XyoBasicHashBase : XyoHash() {
             }
         }
     }
+
+    companion object {
+        @ExperimentalUnsignedTypes
+        fun createHashType (schema: XyoObjectSchema, standardDigestKey: String) : XyoBasicHashBaseProvider {
+            return object : XyoBasicHashBaseProvider() {
+                override val schema: XyoObjectSchema = schema
+                override val standardDigestKey: String = standardDigestKey
+            }
+        }
+    }
 }
