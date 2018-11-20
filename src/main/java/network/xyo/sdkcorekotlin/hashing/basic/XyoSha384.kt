@@ -3,17 +3,9 @@ package network.xyo.sdkcorekotlin.hashing.basic
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 
-/**
- * A Xyo Encoded Sha384 hash
- *
- * @major 0x03
- * @minor 0x06
- */
-object XyoSha384 : XyoBasicHashBase.XyoBasicHashBaseProvider() {
-    override val standardDigestKey: String
-        get() = "SHA-384"
 
+object XyoSha384 : XyoBasicHashBase.XyoBasicHashBaseProvider() {
     @ExperimentalUnsignedTypes
-    override val schema: XyoObjectSchema
-        get() = XyoSchemas.SHA384
+    override val schema: XyoObjectSchema = XyoSchemas.SHA384
+    override val standardDigestKey: String = "SHA-384"
 }

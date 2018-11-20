@@ -5,10 +5,7 @@ import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 
 
 object XyoMd2 : XyoBasicHashBase.XyoBasicHashBaseProvider() {
-    override val standardDigestKey: String
-        get() = "MD2"
-
     @ExperimentalUnsignedTypes
-    override val schema: XyoObjectSchema
-        get() = XyoSchemas.MD2
+    override val schema: XyoObjectSchema = XyoSchemas.MD2
+    override val standardDigestKey: String = "MD2"
 }
