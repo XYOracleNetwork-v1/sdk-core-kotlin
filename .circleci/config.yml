@@ -45,6 +45,13 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Code Climate Set Up
+          command: |
+            # download test reporter as a static binary
+              curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+              chmod +x ./cc-test-reporter
+              ./cc-test-reporter before-build
+      - run:
           name: Test
           command: gradle test
       - run:
