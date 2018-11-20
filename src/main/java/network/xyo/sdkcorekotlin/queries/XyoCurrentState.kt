@@ -1,7 +1,5 @@
 package network.xyo.sdkcorekotlin.queries
 
-import network.xyo.sdkcorekotlin.hashing.XyoPreviousHash
-import network.xyo.sdkcorekotlin.signing.XyoNextPublicKey
 import network.xyo.sdkcorekotlin.signing.XyoSigner
 
 interface XyoCurrentState {
@@ -15,7 +13,7 @@ interface XyoCurrentState {
     /**
      * The previous hash to be included in the next origin block.
      */
-    val previousHash : XyoPreviousHash?
+    val previousHash : ByteArray?
 
     /**
      * The index of the origin chain.
@@ -25,5 +23,5 @@ interface XyoCurrentState {
     /**
      * The next public key to be used in the origin chain.
      */
-    var nextPublicKey : XyoNextPublicKey?
+    var nextPublicKey : ByteArray?
 }

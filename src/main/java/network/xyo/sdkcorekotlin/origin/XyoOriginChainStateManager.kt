@@ -1,9 +1,8 @@
 package network.xyo.sdkcorekotlin.origin
 
 import network.xyo.sdkcorekotlin.hashing.XyoHash
-import network.xyo.sdkcorekotlin.hashing.XyoPreviousHash
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas.INDEX
-import network.xyo.sdkcorekotlin.signing.XyoNextPublicKey
+import network.xyo.sdkcorekotlin.schemas.XyoSchemas.NEXT_PUBLIC_KEY
 import network.xyo.sdkcorekotlin.signing.XyoSigner
 import network.xyo.sdkobjectmodelkotlin.objects.XyoObjectCreator
 import java.nio.ByteBuffer
@@ -21,8 +20,8 @@ open class XyoOriginChainStateManager (private val indexOffset : Int) : XyoOrigi
     private var latestHash : ByteArray? = null
 
     @ExperimentalUnsignedTypes
-    constructor(indexOffset: Int, signers : Array<XyoSigner>, previousHash: XyoPreviousHash): this(indexOffset) {
-        latestHash = previousHash.previousHash
+    constructor(indexOffset: Int, signers : Array<XyoSigner>, previousHash: ByteArray): this(indexOffset) {
+        latestHash = previousHash
         currentSigners = ArrayList(signers.toList())
     }
 
@@ -41,7 +40,7 @@ open class XyoOriginChainStateManager (private val indexOffset : Int) : XyoOrigi
      */
     val allPublicKeys = ArrayList<ByteArray>()
 
-    override var nextPublicKey : XyoNextPublicKey? = null
+    override var nextPublicKey : ByteArray? = null
 
     @ExperimentalUnsignedTypes
     override val index : ByteArray
@@ -49,11 +48,11 @@ open class XyoOriginChainStateManager (private val indexOffset : Int) : XyoOrigi
 
 
     @ExperimentalUnsignedTypes
-    override val previousHash : XyoPreviousHash?
+    override val previousHash : ByteArray?
         get() {
             val latestHashValue = latestHash
             if (latestHashValue != null) {
-                return XyoPreviousHash.createFromHash(latestHashValue)
+                return latestHashValue
             }
             return null
         }
@@ -70,7 +69,7 @@ open class XyoOriginChainStateManager (private val indexOffset : Int) : XyoOrigi
             return
         }
 
-        nextPublicKey = XyoNextPublicKey.createFromHash(signer.publicKey.self)
+        nextPublicKey = XyoObjectCreator.createObject(NEXT_PUBLIC_KEY, signer.publicKey.self)
         waitingSigners.add(signer)
         allPublicKeys.add(signer.publicKey.self)
     }

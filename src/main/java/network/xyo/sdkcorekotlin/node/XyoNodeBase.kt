@@ -288,11 +288,11 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
         val nextPublicKey = originState.nextPublicKey
 
         if (previousHash != null) {
-            signedPayloads.add(previousHash.self)
+            signedPayloads.add(previousHash)
         }
 
         if (nextPublicKey != null) {
-            signedPayloads.add(nextPublicKey.self)
+            signedPayloads.add(nextPublicKey)
         }
 
         signedPayloads.add(index)

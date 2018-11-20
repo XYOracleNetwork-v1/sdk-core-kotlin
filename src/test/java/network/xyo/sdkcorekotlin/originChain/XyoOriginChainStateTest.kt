@@ -9,8 +9,6 @@ import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.hashing.basic.XyoSha256
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas.ARRAY_UNTYPED
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas.PAYLOAD
-import network.xyo.sdkcorekotlin.signing.XyoNextPublicKey
-import network.xyo.sdkcorekotlin.signing.XyoSigner
 import network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k.XyoSha256WithSecp256K
 import network.xyo.sdkobjectmodelkotlin.objects.XyoObjectCreator
 import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectSetCreator
@@ -25,7 +23,7 @@ class XyoOriginChainStateTest : XyoTestBase() {
     private val hashCreator = XyoSha256
     private val originChainState = XyoOriginChainStateManager(0)
     private var lastHash : XyoHash? = null
-    private var nextKey : XyoNextPublicKey? = null
+    private var nextKey : ByteArray? = null
 
     @Test
     fun testOriginChainTest () {
@@ -44,10 +42,10 @@ class XyoOriginChainStateTest : XyoTestBase() {
                 val nextPublicKey = originChainState.nextPublicKey
                 if (nextPublicKey != null) {
                     nextKey = nextPublicKey
-                    elementsInSignedPayload.add(nextPublicKey.self)
+                    elementsInSignedPayload.add(nextPublicKey)
                 }
 
-                val hash = originChainState.previousHash?.self
+                val hash = originChainState.previousHash
                 if (hash != null) {
                     elementsInSignedPayload.add(hash)
                 }
@@ -66,7 +64,7 @@ class XyoOriginChainStateTest : XyoTestBase() {
                 lastHash = aliceBoundWitness.getHash(hashCreator).await()
 
                 if (i != 0) {
-                    assertArrayEquals(lastHash?.hash, XyoObjectCreator.getObjectValue(originChainState.previousHash!!.previousHash))
+                    assertArrayEquals(lastHash?.hash, XyoObjectCreator.getObjectValue(originChainState.previousHash!!))
                     originChainState.removeOldestSigner()
                 }
 
