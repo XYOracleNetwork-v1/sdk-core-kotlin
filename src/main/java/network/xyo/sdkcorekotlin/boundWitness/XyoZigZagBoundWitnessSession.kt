@@ -6,6 +6,7 @@ import network.xyo.sdkcorekotlin.exceptions.XyoBoundWitnessCreationException
 import network.xyo.sdkcorekotlin.exceptions.XyoException
 import network.xyo.sdkcorekotlin.network.XyoNetworkPipe
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
+import network.xyo.sdkobjectmodelkotlin.exceptions.XyoObjectExceotion
 import java.nio.ByteBuffer
 
 
@@ -31,7 +32,8 @@ class XyoZigZagBoundWitnessSession(private val pipe : XyoNetworkPipe,
 
             return null
         } catch (exception : XyoException) {
-
+            return exception
+        } catch (exception : XyoObjectExceotion) {
             return exception
         }
     }

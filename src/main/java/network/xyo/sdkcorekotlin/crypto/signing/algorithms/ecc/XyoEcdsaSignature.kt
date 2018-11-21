@@ -10,8 +10,6 @@ import java.nio.ByteBuffer
 
 /**
  * A base class for all EC signature operations.
- *
- * @param rawSignature the encoded EC signature.
  */
 open class XyoEcdsaSignature(val r : BigInteger, val s : BigInteger) : XyoInterpreter {
 

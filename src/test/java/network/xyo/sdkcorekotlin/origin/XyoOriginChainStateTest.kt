@@ -64,7 +64,7 @@ class XyoOriginChainStateTest : XyoTestBase() {
                 lastHash = aliceBoundWitness.getHash(hashCreator).await()
 
                 if (i != 0) {
-                    assertArrayEquals(lastHash?.hash, XyoObjectCreator.getObjectValue(originChainState.previousHash!!))
+                    assertArrayEquals(lastHash?.self, XyoObjectCreator.getObjectValue(originChainState.previousHash!!))
                     originChainState.removeOldestSigner()
                 }
 

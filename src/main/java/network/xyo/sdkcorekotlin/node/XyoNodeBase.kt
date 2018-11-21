@@ -4,6 +4,7 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
+import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitnessUtil
 import network.xyo.sdkcorekotlin.boundWitness.XyoZigZagBoundWitness
 import network.xyo.sdkcorekotlin.boundWitness.XyoZigZagBoundWitnessSession
 import network.xyo.sdkcorekotlin.hashing.XyoHash
@@ -16,7 +17,6 @@ import network.xyo.sdkcorekotlin.schemas.XyoSchemas.PAYLOAD
 import network.xyo.sdkcorekotlin.storage.XyoStorageProviderInterface
 import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectIterator
 import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectSetCreator
-import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 import java.nio.ByteBuffer
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -184,12 +184,13 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
 
         if (!originBlocks.containsOriginBlock(hash.self).await()) {
             val subBlocks = getBridgedBlocks(boundWitness)
-            // todo remove blocks
-            // boundWitness.removeTypeFromUnsigned(XyoBridgeBlockSet.id)
-            originBlocks.addBoundWitness(boundWitness).await()
+            val boundWitnessWithoutBlocks = XyoBoundWitness.getInstance(
+                    XyoBoundWitnessUtil.removeTypeFromUnsignedPayload(BRIDGE_BLOCK_SET.id, boundWitness.self)
+            )
+            originBlocks.addBoundWitness(boundWitnessWithoutBlocks).await()
 
             for ((_, listener) in listeners) {
-                listener.onBoundWitnessDiscovered(boundWitness)
+                listener.onBoundWitnessDiscovered(boundWitnessWithoutBlocks)
             }
 
             if (subBlocks != null) {
@@ -201,13 +202,10 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
 
     }
 
-
     private fun getBridgedBlocks (boundWitness: XyoBoundWitness) : Iterator<ByteArray>? {
         for (payload in XyoObjectIterator(boundWitness.payloads)) {
-            for (item in XyoObjectIterator(payload)) {
-                if (XyoObjectSchema.createFromHeader(item.copyOfRange(0, 2)).id == BRIDGE_BLOCK_SET.id) {
-                    return XyoObjectIterator(item)
-                }
+            for (item in XyoObjectIterator(payload)[BRIDGE_BLOCK_SET.id]) {
+                return XyoObjectIterator(item)
             }
         }
         return null

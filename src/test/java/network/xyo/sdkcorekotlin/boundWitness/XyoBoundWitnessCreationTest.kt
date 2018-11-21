@@ -6,6 +6,7 @@ import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
 import network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.secp256k.XyoSha256WithSecp256K
 import network.xyo.sdkcorekotlin.crypto.signing.algorithms.rsa.XyoRsaWithSha256
+import network.xyo.sdkobjectmodelkotlin.objects.XyoObjectCreator
 import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectIterator
 import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectSetCreator
 import org.junit.Assert
