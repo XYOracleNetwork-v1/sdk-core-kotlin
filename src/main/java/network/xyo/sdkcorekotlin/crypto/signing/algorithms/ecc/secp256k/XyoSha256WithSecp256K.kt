@@ -3,19 +3,20 @@ package network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.secp256k
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import network.xyo.sdkcorekotlin.hashing.basic.XyoSha256
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigningObjectCreatorVerify
 import network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.XyoEcPrivateKey
 import network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.XyoEcdsaSignature
 import network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.XyoUncompressedEcPublicKey
+import network.xyo.sdkcorekotlin.hashing.basic.XyoBasicHashBase
 import org.bouncycastle.crypto.params.ECDomainParameters
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters
 import org.bouncycastle.crypto.signers.ECDSASigner
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.bouncycastle.crypto.params.ECPublicKeyParameters
 import org.bouncycastle.jce.interfaces.ECPrivateKey
+import java.security.MessageDigest
 import java.security.PublicKey
 import java.security.Signature
 
@@ -35,17 +36,15 @@ class XyoSha256WithSecp256K (privateKey : ECPrivateKey?) : XyoEcSecp256K1(privat
 
             val signer = ECDSASigner()
             signer.init(true, pam)
-            val sig = signer.generateSignature(XyoSha256.createHash(byteArray).await().hash)
+            val sig = signer.generateSignature(hashData(byteArray))
 
             return@async XyoEcdsaSignature(sig[0], sig[1]).self
         }
     }
 
     companion object : XyoSigningObjectCreatorVerify() {
-
         override val signatureInstance: Signature = Signature.getInstance("SHA256withECDSA", BouncyCastleProvider())
         override val key: Byte = 0x01
-
         override val supportedKeys: Array<ByteArray> = arrayOf(XyoSchemas.EC_PUBLIC_KEY.header)
 
         override val supportedSignatures: Array<ByteArray> = arrayOf(XyoSchemas.EC_PRIVATE_KEY.header)
@@ -64,7 +63,6 @@ class XyoSha256WithSecp256K (privateKey : ECPrivateKey?) : XyoEcSecp256K1(privat
             val ecDomainParameters = ECDomainParameters(ecCurve.curve, ecCurve.g, ecCurve.n)
             signer.init(false, ECPublicKeyParameters(ecCurve.curve.createPoint((publicKey as XyoUncompressedEcPublicKey).x, publicKey.y), ecDomainParameters))
 
-            val data = XyoSha256.createHash(byteArray).await().hash
 
             val ecSig = XyoEcdsaSignature.getInstance(signature)
 
@@ -72,10 +70,14 @@ class XyoSha256WithSecp256K (privateKey : ECPrivateKey?) : XyoEcSecp256K1(privat
                 val r = ecSig.r
                 val s = ecSig.s
 
-                return@async signer.verifySignature(data, r, s)
+                return@async signer.verifySignature(hashData(byteArray), r, s)
             }
 
             return@async false
+        }
+
+        private fun hashData (byteArray: ByteArray) : ByteArray {
+            return MessageDigest.getInstance("SHA-256").digest(byteArray)
         }
     }
 }

@@ -8,11 +8,9 @@ import org.bouncycastle.crypto.params.ECDomainParameters
 import org.bouncycastle.jce.ECNamedCurveTable
 import org.bouncycastle.jce.interfaces.ECPrivateKey
 import org.bouncycastle.jce.interfaces.ECPublicKey
-import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec
 import org.bouncycastle.jce.spec.ECParameterSpec
 import java.math.BigInteger
-import java.security.AlgorithmParameters
 import java.security.KeyPair
 
 
@@ -21,7 +19,7 @@ import java.security.KeyPair
  */
 abstract class XyoEcSecp256K1 (privateKey: ECPrivateKey?) : XyoGeneralEc(privateKey) {
     override val spec: ECParameterSpec
-        get() = ECParameterSpec(ecCurve.curve, ecCurve.g, ecCurve.n)
+        get() = ecSpec
 
     override val publicKey: XyoPublicKey
         get() = keyPair.public as XyoPublicKey
@@ -45,7 +43,7 @@ abstract class XyoEcSecp256K1 (privateKey: ECPrivateKey?) : XyoGeneralEc(private
     }
 
     companion object {
-        val ecCurve : ECNamedCurveParameterSpec = ECNamedCurveTable.getParameterSpec("secp256k1")!!
+        val ecCurve : ECNamedCurveParameterSpec = ECNamedCurveTable.getParameterSpec("secp256k1")
         val ecDomainParameters = ECDomainParameters(ecCurve.curve, ecCurve.g, ecCurve.n)
         val ecSpec: ECParameterSpec = ECParameterSpec(ecCurve.curve, ecCurve.g, ecCurve.n)
     }

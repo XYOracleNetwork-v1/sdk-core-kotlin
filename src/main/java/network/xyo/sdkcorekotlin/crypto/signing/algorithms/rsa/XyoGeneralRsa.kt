@@ -65,6 +65,13 @@ abstract class XyoGeneralRsa(private val keySize : Int, privateKey: XyoRsaPrivat
     }
 
     private fun getSpecFromPrivateKey (encodedPrivateKey: XyoRsaPrivateKey) : RSAPublicKeySpec {
-        return RSAPublicKeySpec(encodedPrivateKey.modulus, BigInteger(byteArrayOf(0x01, 0x00, 0x01)))
+        return RSAPublicKeySpec(encodedPrivateKey.modulus, BigInteger(RSA_PUBLIC_EXPONENT))
+    }
+
+    companion object {
+        /**
+         * @note All Xyo Rsa Public Key operations use the modulus 0x0100001
+         */
+        val RSA_PUBLIC_EXPONENT = byteArrayOf(0x01, 0x00, 0x01)
     }
 }

@@ -8,6 +8,7 @@ import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 import java.math.BigInteger
 import java.nio.ByteBuffer
 import java.security.interfaces.RSAPrivateKey
+import kotlin.experimental.and
 
 /**
  * A Xyo Encoded RSA Private key.
@@ -52,7 +53,7 @@ open class XyoRsaPrivateKey (private val mod : BigInteger, private val privateEx
 
         override fun getInstance(byteArray: ByteArray): XyoRsaPrivateKey {
             val value = XyoObjectCreator.getObjectValue(byteArray)
-            val sizeOfPrivateExponent = value[0].toUByte().toInt()
+            val sizeOfPrivateExponent = value[0].toInt() and 0xff
             val privateExponent = value.copyOfRange(1, sizeOfPrivateExponent)
             val modulus = value.copyOfRange((sizeOfPrivateExponent), value.size)
 
