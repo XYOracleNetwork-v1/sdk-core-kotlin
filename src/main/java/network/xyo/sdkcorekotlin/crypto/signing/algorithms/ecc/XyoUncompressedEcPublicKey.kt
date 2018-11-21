@@ -6,11 +6,12 @@ import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.crypto.signing.XyoPublicKey
 import network.xyo.sdkobjectmodelkotlin.objects.XyoObjectCreator
 import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
+import org.bouncycastle.jce.interfaces.ECPublicKey
+import org.bouncycastle.jce.spec.ECParameterSpec
+import org.bouncycastle.math.ec.ECPoint
 import java.math.BigInteger
 import java.nio.ByteBuffer
-import java.security.interfaces.ECPublicKey
-import java.security.spec.ECParameterSpec
-import java.security.spec.ECPoint
+
 
 /**
  * A base class for all uncompressed EC public keys.
@@ -54,12 +55,12 @@ abstract class XyoUncompressedEcPublicKey : ECPublicKey, XyoPublicKey {
         return "XyoUncompressedEcPublicKey"
     }
 
-    override fun getParams(): ECParameterSpec {
-        return ecSpec
+    override fun getQ(): ECPoint {
+        return ecSpec.curve.createPoint(x, y)
     }
 
-    override fun getW(): ECPoint {
-        return ECPoint(x, y)
+    override fun getParameters(): ECParameterSpec {
+        return ecSpec
     }
 
     private fun get32ByteEcPoint(point : BigInteger) : ByteArray {

@@ -20,7 +20,7 @@ class XyoBoundWitnessCreationTest : XyoTestBase() {
             val aliceSignedPayload = XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, arrayOf())
             val aliceUnsignedPayload = XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, arrayOf())
 
-            val alicePayload = XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.PAYLOAD, arrayOf(aliceSignedPayload, aliceUnsignedPayload))
+            val alicePayload = XyoObjectSetCreator.createTypedIterableObject(XyoSchemas.PAYLOAD, arrayOf(aliceSignedPayload, aliceUnsignedPayload))
             val aliceBoundWitness = XyoZigZagBoundWitness(aliceSigners, alicePayload)
             aliceBoundWitness.incomingData(null, true).await()
 
@@ -42,8 +42,8 @@ class XyoBoundWitnessCreationTest : XyoTestBase() {
             val signedPayloadBob = XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, arrayOf())
             val unsignedPayloadBob= XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, arrayOf())
 
-            val payloadAlice = XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.PAYLOAD, arrayOf(signedPayloadAlice, unsignedPayloadAlice))
-            val payloadBob = XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.PAYLOAD, arrayOf(signedPayloadBob, unsignedPayloadBob))
+            val payloadAlice = XyoObjectSetCreator.createTypedIterableObject(XyoSchemas.PAYLOAD, arrayOf(signedPayloadAlice, unsignedPayloadAlice))
+            val payloadBob = XyoObjectSetCreator.createTypedIterableObject(XyoSchemas.PAYLOAD, arrayOf(signedPayloadBob, unsignedPayloadBob))
             val boundWitnessAlice = XyoZigZagBoundWitness(signersAlice, payloadAlice)
             val boundWitnessBob = XyoZigZagBoundWitness(signersBob, payloadBob)
 

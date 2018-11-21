@@ -52,7 +52,7 @@ class XyoOriginChainStateTest : XyoTestBase() {
                 val signedPayload = XyoObjectSetCreator.createUntypedIterableObject(ARRAY_UNTYPED, elementsInSignedPayload.toTypedArray())
                 val unsignedPayload = XyoObjectSetCreator.createUntypedIterableObject(ARRAY_UNTYPED, elementsInUnsignedPayload)
 
-                val alicePayload =  XyoObjectSetCreator.createUntypedIterableObject(PAYLOAD, arrayOf(signedPayload, unsignedPayload))
+                val alicePayload =  XyoObjectSetCreator.createTypedIterableObject(PAYLOAD, arrayOf(signedPayload, unsignedPayload))
                 val aliceBoundWitness = XyoZigZagBoundWitness(originChainState.getSigners(), alicePayload)
 
                 aliceBoundWitness.incomingData(null, true).await()

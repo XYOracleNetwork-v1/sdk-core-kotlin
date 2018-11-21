@@ -14,16 +14,16 @@ import org.bouncycastle.crypto.params.ECDomainParameters
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters
 import org.bouncycastle.crypto.signers.ECDSASigner
 import org.bouncycastle.jce.provider.BouncyCastleProvider
-import java.security.Signature
 import org.bouncycastle.crypto.params.ECPublicKeyParameters
+import org.bouncycastle.jce.interfaces.ECPrivateKey
 import java.security.PublicKey
-import java.security.interfaces.ECPrivateKey
+import java.security.Signature
 
 
 /**
  * A Xyo Signer using EC with the Secp256K1 curve with SHA256.
  */
-class XyoSha256WithSecp256K (privateKey : ECPrivateKey?) : XyoEcSecp256K(privateKey) {
+class XyoSha256WithSecp256K (privateKey : ECPrivateKey?) : XyoEcSecp256K1(privateKey) {
 
     override fun signData(byteArray: ByteArray): Deferred<ByteArray> {
         return GlobalScope.async {
@@ -31,7 +31,7 @@ class XyoSha256WithSecp256K (privateKey : ECPrivateKey?) : XyoEcSecp256K(private
             signatureInstance.update(byteArray)
             signatureInstance.sign()
 
-            val pam = ECPrivateKeyParameters((keyPair.private as XyoEcPrivateKey).s, ecDomainParameters)
+            val pam = ECPrivateKeyParameters((keyPair.private as XyoEcPrivateKey).d, ecDomainParameters)
 
             val signer = ECDSASigner()
             signer.init(true, pam)
@@ -55,7 +55,7 @@ class XyoSha256WithSecp256K (privateKey : ECPrivateKey?) : XyoEcSecp256K(private
         }
 
         override fun newInstance(privateKey: ByteArray): XyoSigner {
-            return XyoSha256WithSecp256K(XyoEcPrivateKey.getInstance(privateKey, getSpec()))
+            return XyoSha256WithSecp256K(XyoEcPrivateKey.getInstance(privateKey, XyoEcSecp256K1.ecSpec))
         }
 
         override fun verifySign(signature: ByteArray, byteArray: ByteArray, publicKey: PublicKey): Deferred<Boolean> = GlobalScope.async {
