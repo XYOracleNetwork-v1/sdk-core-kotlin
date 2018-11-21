@@ -1,16 +1,15 @@
-package network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k
+package network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.secp256k
 
-import jdk.nashorn.internal.objects.Global
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.hashing.basic.XyoSha256
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
-import network.xyo.sdkcorekotlin.signing.XyoSigner
-import network.xyo.sdkcorekotlin.signing.XyoSigningObjectCreatorVerify
-import network.xyo.sdkcorekotlin.signing.algorithms.ecc.XyoEcPrivateKey
-import network.xyo.sdkcorekotlin.signing.algorithms.ecc.XyoEcdsaSignature
-import network.xyo.sdkcorekotlin.signing.algorithms.ecc.XyoUncompressedEcPublicKey
+import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
+import network.xyo.sdkcorekotlin.crypto.signing.XyoSigningObjectCreatorVerify
+import network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.XyoEcPrivateKey
+import network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.XyoEcdsaSignature
+import network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.XyoUncompressedEcPublicKey
 import org.bouncycastle.crypto.params.ECDomainParameters
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters
 import org.bouncycastle.crypto.signers.ECDSASigner
@@ -26,7 +25,6 @@ import java.security.interfaces.ECPrivateKey
  */
 class XyoSha256WithSecp256K (privateKey : ECPrivateKey?) : XyoEcSecp256K(privateKey) {
 
-    @ExperimentalUnsignedTypes
     override fun signData(byteArray: ByteArray): Deferred<ByteArray> {
         return GlobalScope.async {
             signatureInstance.initSign(keyPair.private)
@@ -48,22 +46,18 @@ class XyoSha256WithSecp256K (privateKey : ECPrivateKey?) : XyoEcSecp256K(private
         override val signatureInstance: Signature = Signature.getInstance("SHA256withECDSA", BouncyCastleProvider())
         override val key: Byte = 0x01
 
-        @ExperimentalUnsignedTypes
         override val supportedKeys: Array<ByteArray> = arrayOf(XyoSchemas.EC_PUBLIC_KEY.header)
 
-        @ExperimentalUnsignedTypes
         override val supportedSignatures: Array<ByteArray> = arrayOf(XyoSchemas.EC_PRIVATE_KEY.header)
 
         override fun newInstance(): XyoSigner {
             return XyoSha256WithSecp256K(null)
         }
 
-        @ExperimentalUnsignedTypes
         override fun newInstance(privateKey: ByteArray): XyoSigner {
             return XyoSha256WithSecp256K(XyoEcPrivateKey.getInstance(privateKey, getSpec()))
         }
 
-        @ExperimentalUnsignedTypes
         override fun verifySign(signature: ByteArray, byteArray: ByteArray, publicKey: PublicKey): Deferred<Boolean> = GlobalScope.async {
             val signer = ECDSASigner()
 

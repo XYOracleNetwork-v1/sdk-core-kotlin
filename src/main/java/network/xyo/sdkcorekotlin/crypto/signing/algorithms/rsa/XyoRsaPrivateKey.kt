@@ -1,4 +1,4 @@
-package network.xyo.sdkcorekotlin.signing.algorithms.rsa
+package network.xyo.sdkcorekotlin.crypto.signing.algorithms.rsa
 
 import network.xyo.sdkcorekotlin.XyoFromSelf
 import network.xyo.sdkcorekotlin.XyoInterpreter
@@ -11,9 +11,6 @@ import java.security.interfaces.RSAPrivateKey
 
 /**
  * A Xyo Encoded RSA Private key.
- *
- * @major 0x0a
- * @minor 0x01
  */
 open class XyoRsaPrivateKey (private val mod : BigInteger, private val privateExponent : BigInteger) : RSAPrivateKey, XyoInterpreter {
 
@@ -45,17 +42,14 @@ open class XyoRsaPrivateKey (private val mod : BigInteger, private val privateEx
         return privateExponent
     }
 
-    @ExperimentalUnsignedTypes
     override val schema: XyoObjectSchema
         get() = XyoSchemas.RSA_PRIVATE_KEY
 
-    @ExperimentalUnsignedTypes
     override val self: ByteArray
         get() = XyoObjectCreator.createObject(schema, encoded)
 
     companion object : XyoFromSelf {
 
-        @ExperimentalUnsignedTypes
         override fun getInstance(byteArray: ByteArray): XyoRsaPrivateKey {
             val value = XyoObjectCreator.getObjectValue(byteArray)
             val sizeOfPrivateExponent = value[0].toUByte().toInt()

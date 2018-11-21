@@ -1,23 +1,15 @@
-package network.xyo.sdkcorekotlin.signing.algorithms.rsa
+package network.xyo.sdkcorekotlin.crypto.signing.algorithms.rsa
 
 import network.xyo.sdkcorekotlin.XyoFromSelf
-import network.xyo.sdkcorekotlin.XyoInterpreter
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
-import network.xyo.sdkcorekotlin.signing.XyoPublicKey
+import network.xyo.sdkcorekotlin.crypto.signing.XyoPublicKey
 import network.xyo.sdkobjectmodelkotlin.objects.XyoObjectCreator
 import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 import java.math.BigInteger
-import java.nio.Buffer
-import java.nio.ByteBuffer
 import java.security.interfaces.RSAPublicKey
 
 /**
  * An Xyo Encoded Rsa Public key.
- *
- * @major 0x04
- * @minor 0x03
- *
- * @param modulus the modulus of the public key.
  */
 class XyoRsaPublicKey(private val modulus : BigInteger) : RSAPublicKey, XyoPublicKey {
     /**
@@ -46,17 +38,13 @@ class XyoRsaPublicKey(private val modulus : BigInteger) : RSAPublicKey, XyoPubli
         return publicExponent
     }
 
-    @ExperimentalUnsignedTypes
     override val self: ByteArray
         get() = XyoObjectCreator.createObject(schema, encoded)
 
-    @ExperimentalUnsignedTypes
     override val schema: XyoObjectSchema
         get() = XyoSchemas.RSA_PUBLIC_KEY
 
     companion object : XyoFromSelf {
-
-        @ExperimentalUnsignedTypes
         override fun getInstance(byteArray: ByteArray): XyoRsaPublicKey {
             val value = XyoObjectCreator.getObjectValue(byteArray)
             return  XyoRsaPublicKey(BigInteger(value))

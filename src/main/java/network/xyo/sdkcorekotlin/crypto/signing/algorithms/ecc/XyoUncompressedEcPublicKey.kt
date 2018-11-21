@@ -1,10 +1,9 @@
-package network.xyo.sdkcorekotlin.signing.algorithms.ecc
+package network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc
 
 import network.xyo.sdkcorekotlin.XyoFromSelf
 import network.xyo.sdkcorekotlin.XyoInterpreter
-import network.xyo.sdkcorekotlin.exceptions.XyoCorruptDataException
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
-import network.xyo.sdkcorekotlin.signing.XyoPublicKey
+import network.xyo.sdkcorekotlin.crypto.signing.XyoPublicKey
 import network.xyo.sdkobjectmodelkotlin.objects.XyoObjectCreator
 import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 import java.math.BigInteger
@@ -16,7 +15,6 @@ import java.security.spec.ECPoint
 /**
  * A base class for all uncompressed EC public keys.
  */
-@ExperimentalUnsignedTypes
 abstract class XyoUncompressedEcPublicKey : ECPublicKey, XyoPublicKey {
     /**
      * The Java ECParameterSpec to understand the public key (x and y).
@@ -92,7 +90,6 @@ abstract class XyoUncompressedEcPublicKey : ECPublicKey, XyoPublicKey {
          */
         abstract val ecPramSpec : ECParameterSpec
 
-        @ExperimentalUnsignedTypes
         override fun getInstance(byteArray: ByteArray): XyoInterpreter {
             return object : XyoUncompressedEcPublicKey() {
                 override val ecSpec: ECParameterSpec = ecPramSpec

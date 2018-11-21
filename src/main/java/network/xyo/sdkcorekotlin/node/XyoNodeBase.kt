@@ -35,7 +35,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
     private val heuristics = ConcurrentHashMap<String, XyoHeuristicGetter>()
     private val listeners = ConcurrentHashMap<String, XyoNodeListener>()
 
-    @ExperimentalUnsignedTypes
+
     private var currentBoundWitnessSession : XyoZigZagBoundWitnessSession? = null
 
     /**
@@ -99,7 +99,6 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
      *
      * @param flag The optional flag to use when self signing.
      */
-    @ExperimentalUnsignedTypes
     fun selfSignOriginChain (flag: Int?) : Deferred<Unit> = GlobalScope.async {
         val bitFlag = flag ?: 0
         val options = getBoundWitnessOptions(bitFlag).await()
@@ -170,7 +169,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
         }
     }
 
-    @ExperimentalUnsignedTypes
+
     private fun onBoundWitnessEndSuccess (boundWitness: XyoBoundWitness) = GlobalScope.async {
         loadCreatedBoundWitness(boundWitness).await()
 
@@ -179,7 +178,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
         }
     }
 
-    @ExperimentalUnsignedTypes
+
     private fun loadCreatedBoundWitness (boundWitness: XyoBoundWitness) : Deferred<Unit> = GlobalScope.async {
         val hash = boundWitness.getHash(hashingProvider).await()
 
@@ -202,7 +201,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
 
     }
 
-    @ExperimentalUnsignedTypes
+
     private fun getBridgedBlocks (boundWitness: XyoBoundWitness) : Iterator<ByteArray>? {
         for (payload in XyoObjectIterator(boundWitness.payloads)) {
             for (item in XyoObjectIterator(payload)) {
@@ -221,12 +220,11 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
         }
     }
 
-    @ExperimentalUnsignedTypes
     protected suspend fun doBoundWitness (startingData : ByteArray?, pipe: XyoNetworkPipe) {
         if (currentBoundWitnessSession != null) return
         onBoundWitnessStart()
 
-        val choice = getChoice(ByteBuffer.allocate(4).put(pipe.peer.getRole()).int, startingData == null)
+        val choice = getChoice(ByteBuffer.wrap(pipe.peer.getRole()).int, startingData == null)
         val options = getBoundWitnessOptions(choice).await()
 
         currentBoundWitnessSession = XyoZigZagBoundWitnessSession(

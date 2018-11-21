@@ -1,12 +1,9 @@
-package network.xyo.sdkcorekotlin.signing.rsa.roundtrip
+package network.xyo.sdkcorekotlin.crypto.signing.rsa.roundtrip
 
 import kotlinx.coroutines.runBlocking
 import network.xyo.sdkcorekotlin.XyoTestBase
-import network.xyo.sdkcorekotlin.schemas.XyoSchemas.RSA_PRIVATE_KEY
-import network.xyo.sdkcorekotlin.signing.algorithms.rsa.XyoRsaPrivateKey
-import network.xyo.sdkcorekotlin.signing.algorithms.rsa.XyoRsaPublicKey
-import network.xyo.sdkcorekotlin.signing.algorithms.rsa.XyoRsaWithSha256
-import network.xyo.sdkobjectmodelkotlin.objects.XyoObjectCreator
+import network.xyo.sdkcorekotlin.crypto.signing.algorithms.rsa.XyoRsaPublicKey
+import network.xyo.sdkcorekotlin.crypto.signing.algorithms.rsa.XyoRsaWithSha256
 import org.junit.Assert
 import org.junit.Test
 

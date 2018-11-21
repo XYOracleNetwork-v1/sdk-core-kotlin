@@ -1,7 +1,7 @@
-package network.xyo.sdkcorekotlin.signing.algorithms.rsa
+package network.xyo.sdkcorekotlin.crypto.signing.algorithms.rsa
 
-import network.xyo.sdkcorekotlin.signing.XyoPublicKey
-import network.xyo.sdkcorekotlin.signing.XyoSigner
+import network.xyo.sdkcorekotlin.crypto.signing.XyoPublicKey
+import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
 import java.math.BigInteger
 import java.security.KeyFactory
 import java.security.KeyPair

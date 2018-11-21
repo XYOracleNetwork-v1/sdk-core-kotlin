@@ -5,10 +5,10 @@ import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.exceptions.XyoBoundWitnessCreationException
 import network.xyo.sdkcorekotlin.exceptions.XyoException
 import network.xyo.sdkcorekotlin.network.XyoNetworkPipe
-import network.xyo.sdkcorekotlin.signing.XyoSigner
+import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
 import java.nio.ByteBuffer
 
-@ExperimentalUnsignedTypes
+
 class XyoZigZagBoundWitnessSession(private val pipe : XyoNetworkPipe,
                                    payload : ByteArray,
                                    signers : Array<XyoSigner>,

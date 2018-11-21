@@ -1,4 +1,4 @@
-package network.xyo.sdkcorekotlin.signing.algorithms.ecc
+package network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc
 
 import network.xyo.sdkcorekotlin.XyoFromSelf
 import network.xyo.sdkcorekotlin.XyoInterpreter
@@ -15,7 +15,6 @@ import java.nio.ByteBuffer
  */
 open class XyoEcdsaSignature(val r : BigInteger, val s : BigInteger) : XyoInterpreter {
 
-    @ExperimentalUnsignedTypes
     override val self: ByteArray
         get() = XyoObjectCreator.createObject(schema, encode())
 
@@ -30,7 +29,6 @@ open class XyoEcdsaSignature(val r : BigInteger, val s : BigInteger) : XyoInterp
         return buffer.array()
     }
 
-    @ExperimentalUnsignedTypes
     override val schema: XyoObjectSchema = XyoSchemas.EC_SIGNATURE
 
     companion object : XyoFromSelf {
@@ -45,7 +43,6 @@ open class XyoEcdsaSignature(val r : BigInteger, val s : BigInteger) : XyoInterp
             return XyoRAndS(r, s)
         }
 
-        @ExperimentalUnsignedTypes
         override fun getInstance(byteArray: ByteArray): XyoInterpreter {
             val rAndS = getRAndS(XyoObjectCreator.getObjectValue(byteArray))
             return object : XyoEcdsaSignature(rAndS.r, rAndS.s) {

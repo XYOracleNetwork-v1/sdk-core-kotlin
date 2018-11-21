@@ -1,4 +1,4 @@
-package network.xyo.sdkcorekotlin.signing
+package network.xyo.sdkcorekotlin.crypto.signing
 
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
@@ -133,7 +133,6 @@ abstract class XyoSigner {
             return signingCreators[byte]
         }
 
-        @ExperimentalUnsignedTypes
         fun verify (publicKey: XyoPublicKey, signature: ByteArray, data : ByteArray) : Deferred<Boolean?> = GlobalScope.async {
             val headerPublicKey = publicKey.schema.header
             val headerSignature = XyoObjectSchema.createFromHeader(signature.copyOfRange(0, 2)).header

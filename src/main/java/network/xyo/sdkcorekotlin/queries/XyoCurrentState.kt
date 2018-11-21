@@ -1,6 +1,6 @@
 package network.xyo.sdkcorekotlin.queries
 
-import network.xyo.sdkcorekotlin.signing.XyoSigner
+import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
 
 interface XyoCurrentState {
     /**

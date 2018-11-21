@@ -12,7 +12,6 @@ import org.bouncycastle.jcajce.provider.digest.SHA3
 object XyoSha3 : XyoBasicHashBase.XyoBasicHashBaseProvider() {
     override val standardDigestKey: String = "SHA3"
 
-    @ExperimentalUnsignedTypes
     override fun createHash(data: ByteArray): Deferred<XyoHash> = GlobalScope.async {
         val digest = SHA3.DigestSHA3(256)
         digest.update(data)
@@ -25,7 +24,6 @@ object XyoSha3 : XyoBasicHashBase.XyoBasicHashBaseProvider() {
         }
     }
 
-    @ExperimentalUnsignedTypes
     override val schema: XyoObjectSchema
         get() = XyoSchemas.SHA3
 }

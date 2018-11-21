@@ -1,4 +1,4 @@
-package network.xyo.sdkcorekotlin.signing
+package network.xyo.sdkcorekotlin.crypto.signing
 
 import network.xyo.sdkcorekotlin.XyoInterpreter
 import java.security.PublicKey

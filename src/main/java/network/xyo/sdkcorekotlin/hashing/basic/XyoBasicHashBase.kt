@@ -25,10 +25,8 @@ abstract class XyoBasicHashBase : XyoHash() {
          */
         abstract val standardDigestKey : String
 
-        @ExperimentalUnsignedTypes
         abstract val schema : XyoObjectSchema
 
-        @ExperimentalUnsignedTypes
         override fun createHash (data: ByteArray) : Deferred<XyoHash> {
             return GlobalScope.async {
             val hash = hash(data)
@@ -50,7 +48,6 @@ abstract class XyoBasicHashBase : XyoHash() {
             return object : XyoBasicHashBase() {
                 override val self: ByteArray = byteArray
 
-                @ExperimentalUnsignedTypes
                 override val schema: XyoObjectSchema = this@XyoBasicHashBaseProvider.schema
 
                 override val hash: ByteArray
@@ -61,7 +58,6 @@ abstract class XyoBasicHashBase : XyoHash() {
     }
 
     companion object {
-        @ExperimentalUnsignedTypes
         fun createHashType (schema: XyoObjectSchema, standardDigestKey: String) : XyoBasicHashBaseProvider {
             return object : XyoBasicHashBaseProvider() {
                 override val schema: XyoObjectSchema = schema

@@ -3,7 +3,7 @@ package network.xyo.sdkcorekotlin.origin
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas.INDEX
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas.NEXT_PUBLIC_KEY
-import network.xyo.sdkcorekotlin.signing.XyoSigner
+import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
 import network.xyo.sdkobjectmodelkotlin.objects.XyoObjectCreator
 import java.nio.ByteBuffer
 
@@ -19,7 +19,6 @@ open class XyoOriginChainStateManager (private val indexOffset : Int) : XyoOrigi
     private var waitingSigners = ArrayList<XyoSigner>()
     private var latestHash : ByteArray? = null
 
-    @ExperimentalUnsignedTypes
     constructor(indexOffset: Int, signers : Array<XyoSigner>, previousHash: ByteArray): this(indexOffset) {
         latestHash = previousHash
         currentSigners = ArrayList(signers.toList())
@@ -42,12 +41,9 @@ open class XyoOriginChainStateManager (private val indexOffset : Int) : XyoOrigi
 
     override var nextPublicKey : ByteArray? = null
 
-    @ExperimentalUnsignedTypes
     override val index : ByteArray
         get() = XyoObjectCreator.createObject(INDEX, ByteBuffer.allocate(4).putInt(count + indexOffset).array())
 
-
-    @ExperimentalUnsignedTypes
     override val previousHash : ByteArray?
         get() {
             val latestHashValue = latestHash
@@ -62,7 +58,6 @@ open class XyoOriginChainStateManager (private val indexOffset : Int) : XyoOrigi
         return currentSigners.toTypedArray()
     }
 
-    @ExperimentalUnsignedTypes
     override fun addSigner (signer : XyoSigner) {
         if (ByteBuffer.wrap(XyoObjectCreator.getObjectValue(index)).int == 0) {
             currentSigners.add(signer)

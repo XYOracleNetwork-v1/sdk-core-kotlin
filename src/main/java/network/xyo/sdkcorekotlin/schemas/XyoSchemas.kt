@@ -2,7 +2,7 @@ package network.xyo.sdkcorekotlin.schemas
 
 import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 
-@ExperimentalUnsignedTypes
+
 object XyoSchemas {
     val BW = XyoObjectSchema.createFromHeader(byteArrayOf(0xA0.toByte(), 0x02))
     val ARRAY_TYPED = XyoObjectSchema.createFromHeader(byteArrayOf(0xB0.toByte(), 0x01))
@@ -18,8 +18,8 @@ object XyoSchemas {
     val SHA512 = XyoObjectSchema.createFromHeader(byteArrayOf(0x80.toByte(), 0x0b))
     val SHA3 = XyoObjectSchema.createFromHeader(byteArrayOf(0x80.toByte(), 0x0c))
     val PREVIOUS_HASH = XyoObjectSchema.createFromHeader(byteArrayOf(0x80.toByte(), 0x0d))
-    val BRIDGE_BLOCK_SET = XyoObjectSchema.createFromHeader(byteArrayOf(0xA0.toByte(), 0x0e))
-    val BRIDGE_HASH_SET =  XyoObjectSchema.createFromHeader(byteArrayOf(0xA0.toByte(), 0x0f))
+    val BRIDGE_BLOCK_SET = XyoObjectSchema.createFromHeader(byteArrayOf(0xB0.toByte(), 0x0e))
+    val BRIDGE_HASH_SET =  XyoObjectSchema.createFromHeader(byteArrayOf(0xB0.toByte(), 0x0f))
     val UNIX_TIME = XyoObjectSchema.createFromHeader(byteArrayOf(0x80.toByte(), 0x10))
     val NEXT_PUBLIC_KEY = XyoObjectSchema.createFromHeader(byteArrayOf(0x80.toByte(), 0x11))
     val EC_PUBLIC_KEY = XyoObjectSchema.createFromHeader(byteArrayOf(0x80.toByte(), 0x12))
@@ -28,6 +28,6 @@ object XyoSchemas {
     val RSA_PUBLIC_KEY = XyoObjectSchema.createFromHeader(byteArrayOf(0x80.toByte(), 0x16))
     val RSA_PRIVATE_KEY = XyoObjectSchema.createFromHeader(byteArrayOf(0x80.toByte(), 0x15))
     val RSA_SIGNATURE = XyoObjectSchema.createFromHeader(byteArrayOf(0x80.toByte(), 0x17))
-    val PAYLOAD = XyoObjectSchema.createFromHeader(byteArrayOf(0xA0.toByte(), 0x18))
+    val PAYLOAD = XyoObjectSchema.createFromHeader(byteArrayOf(0xB0.toByte(), 0x18))
     val INDEX = XyoObjectSchema.createFromHeader(byteArrayOf(0x80.toByte(), 0x19))
 }

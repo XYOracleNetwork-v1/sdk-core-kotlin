@@ -4,10 +4,9 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
-import network.xyo.sdkcorekotlin.signing.XyoSigner
+import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
 import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectIterator
 import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectSetCreator
-import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 import java.util.*
 
 /**
@@ -17,7 +16,6 @@ import java.util.*
  * @param payload the payload to pur in the bound witness.
  */
 
-@ExperimentalUnsignedTypes
 open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
                                  private val payload : ByteArray) : XyoBoundWitness() {
 

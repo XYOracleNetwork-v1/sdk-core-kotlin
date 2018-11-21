@@ -1,11 +1,10 @@
-package network.xyo.sdkcorekotlin.signing.algorithms.ecc.secp256k
+package network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.secp256k
 
-import network.xyo.sdkcorekotlin.signing.XyoPublicKey
-import network.xyo.sdkcorekotlin.signing.algorithms.ecc.XyoEcPrivateKey
-import network.xyo.sdkcorekotlin.signing.algorithms.ecc.XyoGeneralEc
-import network.xyo.sdkcorekotlin.signing.algorithms.ecc.XyoUncompressedEcPublicKey
+import network.xyo.sdkcorekotlin.crypto.signing.XyoPublicKey
+import network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.XyoEcPrivateKey
+import network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.XyoGeneralEc
+import network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.XyoUncompressedEcPublicKey
 import org.bouncycastle.crypto.params.ECDomainParameters
-import org.bouncycastle.jce.ECNamedCurveTable
 import org.bouncycastle.jce.provider.BouncyCastleProvider import java.math.BigInteger
 import java.security.AlgorithmParameters
 import java.security.KeyPair
@@ -28,7 +27,6 @@ abstract class XyoEcSecp256K (privateKey: ECPrivateKey?) : XyoGeneralEc(privateK
     override val privateKey: XyoEcPrivateKey
         get() = keyPair.private as XyoEcPrivateKey
 
-    @ExperimentalUnsignedTypes
     override fun ecKeyPairToXyoKeyPair(ecPublicKey: ECPublicKey, ecPrivateKey : ECPrivateKey): KeyPair {
         return KeyPair(
                 object : XyoUncompressedEcPublicKey() {

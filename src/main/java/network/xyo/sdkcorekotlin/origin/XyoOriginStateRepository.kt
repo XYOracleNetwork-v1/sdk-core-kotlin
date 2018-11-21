@@ -2,7 +2,7 @@ package network.xyo.sdkcorekotlin.origin
 
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.queries.XyoCurrentState
-import network.xyo.sdkcorekotlin.signing.XyoSigner
+import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
 
 
 /**

@@ -7,8 +7,7 @@ import network.xyo.sdkcorekotlin.XyoFromSelf
 import network.xyo.sdkcorekotlin.XyoInterpreter
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
-import network.xyo.sdkcorekotlin.signing.XyoSigner
-import network.xyo.sdkobjectmodelkotlin.objects.XyoObjectCreator
+import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
 import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectIterator
 import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectSetCreator
 import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
@@ -18,7 +17,6 @@ import java.nio.ByteBuffer
  * A Xyo Bound Witness Object
  */
 
-@ExperimentalUnsignedTypes
 abstract class XyoBoundWitness : XyoInterpreter {
     /**
      * All of the public keys in the bound witness.
@@ -41,20 +39,19 @@ abstract class XyoBoundWitness : XyoInterpreter {
     val completed: Boolean
         get() {
             if ((XyoObjectIterator(publicKeys).size == XyoObjectIterator(signatures).size)
-                    && (XyoObjectIterator(signatures).size == XyoObjectIterator(payloads).size)) {
+                    && (XyoObjectIterator(signatures).size == XyoObjectIterator(payloads).size)
+                    && XyoObjectIterator(publicKeys).size != 0) {
                 return true
             }
             return false
         }
 
-    @ExperimentalUnsignedTypes
     override val self: ByteArray
         get() = XyoObjectSetCreator.createUntypedIterableObject(
                 schema,
                 arrayOf(publicKeys, payloads, signatures)
         )
 
-    @ExperimentalUnsignedTypes
     override val schema: XyoObjectSchema = XyoSchemas.BW
 
     /**
@@ -104,7 +101,6 @@ abstract class XyoBoundWitness : XyoInterpreter {
 
     companion object : XyoFromSelf {
 
-        @ExperimentalUnsignedTypes
         override fun getInstance(byteArray: ByteArray): XyoBoundWitness {
             return object : XyoBoundWitness() {
                 override val self: ByteArray
@@ -112,17 +108,17 @@ abstract class XyoBoundWitness : XyoInterpreter {
 
                 override val publicKeys: ByteArray
                     get() {
-                        return XyoObjectIterator(byteArray)[0]
+                        return XyoObjectIterator(self)[0]
                     }
 
                 override val payloads: ByteArray
                     get() {
-                        return XyoObjectIterator(byteArray)[1]
+                        return XyoObjectIterator(self)[1]
                     }
 
                 override val signatures: ByteArray
                     get() {
-                        return XyoObjectIterator(byteArray)[2]
+                        return XyoObjectIterator(self)[2]
                     }
             }
         }
@@ -133,7 +129,6 @@ abstract class XyoBoundWitness : XyoInterpreter {
          * @param boundWitness The boundWitness to check
          * @return The number of parties, if null, there is a inconsistent amount of parties.
          */
-        @ExperimentalUnsignedTypes
         fun getNumberOfParties (boundWitness: XyoBoundWitness) : Int? {
             val keySetNumber = XyoObjectIterator(boundWitness.publicKeys).size
             val payloadNumber = XyoObjectIterator(boundWitness.payloads).size

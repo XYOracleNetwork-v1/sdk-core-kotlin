@@ -1,11 +1,10 @@
-package network.xyo.sdkcorekotlin.signing.algorithms.rsa
+package network.xyo.sdkcorekotlin.crypto.signing.algorithms.rsa
 
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
-import network.xyo.sdkcorekotlin.signing.XyoSigner
-import network.xyo.sdkcorekotlin.signing.XyoSigningObjectCreatorVerify
+import network.xyo.sdkcorekotlin.crypto.signing.XyoSigningObjectCreatorVerify
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import java.security.Signature
 
@@ -16,7 +15,6 @@ class XyoRsaWithSha256 (privateKey: XyoRsaPrivateKey?) : XyoGeneralRsa (1024, pr
     override val signature: Signature
         get() = signatureInstance
 
-    @ExperimentalUnsignedTypes
     override fun signData(byteArray: ByteArray): Deferred<ByteArray> {
         return GlobalScope.async {
             signature.initSign(keyPair.private)
@@ -36,15 +34,12 @@ class XyoRsaWithSha256 (privateKey: XyoRsaPrivateKey?) : XyoGeneralRsa (1024, pr
             return XyoRsaWithSha256(null)
         }
 
-        @ExperimentalUnsignedTypes
         override fun newInstance(privateKey: ByteArray): XyoRsaWithSha256 {
             return XyoRsaWithSha256(XyoRsaPrivateKey.getInstance(privateKey))
         }
 
-        @ExperimentalUnsignedTypes
         override val supportedKeys: Array<ByteArray> = arrayOf(XyoSchemas.RSA_PUBLIC_KEY.header)
 
-        @ExperimentalUnsignedTypes
         override val supportedSignatures: Array<ByteArray> = arrayOf(XyoSchemas.RSA_SIGNATURE.header)
     }
 }

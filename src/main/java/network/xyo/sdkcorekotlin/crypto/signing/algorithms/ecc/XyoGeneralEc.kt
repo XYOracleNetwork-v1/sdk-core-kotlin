@@ -1,6 +1,6 @@
-package network.xyo.sdkcorekotlin.signing.algorithms.ecc
+package network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc
 
-import network.xyo.sdkcorekotlin.signing.XyoSigner
+import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
 import org.bouncycastle.crypto.params.ECDomainParameters
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.bouncycastle.jce.spec.ECParameterSpec
@@ -10,26 +10,15 @@ import java.security.interfaces.ECPublicKey
 import java.security.spec.ECPoint
 import java.security.spec.ECPublicKeySpec
 
-/**
- * A base class for all EC crypto operations.
- */
+
 abstract class XyoGeneralEc (privateKey: ECPrivateKey?) : XyoSigner() {
-    /**
-     * The generated public key.
-     */
+
     val keyPair: KeyPair = generateKeyPair(privateKey)
 
-    /**
-     * The spec and curve
-     */
+
     abstract val spec : ECParameterSpec
 
-    /**
-     * Turn ec public and private keys into XyoObject based keys. This is used for packing and unpacking.
-     *
-     * @param ecPublicKey The public key to convert
-     * @param ecPrivateKey The private key to convert
-     */
+
     abstract fun ecKeyPairToXyoKeyPair (ecPublicKey : ECPublicKey, ecPrivateKey : ECPrivateKey) : KeyPair
 
     private fun generateKeyFromPrivate (privateKey: XyoEcPrivateKey) : KeyPair {

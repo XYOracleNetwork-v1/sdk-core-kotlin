@@ -3,10 +3,9 @@ package network.xyo.sdkcorekotlin.boundWitness
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import network.xyo.sdkcorekotlin.signing.XyoSigner
 import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectIterator
 
-@ExperimentalUnsignedTypes
+
 class XyoBoundWitnessVerify (private val allowUnknown : Boolean) {
     /**
      * Will verify a single bound witness.
