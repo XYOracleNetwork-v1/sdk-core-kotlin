@@ -57,12 +57,10 @@ open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoSto
     private fun updateIndex (blockHash : XyoHash) = GlobalScope.async {
         val newIndex = ArrayList<ByteArray>()
         newIndex.add(blockHash.self)
-        val currentIndex = getHashIndex().await()
+        val currentIndex = storageProvider.read(BLOCKS_INDEX_KEY).await()
 
         if (currentIndex != null) {
-            for (hash in currentIndex) {
-                newIndex.add(hash)
-            }
+            XyoObjectSetCreator.addToIterableObject(blockHash.self, currentIndex)
         }
 
         val newIndexEncoded = XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, newIndex.toTypedArray())
@@ -75,7 +73,9 @@ open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoSto
 
         if (currentIndex != null) {
             for (hash in currentIndex) {
-                newIndex.add(hash)
+                if (!hash.contentEquals(blockHash)) {
+                    newIndex.add(hash)
+                }
             }
         }
 
