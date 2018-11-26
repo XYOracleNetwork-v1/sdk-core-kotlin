@@ -36,7 +36,7 @@ open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoSto
     }
 
     private fun readIteratorFromKey (key : ByteArray) = GlobalScope.async{
-        val encodedIndex = storageProvider.read(BLOCKS_INDEX_KEY).await()
+        val encodedIndex = storageProvider.read(key).await()
 
         if (encodedIndex != null) {
             return@async XyoIterableObject(encodedIndex).iterator
