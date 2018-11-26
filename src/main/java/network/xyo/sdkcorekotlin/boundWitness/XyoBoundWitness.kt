@@ -8,9 +8,6 @@ import network.xyo.sdkcorekotlin.XyoInterpreter
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
-import network.xyo.sdkcorekotlin.schemas.XyoSchemas.ARRAY_TYPED
-import network.xyo.sdkcorekotlin.schemas.XyoSchemas.ARRAY_UNTYPED
-import network.xyo.sdkcorekotlin.schemas.XyoSchemas.PAYLOAD
 import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoIterableObject
 import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectSetCreator
 import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
