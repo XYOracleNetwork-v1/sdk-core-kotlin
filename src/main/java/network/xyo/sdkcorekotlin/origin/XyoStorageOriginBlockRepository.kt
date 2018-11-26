@@ -31,13 +31,16 @@ open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoSto
         return@async storageProvider.containsKey(originBlockHash).await()
     }
 
-    override fun getAllOriginBlockHashes() = GlobalScope.async {
+    override fun getAllOriginBlockHashes() : Deferred<Iterator<ByteArray>?> {
+        return readIteratorFromKey(BLOCKS_INDEX_KEY)
+    }
+
+    private fun readIteratorFromKey (key : ByteArray) = GlobalScope.async{
         val encodedIndex = storageProvider.read(BLOCKS_INDEX_KEY).await()
 
         if (encodedIndex != null) {
             return@async XyoIterableObject(encodedIndex).iterator
         }
-
         return@async null
     }
 
@@ -69,7 +72,7 @@ open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoSto
 
     private fun removeIndex (blockHash: ByteArray) = GlobalScope.async {
         val newIndex = ArrayList<ByteArray>()
-        val currentIndex = getHashIndex().await()
+        val currentIndex = getAllOriginBlockHashes().await()
 
         if (currentIndex != null) {
             for (hash in currentIndex) {
@@ -81,15 +84,6 @@ open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoSto
 
         val newIndexEncoded = XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, newIndex.toTypedArray())
         storageProvider.write(BLOCKS_INDEX_KEY, newIndexEncoded)
-    }
-
-    private fun getHashIndex () : Deferred<Iterator<ByteArray>?> = GlobalScope.async{
-        val encodedIndex = storageProvider.read(BLOCKS_INDEX_KEY).await()
-
-        if (encodedIndex != null) {
-            return@async XyoIterableObject(encodedIndex).iterator
-        }
-        return@async null
     }
 
     companion object {
