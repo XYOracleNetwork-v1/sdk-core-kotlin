@@ -11,7 +11,7 @@ import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas.ARRAY_TYPED
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas.ARRAY_UNTYPED
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas.PAYLOAD
-import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectIterator
+import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoIterableObject
 import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectSetCreator
 import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 import java.nio.ByteBuffer
@@ -41,9 +41,9 @@ abstract class XyoBoundWitness : XyoInterpreter {
      */
     val completed: Boolean
         get() {
-            if ((XyoObjectIterator(publicKeys).size == XyoObjectIterator(signatures).size)
-                    && (XyoObjectIterator(signatures).size == XyoObjectIterator(payloads).size)
-                    && XyoObjectIterator(publicKeys).size != 0) {
+            if ((XyoIterableObject(publicKeys).size == XyoIterableObject(signatures).size)
+                    && (XyoIterableObject(signatures).size == XyoIterableObject(payloads).size)
+                    && XyoIterableObject(publicKeys).size != 0) {
                 return true
             }
             return false
@@ -83,8 +83,8 @@ abstract class XyoBoundWitness : XyoInterpreter {
         val signedPayloadsToSign = ArrayList<ByteArray>()
         var signingDataSize = 0
 
-        for (payload in XyoObjectIterator(payloads)) {
-            val signedPayload = XyoObjectIterator(payload)[0]
+        for (payload in XyoIterableObject(payloads).iterator) {
+            val signedPayload = XyoIterableObject((payload))[0]
             signingDataSize += signedPayload.size
             signedPayloadsToSign.add(signedPayload)
         }
@@ -111,17 +111,17 @@ abstract class XyoBoundWitness : XyoInterpreter {
 
                 override val publicKeys: ByteArray
                     get() {
-                        return XyoObjectIterator(self)[0]
+                        return XyoIterableObject(self)[0]
                     }
 
                 override val payloads: ByteArray
                     get() {
-                        return XyoObjectIterator(self)[1]
+                        return XyoIterableObject(self)[1]
                     }
 
                 override val signatures: ByteArray
                     get() {
-                        return XyoObjectIterator(self)[2]
+                        return XyoIterableObject(self)[2]
                     }
             }
         }
@@ -133,9 +133,9 @@ abstract class XyoBoundWitness : XyoInterpreter {
          * @return The number of parties, if null, there is a inconsistent amount of parties.
          */
         fun getNumberOfParties (boundWitness: XyoBoundWitness) : Int? {
-            val keySetNumber = XyoObjectIterator(boundWitness.publicKeys).size
-            val payloadNumber = XyoObjectIterator(boundWitness.payloads).size
-            val signatureNumber = XyoObjectIterator(boundWitness.signatures).size
+            val keySetNumber = XyoIterableObject(boundWitness.publicKeys).size
+            val payloadNumber = XyoIterableObject(boundWitness.payloads).size
+            val signatureNumber = XyoIterableObject(boundWitness.signatures).size
 
             if (keySetNumber == payloadNumber &&  keySetNumber == signatureNumber) {
                 return keySetNumber

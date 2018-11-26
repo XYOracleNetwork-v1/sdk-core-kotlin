@@ -3,7 +3,7 @@ package network.xyo.sdkcorekotlin.boundWitness
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectIterator
+import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoIterableObject
 
 
 class XyoBoundWitnessVerify (private val allowUnknown : Boolean) {
@@ -21,8 +21,8 @@ class XyoBoundWitnessVerify (private val allowUnknown : Boolean) {
 
         val numberOfParties = XyoBoundWitness.getNumberOfParties(boundWitness)
         val dataSignedOn = boundWitness.getSigningData()
-        val publicKeys = XyoObjectIterator(boundWitness.publicKeys)
-        val signatures = XyoObjectIterator(boundWitness.signatures)
+        val publicKeys = XyoIterableObject(boundWitness.publicKeys)
+        val signatures = XyoIterableObject(boundWitness.signatures)
 
         if (numberOfParties != null) {
             return@async checkAllSignatures(dataSignedOn, numberOfParties, publicKeys, signatures).await()
@@ -31,10 +31,10 @@ class XyoBoundWitnessVerify (private val allowUnknown : Boolean) {
         return@async false
     }
 
-    private fun checkAllSignatures(signingData: ByteArray, numberOfParties : Int, publicKeys: XyoObjectIterator, signatures: XyoObjectIterator) : Deferred<Boolean?> = GlobalScope.async {
+    private fun checkAllSignatures(signingData: ByteArray, numberOfParties : Int, publicKeys: XyoIterableObject, signatures: XyoIterableObject) : Deferred<Boolean?> = GlobalScope.async {
         for (partyNum in 0 until numberOfParties) {
-            val keys = XyoObjectIterator(publicKeys[partyNum])
-            val sigs = XyoObjectIterator(signatures[partyNum])
+            val keys = XyoIterableObject(publicKeys[partyNum])
+            val sigs = XyoIterableObject(signatures[partyNum])
 
             if (keys.size != sigs.size) {
                 return@async false
@@ -51,7 +51,7 @@ class XyoBoundWitnessVerify (private val allowUnknown : Boolean) {
     }
 
 
-    private fun checkSinglePartySignatures (keys: XyoObjectIterator, signatures : XyoObjectIterator, signingData : ByteArray) : Deferred<Boolean> = GlobalScope.async {
+    private fun checkSinglePartySignatures (keys: XyoIterableObject, signatures : XyoIterableObject, signingData : ByteArray) : Deferred<Boolean> = GlobalScope.async {
         for (keyNum in 0 until keys.size) {
             val key = keys[keyNum]
             val signature = signatures[keyNum]

@@ -7,7 +7,7 @@ import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.storage.XyoStorageProviderInterface
-import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectIterator
+import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoIterableObject
 import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectSetCreator
 
 
@@ -35,7 +35,7 @@ open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoSto
         val encodedIndex = storageProvider.read(BLOCKS_INDEX_KEY).await()
 
         if (encodedIndex != null) {
-            return@async XyoObjectIterator(encodedIndex)
+            return@async XyoIterableObject(encodedIndex).iterator
         }
 
         return@async null
@@ -87,7 +87,7 @@ open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoSto
         val encodedIndex = storageProvider.read(BLOCKS_INDEX_KEY).await()
 
         if (encodedIndex != null) {
-            return@async XyoObjectIterator(encodedIndex)
+            return@async XyoIterableObject(encodedIndex).iterator
         }
         return@async null
     }

@@ -7,7 +7,7 @@ import network.xyo.sdkcorekotlin.crypto.signing.algorithms.rsa.XyoRsaWithSha256
 import network.xyo.sdkcorekotlin.hashing.basic.XyoSha3
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkobjectmodelkotlin.objects.XyoObjectCreator
-import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectIterator
+import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoIterableObject
 import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectSetCreator
 import org.junit.Assert
 import org.junit.Test
@@ -29,8 +29,9 @@ class XyoTestBoundWitnessUtil : XyoTestBase() {
             val removedItemBoundWitness = XyoBoundWitnessUtil.removeTypeFromUnsignedPayload(XyoSchemas.INDEX.id, aliceBoundWitness.self)
 
                                                 /* todo standardize this XyoObjectIterator(XyoObjectIterator(XyoObjectIterator()[x])[y])[z] */
-            Assert.assertEquals(1, XyoObjectIterator(XyoObjectIterator(XyoObjectIterator(XyoObjectIterator(aliceBoundWitness.self)[1])[0])[1])[XyoSchemas.INDEX.id].size)
-            Assert.assertEquals(0, XyoObjectIterator(XyoObjectIterator(XyoObjectIterator(XyoObjectIterator(removedItemBoundWitness)[1])[0])[1])[XyoSchemas.INDEX.id].size)
+
+            Assert.assertEquals(1, XyoIterableObject(XyoIterableObject(XyoIterableObject(XyoIterableObject(aliceBoundWitness.self)[1])[0])[1])[XyoSchemas.INDEX.id].size)
+            Assert.assertEquals(0, XyoIterableObject(XyoIterableObject(XyoIterableObject(XyoIterableObject(removedItemBoundWitness)[1])[0])[1])[XyoSchemas.INDEX.id].size)
 
             val originalHash = XyoBoundWitness.getInstance(aliceBoundWitness.self).getHash(XyoSha3).await()
             val removedHash = XyoBoundWitness.getInstance(removedItemBoundWitness).getHash(XyoSha3).await()

@@ -2,7 +2,7 @@ package network.xyo.sdkcorekotlin.boundWitness
 
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas.BW
-import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectIterator
+import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoIterableObject
 import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectSetCreator
 import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 
@@ -10,12 +10,12 @@ object XyoBoundWitnessUtil {
     fun removeTypeFromUnsignedPayload (type : Byte, boundWitness: ByteArray) : ByteArray {
         val newPayloads = ArrayList<ByteArray>()
 
-        for (payload in XyoObjectIterator(XyoObjectIterator(boundWitness)[1])) {
-            val signedPayload = XyoObjectIterator(payload)[0]
-            val unsignedPayload = XyoObjectIterator(payload)[1]
+        for (payload in XyoIterableObject(XyoIterableObject(boundWitness)[1]).iterator) {
+            val signedPayload = XyoIterableObject(payload)[0]
+            val unsignedPayload = XyoIterableObject(payload)[1]
             val itemsThatAreNotTypeUnsigned = ArrayList<ByteArray>()
 
-            for (item in XyoObjectIterator(unsignedPayload)) {
+            for (item in XyoIterableObject(unsignedPayload).iterator) {
                 if (XyoObjectSchema.createFromHeader(item.copyOfRange(0, 2)).id != type) {
                     itemsThatAreNotTypeUnsigned.add(item)
                 }
@@ -27,9 +27,9 @@ object XyoBoundWitnessUtil {
 
         return XyoObjectSetCreator.createUntypedIterableObject(BW,
                 arrayOf(
-                        XyoObjectIterator(boundWitness)[0],
+                        XyoIterableObject(boundWitness)[0],
                         XyoObjectSetCreator.createTypedIterableObject(XyoSchemas.ARRAY_TYPED, newPayloads.toTypedArray()),
-                        XyoObjectIterator(boundWitness)[2]
+                        XyoIterableObject(boundWitness)[2]
                 )
             )
     }

@@ -7,7 +7,7 @@ import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
 import network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.secp256k.XyoSha256WithSecp256K
 import network.xyo.sdkcorekotlin.crypto.signing.algorithms.rsa.XyoRsaWithSha256
 import network.xyo.sdkobjectmodelkotlin.objects.XyoObjectCreator
-import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectIterator
+import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoIterableObject
 import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectSetCreator
 import org.junit.Assert
 import org.junit.Test
@@ -25,9 +25,9 @@ class XyoBoundWitnessCreationTest : XyoTestBase() {
             val aliceBoundWitness = XyoZigZagBoundWitness(aliceSigners, alicePayload)
             aliceBoundWitness.incomingData(null, true).await()
 
-            Assert.assertEquals(1, XyoObjectIterator(aliceBoundWitness.payloads).size)
-            Assert.assertEquals(1, XyoObjectIterator(aliceBoundWitness.publicKeys).size)
-            Assert.assertEquals(1, XyoObjectIterator(aliceBoundWitness.signatures).size)
+            Assert.assertEquals(1, XyoIterableObject(aliceBoundWitness.payloads).size)
+            Assert.assertEquals(1, XyoIterableObject(aliceBoundWitness.publicKeys).size)
+            Assert.assertEquals(1, XyoIterableObject(aliceBoundWitness.signatures).size)
             Assert.assertTrue(aliceBoundWitness.completed)
             Assert.assertEquals(1, XyoBoundWitness.getNumberOfParties(aliceBoundWitness))
         }

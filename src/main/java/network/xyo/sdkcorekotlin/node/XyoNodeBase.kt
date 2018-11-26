@@ -15,7 +15,7 @@ import network.xyo.sdkcorekotlin.schemas.XyoSchemas.ARRAY_UNTYPED
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas.BRIDGE_BLOCK_SET
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas.PAYLOAD
 import network.xyo.sdkcorekotlin.storage.XyoStorageProviderInterface
-import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectIterator
+import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoIterableObject
 import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectSetCreator
 import java.nio.ByteBuffer
 import java.util.*
@@ -203,9 +203,9 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
     }
 
     private fun getBridgedBlocks (boundWitness: XyoBoundWitness) : Iterator<ByteArray>? {
-        for (payload in XyoObjectIterator(boundWitness.payloads)) {
-            for (item in XyoObjectIterator(payload)[BRIDGE_BLOCK_SET.id]) {
-                return XyoObjectIterator(item)
+        for (payload in XyoIterableObject(boundWitness.payloads).iterator) {
+            for (item in XyoIterableObject(payload)[BRIDGE_BLOCK_SET.id]) {
+                return XyoIterableObject(item).iterator
             }
         }
         return null

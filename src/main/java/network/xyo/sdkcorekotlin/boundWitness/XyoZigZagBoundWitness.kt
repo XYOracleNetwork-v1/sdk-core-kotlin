@@ -5,7 +5,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
-import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectIterator
+import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoIterableObject
 import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectSetCreator
 import java.util.*
 
@@ -52,7 +52,7 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
             hasSentKeysAndPayload = true
         }
 
-        if (XyoObjectIterator(signatures).size != XyoObjectIterator(publicKeys).size) {
+        if (XyoIterableObject(signatures).size != XyoIterableObject(publicKeys).size) {
             return@async getReturnFromIncoming(getNumberOfSignaturesFromTransfer(transfer), endPoint).await()
 
         }
@@ -65,12 +65,12 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
             return 0
         }
 
-        return XyoObjectIterator((XyoObjectIterator(transfer)[2])).size
+        return XyoIterableObject((XyoIterableObject(transfer)[2])).size
     }
 
     private fun getReturnFromIncoming (signatureReceivedSize : Int, endPoint: Boolean) : Deferred<ByteArray> = GlobalScope.async {
 
-        if (XyoObjectIterator(signatures).size == 0 && !endPoint) {
+        if (XyoIterableObject(signatures).size == 0 && !endPoint) {
             return@async self
         }
 
@@ -84,17 +84,17 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
 
         signForSelf().await()
 
-        val publicKeyIt = XyoObjectIterator(publicKeys)
+        val publicKeyIt = XyoIterableObject(publicKeys)
         for (i in signatureReceivedSize + 1 until publicKeyIt.size ) {
             keysToSend.add(publicKeyIt[i])
         }
 
-        val payloadIt = XyoObjectIterator(payloads)
+        val payloadIt = XyoIterableObject(payloads)
         for (i in signatureReceivedSize + 1 until payloadIt.size) {
             payloadsToSend.add(payloadIt[i])
         }
 
-        val signatureIt =  XyoObjectIterator(signatures)
+        val signatureIt =  XyoIterableObject(signatures).iterator
         signatureToSend.add(signatureIt.next())
 
         return@async XyoObjectSetCreator.createUntypedIterableObject(
@@ -125,10 +125,10 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
     }
 
     private fun addTransfer (transfer : ByteArray) : Deferred<Unit> = GlobalScope.async {
-        val it = XyoObjectIterator(transfer)
-        addIncomingKeys(XyoObjectIterator(it[0]))
-        addIncomingPayload(XyoObjectIterator(it[1]))
-        addIncomingSignatures(XyoObjectIterator(it[2]))
+        val it = XyoIterableObject(transfer)
+        addIncomingKeys(XyoIterableObject(it[0]).iterator)
+        addIncomingPayload(XyoIterableObject(it[1]).iterator)
+        addIncomingSignatures(XyoIterableObject(it[2]).iterator)
     }
 
     private fun addIncomingKeys(incomingKeySets : Iterator<ByteArray>) {
