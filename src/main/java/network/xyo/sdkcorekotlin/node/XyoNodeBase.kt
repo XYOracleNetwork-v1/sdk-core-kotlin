@@ -3,6 +3,7 @@ package network.xyo.sdkcorekotlin.node
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import network.xyo.sdkcorekotlin.XyoLog
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitnessUtil
 import network.xyo.sdkcorekotlin.boundWitness.XyoZigZagBoundWitness
@@ -15,6 +16,7 @@ import network.xyo.sdkcorekotlin.schemas.XyoSchemas.ARRAY_UNTYPED
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas.BRIDGE_BLOCK_SET
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas.PAYLOAD
 import network.xyo.sdkcorekotlin.storage.XyoStorageProviderInterface
+import network.xyo.sdkobjectmodelkotlin.objects.XyoObjectCreator
 import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoIterableObject
 import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectSetCreator
 import java.nio.ByteBuffer
@@ -187,6 +189,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
             val boundWitnessWithoutBlocks = XyoBoundWitness.getInstance(
                     XyoBoundWitnessUtil.removeTypeFromUnsignedPayload(BRIDGE_BLOCK_SET.id, boundWitness.self)
             )
+
             originBlocks.addBoundWitness(boundWitnessWithoutBlocks).await()
 
             for ((_, listener) in listeners) {
@@ -195,6 +198,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
 
             if (subBlocks != null) {
                 for (subBlock in subBlocks) {
+                    XyoLog.logSpecial("Found Bridge Block", TAG)
                     loadCreatedBoundWitness(XyoBoundWitness.getInstance(subBlock)).await()
                 }
             }
@@ -238,6 +242,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
         notifyOptions(options.toTypedArray(), currentBoundWitnessSession)
 
         if (currentBoundWitnessSession?.completed == true && error == null) {
+            XyoLog.logSpecial("Created Bound Witness", TAG)
             updateOriginState(currentBoundWitnessSession!!).await()
             onBoundWitnessEndSuccess(currentBoundWitnessSession!!).await()
             currentBoundWitnessSession = null
@@ -257,6 +262,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
     private fun updateOriginState (boundWitness: XyoBoundWitness) = GlobalScope.async {
         val hash = boundWitness.getHash(hashingProvider).await()
         originState.newOriginBlock(hash)
+        XyoLog.logSpecial("Updating Origin State. Awaiting Index: ${ByteBuffer.wrap(XyoObjectCreator.getObjectValue(originState.index)).int}", TAG)
     }
 
     private fun makePayload (options: Array<XyoBoundWitnessOption>) = GlobalScope.async {
@@ -276,7 +282,6 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
         }
 
         signedPayloads.add(index)
-
         signedPayloads.addAll(payloads.signedOptions)
         unsignedPayloads.addAll(payloads.unsignedOptions)
 
@@ -284,5 +289,9 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
                 XyoObjectSetCreator.createUntypedIterableObject(ARRAY_UNTYPED, signedPayloads.toTypedArray()),
                 XyoObjectSetCreator.createUntypedIterableObject(ARRAY_UNTYPED, unsignedPayloads.toTypedArray())
         ))
+    }
+
+    companion object {
+        const val TAG = "NOD"
     }
 }

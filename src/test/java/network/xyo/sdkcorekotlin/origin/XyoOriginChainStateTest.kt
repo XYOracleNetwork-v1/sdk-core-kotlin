@@ -4,12 +4,11 @@ import kotlinx.coroutines.runBlocking
 import network.xyo.sdkcorekotlin.XyoTestBase
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
 import network.xyo.sdkcorekotlin.boundWitness.XyoZigZagBoundWitness
+import network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.secp256k.XyoSha256WithSecp256K
 import network.xyo.sdkcorekotlin.hashing.XyoHash
+import network.xyo.sdkcorekotlin.hashing.basic.XyoSha3
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas.ARRAY_UNTYPED
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas.PAYLOAD
-import network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.secp256k.XyoSha256WithSecp256K
-import network.xyo.sdkcorekotlin.hashing.basic.XyoBasicHashBase
-import network.xyo.sdkcorekotlin.hashing.basic.XyoSha3
 import network.xyo.sdkobjectmodelkotlin.objects.XyoObjectCreator
 import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectSetCreator
 import org.junit.Assert.assertArrayEquals

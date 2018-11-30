@@ -24,13 +24,16 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
     private val dynamicSignatureSets = ArrayList<ByteArray>()
 
     override val payloads: ByteArray
-        get() = XyoObjectSetCreator.createTypedIterableObject(XyoSchemas.ARRAY_TYPED, dynamicPayloads.toTypedArray())
+        get() = XyoObjectSetCreator.createTypedIterableObject(XyoSchemas.ARRAY_TYPED,
+                XyoObjectSetCreator.convertObjectsToType(dynamicPayloads.toTypedArray(), XyoSchemas.PAYLOAD))
 
     override val publicKeys: ByteArray
-        get() = XyoObjectSetCreator.createTypedIterableObject(XyoSchemas.ARRAY_TYPED, dynamicPublicKeys.toTypedArray())
+        get() = XyoObjectSetCreator.createTypedIterableObject(XyoSchemas.ARRAY_TYPED,
+                XyoObjectSetCreator.convertObjectsToType(dynamicPublicKeys.toTypedArray(), XyoSchemas.ARRAY_UNTYPED))
 
     override val signatures: ByteArray
-        get() = XyoObjectSetCreator.createTypedIterableObject(XyoSchemas.ARRAY_TYPED, dynamicSignatureSets.toTypedArray())
+        get() = XyoObjectSetCreator.createTypedIterableObject(XyoSchemas.ARRAY_TYPED,
+                XyoObjectSetCreator.convertObjectsToType(dynamicSignatureSets.toTypedArray(), XyoSchemas.ARRAY_UNTYPED))
 
     private var hasSentKeysAndPayload = false
 
@@ -105,7 +108,7 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
 
     private fun createKeySet (keys : Array<ByteArray>) : ByteArray {
         return XyoObjectSetCreator.createUntypedIterableObject(
-                XyoSchemas.KEY_SET,
+                XyoSchemas.ARRAY_UNTYPED,
                 keys
         )
     }
@@ -119,7 +122,7 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
 
     private fun createSignatures (signatures : Array<ByteArray>) : ByteArray {
         return XyoObjectSetCreator.createUntypedIterableObject(
-                XyoSchemas.SIGNATURE_SET,
+                XyoSchemas.ARRAY_UNTYPED,
                 signatures
         )
     }
@@ -158,7 +161,7 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
         for (signer in signers) {
             publicKeys.add(signer.publicKey.self)
         }
-        return XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.KEY_SET, publicKeys.toTypedArray())
+        return XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, publicKeys.toTypedArray())
     }
 
     private fun signBoundWitness () = GlobalScope.async {

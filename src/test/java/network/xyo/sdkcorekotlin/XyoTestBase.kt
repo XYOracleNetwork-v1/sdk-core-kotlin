@@ -1,8 +1,5 @@
 package network.xyo.sdkcorekotlin
 
-import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
-import org.junit.Assert.assertArrayEquals
-
 open class XyoTestBase {
     fun String.hexStringToByteArray() : ByteArray {
         val hexChars = "0123456789ABCDEF"

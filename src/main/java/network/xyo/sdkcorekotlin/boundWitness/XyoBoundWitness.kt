@@ -8,6 +8,7 @@ import network.xyo.sdkcorekotlin.XyoInterpreter
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
+import network.xyo.sdkobjectmodelkotlin.objects.XyoObjectCreator
 import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoIterableObject
 import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectSetCreator
 import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
@@ -81,7 +82,7 @@ abstract class XyoBoundWitness : XyoInterpreter {
         var signingDataSize = 0
 
         for (payload in XyoIterableObject(payloads).iterator) {
-            val signedPayload = XyoIterableObject((payload))[0]
+            val signedPayload = XyoObjectCreator.getObjectValue(XyoIterableObject((payload))[0])
             signingDataSize += signedPayload.size
             signedPayloadsToSign.add(signedPayload)
         }

@@ -2,11 +2,13 @@ package network.xyo.sdkcorekotlin.boundWitness
 
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import network.xyo.sdkcorekotlin.XyoLog
 import network.xyo.sdkcorekotlin.exceptions.XyoBoundWitnessCreationException
 import network.xyo.sdkcorekotlin.exceptions.XyoException
 import network.xyo.sdkcorekotlin.network.XyoNetworkPipe
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
 import network.xyo.sdkobjectmodelkotlin.exceptions.XyoObjectExceotion
+import java.lang.StringBuilder
 import java.nio.ByteBuffer
 
 
@@ -32,8 +34,10 @@ class XyoZigZagBoundWitnessSession(private val pipe : XyoNetworkPipe,
 
             return null
         } catch (exception : XyoException) {
+            XyoLog.logError("Bound witness creation error: $exception", TAG, exception)
             return exception
         } catch (exception : XyoObjectExceotion) {
+            XyoLog.logError("Bound witness creation error: $exception", TAG, exception)
             return exception
         }
     }
@@ -57,5 +61,9 @@ class XyoZigZagBoundWitnessSession(private val pipe : XyoNetworkPipe,
         }
 
         return@async response
+    }
+
+    companion object {
+        const val TAG = "BWS"
     }
 }

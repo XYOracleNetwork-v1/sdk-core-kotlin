@@ -2,6 +2,7 @@ package network.xyo.sdkcorekotlin.boundWitness
 
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas.BW
+import network.xyo.sdkobjectmodelkotlin.objects.XyoObjectCreator
 import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoIterableObject
 import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectSetCreator
 import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
@@ -21,7 +22,7 @@ object XyoBoundWitnessUtil {
                 }
             }
 
-            val newUnsignedPayload = XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, newPayloads.toTypedArray())
+            val newUnsignedPayload = XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, itemsThatAreNotTypeUnsigned.toTypedArray())
             newPayloads.add(XyoObjectSetCreator.createTypedIterableObject(XyoSchemas.PAYLOAD, arrayOf(signedPayload, newUnsignedPayload)))
         }
 
@@ -32,5 +33,21 @@ object XyoBoundWitnessUtil {
                         XyoIterableObject(boundWitness)[2]
                 )
             )
+    }
+
+    fun getPartyNumberFromPublicKey (boundWitness: ByteArray, publicKey: ByteArray) : Int? {
+        val keys = XyoIterableObject(XyoIterableObject(boundWitness)[0])
+        for (i in 0..keys.size) {
+            for (key in XyoIterableObject(keys[i]).iterator) {
+                val keyValue = XyoObjectCreator.getObjectValue(publicKey)
+                val bwKeyValue = XyoObjectCreator.getObjectValue(key)
+
+                if (keyValue.contentEquals(bwKeyValue)) {
+                    return i
+                }
+            }
+        }
+
+        return null
     }
 }
