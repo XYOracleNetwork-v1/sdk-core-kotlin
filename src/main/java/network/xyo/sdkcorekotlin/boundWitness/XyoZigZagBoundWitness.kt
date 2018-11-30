@@ -25,10 +25,10 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
     private val dynamicSignatureSets = ArrayList<ByteArray>()
 
     override val payloads: ByteArray
-        get() = convertAndCreateIteratableObject(XyoSchemas.ARRAY_TYPED, XyoSchemas.PAYLOAD, dynamicSignatureSets.toTypedArray())
+        get() = convertAndCreateIteratableObject(XyoSchemas.ARRAY_TYPED, XyoSchemas.PAYLOAD, dynamicPayloads.toTypedArray())
 
     override val publicKeys: ByteArray
-        get() = convertAndCreateIteratableObject(XyoSchemas.ARRAY_TYPED, XyoSchemas.ARRAY_UNTYPED, dynamicSignatureSets.toTypedArray())
+        get() = convertAndCreateIteratableObject(XyoSchemas.ARRAY_TYPED, XyoSchemas.ARRAY_UNTYPED, dynamicPublicKeys.toTypedArray())
 
     override val signatures: ByteArray
         get() = convertAndCreateIteratableObject(XyoSchemas.ARRAY_TYPED, XyoSchemas.ARRAY_UNTYPED, dynamicSignatureSets.toTypedArray())
