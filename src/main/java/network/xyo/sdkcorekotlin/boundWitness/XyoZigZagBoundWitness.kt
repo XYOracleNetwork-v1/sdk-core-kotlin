@@ -7,6 +7,7 @@ import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
 import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoIterableObject
 import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectSetCreator
+import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 import java.util.*
 
 /**
@@ -24,16 +25,13 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
     private val dynamicSignatureSets = ArrayList<ByteArray>()
 
     override val payloads: ByteArray
-        get() = XyoObjectSetCreator.createTypedIterableObject(XyoSchemas.ARRAY_TYPED,
-                XyoObjectSetCreator.convertObjectsToType(dynamicPayloads.toTypedArray(), XyoSchemas.PAYLOAD))
+        get() = convertAndCreateIteratableObject(XyoSchemas.ARRAY_TYPED, XyoSchemas.PAYLOAD, dynamicSignatureSets.toTypedArray())
 
     override val publicKeys: ByteArray
-        get() = XyoObjectSetCreator.createTypedIterableObject(XyoSchemas.ARRAY_TYPED,
-                XyoObjectSetCreator.convertObjectsToType(dynamicPublicKeys.toTypedArray(), XyoSchemas.ARRAY_UNTYPED))
+        get() = convertAndCreateIteratableObject(XyoSchemas.ARRAY_TYPED, XyoSchemas.ARRAY_UNTYPED, dynamicSignatureSets.toTypedArray())
 
     override val signatures: ByteArray
-        get() = XyoObjectSetCreator.createTypedIterableObject(XyoSchemas.ARRAY_TYPED,
-                XyoObjectSetCreator.convertObjectsToType(dynamicSignatureSets.toTypedArray(), XyoSchemas.ARRAY_UNTYPED))
+        get() = convertAndCreateIteratableObject(XyoSchemas.ARRAY_TYPED, XyoSchemas.ARRAY_UNTYPED, dynamicSignatureSets.toTypedArray())
 
     private var hasSentKeysAndPayload = false
 
@@ -61,6 +59,11 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
         }
 
         return@async XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, arrayOf())
+    }
+
+    private fun convertAndCreateIteratableObject(itSchema : XyoObjectSchema, itemSchema : XyoObjectSchema, items : Array<ByteArray>) : ByteArray {
+        return XyoObjectSetCreator.createTypedIterableObject(itSchema,
+                XyoObjectSetCreator.convertObjectsToType(items, itemSchema))
     }
 
     private fun getNumberOfSignaturesFromTransfer (transfer: ByteArray?) : Int {
