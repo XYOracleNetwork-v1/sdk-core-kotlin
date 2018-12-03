@@ -52,7 +52,7 @@ class XyoWeakReferenceCaching (private val layerToAddCacheTo : XyoStorageProvide
         }
     }
 
-    override fun getAllKeys(): Deferred<Array<ByteArray>> = GlobalScope.async {
+    override fun getAllKeys(): Deferred<Iterator<ByteArray>> = GlobalScope.async {
         return@async layerToAddCacheTo.getAllKeys().await()
     }
 }

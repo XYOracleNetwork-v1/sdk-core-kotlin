@@ -1,44 +1,51 @@
 package network.xyo.sdkcorekotlin.storage
 
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import network.xyo.sdkcorekotlin.data.XyoGenericItem
-import network.xyo.sdkcorekotlin.data.XyoUnsignedHelper
-import network.xyo.sdkcorekotlin.data.array.multi.XyoMultiTypeArrayInt
+import network.xyo.sdkcorekotlin.schemas.XyoSchemas
+import network.xyo.sdkobjectmodelkotlin.objects.XyoObjectCreator
+import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoIterableObject
+import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectSetCreator
+import java.nio.ByteBuffer
 
 class XyoSaveQueue(private val storageProvider: XyoStorageProviderInterface) {
     fun saveKeys(keys: Array<ByteArray>) = GlobalScope.async {
-        val encodedKeys = XyoMultiTypeArrayInt(Array(keys.size) { i ->
-            XyoGenericItem(keys[i])
-        }).untyped
-        storageProvider.write(KEYS_KEY.toByteArray(), encodedKeys).await()
+        storageProvider.write(
+                KEYS_KEY.toByteArray(),
+                XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, keys)
+        ).await()
     }
 
-    fun getKeys() = GlobalScope.async {
-        val encodedKeys = storageProvider.read(KEYS_KEY.toByteArray()).await()
+    fun getKeys() : Deferred<Array<ByteArray>?> = GlobalScope.async {
+        val encoded = storageProvider.read(KEYS_KEY.toByteArray()).await()
 
-        if (encodedKeys != null) {
-            val unpackedKeys = XyoMultiTypeArrayInt.createFromPacked(encodedKeys) as XyoMultiTypeArrayInt
-            return@async Array(unpackedKeys.array.size) { i -> unpackedKeys.array[i].objectInBytes }
+        if (encoded != null) {
+            val it = XyoIterableObject(encoded)
+            return@async Array(it.size) { i ->
+                it[i]
+            }
         }
 
         return@async null
     }
 
     fun saveWeights(weights: Array<Int>) = GlobalScope.async {
-        val encodedKeys = XyoMultiTypeArrayInt(Array(weights.size) { i ->
-            XyoGenericItem(XyoUnsignedHelper.createUnsignedInt(weights[i]))
-        }).untyped
-        storageProvider.write(WEIGHT_KEY.toByteArray(), encodedKeys).await()
+        return@async storageProvider.write(
+                WEIGHT_KEY.toByteArray(),
+                XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, Array(weights.size) { i ->
+                    XyoObjectCreator.createObject(XyoSchemas.RSSI, ByteBuffer.allocate(4).putInt(weights[i]).array())
+                })
+        ).await()
     }
 
-    fun getWeights() = GlobalScope.async {
-        val encodedWeights = storageProvider.read(WEIGHT_KEY.toByteArray()).await()
+    fun getWeights() : Deferred<Array<Int>?> = GlobalScope.async {
+        val encoded = storageProvider.read(WEIGHT_KEY.toByteArray()).await()
 
-        if (encodedWeights != null) {
-            val unpackedWeights = XyoMultiTypeArrayInt.createFromPacked(encodedWeights) as XyoMultiTypeArrayInt
-            return@async Array(unpackedWeights.array.size) { i ->
-                XyoUnsignedHelper.readUnsignedInt(unpackedWeights.array[i].objectInBytes)
+        if (encoded != null) {
+            val it = XyoIterableObject(encoded)
+            return@async Array(it.size) { i ->
+                ByteBuffer.wrap(XyoObjectCreator.getObjectValue(it[i])).int
             }
         }
 

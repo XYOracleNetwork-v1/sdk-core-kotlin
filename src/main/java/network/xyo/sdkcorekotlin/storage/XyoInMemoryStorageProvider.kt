@@ -25,7 +25,7 @@ class XyoInMemoryStorageProvider : XyoStorageProviderInterface {
     }
 
     override fun getAllKeys() = GlobalScope.async {
-        return@async keys.toTypedArray()
+        return@async keys.iterator()
     }
 
     override fun read(key: ByteArray) = GlobalScope.async {

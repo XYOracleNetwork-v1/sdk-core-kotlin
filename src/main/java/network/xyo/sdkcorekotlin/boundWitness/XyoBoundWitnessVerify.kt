@@ -3,10 +3,8 @@ package network.xyo.sdkcorekotlin.boundWitness
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import network.xyo.sdkcorekotlin.data.XyoObject
-import network.xyo.sdkcorekotlin.data.array.multi.XyoKeySet
-import network.xyo.sdkcorekotlin.signing.XyoSignatureSet
-import network.xyo.sdkcorekotlin.signing.XyoSigner
+import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoIterableObject
+
 
 class XyoBoundWitnessVerify (private val allowUnknown : Boolean) {
     /**
@@ -23,8 +21,8 @@ class XyoBoundWitnessVerify (private val allowUnknown : Boolean) {
 
         val numberOfParties = XyoBoundWitness.getNumberOfParties(boundWitness)
         val dataSignedOn = boundWitness.getSigningData()
-        val publicKeys = boundWitness.publicKeys
-        val signatures = boundWitness.signatures
+        val publicKeys = XyoIterableObject(boundWitness.publicKeys)
+        val signatures = XyoIterableObject(boundWitness.signatures)
 
         if (numberOfParties != null) {
             return@async checkAllSignatures(dataSignedOn, numberOfParties, publicKeys, signatures).await()
@@ -33,10 +31,10 @@ class XyoBoundWitnessVerify (private val allowUnknown : Boolean) {
         return@async false
     }
 
-    private fun checkAllSignatures(signingData: ByteArray, numberOfParties : Int, publicKeys: Array<XyoKeySet>, signatures: Array<XyoSignatureSet>) : Deferred<Boolean?> = GlobalScope.async {
+    private fun checkAllSignatures(signingData: ByteArray, numberOfParties : Int, publicKeys: XyoIterableObject, signatures: XyoIterableObject) : Deferred<Boolean?> = GlobalScope.async {
         for (partyNum in 0 until numberOfParties) {
-            val keys = publicKeys[partyNum].array
-            val sigs = signatures[partyNum].array
+            val keys = XyoIterableObject(publicKeys[partyNum])
+            val sigs = XyoIterableObject(signatures[partyNum])
 
             if (keys.size != sigs.size) {
                 return@async false
@@ -53,16 +51,17 @@ class XyoBoundWitnessVerify (private val allowUnknown : Boolean) {
     }
 
 
-    private fun checkSinglePartySignatures (keys: Array<XyoObject>, signatures : Array<XyoObject>, signingData : ByteArray) : Deferred<Boolean> = GlobalScope.async {
+    private fun checkSinglePartySignatures (keys: XyoIterableObject, signatures : XyoIterableObject, signingData : ByteArray) : Deferred<Boolean> = GlobalScope.async {
         for (keyNum in 0 until keys.size) {
             val key = keys[keyNum]
             val signature = signatures[keyNum]
 
-            val verify = XyoSigner.verify(key, signature, signingData).await()
+            // todo
+            // val verify = XyoSigner.verify(key, signature, signingData).await()
 
-            if ((verify == null && !allowUnknown) || verify == false) {
-                return@async false
-            }
+//            if ((verify == null && !allowUnknown) || verify == false) {
+//                return@async false
+//            }
         }
 
         return@async true

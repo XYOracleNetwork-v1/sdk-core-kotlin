@@ -85,7 +85,9 @@ open class XyoBridgeQueue {
     }
 
     fun setQueue (blocks : Array<ByteArray>, weights: Array<Int>) {
-        blocksToBridge = ArrayList(Array(blocks.size) { i -> XyoBridgeQueueItem(blocks[i], weights[i]) }.asList())
+        blocksToBridge = ArrayList(Array(blocks.size) { i ->
+            XyoBridgeQueueItem(blocks[i], weights[i]) }.asList()
+        )
     }
 
     /**

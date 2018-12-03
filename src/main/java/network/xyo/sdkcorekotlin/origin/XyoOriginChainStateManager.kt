@@ -1,11 +1,12 @@
 package network.xyo.sdkcorekotlin.origin
 
-import network.xyo.sdkcorekotlin.data.XyoObject
-import network.xyo.sdkcorekotlin.data.heuristics.number.unsigned.XyoIndex
 import network.xyo.sdkcorekotlin.hashing.XyoHash
-import network.xyo.sdkcorekotlin.hashing.XyoPreviousHash
-import network.xyo.sdkcorekotlin.signing.XyoNextPublicKey
-import network.xyo.sdkcorekotlin.signing.XyoSigner
+import network.xyo.sdkcorekotlin.schemas.XyoSchemas.INDEX
+import network.xyo.sdkcorekotlin.schemas.XyoSchemas.NEXT_PUBLIC_KEY
+import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
+import network.xyo.sdkcorekotlin.schemas.XyoSchemas.PREVIOUS_HASH
+import network.xyo.sdkobjectmodelkotlin.objects.XyoObjectCreator
+import java.nio.ByteBuffer
 
 
 /**
@@ -17,10 +18,10 @@ import network.xyo.sdkcorekotlin.signing.XyoSigner
 open class XyoOriginChainStateManager (private val indexOffset : Int) : XyoOriginStateRepository {
     private var currentSigners = ArrayList<XyoSigner>()
     private var waitingSigners = ArrayList<XyoSigner>()
-    private var latestHash : XyoHash? = null
+    private var latestHash : ByteArray? = null
 
-    constructor(indexOffset: Int, signers : Array<XyoSigner>, previousHash: XyoPreviousHash): this(indexOffset) {
-        latestHash = previousHash.hash
+    constructor(indexOffset: Int, signers : Array<XyoSigner>, previousHash: ByteArray): this(indexOffset) {
+        latestHash = previousHash
         currentSigners = ArrayList(signers.toList())
     }
 
@@ -37,19 +38,18 @@ open class XyoOriginChainStateManager (private val indexOffset : Int) : XyoOrigi
     /**
      * All of the public keys used in the origin chain.
      */
-    val allPublicKeys = ArrayList<XyoObject>()
+    val allPublicKeys = ArrayList<ByteArray>()
 
-    override var nextPublicKey : XyoNextPublicKey? = null
+    override var nextPublicKey : ByteArray? = null
 
-    override val index : XyoIndex
-        get() = XyoIndex(count + indexOffset)
+    override val index : ByteArray
+        get() = XyoObjectCreator.createObject(INDEX, ByteBuffer.allocate(4).putInt(count + indexOffset).array())
 
-
-    override val previousHash : XyoPreviousHash?
+    override val previousHash : ByteArray?
         get() {
             val latestHashValue = latestHash
             if (latestHashValue != null) {
-                return XyoPreviousHash(latestHashValue)
+                return XyoObjectCreator.createObject(PREVIOUS_HASH, latestHashValue)
             }
             return null
         }
@@ -60,14 +60,14 @@ open class XyoOriginChainStateManager (private val indexOffset : Int) : XyoOrigi
     }
 
     override fun addSigner (signer : XyoSigner) {
-        if (index.number == 0) {
+        if (ByteBuffer.wrap(XyoObjectCreator.getObjectValue(index)).int == 0) {
             currentSigners.add(signer)
             return
         }
 
-        nextPublicKey = XyoNextPublicKey(signer.publicKey)
+        nextPublicKey = XyoObjectCreator.createObject(NEXT_PUBLIC_KEY, signer.publicKey.self)
         waitingSigners.add(signer)
-        allPublicKeys.add(signer.publicKey)
+        allPublicKeys.add(signer.publicKey.self)
     }
 
     override fun removeOldestSigner () {
@@ -77,7 +77,7 @@ open class XyoOriginChainStateManager (private val indexOffset : Int) : XyoOrigi
     override fun newOriginBlock (hash : XyoHash) {
         nextPublicKey = null
         allHashes.add(hash)
-        latestHash = hash
+        latestHash = hash.self
         count++
         addWaitingSigner()
     }

@@ -32,7 +32,7 @@ interface XyoStorageProviderInterface {
      * @return Returns a deferred Array<ByteArray>. The Deferred contains an array of ByteArrays that
      * are keys.
      */
-    fun getAllKeys(): Deferred<Array<ByteArray>>
+    fun getAllKeys(): Deferred<Iterator<ByteArray>>
 
     /**
      * Deletes the value for the corresponding key.

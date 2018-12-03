@@ -27,7 +27,7 @@ interface XyoOriginBlockRepository : XyoGetOriginBlockByHash {
      *
      * @return A deferred Array<ByteArray>
      */
-    fun getAllOriginBlockHashes () : Deferred<Array<ByteArray>>
+    fun getAllOriginBlockHashes () : Deferred<Iterator<ByteArray>?>
 
     /**
      * Adds a bound bound witness to the navigator and stores it. If the bound witness is not an

@@ -19,7 +19,7 @@ open class XyoIndexableOriginBlockRepository(storageProviderInterface: XyoHash.X
     }
 
     override fun addBoundWitness(originBlock: XyoBoundWitness): Deferred<Exception?> = GlobalScope.async {
-        val key = originBlock.getHash(hashingObject).await().typed
+        val key = originBlock.getHash(hashingObject).await().self
 
         for ((_, indexer) in indexers) {
             indexer.createIndex(key, originBlock)

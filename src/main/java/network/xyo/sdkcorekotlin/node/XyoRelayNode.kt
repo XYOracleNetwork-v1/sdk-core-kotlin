@@ -5,14 +5,12 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
-import network.xyo.sdkcorekotlin.data.XyoObjectProvider
-import network.xyo.sdkcorekotlin.data.XyoUnsignedHelper
-import network.xyo.sdkcorekotlin.data.array.multi.XyoBridgeHashSet
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.network.XyoNetworkPipe
 import network.xyo.sdkcorekotlin.network.XyoNetworkProcedureCatalogueInterface
 import network.xyo.sdkcorekotlin.network.XyoProcedureCatalogue
 import network.xyo.sdkcorekotlin.storage.XyoStorageProviderInterface
+import java.nio.ByteBuffer
 
 /**
  * A base class for nodes creating data, then relaying it (e.g.) sentinels and bridges.
@@ -40,7 +38,7 @@ abstract class XyoRelayNode (storageProvider : XyoStorageProviderInterface,
 
         override fun onBoundWitnessDiscovered(boundWitness: XyoBoundWitness) {
             runBlocking {
-                originBlocksToBridge.addBlock(boundWitness.getHash(hashingProvider).await().typed)
+                originBlocksToBridge.addBlock(boundWitness.getHash(hashingProvider).await().self)
             }
         }
 
@@ -89,10 +87,10 @@ abstract class XyoRelayNode (storageProvider : XyoStorageProviderInterface,
 
     override fun getChoice(catalog: Int, strict: Boolean): Int {
         if (catalog and XyoProcedureCatalogue.TAKE_ORIGIN_CHAIN == XyoProcedureCatalogue.TAKE_ORIGIN_CHAIN
-                && procedureCatalogue.canDo(XyoUnsignedHelper.createUnsignedInt(XyoProcedureCatalogue.TAKE_ORIGIN_CHAIN))) {
+                && procedureCatalogue.canDo(ByteBuffer.allocate(4).putInt(XyoProcedureCatalogue.TAKE_ORIGIN_CHAIN).array())) {
             return  XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN
         } else if (catalog and XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN == XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN
-                && procedureCatalogue.canDo(XyoUnsignedHelper.createUnsignedInt(XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN))) {
+                && procedureCatalogue.canDo(ByteBuffer.allocate(4).putInt(XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN).array())) {
             return XyoProcedureCatalogue.TAKE_ORIGIN_CHAIN
         }
 
