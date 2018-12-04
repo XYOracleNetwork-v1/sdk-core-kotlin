@@ -9,8 +9,7 @@ import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.hashing.basic.XyoSha3
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas.ARRAY_UNTYPED
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas.PAYLOAD
-import network.xyo.sdkobjectmodelkotlin.objects.XyoObjectCreator
-import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectSetCreator
+import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -22,18 +21,18 @@ class XyoOriginChainStateTest : XyoTestBase() {
     private val hashCreator = XyoSha3
     private val originChainState = XyoOriginChainStateManager(0)
     private var lastHash : XyoHash? = null
-    private var nextKey : ByteArray? = null
+    private var nextKey : XyoBuff? = null
 
     @Test
     fun testOriginChainTest () {
         val startingSigner = XyoSha256WithSecp256K.newInstance()
-        
+
         runBlocking {
             val originBlocks = ArrayList<XyoBoundWitness>()
             originChainState.addSigner(startingSigner)
             for (i in 0..numberOfBlocks) {
-                val elementsInSignedPayload = ArrayList<ByteArray>()
-                val elementsInUnsignedPayload = arrayOf<ByteArray>()
+                val elementsInSignedPayload = ArrayList<XyoBuff>()
+                val elementsInUnsignedPayload = arrayOf<XyoBuff>()
 
 
                 elementsInSignedPayload.add(originChainState.index)
@@ -49,11 +48,11 @@ class XyoOriginChainStateTest : XyoTestBase() {
                     elementsInSignedPayload.add(hash)
                 }
 
-                val signedPayload = XyoObjectSetCreator.createUntypedIterableObject(ARRAY_UNTYPED, elementsInSignedPayload.toTypedArray())
-                val unsignedPayload = XyoObjectSetCreator.createUntypedIterableObject(ARRAY_UNTYPED, elementsInUnsignedPayload)
-
-                val alicePayload =  XyoObjectSetCreator.createTypedIterableObject(PAYLOAD, arrayOf(signedPayload, unsignedPayload))
-                val aliceBoundWitness = XyoZigZagBoundWitness(originChainState.getSigners(), alicePayload)
+                val aliceBoundWitness = XyoZigZagBoundWitness(
+                        originChainState.getSigners(),
+                        elementsInSignedPayload.toTypedArray(),
+                        elementsInUnsignedPayload
+                )
 
                 aliceBoundWitness.incomingData(null, true).await()
                 originChainState.newOriginBlock(aliceBoundWitness.getHash(hashCreator).await())
@@ -63,11 +62,11 @@ class XyoOriginChainStateTest : XyoTestBase() {
                 lastHash = aliceBoundWitness.getHash(hashCreator).await()
 
                 if (i != 0) {
-                    assertArrayEquals(lastHash?.self, XyoObjectCreator.getObjectValue(originChainState.previousHash!!))
+                    assertArrayEquals(lastHash?.bytesCopy, originChainState.previousHash!!.valueCopy)
                     originChainState.removeOldestSigner()
                 }
 
-                assertEquals(i, ByteBuffer.wrap(XyoObjectCreator.getObjectValue(originChainState.index)).int - 1 )
+                assertEquals(i, ByteBuffer.wrap((originChainState.index.valueCopy)).int - 1 )
             }
         }
     }

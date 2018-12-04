@@ -19,8 +19,8 @@ class XyoRsaCryptoStandardTest : XyoTestBase() {
             val sig = rsa.signData(dataToSign).await()
 
 
-            Assert.assertArrayEquals(assertedPublic, rsa.publicKey.self)
-            Assert.assertArrayEquals(assertedPrivate, rsa.privateKey.self)
+            Assert.assertArrayEquals(assertedPublic, rsa.publicKey.bytesCopy)
+            Assert.assertArrayEquals(assertedPrivate, rsa.privateKey.bytesCopy)
             Assert.assertTrue(XyoRsaWithSha256.verifySign(sig, dataToSign, XyoRsaPublicKey.getInstance(assertedPublic)).await())
         }
     }

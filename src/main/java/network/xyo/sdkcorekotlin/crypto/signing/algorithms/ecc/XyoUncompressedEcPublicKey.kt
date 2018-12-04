@@ -1,10 +1,9 @@
 package network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc
 
 import network.xyo.sdkcorekotlin.XyoFromSelf
-import network.xyo.sdkcorekotlin.XyoInterpreter
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.crypto.signing.XyoPublicKey
-import network.xyo.sdkobjectmodelkotlin.objects.XyoObjectCreator
+import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 import org.bouncycastle.jce.interfaces.ECPublicKey
 import org.bouncycastle.jce.spec.ECParameterSpec
@@ -16,7 +15,7 @@ import java.nio.ByteBuffer
 /**
  * A base class for all uncompressed EC public keys.
  */
-abstract class XyoUncompressedEcPublicKey : ECPublicKey, XyoPublicKey {
+abstract class XyoUncompressedEcPublicKey : ECPublicKey, XyoPublicKey() {
     /**
      * The Java ECParameterSpec to understand the public key (x and y).
      */
@@ -26,23 +25,24 @@ abstract class XyoUncompressedEcPublicKey : ECPublicKey, XyoPublicKey {
      * The X point of the public key.
      */
     open val x : BigInteger
-        get() = BigInteger(1, XyoObjectCreator.getObjectValue(self).copyOfRange(0, 32))
+        get() = BigInteger(1, valueCopy.copyOfRange(0, 32))
 
     /**
      * The Y point of the public key.
      */
     open val y : BigInteger
-        get() = BigInteger(1, XyoObjectCreator.getObjectValue(self).copyOfRange(32, 64))
+        get() = BigInteger(1, valueCopy.copyOfRange(32, 64))
 
     override fun getAlgorithm(): String {
         return "EC"
     }
 
+    override var item: ByteArray
+        get() = XyoBuff.getObjectEncoded(schema, encoded)
+        set(value) {}
+
     override val schema: XyoObjectSchema
         get() = XyoSchemas.EC_PUBLIC_KEY
-
-    override val self: ByteArray
-        get() = XyoObjectCreator.createObject(schema, encoded)
 
     override fun getEncoded(): ByteArray {
         val buffer = ByteBuffer.allocate(64)
@@ -91,11 +91,13 @@ abstract class XyoUncompressedEcPublicKey : ECPublicKey, XyoPublicKey {
          */
         abstract val ecPramSpec : ECParameterSpec
 
-        override fun getInstance(byteArray: ByteArray): XyoInterpreter {
+        override fun getInstance(byteArray: ByteArray): XyoUncompressedEcPublicKey {
             return object : XyoUncompressedEcPublicKey() {
                 override val ecSpec: ECParameterSpec = ecPramSpec
-                override val self: ByteArray
-                    get() = byteArray
+                override val allowedOffset: Int
+                    get() = 0
+
+                override var item: ByteArray = byteArray
             }
 
         }

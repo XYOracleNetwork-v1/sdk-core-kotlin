@@ -1,6 +1,8 @@
 package network.xyo.sdkcorekotlin.node
 
 import network.xyo.sdkcorekotlin.XyoTestBase
+import network.xyo.sdkcorekotlin.schemas.XyoSchemas
+import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import org.junit.Assert
 import org.junit.Test
 
@@ -14,7 +16,7 @@ class XyoBridgeQueueTest : XyoTestBase() {
         queue.sendLimit = 10
 
         for (i in 0 until numberOfBlocks) {
-            queue.addBlock(byteArrayOf(i.toByte()))
+            queue.addBlock(XyoBuff.newInstance(XyoSchemas.STUB_HASH, byteArrayOf(i.toByte())))
         }
 
         var numberOfBlocksOffloaded = 0

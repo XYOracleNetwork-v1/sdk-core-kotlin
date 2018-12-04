@@ -1,14 +1,14 @@
 package network.xyo.sdkcorekotlin.node
 
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
-import network.xyo.sdkobjectmodelkotlin.objects.XyoObjectCreator
+import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import java.nio.ByteBuffer
 
 class XyoUnixTimeGetter : XyoHeuristicGetter {
-    override fun getHeuristic(): ByteArray? {
+    override fun getHeuristic(): XyoBuff? {
         val time = System.currentTimeMillis()
         val buffer = ByteBuffer.allocate(8).putLong(time)
 
-        return XyoObjectCreator.createObject(XyoSchemas.UNIX_TIME, buffer.array())
+        return XyoBuff.newInstance(XyoSchemas.UNIX_TIME, buffer.array())
     }
 }

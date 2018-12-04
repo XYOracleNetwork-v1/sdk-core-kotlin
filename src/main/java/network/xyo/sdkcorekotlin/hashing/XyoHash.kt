@@ -2,12 +2,12 @@ package network.xyo.sdkcorekotlin.hashing
 
 import kotlinx.coroutines.Deferred
 import network.xyo.sdkcorekotlin.XyoFromSelf
-import network.xyo.sdkcorekotlin.XyoInterpreter
+import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 
 /**
  * A base class for containing and encoding hashes.
  */
-abstract class XyoHash : XyoInterpreter {
+abstract class XyoHash : XyoBuff() {
     /**
      * The encoded hash.
      */

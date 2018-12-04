@@ -2,51 +2,48 @@ package network.xyo.sdkcorekotlin.boundWitness
 
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas.BW
-import network.xyo.sdkobjectmodelkotlin.objects.XyoObjectCreator
-import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoIterableObject
-import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectSetCreator
+import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
+import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
 import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 
 object XyoBoundWitnessUtil {
-    fun removeTypeFromUnsignedPayload (type : Byte, boundWitness: ByteArray) : ByteArray {
-        val newPayloads = ArrayList<ByteArray>()
+    fun removeTypeFromUnsignedPayload (type : Byte, boundWitness: XyoIterableObject) : XyoIterableObject {
+        val newBoundWitnessLedger = ArrayList<XyoBuff>()
 
-        for (payload in XyoIterableObject(XyoIterableObject(boundWitness)[1]).iterator) {
-            val signedPayload = XyoIterableObject(payload)[0]
-            val unsignedPayload = XyoIterableObject(payload)[1]
-            val itemsThatAreNotTypeUnsigned = ArrayList<ByteArray>()
+        val fetters = boundWitness[XyoSchemas.FETTER.id]
+        val witnesses = boundWitness[XyoSchemas.WITNESSS.id]
 
-            for (item in XyoIterableObject(unsignedPayload).iterator) {
-                if (XyoObjectSchema.createFromHeader(item.copyOfRange(0, 2)).id != type) {
-                    itemsThatAreNotTypeUnsigned.add(item)
+        newBoundWitnessLedger.addAll(fetters)
+
+        for (witness in witnesses) {
+            if (witness is XyoIterableObject) {
+                val items = ArrayList<XyoBuff>()
+
+                for (item in witness.iterator) {
+                    if (item.schema.id != type) {
+                        items.add(item)
+                    }
                 }
-            }
 
-            val newUnsignedPayload = XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, itemsThatAreNotTypeUnsigned.toTypedArray())
-            newPayloads.add(XyoObjectSetCreator.createTypedIterableObject(XyoSchemas.PAYLOAD, arrayOf(signedPayload, newUnsignedPayload)))
+                newBoundWitnessLedger.add(XyoIterableObject.createUntypedIterableObject(XyoSchemas.WITNESSS, items.toTypedArray()))
+            }
         }
 
-        return XyoObjectSetCreator.createUntypedIterableObject(BW,
-                arrayOf(
-                        XyoIterableObject(boundWitness)[0],
-                        XyoObjectSetCreator.createTypedIterableObject(XyoSchemas.ARRAY_TYPED, newPayloads.toTypedArray()),
-                        XyoIterableObject(boundWitness)[2]
-                )
-            )
+        return XyoIterableObject.createUntypedIterableObject(XyoSchemas.BW, newBoundWitnessLedger.toTypedArray())
     }
 
     fun getPartyNumberFromPublicKey (boundWitness: ByteArray, publicKey: ByteArray) : Int? {
-        val keys = XyoIterableObject(XyoIterableObject(boundWitness)[0])
-        for (i in 0..keys.size) {
-            for (key in XyoIterableObject(keys[i]).iterator) {
-                val keyValue = XyoObjectCreator.getObjectValue(publicKey)
-                val bwKeyValue = XyoObjectCreator.getObjectValue(key)
-
-                if (keyValue.contentEquals(bwKeyValue)) {
-                    return i
-                }
-            }
-        }
+//        val keys = XyoIterableObject(XyoIterableObject(boundWitness)[0])
+//        for (i in 0..keys.size) {
+//            for (key in XyoIterableObject(keys[i]).iterator) {
+//                val keyValue = XyoObjectCreator.getObjectValue(publicKey)
+//                val bwKeyValue = XyoObjectCreator.getObjectValue(key)
+//
+//                if (keyValue.contentEquals(bwKeyValue)) {
+//                    return i
+//                }
+//            }
+//        }
 
         return null
     }

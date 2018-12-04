@@ -10,6 +10,7 @@ import network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.XyoEcPrivateKey
 import network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.XyoEcdsaSignature
 import network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.XyoUncompressedEcPublicKey
 import network.xyo.sdkcorekotlin.hashing.basic.XyoBasicHashBase
+import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import org.bouncycastle.crypto.params.ECDomainParameters
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters
 import org.bouncycastle.crypto.signers.ECDSASigner
@@ -26,7 +27,7 @@ import java.security.Signature
  */
 class XyoSha256WithSecp256K (privateKey : ECPrivateKey?) : XyoEcSecp256K1(privateKey) {
 
-    override fun signData(byteArray: ByteArray): Deferred<ByteArray> {
+    override fun signData(byteArray: ByteArray): Deferred<XyoBuff> {
         return GlobalScope.async {
             signatureInstance.initSign(keyPair.private)
             signatureInstance.update(byteArray)
@@ -38,7 +39,7 @@ class XyoSha256WithSecp256K (privateKey : ECPrivateKey?) : XyoEcSecp256K1(privat
             signer.init(true, pam)
             val sig = signer.generateSignature(hashData(byteArray))
 
-            return@async XyoEcdsaSignature(sig[0], sig[1]).self
+            return@async XyoEcdsaSignature(sig[0], sig[1])
         }
     }
 
@@ -57,23 +58,20 @@ class XyoSha256WithSecp256K (privateKey : ECPrivateKey?) : XyoEcSecp256K1(privat
             return XyoSha256WithSecp256K(XyoEcPrivateKey.getInstance(privateKey, XyoEcSecp256K1.ecSpec))
         }
 
-        override fun verifySign(signature: ByteArray, byteArray: ByteArray, publicKey: PublicKey): Deferred<Boolean> = GlobalScope.async {
+        override fun verifySign(signature: XyoBuff, byteArray: ByteArray, publicKey: PublicKey): Deferred<Boolean> = GlobalScope.async {
             val signer = ECDSASigner()
 
             val ecDomainParameters = ECDomainParameters(ecCurve.curve, ecCurve.g, ecCurve.n)
             signer.init(false, ECPublicKeyParameters(ecCurve.curve.createPoint((publicKey as XyoUncompressedEcPublicKey).x, publicKey.y), ecDomainParameters))
 
 
-            val ecSig = XyoEcdsaSignature.getInstance(signature)
+            val ecSig = XyoEcdsaSignature.getInstance(signature.bytesCopy)
 
-            if (ecSig is XyoEcdsaSignature) {
-                val r = ecSig.r
-                val s = ecSig.s
+            val r = ecSig.r
+            val s = ecSig.s
 
-                return@async signer.verifySignature(hashData(byteArray), r, s)
-            }
+            return@async signer.verifySignature(hashData(byteArray), r, s)
 
-            return@async false
         }
 
         private fun hashData (byteArray: ByteArray) : ByteArray {

@@ -1,13 +1,14 @@
 package network.xyo.sdkcorekotlin.node
 
 import com.sun.corba.se.impl.encoding.CodeSetConversion
+import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 
 /**
  * A class to manage outgoing origin blocks for bridges and sentinels.
  */
 open class XyoBridgeQueue {
     private var blocksToBridge = ArrayList<XyoBridgeQueueItem>()
-    private var removed = ArrayList<ByteArray>()
+    private var removed = ArrayList<XyoBuff>()
 
     /**
      * The maximum number of blocks to send at a given time.
@@ -24,7 +25,7 @@ open class XyoBridgeQueue {
      *
      * @param blockHash The block to add.
      */
-    fun addBlock (blockHash : ByteArray) {
+    fun addBlock (blockHash : XyoBuff) {
         blocksToBridge.add(XyoBridgeQueueItem(blockHash, 0))
         sortQueue()
     }
@@ -35,7 +36,7 @@ open class XyoBridgeQueue {
      * @param blockHash The block to add.
      * @param weight The weight to add the block to the queue with.
      */
-    fun addBlock (blockHash : ByteArray, weight : Int) {
+    fun addBlock (blockHash : XyoBuff, weight : Int) {
         blocksToBridge.add(XyoBridgeQueueItem(blockHash, weight))
         sortQueue()
     }
@@ -78,13 +79,13 @@ open class XyoBridgeQueue {
     /**
      * Get the blocks that have exceeded the removeWeight and are out of the queue
      */
-    fun getToRemove () : Array<ByteArray> {
+    fun getToRemove () : Array<XyoBuff> {
         val result = removed.toTypedArray()
         removed.clear()
         return result
     }
 
-    fun setQueue (blocks : Array<ByteArray>, weights: Array<Int>) {
+    fun setQueue (blocks : Array<XyoBuff>, weights: Array<Int>) {
         blocksToBridge = ArrayList(Array(blocks.size) { i ->
             XyoBridgeQueueItem(blocks[i], weights[i]) }.asList()
         )
@@ -95,7 +96,7 @@ open class XyoBridgeQueue {
      *
      * @return An array of origin block hashes
      */
-    fun getAllBlocks () : Array<ByteArray> {
+    fun getAllBlocks () : Array<XyoBuff> {
         return Array(blocksToBridge.size) { i -> blocksToBridge[i].boundWitnessHash }
     }
 
@@ -131,17 +132,17 @@ open class XyoBridgeQueue {
     }
 
     companion object {
-        class XyoBridgeQueueItem (val boundWitnessHash: ByteArray, var weight: Int) : Comparable<XyoBridgeQueueItem> {
+        class XyoBridgeQueueItem (val boundWitnessHash: XyoBuff, var weight: Int) : Comparable<XyoBridgeQueueItem> {
             override fun compareTo(other: XyoBridgeQueueItem): Int {
                 return weight.compareTo(other.weight)
             }
 
             override fun equals(other: Any?): Boolean {
-                return boundWitnessHash.contentEquals((other as XyoBridgeQueueItem).boundWitnessHash)
+                return boundWitnessHash.bytesCopy.contentEquals((other as XyoBridgeQueueItem).boundWitnessHash.bytesCopy)
             }
 
             override fun hashCode(): Int {
-                return boundWitnessHash.contentHashCode()
+                return boundWitnessHash.bytesCopy.contentHashCode()
             }
         }
     }

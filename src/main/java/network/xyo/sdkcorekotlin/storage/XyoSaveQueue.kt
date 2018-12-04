@@ -4,25 +4,29 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
-import network.xyo.sdkobjectmodelkotlin.objects.XyoObjectCreator
-import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoIterableObject
-import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectSetCreator
+import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
+import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
 import java.nio.ByteBuffer
 
 class XyoSaveQueue(private val storageProvider: XyoStorageProviderInterface) {
-    fun saveKeys(keys: Array<ByteArray>) = GlobalScope.async {
+    fun saveKeys(keys: Array<XyoBuff>) = GlobalScope.async {
         storageProvider.write(
                 KEYS_KEY.toByteArray(),
-                XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, keys)
+                XyoIterableObject.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, keys).bytesCopy
         ).await()
     }
 
-    fun getKeys() : Deferred<Array<ByteArray>?> = GlobalScope.async {
+    fun getKeys() : Deferred<Array<XyoBuff>?> = GlobalScope.async {
         val encoded = storageProvider.read(KEYS_KEY.toByteArray()).await()
 
         if (encoded != null) {
-            val it = XyoIterableObject(encoded)
-            return@async Array(it.size) { i ->
+            val it = object : XyoIterableObject() {
+                override val allowedOffset: Int
+                    get() = 0
+
+                override var item: ByteArray = encoded
+            }
+            return@async Array(it.count) { i ->
                 it[i]
             }
         }
@@ -33,9 +37,9 @@ class XyoSaveQueue(private val storageProvider: XyoStorageProviderInterface) {
     fun saveWeights(weights: Array<Int>) = GlobalScope.async {
         return@async storageProvider.write(
                 WEIGHT_KEY.toByteArray(),
-                XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, Array(weights.size) { i ->
-                    XyoObjectCreator.createObject(XyoSchemas.RSSI, ByteBuffer.allocate(4).putInt(weights[i]).array())
-                })
+                XyoIterableObject.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, Array(weights.size) { i ->
+                    XyoBuff.newInstance(XyoSchemas.RSSI, ByteBuffer.allocate(4).putInt(weights[i]).array())
+                }).bytesCopy
         ).await()
     }
 
@@ -43,9 +47,15 @@ class XyoSaveQueue(private val storageProvider: XyoStorageProviderInterface) {
         val encoded = storageProvider.read(WEIGHT_KEY.toByteArray()).await()
 
         if (encoded != null) {
-            val it = XyoIterableObject(encoded)
-            return@async Array(it.size) { i ->
-                ByteBuffer.wrap(XyoObjectCreator.getObjectValue(it[i])).int
+            val it = object : XyoIterableObject() {
+                override val allowedOffset: Int
+                    get() = 0
+
+                override var item: ByteArray = encoded
+            }
+
+            return@async Array(it.count) { i ->
+                ByteBuffer.wrap(it[i].valueCopy).int
             }
         }
 

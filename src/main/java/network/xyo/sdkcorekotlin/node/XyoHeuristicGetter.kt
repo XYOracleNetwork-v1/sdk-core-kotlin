@@ -1,5 +1,7 @@
 package network.xyo.sdkcorekotlin.node
 
+import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
+
 interface XyoHeuristicGetter {
 
     /**
@@ -8,5 +10,5 @@ interface XyoHeuristicGetter {
      *
      * @return the Heuristic
      */
-    fun getHeuristic() : ByteArray?
+    fun getHeuristic() : XyoBuff?
 }

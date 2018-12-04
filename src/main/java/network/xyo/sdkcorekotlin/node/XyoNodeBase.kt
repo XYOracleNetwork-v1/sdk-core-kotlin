@@ -12,13 +12,13 @@ import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.network.XyoNetworkPipe
 import network.xyo.sdkcorekotlin.origin.XyoIndexableOriginBlockRepository
 import network.xyo.sdkcorekotlin.origin.XyoOriginChainStateManager
+import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas.ARRAY_UNTYPED
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas.BRIDGE_BLOCK_SET
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas.PAYLOAD
 import network.xyo.sdkcorekotlin.storage.XyoStorageProviderInterface
-import network.xyo.sdkobjectmodelkotlin.objects.XyoObjectCreator
-import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoIterableObject
-import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectSetCreator
+import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
+import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
 import java.nio.ByteBuffer
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -104,7 +104,8 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
     fun selfSignOriginChain (flag: Int?) : Deferred<Unit> = GlobalScope.async {
         val bitFlag = flag ?: 0
         val options = getBoundWitnessOptions(bitFlag).await()
-        val boundWitness = XyoZigZagBoundWitness(originState.getSigners(), makePayload(options.toTypedArray()).await())
+        //todo
+        val boundWitness = XyoZigZagBoundWitness(originState.getSigners(), makeSignedPayload(options.toTypedArray()).await(), makeUnsignedPayload(options.toTypedArray()).await())
         boundWitness.incomingData(null, true).await()
         updateOriginState(boundWitness).await()
         onBoundWitnessEndSuccess(boundWitness).await()
@@ -115,11 +116,11 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
     }
 
 
-    private class XyoOptionPayload (val unsignedOptions : Array<ByteArray>, val signedOptions : Array<ByteArray> )
+    private class XyoOptionPayload (val unsignedOptions : Array<XyoBuff>, val signedOptions : Array<XyoBuff> )
 
     private fun getBoundWitnessOptionPayloads (options: Array<XyoBoundWitnessOption>) : Deferred<XyoOptionPayload> = GlobalScope.async {
-        val signedPayloads =  ArrayList<ByteArray>()
-        val unsignedPayloads = ArrayList<ByteArray>()
+        val signedPayloads =  ArrayList<XyoBuff>()
+        val unsignedPayloads = ArrayList<XyoBuff>()
 
         for (option in options) {
             val unsignedPayload = option.getUnsignedPayload()
@@ -150,8 +151,8 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
     }
 
 
-    private fun getHeuristics () : Array<ByteArray> {
-        val list = LinkedList<ByteArray>()
+    private fun getHeuristics () : Array<XyoBuff> {
+        val list = LinkedList<XyoBuff>()
 
         for ((_, getter) in heuristics) {
             val heuristic = getter.getHeuristic()
@@ -184,10 +185,10 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
     private fun loadCreatedBoundWitness (boundWitness: XyoBoundWitness) : Deferred<Unit> = GlobalScope.async {
         val hash = boundWitness.getHash(hashingProvider).await()
 
-        if (!originBlocks.containsOriginBlock(hash.self).await()) {
+        if (originBlocks.containsOriginBlock(hash).await() == false) {
             val subBlocks = getBridgedBlocks(boundWitness)
             val boundWitnessWithoutBlocks = XyoBoundWitness.getInstance(
-                    XyoBoundWitnessUtil.removeTypeFromUnsignedPayload(BRIDGE_BLOCK_SET.id, boundWitness.self)
+                    XyoBoundWitnessUtil.removeTypeFromUnsignedPayload(BRIDGE_BLOCK_SET.id, boundWitness).bytesCopy
             )
 
             originBlocks.addBoundWitness(boundWitnessWithoutBlocks).await()
@@ -199,20 +200,22 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
             if (subBlocks != null) {
                 for (subBlock in subBlocks) {
                     XyoLog.logSpecial("Found Bridge Block", TAG)
-                    loadCreatedBoundWitness(XyoBoundWitness.getInstance(subBlock)).await()
+                    loadCreatedBoundWitness(XyoBoundWitness.getInstance(subBlock.bytesCopy)).await()
                 }
             }
         }
 
     }
 
-    private fun getBridgedBlocks (boundWitness: XyoBoundWitness) : Iterator<ByteArray>? {
-        for (payload in XyoIterableObject(boundWitness.payloads).iterator) {
-            for (item in XyoIterableObject(payload)[BRIDGE_BLOCK_SET.id]) {
-                return XyoIterableObject(item).iterator
-            }
-        }
+    private fun getBridgedBlocks (boundWitness: XyoBoundWitness) : Iterator<XyoBuff>? {
+        //todo
         return null
+//        for (payload in boundWitness[XyoSchemas.WITNESSS.id]) {
+//            for (item in XyoIterableObject(payload)[BRIDGE_BLOCK_SET.id]) {
+//                return XyoIterableObject(item).iterator
+//            }
+//        }
+//        return null
     }
 
     private fun onBoundWitnessEndFailure(error: Exception?) {
@@ -231,12 +234,24 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
 
         currentBoundWitnessSession = XyoZigZagBoundWitnessSession(
                 pipe,
-                makePayload(options.toTypedArray()).await(),
+                makeSignedPayload(options.toTypedArray()).await(),
+                makeUnsignedPayload(options.toTypedArray()).await(),
                 originState.getSigners(),
                 ByteBuffer.allocate(4).putInt(choice).array()
         )
 
-        val error = currentBoundWitnessSession?.doBoundWitness(startingData)
+        val encodedStartingData = if (startingData == null) {
+            null
+        } else {
+            object : XyoIterableObject() {
+                override val allowedOffset: Int
+                    get() = 0
+
+                override var item: ByteArray = startingData
+            }
+        }
+
+        val error = currentBoundWitnessSession?.doBoundWitness(encodedStartingData)
         pipe.close().await()
 
         notifyOptions(options.toTypedArray(), currentBoundWitnessSession)
@@ -262,13 +277,12 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
     private fun updateOriginState (boundWitness: XyoBoundWitness) = GlobalScope.async {
         val hash = boundWitness.getHash(hashingProvider).await()
         originState.newOriginBlock(hash)
-        XyoLog.logSpecial("Updating Origin State. Awaiting Index: ${ByteBuffer.wrap(XyoObjectCreator.getObjectValue(originState.index)).int}", TAG)
+        XyoLog.logSpecial("Updating Origin State. Awaiting Index: ${ByteBuffer.wrap(originState.index.valueCopy).int}", TAG)
     }
 
-    private fun makePayload (options: Array<XyoBoundWitnessOption>) = GlobalScope.async {
-        val unsignedPayloads = ArrayList<ByteArray>(getHeuristics().asList())
+    private fun makeSignedPayload (options: Array<XyoBoundWitnessOption>) = GlobalScope.async {
         val payloads = getBoundWitnessOptionPayloads(options).await()
-        val signedPayloads = ArrayList<ByteArray>()
+        val signedPayloads = ArrayList<XyoBuff>()
         val previousHash = originState.previousHash
         val index = originState.index
         val nextPublicKey = originState.nextPublicKey
@@ -283,12 +297,17 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
 
         signedPayloads.add(index)
         signedPayloads.addAll(payloads.signedOptions)
+
+        return@async signedPayloads.toTypedArray()
+    }
+
+    private fun makeUnsignedPayload (options: Array<XyoBoundWitnessOption>) = GlobalScope.async {
+        val unsignedPayloads = ArrayList<XyoBuff>(getHeuristics().asList())
+        val payloads = getBoundWitnessOptionPayloads(options).await()
+
         unsignedPayloads.addAll(payloads.unsignedOptions)
 
-        return@async XyoObjectSetCreator.createTypedIterableObject(PAYLOAD, arrayOf(
-                XyoObjectSetCreator.createUntypedIterableObject(ARRAY_UNTYPED, signedPayloads.toTypedArray()),
-                XyoObjectSetCreator.createUntypedIterableObject(ARRAY_UNTYPED, unsignedPayloads.toTypedArray())
-        ))
+        return@async unsignedPayloads.toTypedArray()
     }
 
     companion object {
