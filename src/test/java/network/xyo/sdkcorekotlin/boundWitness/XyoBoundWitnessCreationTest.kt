@@ -22,7 +22,7 @@ class XyoBoundWitnessCreationTest : XyoTestBase() {
 
             Assert.assertEquals(1, aliceBoundWitness[XyoSchemas.FETTER.id].size)
             Assert.assertEquals(1, aliceBoundWitness[XyoSchemas.WITNESSS.id].size)
-            Assert.assertEquals(1, XyoBoundWitness.getNumberOfParties(aliceBoundWitness))
+            Assert.assertEquals(1, aliceBoundWitness.numberOfParties)
             Assert.assertTrue(aliceBoundWitness.completed)
         }
     }
@@ -47,8 +47,8 @@ class XyoBoundWitnessCreationTest : XyoTestBase() {
             Assert.assertArrayEquals(boundWitnessAlice.valueCopy, boundWitnessBob.valueCopy)
             Assert.assertTrue(boundWitnessAlice.completed)
             Assert.assertTrue(boundWitnessBob.completed)
-            Assert.assertEquals(2, XyoBoundWitness.getNumberOfParties(boundWitnessAlice))
-            Assert.assertEquals(2, XyoBoundWitness.getNumberOfParties(boundWitnessBob))
+            Assert.assertEquals(2, boundWitnessAlice.numberOfParties)
+            Assert.assertEquals(2, boundWitnessBob.numberOfParties)
         }
     }
 }
