@@ -1,6 +1,7 @@
 package network.xyo.sdkcorekotlin.node
 
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
+import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 
 /**
  * A base class for bound witness options. For example a sentinel would have an option for
@@ -17,14 +18,14 @@ abstract class XyoBoundWitnessOption {
      *
      * @return The optional signed data.
      */
-    abstract suspend fun getSignedPayload() : ByteArray?
+    abstract suspend fun getSignedPayload() : XyoBuff?
 
     /**
      * Gets the unsigned payload to include in the bound witness.
      *
      * @return The option unsigned data.
      */
-    abstract suspend fun getUnsignedPayload() : ByteArray?
+    abstract suspend fun getUnsignedPayload() : XyoBuff?
 
     /**
      * This function will be called after the current bound witness has been completed. If the bound witness is null,

@@ -38,7 +38,7 @@ abstract class XyoRelayNode (storageProvider : XyoStorageProviderInterface,
 
         override fun onBoundWitnessDiscovered(boundWitness: XyoBoundWitness) {
             runBlocking {
-                originBlocksToBridge.addBlock(boundWitness.getHash(hashingProvider).await().self)
+                originBlocksToBridge.addBlock(boundWitness.getHash(hashingProvider).await())
             }
         }
 

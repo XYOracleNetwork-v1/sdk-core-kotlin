@@ -1,9 +1,8 @@
 package network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc
 
 import network.xyo.sdkcorekotlin.XyoFromSelf
-import network.xyo.sdkcorekotlin.XyoInterpreter
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
-import network.xyo.sdkobjectmodelkotlin.objects.XyoObjectCreator
+import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 import java.math.BigInteger
 import java.nio.ByteBuffer
@@ -11,10 +10,12 @@ import java.nio.ByteBuffer
 /**
  * A base class for all EC signature operations.
  */
-open class XyoEcdsaSignature(val r : BigInteger, val s : BigInteger) : XyoInterpreter {
+open class XyoEcdsaSignature(val r : BigInteger, val s : BigInteger) : XyoBuff() {
 
-    override val self: ByteArray
-        get() = XyoObjectCreator.createObject(schema, encode())
+    override var item: ByteArray = XyoBuff.getObjectEncoded(XyoSchemas.EC_SIGNATURE, encode())
+
+    override val allowedOffset: Int
+        get() = 0
 
     private fun encode () : ByteArray {
         val encodedR = r.toByteArray()
@@ -41,11 +42,13 @@ open class XyoEcdsaSignature(val r : BigInteger, val s : BigInteger) : XyoInterp
             return XyoRAndS(r, s)
         }
 
-        override fun getInstance(byteArray: ByteArray): XyoInterpreter {
-            val rAndS = getRAndS(XyoObjectCreator.getObjectValue(byteArray))
+        override fun getInstance(byteArray: ByteArray): XyoEcdsaSignature {
+            val rAndS = getRAndS(object : XyoBuff() {
+                override val allowedOffset: Int = 0
+                override var item: ByteArray = byteArray
+            }.valueCopy)
             return object : XyoEcdsaSignature(rAndS.r, rAndS.s) {
-                override val self: ByteArray
-                    get() = byteArray
+                override var item: ByteArray = byteArray
             }
         }
     }

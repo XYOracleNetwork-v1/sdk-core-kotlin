@@ -7,22 +7,34 @@ import network.xyo.sdkcorekotlin.exceptions.XyoBoundWitnessCreationException
 import network.xyo.sdkcorekotlin.exceptions.XyoException
 import network.xyo.sdkcorekotlin.network.XyoNetworkPipe
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
-import network.xyo.sdkobjectmodelkotlin.exceptions.XyoObjectExceotion
-import java.lang.StringBuilder
+import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
+import network.xyo.sdkobjectmodelkotlin.exceptions.XyoObjectException
+import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
 import java.nio.ByteBuffer
 
 
 class XyoZigZagBoundWitnessSession(private val pipe : XyoNetworkPipe,
-                                   payload : ByteArray,
+                                   signedPayload : XyoBuff,
+                                   unsignedPayload : XyoBuff,
                                    signers : Array<XyoSigner>,
-                                   private val choice : ByteArray) : XyoZigZagBoundWitness(signers, payload) {
+                                   private val choice : ByteArray) : XyoZigZagBoundWitness(signers, signedPayload, unsignedPayload) {
 
     private var cycles = 0
 
-    suspend fun doBoundWitness(transfer: ByteArray?) : Exception?  {
+    suspend fun doBoundWitness(transfer: XyoIterableObject?) : Exception?  {
         try {
             if (!completed) {
-                val response = sendAndReceive(transfer != null, transfer).await()
+                val rawResponse = sendAndReceive(transfer != null, transfer).await()
+                var response : XyoIterableObject? = null
+
+                if (rawResponse != null) {
+                    response = object : XyoIterableObject() {
+                        override val allowedOffset: Int
+                            get() = 0
+
+                        override var item: ByteArray = rawResponse
+                    }
+                }
 
                 if (cycles == 0 && transfer != null && response != null) {
                     incomingData(response, false).await()
@@ -36,24 +48,24 @@ class XyoZigZagBoundWitnessSession(private val pipe : XyoNetworkPipe,
         } catch (exception : XyoException) {
             XyoLog.logError("Bound witness creation error: $exception", TAG, exception)
             return exception
-        } catch (exception : XyoObjectExceotion) {
+        } catch (exception : XyoObjectException) {
             XyoLog.logError("Bound witness creation error: $exception", TAG, exception)
             return exception
         }
     }
 
-    private fun sendAndReceive (didHaveData : Boolean, transfer : ByteArray?) = GlobalScope.async {
+    private fun sendAndReceive (didHaveData : Boolean, transfer : XyoIterableObject?) = GlobalScope.async {
         val response : ByteArray?
         val returnData = incomingData(transfer, cycles == 0 && didHaveData).await()
 
         if (cycles == 0 && !didHaveData) {
-            val buffer = ByteBuffer.allocate(1 + choice.size + returnData.size)
+            val buffer = ByteBuffer.allocate(1 + choice.size + returnData.sizeBytes + 2)
             buffer.put(choice.size.toByte())
             buffer.put(choice)
-            buffer.put(returnData)
+            buffer.put(returnData.bytesCopy)
             response = pipe.send(buffer.array(), true).await() ?: throw XyoBoundWitnessCreationException("Response is null!")
         } else {
-            response = pipe.send(returnData, cycles == 0).await()
+            response = pipe.send(returnData.bytesCopy, cycles == 0).await()
 
             if (cycles == 0 && response == null) {
                 throw XyoBoundWitnessCreationException("Response is null!")

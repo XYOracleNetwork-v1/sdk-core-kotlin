@@ -1,6 +1,7 @@
 package network.xyo.sdkcorekotlin.queries
 
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
+import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 
 interface XyoCurrentState {
     /**
@@ -13,15 +14,15 @@ interface XyoCurrentState {
     /**
      * The previous hash to be included in the next origin block.
      */
-    val previousHash : ByteArray?
+    val previousHash : XyoBuff?
 
     /**
      * The index of the origin chain.
      */
-    val index : ByteArray
+    val index : XyoBuff
 
     /**
      * The next public key to be used in the origin chain.
      */
-    var nextPublicKey : ByteArray?
+    var nextPublicKey : XyoBuff?
 }

@@ -5,7 +5,7 @@ import network.xyo.sdkcorekotlin.schemas.XyoSchemas.INDEX
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas.NEXT_PUBLIC_KEY
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas.PREVIOUS_HASH
-import network.xyo.sdkobjectmodelkotlin.objects.XyoObjectCreator
+import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import java.nio.ByteBuffer
 
 
@@ -38,18 +38,18 @@ open class XyoOriginChainStateManager (private val indexOffset : Int) : XyoOrigi
     /**
      * All of the public keys used in the origin chain.
      */
-    val allPublicKeys = ArrayList<ByteArray>()
+    val allPublicKeys = ArrayList<XyoBuff>()
 
-    override var nextPublicKey : ByteArray? = null
+    override var nextPublicKey : XyoBuff? = null
 
-    override val index : ByteArray
-        get() = XyoObjectCreator.createObject(INDEX, ByteBuffer.allocate(4).putInt(count + indexOffset).array())
+    override val index : XyoBuff
+        get() = XyoBuff.newInstance(INDEX, ByteBuffer.allocate(4).putInt(count + indexOffset).array())
 
-    override val previousHash : ByteArray?
+    override val previousHash : XyoBuff?
         get() {
             val latestHashValue = latestHash
             if (latestHashValue != null) {
-                return XyoObjectCreator.createObject(PREVIOUS_HASH, latestHashValue)
+                return XyoBuff.newInstance(PREVIOUS_HASH, latestHashValue)
             }
             return null
         }
@@ -60,14 +60,14 @@ open class XyoOriginChainStateManager (private val indexOffset : Int) : XyoOrigi
     }
 
     override fun addSigner (signer : XyoSigner) {
-        if (ByteBuffer.wrap(XyoObjectCreator.getObjectValue(index)).int == 0) {
+        if (ByteBuffer.wrap(index.valueCopy).int == 0) {
             currentSigners.add(signer)
             return
         }
 
-        nextPublicKey = XyoObjectCreator.createObject(NEXT_PUBLIC_KEY, signer.publicKey.self)
+        nextPublicKey = XyoBuff.newInstance(NEXT_PUBLIC_KEY, signer.publicKey.bytesCopy)
         waitingSigners.add(signer)
-        allPublicKeys.add(signer.publicKey.self)
+        allPublicKeys.add(signer.publicKey)
     }
 
     override fun removeOldestSigner () {
@@ -77,7 +77,7 @@ open class XyoOriginChainStateManager (private val indexOffset : Int) : XyoOrigi
     override fun newOriginBlock (hash : XyoHash) {
         nextPublicKey = null
         allHashes.add(hash)
-        latestHash = hash.self
+        latestHash = hash.bytesCopy
         count++
         addWaitingSigner()
     }

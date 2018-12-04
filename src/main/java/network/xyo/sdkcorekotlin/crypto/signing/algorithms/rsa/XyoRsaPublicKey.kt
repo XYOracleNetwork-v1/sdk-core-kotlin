@@ -4,7 +4,7 @@ import network.xyo.sdkcorekotlin.XyoFromSelf
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.crypto.signing.XyoPublicKey
 import network.xyo.sdkcorekotlin.crypto.signing.algorithms.rsa.XyoGeneralRsa.Companion.RSA_PUBLIC_EXPONENT
-import network.xyo.sdkobjectmodelkotlin.objects.XyoObjectCreator
+import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 import java.math.BigInteger
 import java.security.interfaces.RSAPublicKey
@@ -12,7 +12,7 @@ import java.security.interfaces.RSAPublicKey
 /**
  * An Xyo Encoded Rsa Public key.
  */
-class XyoRsaPublicKey(private val modulus : BigInteger) : RSAPublicKey, XyoPublicKey {
+class XyoRsaPublicKey(private val modulus : BigInteger) : RSAPublicKey, XyoPublicKey() {
     private val publicExponent : BigInteger = BigInteger(RSA_PUBLIC_EXPONENT)
 
     override fun getAlgorithm(): String {
@@ -35,15 +35,24 @@ class XyoRsaPublicKey(private val modulus : BigInteger) : RSAPublicKey, XyoPubli
         return publicExponent
     }
 
-    override val self: ByteArray
-        get() = XyoObjectCreator.createObject(schema, encoded)
+    override val allowedOffset: Int
+        get() = 0
+
+    override var item: ByteArray
+        get() = XyoBuff.newInstance(schema, encoded).bytesCopy
+        set(value) {}
 
     override val schema: XyoObjectSchema
         get() = XyoSchemas.RSA_PUBLIC_KEY
 
     companion object : XyoFromSelf {
         override fun getInstance(byteArray: ByteArray): XyoRsaPublicKey {
-            val value = XyoObjectCreator.getObjectValue(byteArray)
+            val value = object : XyoBuff() {
+                override val allowedOffset: Int = 0
+                override var item: ByteArray = byteArray
+            }.valueCopy
+
+
             return XyoRsaPublicKey(BigInteger(value))
         }
     }

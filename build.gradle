@@ -9,7 +9,7 @@ sourceCompatibility = 1.8
 /**
  * If set to true, will build with local versions of the dependencies.
  */
-def buildWithLocalProjects = false
+def buildWithLocalProjects = true
 
 ext {
     if (!project.hasProperty('local')) {

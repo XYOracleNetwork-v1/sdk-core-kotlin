@@ -1,15 +1,14 @@
 package network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc
 
-import network.xyo.sdkcorekotlin.XyoInterpreter
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
-import network.xyo.sdkobjectmodelkotlin.objects.XyoObjectCreator
+import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 import org.bouncycastle.jce.interfaces.ECPrivateKey
 import org.bouncycastle.jce.spec.ECParameterSpec
 import java.math.BigInteger
 
 
-abstract class XyoEcPrivateKey : ECPrivateKey, XyoInterpreter {
+abstract class XyoEcPrivateKey : ECPrivateKey, XyoBuff() {
 
     override fun getAlgorithm(): String {
         return "EC"
@@ -23,8 +22,12 @@ abstract class XyoEcPrivateKey : ECPrivateKey, XyoInterpreter {
         return "XyoEcPrivateKey"
     }
 
-    override val self: ByteArray
-        get() = XyoObjectCreator.createObject(schema, d.toByteArray())
+    override val allowedOffset: Int
+        get() = 0
+
+    override var item: ByteArray
+        get() = XyoBuff.newInstance(schema, d.toByteArray()).bytesCopy
+        set(value) {}
 
     override val schema: XyoObjectSchema
         get() = XyoSchemas.EC_PRIVATE_KEY
@@ -34,15 +37,14 @@ abstract class XyoEcPrivateKey : ECPrivateKey, XyoInterpreter {
 
         fun getInstance(byteArray: ByteArray, ecSpec: ECParameterSpec): XyoEcPrivateKey {
             return object : XyoEcPrivateKey() {
-                override val self: ByteArray
-                    get() = byteArray
+                override var item: ByteArray = byteArray
 
                 override fun getParameters(): ECParameterSpec {
                     return ecSpec
                 }
 
                 override fun getD(): BigInteger {
-                    return BigInteger(XyoObjectCreator.getObjectValue(self))
+                    return BigInteger(valueCopy)
                 }
             }
         }

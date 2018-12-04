@@ -3,13 +3,9 @@ package network.xyo.sdkcorekotlin.hashing.basic
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import network.xyo.sdkcorekotlin.XyoInterpreter
-import network.xyo.sdkcorekotlin.exceptions.XyoCorruptDataException
 import network.xyo.sdkcorekotlin.hashing.XyoHash
-import network.xyo.sdkobjectmodelkotlin.objects.XyoObjectCreator
-import network.xyo.sdkobjectmodelkotlin.objects.sets.XyoObjectSetCreator
+import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
-import java.nio.ByteBuffer
 import java.security.MessageDigest
 
 /**
@@ -30,12 +26,13 @@ abstract class XyoBasicHashBase : XyoHash() {
         override fun createHash (data: ByteArray) : Deferred<XyoHash> {
             return GlobalScope.async {
             val hash = hash(data)
-            val item = XyoObjectCreator.createObject(schema, hash)
+            val item = XyoBuff.newInstance(schema, hash)
 
                 return@async object : XyoBasicHashBase() {
-                    override val self: ByteArray = item
+                    override var item: ByteArray = item.bytesCopy
                     override val schema: XyoObjectSchema = this@XyoBasicHashBaseProvider.schema
                     override val hash: ByteArray = hash
+                    override val allowedOffset: Int = 0
                 }
             }
         }
@@ -44,14 +41,16 @@ abstract class XyoBasicHashBase : XyoHash() {
             return MessageDigest.getInstance(standardDigestKey).digest(data)
         }
 
-        override fun getInstance(byteArray: ByteArray): XyoInterpreter {
+        override fun getInstance(byteArray: ByteArray): XyoBuff {
             return object : XyoBasicHashBase() {
-                override val self: ByteArray = byteArray
+                override val allowedOffset: Int
+                    get() = 0
 
+                override var item: ByteArray = byteArray
                 override val schema: XyoObjectSchema = this@XyoBasicHashBaseProvider.schema
 
                 override val hash: ByteArray
-                    get() = self.copyOfRange(2, self.size)
+                    get() = item.copyOfRange(2, item.size + 2)
 
             }
         }

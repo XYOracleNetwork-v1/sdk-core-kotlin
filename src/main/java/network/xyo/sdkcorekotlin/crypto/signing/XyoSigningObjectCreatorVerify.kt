@@ -3,7 +3,7 @@ package network.xyo.sdkcorekotlin.crypto.signing
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import network.xyo.sdkobjectmodelkotlin.objects.XyoObjectCreator
+import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import java.security.PublicKey
 import java.security.Signature
 
@@ -16,14 +16,14 @@ abstract class XyoSigningObjectCreatorVerify : XyoSigner.XyoSignerProvider() {
      */
     abstract val signatureInstance : Signature
 
-    override fun verifySign(signature: ByteArray,
+    override fun verifySign(signature: XyoBuff,
                             byteArray: ByteArray,
                             publicKey: PublicKey): Deferred<Boolean> {
 
         return GlobalScope.async {
             signatureInstance.initVerify(publicKey)
             signatureInstance.update(byteArray)
-            return@async signatureInstance.verify(XyoObjectCreator.getObjectValue(signature))
+            return@async signatureInstance.verify(signature.valueCopy)
         }
     }
 }
