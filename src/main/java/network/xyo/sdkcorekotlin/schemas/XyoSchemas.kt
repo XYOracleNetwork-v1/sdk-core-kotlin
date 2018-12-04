@@ -30,7 +30,7 @@ object XyoSchemas {
     val UNIX_TIME = XyoObjectSchema.createFromHeader(byteArrayOf(           0x80.toByte(),        20.toByte()))
 
     val FETTER = XyoObjectSchema.createFromHeader(byteArrayOf(              0xA0.toByte(),        21.toByte()))
-    val WITNESSS = XyoObjectSchema.createFromHeader(byteArrayOf(              0xA0.toByte(),      22.toByte()))
+    val WITNESSS = XyoObjectSchema.createFromHeader(byteArrayOf(             0xA0.toByte(),       22.toByte()))
 
     val EC_PRIVATE_KEY = XyoObjectSchema.createFromHeader(byteArrayOf(      0x80.toByte(),        0xFF.toByte()))
     val RSA_PRIVATE_KEY = XyoObjectSchema.createFromHeader(byteArrayOf(     0x80.toByte(),        0xFF.toByte()))

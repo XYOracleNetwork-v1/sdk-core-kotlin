@@ -21,8 +21,7 @@ class XyoRsaWithSha256 (privateKey: XyoRsaPrivateKey?) : XyoGeneralRsa (1024, pr
             signature.initSign(keyPair.private)
             signature.update(byteArray)
             return@async object : XyoRsaSignature() {
-                override val signature: ByteArray
-                    get() = this@XyoRsaWithSha256.signature.sign()
+                override val signature: ByteArray = this@XyoRsaWithSha256.signature.sign()
             }
         }
     }

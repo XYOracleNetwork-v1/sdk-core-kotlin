@@ -298,7 +298,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
         signedPayloads.add(index)
         signedPayloads.addAll(payloads.signedOptions)
 
-        return@async XyoIterableObject.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, signedPayloads.toTypedArray())
+        return@async signedPayloads.toTypedArray()
     }
 
     private fun makeUnsignedPayload (options: Array<XyoBoundWitnessOption>) = GlobalScope.async {
@@ -307,7 +307,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
 
         unsignedPayloads.addAll(payloads.unsignedOptions)
 
-        return@async XyoIterableObject.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, unsignedPayloads.toTypedArray())
+        return@async unsignedPayloads.toTypedArray()
     }
 
     companion object {

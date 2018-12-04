@@ -2,37 +2,34 @@ package network.xyo.sdkcorekotlin.boundWitness
 
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas.BW
+import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
 import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 
 object XyoBoundWitnessUtil {
     fun removeTypeFromUnsignedPayload (type : Byte, boundWitness: XyoIterableObject) : XyoIterableObject {
-        val newPayloads = ArrayList<ByteArray>()
+        val newBoundWitnessLedger = ArrayList<XyoBuff>()
 
-        return boundWitness
+        val fetters = boundWitness[XyoSchemas.FETTER.id]
+        val witnesses = boundWitness[XyoSchemas.WITNESSS.id]
 
-//        for (payload in XyoIterableObject(boundWitness[1]).iterator) {
-//            val signedPayload = XyoIterableObject(payload)[0]
-//            val unsignedPayload = XyoIterableObject(payload)[1]
-//            val itemsThatAreNotTypeUnsigned = ArrayList<ByteArray>()
-//
-//            for (item in XyoIterableObject(unsignedPayload).iterator) {
-//                if (XyoObjectSchema.createFromHeader(item.copyOfRange(0, 2)).id != type) {
-//                    itemsThatAreNotTypeUnsigned.add(item)
-//                }
-//            }
-//
-//            val newUnsignedPayload = XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, itemsThatAreNotTypeUnsigned.toTypedArray())
-//            newPayloads.add(XyoObjectSetCreator.createTypedIterableObject(XyoSchemas.PAYLOAD, arrayOf(signedPayload, newUnsignedPayload)))
-//        }
-//
-//        return XyoObjectSetCreator.createUntypedIterableObject(BW,
-//                arrayOf(
-//                        XyoIterableObject(boundWitness)[0],
-//                        XyoObjectSetCreator.createTypedIterableObject(XyoSchemas.ARRAY_TYPED, newPayloads.toTypedArray()),
-//                        XyoIterableObject(boundWitness)[2]
-//                )
-//            )
+        newBoundWitnessLedger.addAll(fetters)
+
+        for (witness in witnesses) {
+            if (witness is XyoIterableObject) {
+                val items = ArrayList<XyoBuff>()
+
+                for (item in witness.iterator) {
+                    if (item.schema.id != type) {
+                        items.add(item)
+                    }
+                }
+
+                newBoundWitnessLedger.add(XyoIterableObject.createUntypedIterableObject(XyoSchemas.WITNESSS, items.toTypedArray()))
+            }
+        }
+
+        return XyoIterableObject.createUntypedIterableObject(XyoSchemas.BW, newBoundWitnessLedger.toTypedArray())
     }
 
     fun getPartyNumberFromPublicKey (boundWitness: ByteArray, publicKey: ByteArray) : Int? {

@@ -14,8 +14,8 @@ import java.nio.ByteBuffer
 
 
 class XyoZigZagBoundWitnessSession(private val pipe : XyoNetworkPipe,
-                                   signedPayload : XyoBuff,
-                                   unsignedPayload : XyoBuff,
+                                   signedPayload : Array<XyoBuff>,
+                                   unsignedPayload : Array<XyoBuff>,
                                    signers : Array<XyoSigner>,
                                    private val choice : ByteArray) : XyoZigZagBoundWitness(signers, signedPayload, unsignedPayload) {
 

@@ -10,7 +10,6 @@ import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
 import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
-import java.nio.ByteBuffer
 
 /**
  * A Xyo Bound Witness Object
@@ -30,7 +29,33 @@ abstract class XyoBoundWitness : XyoIterableObject() {
             return false
         }
 
+    private val witnessFetterBoundary: Int
+        get() {
+            val fetters = this[XyoSchemas.FETTER.id]
+            var offsetSize = 0
+
+            for (fetter in fetters) {
+                offsetSize += fetter.sizeBytes + 2
+            }
+
+            return offsetSize
+        }
+
     override val schema: XyoObjectSchema = XyoSchemas.BW
+
+    protected fun createFetter (payload: Array<XyoBuff>, publicKeys : XyoBuff) : XyoBuff {
+        val itemsInFetter = ArrayList<XyoBuff>()
+        itemsInFetter.add(publicKeys)
+        itemsInFetter.addAll(payload)
+        return XyoIterableObject.createUntypedIterableObject(XyoSchemas.FETTER, itemsInFetter.toTypedArray())
+    }
+
+    protected fun createWitness (payload: Array<XyoBuff>, signatures : XyoBuff) : XyoBuff {
+        val itemsInWittness = ArrayList<XyoBuff>()
+        itemsInWittness.add(signatures)
+        itemsInWittness.addAll(payload)
+        return XyoIterableObject.createUntypedIterableObject(XyoSchemas.WITNESSS, itemsInWittness.toTypedArray())
+    }
 
     /**
      * Gets the hash of the bound witness.
@@ -55,8 +80,7 @@ abstract class XyoBoundWitness : XyoIterableObject() {
     }
 
     fun getSigningData(): ByteArray {
-        // todo
-        return byteArrayOf(0xFF.toByte())
+        return valueCopy.copyOfRange(0, witnessFetterBoundary)
     }
 
     companion object : XyoFromSelf {
@@ -76,16 +100,14 @@ abstract class XyoBoundWitness : XyoIterableObject() {
          * @return The number of parties, if null, there is a inconsistent amount of parties.
          */
         fun getNumberOfParties (boundWitness: XyoBoundWitness) : Int? {
-//            val keySetNumber = boundWitness.publicKeys.count
-//            val payloadNumber = boundWitness.payloads.count
-//            val signatureNumber = boundWitness.signatures.count
-//
-//            if (keySetNumber == payloadNumber &&  keySetNumber == signatureNumber) {
-//                return keySetNumber
-//            }
-//
-//            return null
-            return 2
+            val numberOfFetters = boundWitness[XyoSchemas.FETTER.id].size
+            val numberOfWitnesses= boundWitness[XyoSchemas.FETTER.id].size
+
+            if (numberOfFetters == numberOfWitnesses) {
+                return numberOfFetters
+            }
+
+            return null
         }
     }
 }

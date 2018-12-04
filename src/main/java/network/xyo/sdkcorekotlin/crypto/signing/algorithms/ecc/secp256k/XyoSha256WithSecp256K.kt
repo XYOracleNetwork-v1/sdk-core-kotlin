@@ -65,7 +65,7 @@ class XyoSha256WithSecp256K (privateKey : ECPrivateKey?) : XyoEcSecp256K1(privat
             signer.init(false, ECPublicKeyParameters(ecCurve.curve.createPoint((publicKey as XyoUncompressedEcPublicKey).x, publicKey.y), ecDomainParameters))
 
 
-            val ecSig = XyoEcdsaSignature.getInstance(signature.valueCopy)
+            val ecSig = XyoEcdsaSignature.getInstance(signature.bytesCopy)
 
             val r = ecSig.r
             val s = ecSig.s
