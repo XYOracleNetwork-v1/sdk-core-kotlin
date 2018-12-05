@@ -22,7 +22,7 @@ object XyoLog {
      */
     fun logDebug (info: String, tag : String) {
         if (isInDebug) {
-            println("$ANSI_GREEN${getTime()}$ANSI_RESET $ANSI_YELLOW$tag$ANSI_RESET $info")
+            logInfo(info, tag)
         }
     }
 
@@ -30,22 +30,26 @@ object XyoLog {
      * Logs any info.
      */
     fun logInfo(info : String, tag: String) {
-        println("$ANSI_GREEN${getTime()}$ANSI_RESET $ANSI_YELLOW$tag$ANSI_RESET $info")
+        println("${createHeader(tag)} $info")
     }
 
     /**
      * Logs a special message
      */
     fun logSpecial (info : String, tag: String) {
-        println("$ANSI_GREEN${getTime()}$ANSI_RESET $ANSI_YELLOW$tag$ANSI_RESET $ANSI_PURPLE$info$ANSI_RESET")
+        println("${createHeader(tag)} $ANSI_PURPLE$info$ANSI_RESET")
     }
 
     /**
      * Logs an error.
      */
     fun logError (info: String, tag: String, exception: Exception?) {
-        println("$ANSI_GREEN${getTime()}$ANSI_RESET $ANSI_YELLOW$tag$ANSI_RESET $ANSI_RED$info$ANSI_RESET")
+        println("${createHeader(tag)} $ANSI_RED$info$ANSI_RESET")
         exception?.printStackTrace()
+    }
+
+    private fun createHeader (tag: String) : String {
+        return "$ANSI_GREEN${getTime()}$ANSI_RESET $ANSI_YELLOW$tag$ANSI_RESET"
     }
 
     private fun getTime () : String {

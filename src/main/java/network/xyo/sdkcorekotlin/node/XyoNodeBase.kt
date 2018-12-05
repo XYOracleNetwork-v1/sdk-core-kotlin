@@ -3,7 +3,6 @@ package network.xyo.sdkcorekotlin.node
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import network.xyo.sdkcorekotlin.XyoFromSelf
 import network.xyo.sdkcorekotlin.XyoLog
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitnessUtil
@@ -14,9 +13,7 @@ import network.xyo.sdkcorekotlin.network.XyoNetworkPipe
 import network.xyo.sdkcorekotlin.origin.XyoIndexableOriginBlockRepository
 import network.xyo.sdkcorekotlin.origin.XyoOriginChainStateManager
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
-import network.xyo.sdkcorekotlin.schemas.XyoSchemas.ARRAY_UNTYPED
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas.BRIDGE_BLOCK_SET
-import network.xyo.sdkcorekotlin.schemas.XyoSchemas.PAYLOAD
 import network.xyo.sdkcorekotlin.storage.XyoStorageProviderInterface
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
@@ -116,7 +113,6 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
     fun addBoundWitnessOption (boundWitnessOption: XyoBoundWitnessOption) {
         boundWitnessOptions[boundWitnessOption.flag] = boundWitnessOption
     }
-
 
     private class XyoOptionPayload (val unsignedOptions : Array<XyoBuff>, val signedOptions : Array<XyoBuff> )
 
