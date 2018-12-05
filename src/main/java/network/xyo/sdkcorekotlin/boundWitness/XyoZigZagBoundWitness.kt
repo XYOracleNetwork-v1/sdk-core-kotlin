@@ -3,13 +3,10 @@ package network.xyo.sdkcorekotlin.boundWitness
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import network.xyo.sdkcorekotlin.XyoFromSelf
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
-import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
-import java.util.*
 import kotlin.collections.ArrayList
 
 /**
@@ -43,7 +40,7 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
 
     private val numberOfWitnesses : Int
         get() {
-            return this[XyoSchemas.WITNESSS.id].size
+            return this[XyoSchemas.WITNESS.id].size
         }
 
     /**
@@ -75,7 +72,7 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
             return 0
         }
 
-        return transfer[XyoSchemas.WITNESSS.id].size
+        return transfer[XyoSchemas.WITNESS.id].size
     }
 
     private fun getReturnFromIncoming (signatureReceivedSize : Int, endPoint: Boolean, payload : Array<XyoBuff>) : Deferred<XyoIterableObject> = GlobalScope.async {
@@ -97,7 +94,7 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
             toSend.add(publicKeyIt[i])
         }
 
-        val signatureIt = this@XyoZigZagBoundWitness[XyoSchemas.WITNESSS.id]
+        val signatureIt = this@XyoZigZagBoundWitness[XyoSchemas.WITNESS.id]
         toSend.add(signatureIt[signatureIt.size - 1])
 
         return@async XyoIterableObject.createUntypedIterableObject(
@@ -117,11 +114,11 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
         for (signer in signers) {
             publicKeys.add(signer.publicKey)
         }
-        return XyoIterableObject.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, publicKeys.toTypedArray())
+        return XyoIterableObject.createUntypedIterableObject(XyoSchemas.KEY_SET, publicKeys.toTypedArray())
     }
 
     private fun signBoundWitness (payload: Array<XyoBuff>) = GlobalScope.async {
-        return@async createWitness(payload, XyoIterableObject.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, Array(signers.size) { i ->
+        return@async createWitness(payload, XyoIterableObject.createUntypedIterableObject(XyoSchemas.SIGNATURE_SET, Array(signers.size) { i ->
             signCurrent(signers[i]).await()
         }))
     }

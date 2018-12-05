@@ -3,10 +3,12 @@ package network.xyo.sdkcorekotlin.boundWitness
 import kotlinx.coroutines.runBlocking
 import network.xyo.sdkcorekotlin.XyoTestBase
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
+import network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.XyoUncompressedEcPublicKey
 import network.xyo.sdkcorekotlin.crypto.signing.algorithms.rsa.XyoRsaWithSha256
 import network.xyo.sdkcorekotlin.hashing.basic.XyoBasicHashBase
 import network.xyo.sdkcorekotlin.hashing.basic.XyoSha3
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
+import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
 import org.junit.Assert
 import org.junit.Test
@@ -21,6 +23,8 @@ class XyoTestBoundWitnessUtil : XyoTestBase() {
             val createdBoundWitness = XyoBoundWitness.getInstance(boundWitnessBytes.copyOfRange(1, boundWitnessBytes.size))
             val removedBoundWitness = XyoBoundWitnessUtil.removeTypeFromUnsignedPayload(XyoSchemas.RSSI.id, createdBoundWitness)
 
+            println(createdBoundWitness)
+
             for (witness in removedBoundWitness[XyoSchemas.FETTER.id]) {
                 if (witness is XyoIterableObject) {
                     for (item in witness.iterator) {
@@ -30,6 +34,22 @@ class XyoTestBoundWitnessUtil : XyoTestBase() {
                     }
                 }
             }
+        }
+    }
+
+    @Test
+    fun testGetPartyNumFromPublicKey () {
+        runBlocking {
+            val boundWitnessBytes = BigInteger("A00200000150A01500000050A0190000004A800C0000004463CC32B772E685918892C01506F18F7681BC485C43E17669300B284DC5D0D2D8AF0B7D17C37C640CBF99E5CBE96C492278D9463E032F560C0B9EB2547843F87BA01500000050A0190000004A800C00000044ECAE3C522E5942CA1542F8172658F8FDE2E6C8C9F61DD6D3E1D22EFC7C9C4A028946E6CC1D4926641F7A93552FB312D5624151001C2A45C42EC4CFE39F1D0128A01600000052A01A0000004C800900000046202EF52AEEF626AA3CA0709F1963D1627A4BB578C82830B8FA715832FBADCC41FC205840ED99B67021B78A3470A08E85F5D7A66B8C217AEF9CFAA0E27C99F0376A45A01600000052A01A0000004C800900000046200A2806F9FE2345024F3E950488DB0F08297FA7E57D429FF0753045EAA28E5DD5202E1C55B6B58C7BE40FE367D9D4DB2B48D5A4CD38C40995C30B400B10ECE45367", 16).toByteArray()
+            val publicKeyBytes = "800C00000044ECAE3C522E5942CA1542F8172658F8FDE2E6C8C9F61DD6D3E1D22EFC7C9C4A028946E6CC1D4926641F7A93552FB312D5624151001C2A45C42EC4CFE39F1D0128".hexStringToByteArray()
+            val publicKey = object : XyoBuff() {
+                override val allowedOffset: Int = 0
+                override var item: ByteArray = publicKeyBytes
+            }
+            val createdBoundWitness = XyoBoundWitness.getInstance(boundWitnessBytes.copyOfRange(1, boundWitnessBytes.size))
+            val partyNumOfPublicKey = XyoBoundWitnessUtil.getPartyNumberFromPublicKey(createdBoundWitness, publicKey)
+
+            Assert.assertEquals(1, partyNumOfPublicKey)
         }
     }
 }

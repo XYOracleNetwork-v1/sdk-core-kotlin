@@ -1,17 +1,16 @@
 package network.xyo.sdkcorekotlin.boundWitness
 
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
-import network.xyo.sdkcorekotlin.schemas.XyoSchemas.BW
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
-import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
+import network.xyo.sdkobjectmodelkotlin.objects.toHexString
 
 object XyoBoundWitnessUtil {
     fun removeTypeFromUnsignedPayload (type : Byte, boundWitness: XyoIterableObject) : XyoIterableObject {
         val newBoundWitnessLedger = ArrayList<XyoBuff>()
 
         val fetters = boundWitness[XyoSchemas.FETTER.id]
-        val witnesses = boundWitness[XyoSchemas.WITNESSS.id]
+        val witnesses = boundWitness[XyoSchemas.WITNESS.id]
 
         newBoundWitnessLedger.addAll(fetters)
 
@@ -25,25 +24,27 @@ object XyoBoundWitnessUtil {
                     }
                 }
 
-                newBoundWitnessLedger.add(XyoIterableObject.createUntypedIterableObject(XyoSchemas.WITNESSS, items.toTypedArray()))
+                newBoundWitnessLedger.add(XyoIterableObject.createUntypedIterableObject(XyoSchemas.WITNESS, items.toTypedArray()))
             }
         }
 
         return XyoIterableObject.createUntypedIterableObject(XyoSchemas.BW, newBoundWitnessLedger.toTypedArray())
     }
 
-    fun getPartyNumberFromPublicKey (boundWitness: ByteArray, publicKey: ByteArray) : Int? {
-//        val keys = XyoIterableObject(XyoIterableObject(boundWitness)[0])
-//        for (i in 0..keys.size) {
-//            for (key in XyoIterableObject(keys[i]).iterator) {
-//                val keyValue = XyoObjectCreator.getObjectValue(publicKey)
-//                val bwKeyValue = XyoObjectCreator.getObjectValue(key)
-//
-//                if (keyValue.contentEquals(bwKeyValue)) {
-//                    return i
-//                }
-//            }
-//        }
+    fun getPartyNumberFromPublicKey (boundWitness: XyoBoundWitness, publicKey: XyoBuff) : Int? {
+        for (i in 0 until (boundWitness.numberOfParties ?: 0)) {
+            val fetter = boundWitness.getFetterOfParty(i) ?: return null
+
+            for (keySet in fetter[XyoSchemas.KEY_SET.id]) {
+                if (keySet is XyoIterableObject) {
+                    for (key in keySet.iterator) {
+                        if (key == publicKey) {
+                            return i
+                        }
+                    }
+                }
+            }
+        }
 
         return null
     }

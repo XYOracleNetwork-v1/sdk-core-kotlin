@@ -4,17 +4,14 @@ import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 
 
 object XyoSchemas {
-    // todo fix minor
-    val ARRAY_TYPED = XyoObjectSchema.createFromHeader(byteArrayOf(         0xB0.toByte(),        0xCC.toByte()))
+    val ARRAY_TYPED = XyoObjectSchema.createFromHeader(byteArrayOf(         0xB0.toByte(),        1.toByte()))
     val ARRAY_UNTYPED =  XyoObjectSchema.createFromHeader(byteArrayOf(      0xA0.toByte(),        1.toByte()))
 
-    // todo check if untyped
     val BW = XyoObjectSchema.createFromHeader(byteArrayOf(                  0xA0.toByte(),        2.toByte()))
     val INDEX = XyoObjectSchema.createFromHeader(byteArrayOf(               0x80.toByte(),        3.toByte()))
     val NEXT_PUBLIC_KEY = XyoObjectSchema.createFromHeader(byteArrayOf(     0x80.toByte(),        4.toByte()))
     val BRIDGE_BLOCK_SET = XyoObjectSchema.createFromHeader(byteArrayOf(    0xB0.toByte(),        5.toByte()))
     val BRIDGE_HASH_SET =  XyoObjectSchema.createFromHeader(byteArrayOf(    0xB0.toByte(),        6.toByte()))
-    val PAYLOAD = XyoObjectSchema.createFromHeader(byteArrayOf(             0xB0.toByte(),        7.toByte()))
     val PREVIOUS_HASH = XyoObjectSchema.createFromHeader(byteArrayOf(       0x80.toByte(),        8.toByte()))
     val EC_SIGNATURE = XyoObjectSchema.createFromHeader(byteArrayOf(        0x80.toByte(),        9.toByte()))
     val RSA_SIGNATURE = XyoObjectSchema.createFromHeader(byteArrayOf(       0x80.toByte(),        10.toByte()))
@@ -28,9 +25,10 @@ object XyoSchemas {
     val GPS = XyoObjectSchema.createFromHeader(byteArrayOf(                 0x80.toByte(),        18.toByte()))
     val RSSI = XyoObjectSchema.createFromHeader(byteArrayOf(                0x80.toByte(),        19.toByte()))
     val UNIX_TIME = XyoObjectSchema.createFromHeader(byteArrayOf(           0x80.toByte(),        20.toByte()))
-
     val FETTER = XyoObjectSchema.createFromHeader(byteArrayOf(              0xA0.toByte(),        21.toByte()))
-    val WITNESSS = XyoObjectSchema.createFromHeader(byteArrayOf(             0xA0.toByte(),       22.toByte()))
+    val WITNESS = XyoObjectSchema.createFromHeader(byteArrayOf(             0xA0.toByte(),        22.toByte()))
+    val KEY_SET = XyoObjectSchema.createFromHeader(byteArrayOf(             0xA0.toByte(),        25.toByte()))
+    val SIGNATURE_SET = XyoObjectSchema.createFromHeader(byteArrayOf(       0xA0.toByte(),        26.toByte()))
 
     val EC_PRIVATE_KEY = XyoObjectSchema.createFromHeader(byteArrayOf(      0x80.toByte(),        0xFF.toByte()))
     val RSA_PRIVATE_KEY = XyoObjectSchema.createFromHeader(byteArrayOf(     0x80.toByte(),        0xFF.toByte()))

@@ -24,8 +24,8 @@ abstract class XyoBoundWitness : XyoIterableObject() {
      */
     val completed: Boolean
         get() {
-            if ((this[XyoSchemas.FETTER.id].size == this[XyoSchemas.WITNESSS.id].size)
-                    && this[XyoSchemas.WITNESSS.id].isNotEmpty()) {
+            if ((this[XyoSchemas.FETTER.id].size == this[XyoSchemas.WITNESS.id].size)
+                    && this[XyoSchemas.WITNESS.id].isNotEmpty()) {
                 return true
             }
             return false
@@ -123,7 +123,7 @@ abstract class XyoBoundWitness : XyoIterableObject() {
         val itemsInWitness = ArrayList<XyoBuff>()
         itemsInWitness.add(signatures)
         itemsInWitness.addAll(payload)
-        return XyoIterableObject.createUntypedIterableObject(XyoSchemas.WITNESSS, itemsInWitness.toTypedArray())
+        return XyoIterableObject.createUntypedIterableObject(XyoSchemas.WITNESS, itemsInWitness.toTypedArray())
     }
 
     /**

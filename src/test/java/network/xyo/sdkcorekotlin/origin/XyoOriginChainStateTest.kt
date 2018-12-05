@@ -8,7 +8,6 @@ import network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.secp256k.XyoSha25
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.hashing.basic.XyoSha3
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas.ARRAY_UNTYPED
-import network.xyo.sdkcorekotlin.schemas.XyoSchemas.PAYLOAD
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals

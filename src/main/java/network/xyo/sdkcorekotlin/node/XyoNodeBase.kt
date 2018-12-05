@@ -206,7 +206,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
     }
 
     private fun getBridgedBlocks (boundWitness: XyoBoundWitness) : Iterator<XyoBuff>? {
-        for (witness in boundWitness[XyoSchemas.WITNESSS.id]) {
+        for (witness in boundWitness[XyoSchemas.WITNESS.id]) {
             if (witness is XyoIterableObject) {
                 for (item in witness[XyoSchemas.BRIDGE_BLOCK_SET.id].iterator()) {
                     if (item is XyoIterableObject) {

@@ -20,7 +20,7 @@ class XyoBoundWitnessInterpretTest : XyoTestBase() {
         val createdBoundWitness = XyoBoundWitness.getInstance(boundWitnessBytes.copyOfRange(1, boundWitnessBytes.size))
 
         Assert.assertEquals(2, createdBoundWitness[XyoSchemas.FETTER.id].size)
-        Assert.assertEquals(2, createdBoundWitness[XyoSchemas.WITNESSS.id].size)
+        Assert.assertEquals(2, createdBoundWitness[XyoSchemas.WITNESS.id].size)
         Assert.assertEquals(2, createdBoundWitness.numberOfParties)
         Assert.assertArrayEquals(expectedFetterOne, createdBoundWitness.getFetterOfParty(0)?.bytesCopy)
         Assert.assertArrayEquals(expectedWitnessOne, createdBoundWitness.getWitnessOfParty(0)?.bytesCopy)
