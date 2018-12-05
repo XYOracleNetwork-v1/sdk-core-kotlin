@@ -7,6 +7,7 @@ import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigningObjectCreatorVerify
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import org.bouncycastle.jce.provider.BouncyCastleProvider
+import java.security.PublicKey
 import java.security.Signature
 
 /**
@@ -41,5 +42,13 @@ class XyoRsaWithSha256 (privateKey: XyoRsaPrivateKey?) : XyoGeneralRsa (1024, pr
         override val supportedKeys: Array<ByteArray> = arrayOf(XyoSchemas.RSA_PUBLIC_KEY.header)
 
         override val supportedSignatures: Array<ByteArray> = arrayOf(XyoSchemas.RSA_SIGNATURE.header)
+
+        override fun verifySign(signature: XyoBuff, byteArray: ByteArray, publicKey: XyoBuff): Deferred<Boolean> {
+            return GlobalScope.async {
+                signatureInstance.initVerify(XyoRsaPublicKey.getInstance(publicKey.bytesCopy))
+                signatureInstance.update(byteArray)
+                return@async signatureInstance.verify(signature.valueCopy)
+            }
+        }
     }
 }

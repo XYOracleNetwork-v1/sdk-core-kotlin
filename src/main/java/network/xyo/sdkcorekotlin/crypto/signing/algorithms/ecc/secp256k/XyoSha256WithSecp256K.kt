@@ -58,7 +58,7 @@ class XyoSha256WithSecp256K (privateKey : ECPrivateKey?) : XyoEcSecp256K1(privat
             return XyoSha256WithSecp256K(XyoEcPrivateKey.getInstance(privateKey, XyoEcSecp256K1.ecSpec))
         }
 
-        override fun verifySign(signature: XyoBuff, byteArray: ByteArray, publicKey: PublicKey): Deferred<Boolean> = GlobalScope.async {
+        override fun verifySign(signature: XyoBuff, byteArray: ByteArray, publicKey: XyoBuff): Deferred<Boolean> = GlobalScope.async {
             val signer = ECDSASigner()
 
             val ecDomainParameters = ECDomainParameters(ecCurve.curve, ecCurve.g, ecCurve.n)

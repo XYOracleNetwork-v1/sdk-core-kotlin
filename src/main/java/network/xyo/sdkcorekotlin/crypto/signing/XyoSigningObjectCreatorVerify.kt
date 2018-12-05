@@ -16,14 +16,14 @@ abstract class XyoSigningObjectCreatorVerify : XyoSigner.XyoSignerProvider() {
      */
     abstract val signatureInstance : Signature
 
-    override fun verifySign(signature: XyoBuff,
-                            byteArray: ByteArray,
-                            publicKey: PublicKey): Deferred<Boolean> {
-
-        return GlobalScope.async {
-            signatureInstance.initVerify(publicKey)
-            signatureInstance.update(byteArray)
-            return@async signatureInstance.verify(signature.valueCopy)
-        }
-    }
+//    override fun verifySign(signature: XyoBuff,
+//                            byteArray: ByteArray,
+//                            publicKey: PublicKey): Deferred<Boolean> {
+//
+//        return GlobalScope.async {
+//            signatureInstance.initVerify(publicKey)
+//            signatureInstance.update(byteArray)
+//            return@async signatureInstance.verify(signature.valueCopy)
+//        }
+//    }
 }

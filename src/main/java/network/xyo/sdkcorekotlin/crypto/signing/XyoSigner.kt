@@ -65,7 +65,7 @@ abstract class XyoSigner {
          */
         abstract fun verifySign (signature: XyoBuff,
                                  byteArray: ByteArray,
-                                 publicKey : PublicKey) : Deferred<Boolean>
+                                 publicKey : XyoBuff) : Deferred<Boolean>
 
         /**
          * The key to identify the signer provider by so it can be added to a mapping.
@@ -134,7 +134,7 @@ abstract class XyoSigner {
             return signingCreators[byte]
         }
 
-        fun verify (publicKey: XyoPublicKey, signature: XyoBuff, data : ByteArray) : Deferred<Boolean?> = GlobalScope.async {
+        fun verify (publicKey: XyoBuff, signature: XyoBuff, data : ByteArray) : Deferred<Boolean?> = GlobalScope.async {
             val headerPublicKey = publicKey.schema.header
             val creator = verifiers[headerPublicKey.contentHashCode()]?.get(signature.schema.header.contentHashCode())
 
