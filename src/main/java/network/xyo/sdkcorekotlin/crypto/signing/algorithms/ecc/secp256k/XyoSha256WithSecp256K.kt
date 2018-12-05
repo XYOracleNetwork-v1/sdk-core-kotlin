@@ -17,6 +17,7 @@ import org.bouncycastle.crypto.signers.ECDSASigner
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.bouncycastle.crypto.params.ECPublicKeyParameters
 import org.bouncycastle.jce.interfaces.ECPrivateKey
+import org.bouncycastle.jce.spec.ECParameterSpec
 import java.security.MessageDigest
 import java.security.PublicKey
 import java.security.Signature
@@ -48,7 +49,7 @@ class XyoSha256WithSecp256K (privateKey : ECPrivateKey?) : XyoEcSecp256K1(privat
         override val key: Byte = 0x01
         override val supportedKeys: Array<ByteArray> = arrayOf(XyoSchemas.EC_PUBLIC_KEY.header)
 
-        override val supportedSignatures: Array<ByteArray> = arrayOf(XyoSchemas.EC_PRIVATE_KEY.header)
+        override val supportedSignatures: Array<ByteArray> = arrayOf(XyoSchemas.EC_SIGNATURE.header)
 
         override fun newInstance(): XyoSigner {
             return XyoSha256WithSecp256K(null)
@@ -60,9 +61,14 @@ class XyoSha256WithSecp256K (privateKey : ECPrivateKey?) : XyoEcSecp256K1(privat
 
         override fun verifySign(signature: XyoBuff, byteArray: ByteArray, publicKey: XyoBuff): Deferred<Boolean> = GlobalScope.async {
             val signer = ECDSASigner()
+            val uncompressedKey = object :XyoUncompressedEcPublicKey() {
+                override val ecSpec: ECParameterSpec = XyoEcSecp256K1.ecSpec
+                override val allowedOffset: Int = 0
+                override var item: ByteArray = publicKey.bytesCopy
+            }
 
             val ecDomainParameters = ECDomainParameters(ecCurve.curve, ecCurve.g, ecCurve.n)
-            signer.init(false, ECPublicKeyParameters(ecCurve.curve.createPoint((publicKey as XyoUncompressedEcPublicKey).x, publicKey.y), ecDomainParameters))
+            signer.init(false, ECPublicKeyParameters(ecCurve.curve.createPoint(uncompressedKey.x, uncompressedKey.y), ecDomainParameters))
 
 
             val ecSig = XyoEcdsaSignature.getInstance(signature.bytesCopy)

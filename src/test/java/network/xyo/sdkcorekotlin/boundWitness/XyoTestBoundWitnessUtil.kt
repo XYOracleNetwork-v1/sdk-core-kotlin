@@ -23,8 +23,6 @@ class XyoTestBoundWitnessUtil : XyoTestBase() {
             val createdBoundWitness = XyoBoundWitness.getInstance(boundWitnessBytes.copyOfRange(1, boundWitnessBytes.size))
             val removedBoundWitness = XyoBoundWitnessUtil.removeTypeFromUnsignedPayload(XyoSchemas.RSSI.id, createdBoundWitness)
 
-            println(createdBoundWitness)
-
             for (witness in removedBoundWitness[XyoSchemas.FETTER.id]) {
                 if (witness is XyoIterableObject) {
                     for (item in witness.iterator) {

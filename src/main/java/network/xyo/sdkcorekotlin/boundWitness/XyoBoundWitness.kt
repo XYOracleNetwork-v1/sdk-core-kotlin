@@ -9,6 +9,7 @@ import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
+import network.xyo.sdkobjectmodelkotlin.objects.toHexString
 import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 
 /**
@@ -62,6 +63,7 @@ abstract class XyoBoundWitness : XyoIterableObject() {
         val numOfParties = numberOfParties
 
         if (completed && numOfParties != null) {
+
              if (numOfParties < partyNum) {
                  return null
              }
@@ -82,11 +84,13 @@ abstract class XyoBoundWitness : XyoIterableObject() {
         val numOfParties = numberOfParties
 
         if (completed && numOfParties != null) {
+
             if (numOfParties < partyNum) {
                 return null
             }
 
-            return this[numOfParties - partyNum] as? XyoIterableObject
+
+            return this[(numOfParties * 2) - (partyNum + 1)] as? XyoIterableObject
         }
 
         return null
