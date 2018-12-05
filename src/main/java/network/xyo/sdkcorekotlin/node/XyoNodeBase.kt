@@ -3,6 +3,7 @@ package network.xyo.sdkcorekotlin.node
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import network.xyo.sdkcorekotlin.XyoFromSelf
 import network.xyo.sdkcorekotlin.XyoLog
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitnessUtil
@@ -36,8 +37,6 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
     private val boundWitnessOptions = ConcurrentHashMap<Int, XyoBoundWitnessOption>()
     private val heuristics = ConcurrentHashMap<String, XyoHeuristicGetter>()
     private val listeners = ConcurrentHashMap<String, XyoNodeListener>()
-
-
     private var currentBoundWitnessSession : XyoZigZagBoundWitnessSession? = null
 
     /**
@@ -104,8 +103,11 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
     fun selfSignOriginChain (flag: Int?) : Deferred<Unit> = GlobalScope.async {
         val bitFlag = flag ?: 0
         val options = getBoundWitnessOptions(bitFlag).await()
-        //todo
-        val boundWitness = XyoZigZagBoundWitness(originState.getSigners(), makeSignedPayload(options.toTypedArray()).await(), makeUnsignedPayload(options.toTypedArray()).await())
+        val boundWitness = XyoZigZagBoundWitness(
+                originState.getSigners(),
+                makeSignedPayload(options.toTypedArray()).await(),
+                makeUnsignedPayload(options.toTypedArray()).await()
+        )
         boundWitness.incomingData(null, true).await()
         updateOriginState(boundWitness).await()
         onBoundWitnessEndSuccess(boundWitness).await()
@@ -185,7 +187,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
     private fun loadCreatedBoundWitness (boundWitness: XyoBoundWitness) : Deferred<Unit> = GlobalScope.async {
         val hash = boundWitness.getHash(hashingProvider).await()
 
-        if (originBlocks.containsOriginBlock(hash).await() == false) {
+        if (!originBlocks.containsOriginBlock(hash).await()) {
             val subBlocks = getBridgedBlocks(boundWitness)
             val boundWitnessWithoutBlocks = XyoBoundWitness.getInstance(
                     XyoBoundWitnessUtil.removeTypeFromUnsignedPayload(BRIDGE_BLOCK_SET.id, boundWitness).bytesCopy
@@ -208,14 +210,17 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
     }
 
     private fun getBridgedBlocks (boundWitness: XyoBoundWitness) : Iterator<XyoBuff>? {
-        //todo
+        for (witness in boundWitness[XyoSchemas.WITNESSS.id]) {
+            if (witness is XyoIterableObject) {
+                for (item in witness[XyoSchemas.BRIDGE_BLOCK_SET.id].iterator()) {
+                    if (item is XyoIterableObject) {
+                        return item.iterator
+                    }
+                }
+            }
+        }
+
         return null
-//        for (payload in boundWitness[XyoSchemas.WITNESSS.id]) {
-//            for (item in XyoIterableObject(payload)[BRIDGE_BLOCK_SET.id]) {
-//                return XyoIterableObject(item).iterator
-//            }
-//        }
-//        return null
     }
 
     private fun onBoundWitnessEndFailure(error: Exception?) {
