@@ -240,18 +240,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
                 ByteBuffer.allocate(4).putInt(choice).array()
         )
 
-        val encodedStartingData = if (startingData == null) {
-            null
-        } else {
-            object : XyoIterableObject() {
-                override val allowedOffset: Int
-                    get() = 0
-
-                override var item: ByteArray = startingData
-            }
-        }
-
-        val error = currentBoundWitnessSession?.doBoundWitness(encodedStartingData)
+        val error = currentBoundWitnessSession?.doBoundWitness(createStartingData(startingData))
         pipe.close().await()
 
         notifyOptions(options.toTypedArray(), currentBoundWitnessSession)
@@ -266,6 +255,17 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
 
         onBoundWitnessEndFailure(error)
         currentBoundWitnessSession = null
+    }
+
+    private fun createStartingData (startingData : ByteArray?) : XyoIterableObject? {
+        return if (startingData == null) {
+            null
+        } else {
+            object : XyoIterableObject() {
+                override val allowedOffset: Int = 0
+                override var item: ByteArray = startingData
+            }
+        }
     }
 
     private fun notifyOptions (options: Array<XyoBoundWitnessOption>, boundWitness: XyoBoundWitness?) {

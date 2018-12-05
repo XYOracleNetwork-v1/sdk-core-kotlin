@@ -21,20 +21,11 @@ class XyoZigZagBoundWitnessSession(private val pipe : XyoNetworkPipe,
 
     private var cycles = 0
 
-    suspend fun doBoundWitness(transfer: XyoIterableObject?) : Exception?  {
+    suspend fun doBoundWitness(transfer: XyoIterableObject?) : Exception? {
         try {
             if (!completed) {
                 val rawResponse = sendAndReceive(transfer != null, transfer).await()
-                var response : XyoIterableObject? = null
-
-                if (rawResponse != null) {
-                    response = object : XyoIterableObject() {
-                        override val allowedOffset: Int
-                            get() = 0
-
-                        override var item: ByteArray = rawResponse
-                    }
-                }
+                val response: XyoIterableObject? = createResponse(rawResponse)
 
                 if (cycles == 0 && transfer != null && response != null) {
                     incomingData(response, false).await()
@@ -45,10 +36,10 @@ class XyoZigZagBoundWitnessSession(private val pipe : XyoNetworkPipe,
             }
 
             return null
-        } catch (exception : XyoException) {
+        } catch (exception: XyoException) {
             XyoLog.logError("Bound witness creation error: $exception", TAG, exception)
             return exception
-        } catch (exception : XyoObjectException) {
+        } catch (exception: XyoObjectException) {
             XyoLog.logError("Bound witness creation error: $exception", TAG, exception)
             return exception
         }
@@ -73,6 +64,17 @@ class XyoZigZagBoundWitnessSession(private val pipe : XyoNetworkPipe,
         }
 
         return@async response
+    }
+
+    private fun createResponse (response : ByteArray?) : XyoIterableObject? {
+        return if (response == null) {
+            null
+        } else {
+            object : XyoIterableObject() {
+                override val allowedOffset: Int = 0
+                override var item: ByteArray = response
+            }
+        }
     }
 
     companion object {
