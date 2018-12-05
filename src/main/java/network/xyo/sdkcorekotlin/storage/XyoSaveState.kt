@@ -3,31 +3,42 @@ package network.xyo.sdkcorekotlin.storage
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import network.xyo.sdkcorekotlin.schemas.XyoSchemas
+import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
+import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
+import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 import java.lang.Exception
 
 class XyoSaveState (private val storageProvider: XyoStorageProviderInterface) {
-    fun saveIndex (index : ByteArray) : Deferred<Exception?> {
-        return writeFromKey(INDEX, index)
+    fun saveIndex (index : XyoBuff) : Deferred<Exception?> {
+        return writeFromKey(INDEX, index.valueCopy)
     }
 
-    fun saveSigners (privateKeys: ByteArray) : Deferred<Exception?> {
-        return writeFromKey(SIGNERS_KEY, privateKeys)
+    fun saveSigners (privateKeys: Array<XyoBuff>) : Deferred<Exception?> {
+        return writeFromKey(
+                SIGNERS_KEY,
+                XyoIterableObject.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, privateKeys).bytesCopy
+        )
     }
 
-    fun savePreviousHash (hash : ByteArray) : Deferred<Exception?>{
-        return writeFromKey(PREV_HASH_KEY, hash)
+    fun savePreviousHash (hash : XyoBuff) : Deferred<Exception?>{
+        return writeFromKey(PREV_HASH_KEY, hash.bytesCopy)
     }
 
-    fun getIndex () : Deferred<ByteArray?> {
-        return readFromKey(INDEX)
+    fun getIndex () : Deferred<XyoBuff?> = GlobalScope.async {
+        return@async XyoBuff.wrap(readFromKey(INDEX).await() ?: return@async null)
     }
 
-    fun getSigners () : Deferred<ByteArray?> {
-        return readFromKey(SIGNERS_KEY)
+    fun getSigners () : Deferred<Iterator<XyoBuff>?> = GlobalScope.async {
+        val encodedSigners = readFromKey(PREV_HASH_KEY).await() ?: return@async null
+        return@async object : XyoIterableObject() {
+            override val allowedOffset: Int = 0
+            override var item: ByteArray = encodedSigners
+        }.iterator
     }
 
-    fun getPreviousHash () : Deferred<ByteArray?> {
-        return readFromKey(PREV_HASH_KEY)
+    fun getPreviousHash () : Deferred<XyoBuff?> = GlobalScope.async {
+        return@async XyoBuff.wrap(readFromKey(PREV_HASH_KEY).await() ?: return@async null)
     }
 
     private fun readFromKey (key : String) = GlobalScope.async {

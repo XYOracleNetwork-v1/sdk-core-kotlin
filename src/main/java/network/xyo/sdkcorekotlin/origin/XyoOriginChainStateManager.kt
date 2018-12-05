@@ -18,9 +18,9 @@ import java.nio.ByteBuffer
 open class XyoOriginChainStateManager (private val indexOffset : Int) : XyoOriginStateRepository {
     private var currentSigners = ArrayList<XyoSigner>()
     private var waitingSigners = ArrayList<XyoSigner>()
-    private var latestHash : ByteArray? = null
+    private var latestHash : XyoBuff? = null
 
-    constructor(indexOffset: Int, signers : Array<XyoSigner>, previousHash: ByteArray): this(indexOffset) {
+    constructor(indexOffset: Int, signers : Array<XyoSigner>, previousHash: XyoBuff): this(indexOffset) {
         latestHash = previousHash
         currentSigners = ArrayList(signers.toList())
     }
@@ -49,7 +49,7 @@ open class XyoOriginChainStateManager (private val indexOffset : Int) : XyoOrigi
         get() {
             val latestHashValue = latestHash
             if (latestHashValue != null) {
-                return XyoBuff.newInstance(PREVIOUS_HASH, latestHashValue)
+                return XyoBuff.newInstance(PREVIOUS_HASH, latestHashValue.bytesCopy)
             }
             return null
         }
@@ -77,7 +77,7 @@ open class XyoOriginChainStateManager (private val indexOffset : Int) : XyoOrigi
     override fun newOriginBlock (hash : XyoHash) {
         nextPublicKey = null
         allHashes.add(hash)
-        latestHash = hash.bytesCopy
+        latestHash = hash
         count++
         addWaitingSigner()
     }

@@ -63,19 +63,22 @@ open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoSto
     }
 
     private fun updateIndex (blockHash : XyoHash) = GlobalScope.async {
-        val newIndex = arrayOf(blockHash.bytesCopy)
+        val newIndex =ArrayList<XyoBuff>()
         val currentIndex = storageProvider.read(BLOCKS_INDEX_KEY).await()
 
-        // throw Exception("Stub!")
+        newIndex.add(blockHash)
 
-//        if (currentIndex != null) {
-//            val newIndexEncoded =  XyoObjectSetCreator.addToIterableObject(blockHash.bytesCopy, currentIndex)
-//            return@async storageProvider.write(BLOCKS_INDEX_KEY, newIndexEncoded)
-//
-//        }
-//
-//        val newIndexEncoded = XyoObjectSetCreator.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, newIndex)
-//        return@async storageProvider.write(BLOCKS_INDEX_KEY, newIndexEncoded)
+        if (currentIndex != null) {
+            for (item in object : XyoIterableObject() {
+                override val allowedOffset: Int = 0
+                override var item: ByteArray = currentIndex
+            }.iterator) {
+                newIndex.add(item)
+            }
+        }
+
+        val newIndexEncoded = XyoIterableObject.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, newIndex.toTypedArray())
+        return@async storageProvider.write(BLOCKS_INDEX_KEY, newIndexEncoded.bytesCopy)
     }
 
     private fun removeIndex (blockHash: ByteArray) = GlobalScope.async {
