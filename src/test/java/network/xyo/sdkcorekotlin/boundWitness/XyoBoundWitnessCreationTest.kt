@@ -48,9 +48,6 @@ class XyoBoundWitnessCreationTest : XyoTestBase() {
             val aliceToBobTwo = boundWitnessAlice.incomingData(bobToAliceOne, false).await()
             boundWitnessBob.incomingData(aliceToBobTwo, false).await()
 
-            println(boundWitnessBob)
-            println(boundWitnessAlice)
-
             Assert.assertTrue(XyoBoundWitnessVerify(false).verify(boundWitnessBob).await()!!)
 
             Assert.assertArrayEquals(boundWitnessAlice.bytesCopy, boundWitnessBob.bytesCopy)
@@ -58,9 +55,6 @@ class XyoBoundWitnessCreationTest : XyoTestBase() {
             Assert.assertTrue(boundWitnessBob.completed)
             Assert.assertEquals(2, boundWitnessAlice.numberOfParties)
             Assert.assertEquals(2, boundWitnessBob.numberOfParties)
-
-            println(boundWitnessAlice.bytesCopy.toHexString())
-
         }
     }
 }

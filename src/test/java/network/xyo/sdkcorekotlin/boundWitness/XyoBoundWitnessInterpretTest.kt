@@ -23,9 +23,6 @@ class XyoBoundWitnessInterpretTest : XyoTestBase() {
         Assert.assertEquals(2, createdBoundWitness[XyoSchemas.WITNESS.id].size)
         Assert.assertEquals(2, createdBoundWitness.numberOfParties)
 
-        println(createdBoundWitness.getWitnessOfParty(0)?.bytesCopy?.toHexString())
-
-
         Assert.assertArrayEquals(expectedFetterOne, createdBoundWitness.getFetterOfParty(0)?.bytesCopy)
         Assert.assertArrayEquals(expectedWitnessOne, createdBoundWitness.getWitnessOfParty(0)?.bytesCopy)
         Assert.assertArrayEquals(expectedFetterTwo, createdBoundWitness.getFetterOfParty(1)?.bytesCopy)
