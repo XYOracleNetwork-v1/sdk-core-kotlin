@@ -5,6 +5,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
+import network.xyo.sdkcorekotlin.exceptions.XyoCorruptDataException
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
 import kotlin.collections.ArrayList
@@ -64,7 +65,7 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
             return@async getReturnFromIncoming(getNumberOfSignaturesFromTransfer(transfer), endPoint, unsignedPayload).await()
         }
 
-        return@async XyoIterableObject.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, arrayOf())
+        return@async encodeTransfer(arrayOf())
     }
 
     private fun getNumberOfSignaturesFromTransfer (transfer: XyoIterableObject?) : Int {
@@ -78,7 +79,7 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
     private fun getReturnFromIncoming (signatureReceivedSize : Int, endPoint: Boolean, payload : Array<XyoBuff>) : Deferred<XyoIterableObject> = GlobalScope.async {
 
         if (numberOfWitnesses == 0 && !endPoint) {
-            return@async this@XyoZigZagBoundWitness
+            return@async encodeTransfer(dynamicLeader.toTypedArray())
         }
 
         return@async passAndSign(signatureReceivedSize, payload).await()
@@ -97,10 +98,31 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
         val signatureIt = this@XyoZigZagBoundWitness[XyoSchemas.WITNESS.id]
         toSend.add(signatureIt[signatureIt.size - 1])
 
-        return@async XyoIterableObject.createUntypedIterableObject(
-                schema,
-                toSend.toTypedArray()
-        )
+        return@async encodeTransfer(toSend.toTypedArray())
+    }
+
+    private fun encodeTransfer (itemsToTransfer : Array<XyoBuff>) : XyoIterableObject {
+        val fetters = ArrayList<XyoBuff>()
+        val witnesses =  ArrayList<XyoBuff>()
+
+        for (item in itemsToTransfer) {
+            when (item.schema.id) {
+                XyoSchemas.FETTER.id -> {
+                    fetters.add(item)
+                }
+                XyoSchemas.WITNESS.id ->  {
+                    witnesses.add(item)
+                }
+            }
+        }
+
+        if (fetters.size == 0 && witnesses.size != 0) {
+            return XyoIterableObject.createTypedIterableObject(XyoSchemas.WITNESS_SET, witnesses.toTypedArray())
+        } else if(numberOfFetters != 0 && numberOfWitnesses == 0) {
+            return XyoIterableObject.createTypedIterableObject(XyoSchemas.FETTER_SET, fetters.toTypedArray())
+        }
+
+        return  XyoIterableObject.createUntypedIterableObject(XyoSchemas.BW_FRAGMENT, itemsToTransfer)
     }
 
     private fun addTransfer (transfer : XyoIterableObject) : Deferred<Unit> = GlobalScope.async {

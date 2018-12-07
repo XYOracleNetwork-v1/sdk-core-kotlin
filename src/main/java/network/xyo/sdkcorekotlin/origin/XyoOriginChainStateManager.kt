@@ -4,8 +4,11 @@ import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas.INDEX
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas.NEXT_PUBLIC_KEY
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
+import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas.PREVIOUS_HASH
+import network.xyo.sdkcorekotlin.schemas.XyoSchemas.STUB_HASH
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
+import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
 import java.nio.ByteBuffer
 
 
@@ -49,7 +52,7 @@ open class XyoOriginChainStateManager (private val indexOffset : Int) : XyoOrigi
         get() {
             val latestHashValue = latestHash
             if (latestHashValue != null) {
-                return XyoBuff.newInstance(PREVIOUS_HASH, latestHashValue.bytesCopy)
+                return XyoIterableObject.createTypedIterableObject(XyoSchemas.PREVIOUS_HASH, arrayOf(latestHashValue))
             }
             return null
         }

@@ -9,6 +9,7 @@ import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitnessUtil
 import network.xyo.sdkcorekotlin.boundWitness.XyoZigZagBoundWitness
 import network.xyo.sdkcorekotlin.boundWitness.XyoZigZagBoundWitnessSession
 import network.xyo.sdkcorekotlin.hashing.XyoHash
+import network.xyo.sdkcorekotlin.hashing.basic.XyoBasicHashBase
 import network.xyo.sdkcorekotlin.network.XyoNetworkPipe
 import network.xyo.sdkcorekotlin.origin.XyoIndexableOriginBlockRepository
 import network.xyo.sdkcorekotlin.origin.XyoOriginChainStateManager
@@ -17,6 +18,7 @@ import network.xyo.sdkcorekotlin.schemas.XyoSchemas.BRIDGE_BLOCK_SET
 import network.xyo.sdkcorekotlin.storage.XyoStorageProviderInterface
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
+import network.xyo.sdkobjectmodelkotlin.objects.toHexString
 import java.nio.ByteBuffer
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -173,6 +175,9 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
 
     private fun onBoundWitnessEndSuccess (boundWitness: XyoBoundWitness) = GlobalScope.async {
         loadCreatedBoundWitness(boundWitness).await()
+        println(XyoBasicHashBase.createHashType(XyoSchemas.SHA_256, "SHA-256").createHash(boundWitness.signingData).await().bytesCopy.toHexString())
+
+        throw Exception()
 
         for ((_, listener) in listeners) {
             listener.onBoundWitnessEndSucess(boundWitness)
