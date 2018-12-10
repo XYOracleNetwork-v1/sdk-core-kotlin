@@ -3,6 +3,7 @@ package network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc
 import network.xyo.sdkcorekotlin.XyoFromSelf
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
+import network.xyo.sdkobjectmodelkotlin.objects.XyoNumberEncoder
 import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 import java.math.BigInteger
 import java.nio.ByteBuffer
@@ -27,8 +28,6 @@ open class XyoEcdsaSignature(val r : BigInteger, val s : BigInteger) : XyoBuff()
         buffer.put(encodedS)
         return buffer.array()
     }
-
-    override val schema: XyoObjectSchema = XyoSchemas.EC_SIGNATURE
 
     companion object : XyoFromSelf {
         class XyoRAndS(val r : BigInteger, val s : BigInteger)

@@ -20,6 +20,7 @@ class XyoBoundWitnessVerify (private val allowUnknown : Boolean) {
      */
     fun verify (boundWitness: XyoBoundWitness) : Deferred<Boolean?> = GlobalScope.async {
         if (!boundWitness.completed) {
+            println("d")
             return@async false
         }
 
@@ -53,7 +54,7 @@ class XyoBoundWitnessVerify (private val allowUnknown : Boolean) {
             val signature = signatures[keyNum]
 
             val verify = XyoSigner.verify(key, signature, signingData).await()
-
+            
             if ((verify == null && !allowUnknown) || verify == false) {
                 return@async false
             }

@@ -39,9 +39,9 @@ class XyoRsaWithSha256 (privateKey: XyoRsaPrivateKey?) : XyoGeneralRsa (1024, pr
             return XyoRsaWithSha256(XyoRsaPrivateKey.getInstance(privateKey))
         }
 
-        override val supportedKeys: Array<ByteArray> = arrayOf(XyoSchemas.RSA_PUBLIC_KEY.header)
+        override val supportedKeys: Array<Byte> = arrayOf(XyoSchemas.RSA_PUBLIC_KEY.id)
 
-        override val supportedSignatures: Array<ByteArray> = arrayOf(XyoSchemas.RSA_SIGNATURE.header)
+        override val supportedSignatures: Array<Byte> = arrayOf(XyoSchemas.RSA_SIGNATURE.id)
 
         override fun verifySign(signature: XyoBuff, byteArray: ByteArray, publicKey: XyoBuff): Deferred<Boolean> {
             return GlobalScope.async {

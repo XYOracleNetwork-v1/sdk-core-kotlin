@@ -30,7 +30,6 @@ abstract class XyoBasicHashBase : XyoHash() {
 
                 return@async object : XyoBasicHashBase() {
                     override var item: ByteArray = item.bytesCopy
-                    override val schema: XyoObjectSchema = this@XyoBasicHashBaseProvider.schema
                     override val hash: ByteArray = hash
                     override val allowedOffset: Int = 0
                 }
@@ -47,7 +46,6 @@ abstract class XyoBasicHashBase : XyoHash() {
                     get() = 0
 
                 override var item: ByteArray = byteArray
-                override val schema: XyoObjectSchema = this@XyoBasicHashBaseProvider.schema
 
                 override val hash: ByteArray
                     get() = item.copyOfRange(2, item.size + 2)

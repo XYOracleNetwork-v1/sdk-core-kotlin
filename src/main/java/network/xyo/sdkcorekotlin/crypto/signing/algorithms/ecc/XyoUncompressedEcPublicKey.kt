@@ -4,6 +4,7 @@ import network.xyo.sdkcorekotlin.XyoFromSelf
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.crypto.signing.XyoPublicKey
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
+import network.xyo.sdkobjectmodelkotlin.objects.XyoNumberEncoder
 import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 import org.bouncycastle.jce.interfaces.ECPublicKey
 import org.bouncycastle.jce.spec.ECParameterSpec
@@ -38,11 +39,8 @@ abstract class XyoUncompressedEcPublicKey : ECPublicKey, XyoPublicKey() {
     }
 
     override var item: ByteArray
-        get() = XyoBuff.getObjectEncoded(schema, encoded)
+        get() = XyoBuff.getObjectEncoded(XyoSchemas.EC_PUBLIC_KEY, encoded)
         set(value) {}
-
-    override val schema: XyoObjectSchema
-        get() = XyoSchemas.EC_PUBLIC_KEY
 
     override fun getEncoded(): ByteArray {
         val buffer = ByteBuffer.allocate(64)

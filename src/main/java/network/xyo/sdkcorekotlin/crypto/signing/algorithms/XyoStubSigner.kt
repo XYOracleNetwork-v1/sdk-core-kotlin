@@ -28,9 +28,6 @@ class XyoStubSigner : XyoSigner() {
 
     override val publicKey: XyoPublicKey
         get() = object : XyoPublicKey() {
-            override val schema: XyoObjectSchema
-                get() = XyoSchemas.STUB_PUBLIC_KEY
-
             override val allowedOffset: Int
                 get() = 0
 

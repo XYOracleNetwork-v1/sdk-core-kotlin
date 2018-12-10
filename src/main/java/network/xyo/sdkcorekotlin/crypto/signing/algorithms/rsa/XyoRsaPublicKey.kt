@@ -5,6 +5,7 @@ import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.crypto.signing.XyoPublicKey
 import network.xyo.sdkcorekotlin.crypto.signing.algorithms.rsa.XyoGeneralRsa.Companion.RSA_PUBLIC_EXPONENT
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
+import network.xyo.sdkobjectmodelkotlin.objects.XyoNumberEncoder
 import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 import java.math.BigInteger
 import java.security.interfaces.RSAPublicKey
@@ -39,11 +40,9 @@ class XyoRsaPublicKey(private val modulus : BigInteger) : RSAPublicKey, XyoPubli
         get() = 0
 
     override var item: ByteArray
-        get() = XyoBuff.newInstance(schema, encoded).bytesCopy
+        get() = XyoBuff.newInstance(XyoSchemas.RSA_PUBLIC_KEY, encoded).bytesCopy
         set(value) {}
 
-    override val schema: XyoObjectSchema
-        get() = XyoSchemas.RSA_PUBLIC_KEY
 
     companion object : XyoFromSelf {
         override fun getInstance(byteArray: ByteArray): XyoRsaPublicKey {

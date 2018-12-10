@@ -177,8 +177,6 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
         loadCreatedBoundWitness(boundWitness).await()
         println(XyoBasicHashBase.createHashType(XyoSchemas.SHA_256, "SHA-256").createHash(boundWitness.signingData).await().bytesCopy.toHexString())
 
-        throw Exception()
-
         for ((_, listener) in listeners) {
             listener.onBoundWitnessEndSucess(boundWitness)
         }

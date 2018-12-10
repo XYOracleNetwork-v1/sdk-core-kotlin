@@ -47,9 +47,8 @@ class XyoSha256WithSecp256K (privateKey : ECPrivateKey?) : XyoEcSecp256K1(privat
     companion object : XyoSigningObjectCreatorVerify() {
         override val signatureInstance: Signature = Signature.getInstance("SHA256withECDSA", BouncyCastleProvider())
         override val key: Byte = 0x01
-        override val supportedKeys: Array<ByteArray> = arrayOf(XyoSchemas.EC_PUBLIC_KEY.header)
-
-        override val supportedSignatures: Array<ByteArray> = arrayOf(XyoSchemas.EC_SIGNATURE.header)
+        override val supportedKeys: Array<Byte> = arrayOf(XyoSchemas.EC_PUBLIC_KEY.id)
+        override val supportedSignatures: Array<Byte> = arrayOf(XyoSchemas.EC_SIGNATURE.id)
 
         override fun newInstance(): XyoSigner {
             return XyoSha256WithSecp256K(null)

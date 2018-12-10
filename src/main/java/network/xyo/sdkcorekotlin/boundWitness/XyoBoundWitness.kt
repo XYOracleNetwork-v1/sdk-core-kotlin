@@ -17,7 +17,6 @@ import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
  */
 
 abstract class XyoBoundWitness : XyoIterableObject() {
-    override val schema: XyoObjectSchema = XyoSchemas.BW
 
     /**
      * If the bound witness is completed or not. This is represented by the number of fetters eqlaing the number of
