@@ -40,7 +40,7 @@ project(':mod-tcp-kotlin').projectDir = new File('../mod-tcp-kotlin')
 implementation project (':sdk-core-kotlin')
 ```
 
-### Using JitPack with Gitpack
+### Using JitPack
 #### With Gradle
 1. Point maven to `https://jitpack.io`
 ```gradle
