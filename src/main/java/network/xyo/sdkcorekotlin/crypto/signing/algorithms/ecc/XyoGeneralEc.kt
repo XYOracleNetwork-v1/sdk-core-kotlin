@@ -13,7 +13,12 @@ import java.security.KeyPairGenerator
 
 abstract class XyoGeneralEc (privateKey: ECPrivateKey?) : XyoSigner() {
 
-    val keyPair: KeyPair = generateKeyPair(privateKey)
+    val keyPair: KeyPair = if (privateKey != null) {
+            generateKeyFromPrivate(privateKey)
+        } else {
+            generateNewKeyPair()
+        }
+
     abstract val spec : ECParameterSpec
     abstract fun ecKeyPairToXyoKeyPair (ecPublicKey : ECPublicKey, ecPrivateKey : ECPrivateKey) : KeyPair
 
@@ -29,12 +34,6 @@ abstract class XyoGeneralEc (privateKey: ECPrivateKey?) : XyoSigner() {
         return ECPublicKeySpec(domain.g.multiply(privateKey.d), privateKey.parameters)
     }
 
-    private fun generateKeyPair(encodedPrivateKey: ECPrivateKey?): KeyPair {
-        if (encodedPrivateKey != null) {
-            return generateKeyFromPrivate(encodedPrivateKey)
-        }
-        return generateNewKeyPair()
-    }
 
     private fun generateNewKeyPair () : KeyPair {
         val keyGenerator : KeyPairGenerator = KeyPairGenerator.getInstance("EC", BouncyCastleProvider())

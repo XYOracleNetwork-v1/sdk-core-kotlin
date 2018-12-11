@@ -34,17 +34,16 @@ abstract class XyoGeneralRsa(private val keySize : Int, privateKey: XyoRsaPrivat
             throw Exception("Key can not be casted!")
         }
 
-    open val keyPair: KeyPair = generateKeyPair(privateKey)
+    open val keyPair: KeyPair = if (privateKey != null) {
+        generateKeyPairFromPrivate(privateKey)
+    } else {
+        generateNewKeyPair()
+    }
 
     override val privateKey: XyoRsaPrivateKey
         get() = (keyPair.private as XyoRsaPrivateKey)
 
-    private fun generateKeyPair(privateKey: XyoRsaPrivateKey?): KeyPair {
-        if (privateKey != null) {
-            return generateKeyPairFromPrivate(privateKey)
-        }
-        return generateNewKeyPair()
-    }
+
 
     private fun generateKeyPairFromPrivate (encodedPrivateKey: XyoRsaPrivateKey) : KeyPair {
         val keyGenerator: KeyFactory = KeyFactory.getInstance("RSA")

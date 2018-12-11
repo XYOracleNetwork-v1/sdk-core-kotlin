@@ -243,13 +243,11 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
     }
 
     private fun createStartingData (startingData : ByteArray?) : XyoIterableObject? {
-        return if (startingData == null) {
-            null
-        } else {
-            object : XyoIterableObject() {
-                override val allowedOffset: Int = 0
-                override var item: ByteArray = startingData
-            }
+        if (startingData == null) return null
+
+        return object : XyoIterableObject() {
+            override val allowedOffset: Int = 0
+            override var item: ByteArray = startingData
         }
     }
 

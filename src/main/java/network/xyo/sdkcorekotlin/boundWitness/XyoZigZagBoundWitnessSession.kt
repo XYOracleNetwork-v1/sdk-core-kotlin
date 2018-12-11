@@ -25,7 +25,14 @@ class XyoZigZagBoundWitnessSession(private val pipe : XyoNetworkPipe,
         try {
             if (!completed) {
                 val rawResponse = sendAndReceive(transfer != null, transfer).await()
-                val response: XyoIterableObject? = createResponse(rawResponse)
+                val response: XyoIterableObject? = if (rawResponse == null) {
+                        null
+                    } else {
+                        object : XyoIterableObject() {
+                            override val allowedOffset: Int = 0
+                            override var item: ByteArray = rawResponse
+                        }
+                    }
 
                 if (cycles == 0 && transfer != null && response != null) {
                     incomingData(response, false).await()
@@ -64,17 +71,6 @@ class XyoZigZagBoundWitnessSession(private val pipe : XyoNetworkPipe,
         }
 
         return@async response
-    }
-
-    private fun createResponse (response : ByteArray?) : XyoIterableObject? {
-        return if (response == null) {
-            null
-        } else {
-            object : XyoIterableObject() {
-                override val allowedOffset: Int = 0
-                override var item: ByteArray = response
-            }
-        }
     }
 
     companion object {
