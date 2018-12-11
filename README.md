@@ -87,6 +87,20 @@ dependencies {
 * JDK 1.8
 * Kotlin
 
+## Building and Testing with Gralde
+
+**Building**
+Source ius located in /src/main/*
+```
+gradle build
+```
+
+**Testing**
+All tests can be found in /src/test/*
+```
+gradle test
+```
+
 ## License
 This project is licensed under the MIT License - see the LICENSE.md file for details
 
