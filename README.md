@@ -24,30 +24,25 @@ You can add sdk-core-kotlin to your existing app by cloning the project and manu
 
 ### Build From Source
 
-#### Clone from github
+1) Clone from github
 ```
 git clone git@github.com:XYOracleNetwork/sdk-core-kotlin.git
 ```
 
-#### Add project to settings.gradle
+2) Add project to settings.gradle
 ```
 include ':sdk-core-kotlin'
 project(':mod-tcp-kotlin').projectDir = new File('../mod-tcp-kotlin')
 ```
 
-#### Include in project
+3) Include in project
 ```
 implementation project (':sdk-core-kotlin')
 ```
 
-```gradle
-dependencies {
-    implementation 'com.github.XYOracleNetwork:sdk-core-kotlin:v0.1.1-beta.0'
-}
-```
-
 ### Using JitPack with Gitpack
 #### With Gradle
+1. Point maven to `https://jitpack.io`
 ```gradle
 allprojects {
 	repositories {
@@ -57,6 +52,7 @@ allprojects {
 }
 ```
 
+2. Inlucde sdk-core-kotlin in dependencies
 ```gradle
 dependencies {
 	implementation 'com.github.XYOracleNetwork:sdk-core-kotlin:v0.1.1-beta.0'
@@ -64,6 +60,7 @@ dependencies {
 ```
 
 #### With Maven
+1. Point maven to `https://jitpack.io`
 ```maven
 <repositories>
 	<repository>
@@ -73,6 +70,7 @@ dependencies {
 </repositories>
 ```
 
+2. Inlucde sdk-core-kotlin in dependencies
 ```maven
 <dependency>
     <groupId>com.github.XYOracleNetwork</groupId>
@@ -80,10 +78,6 @@ dependencies {
     <version>Tag</version>
 </dependency>
 ```
-
-#### Prerequisites
-* JDK 1.8
-* Kotlin
 
 ## Building and Testing with Gralde
 
