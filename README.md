@@ -11,9 +11,13 @@
 | Master      | [![](https://circleci.com/gh/XYOracleNetwork/sdk-core-kotlin.svg?style=shield)](https://circleci.com/gh/XYOracleNetwork/sdk-core-kotlin) |
 | Develop      | [![](https://circleci.com/gh/XYOracleNetwork/sdk-core-kotlin/tree/develop.svg?style=shield)](https://circleci.com/gh/XYOracleNetwork/sdk-core-kotlin/tree/develop)      |
 
-A library to preform all basic XYO Network functions.
+A library to preform all core XYO Network functions.
 This includes creating an origin chain, maintaining an origin chain, negotiations for talking to other nodes, and other basic functionality.
 The library has heavily abstracted modules so that all operations will work with any crypto, storage, networking, ect.
+
+The XYO protocol for creating origin-blocks is specified in the [XYO Yellow Paper](https://docs.xyo.network/XYO-Yellow-Paper.pdf). In it, it describes the behavior of how a node on the XYO network should create Bound Witnesses. Note, the behavior is not coupled with any particular technology constraints around transport layers, cryptographic algorithms, or hashing algorithms.
+
+[Here](https://github.com/XYOracleNetwork/spec-coreobjectmodel-tex) is a link to the core object model that contains an index of major/minor values and their respective objects.
 
 ## Installing
 You can add sdk-core-kotlin to your existing app by cloning the project and manually adding it to your build.gradle or by using JitPack.
@@ -38,7 +42,7 @@ implementation project (':sdk-core-kotlin')
 
 ```gradle
 dependencies {
-    implementation 'com.github.XYOracleNetwork:sdk-core-kotlin:v0.1.0-beta'
+    implementation 'com.github.XYOracleNetwork:sdk-core-kotlin:v0.1.1-beta.0'
 }
 ```
 
@@ -57,7 +61,7 @@ allprojects {
 
 ```gradle
 dependencies {
-	implementation 'com.github.XYOracleNetwork:sdk-core-kotlin:Tag'
+	implementation 'com.github.XYOracleNetwork:sdk-core-kotlin:v0.1.1-beta.0'
 }
 ```
 
