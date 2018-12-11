@@ -59,24 +59,29 @@ class XyoSha256WithSecp256K (privateKey : ECPrivateKey?) : XyoEcSecp256K1(privat
         }
 
         override fun verifySign(signature: XyoBuff, byteArray: ByteArray, publicKey: XyoBuff): Deferred<Boolean> = GlobalScope.async {
-            val signer = ECDSASigner()
-            val uncompressedKey = object :XyoUncompressedEcPublicKey() {
-                override val ecSpec: ECParameterSpec = XyoEcSecp256K1.ecSpec
-                override val allowedOffset: Int = 0
-                override var item: ByteArray = publicKey.bytesCopy
+            try {
+                val signer = ECDSASigner()
+                val uncompressedKey = object :XyoUncompressedEcPublicKey() {
+                    override val ecSpec: ECParameterSpec = XyoEcSecp256K1.ecSpec
+                    override val allowedOffset: Int = 0
+                    override var item: ByteArray = publicKey.bytesCopy
+                }
+
+                val ecDomainParameters = ECDomainParameters(ecCurve.curve, ecCurve.g, ecCurve.n)
+                signer.init(false, ECPublicKeyParameters(ecCurve.curve.createPoint(uncompressedKey.x, uncompressedKey.y), ecDomainParameters))
+
+
+                val ecSig = XyoEcdsaSignature.getInstance(signature.bytesCopy)
+
+                val r = ecSig.r
+                val s = ecSig.s
+
+                return@async signer.verifySignature(hashData(byteArray), r, s)
+
+                // if point is not on curve
+            } catch (e : IllegalArgumentException) {
+                return@async false
             }
-
-            val ecDomainParameters = ECDomainParameters(ecCurve.curve, ecCurve.g, ecCurve.n)
-            signer.init(false, ECPublicKeyParameters(ecCurve.curve.createPoint(uncompressedKey.x, uncompressedKey.y), ecDomainParameters))
-
-
-            val ecSig = XyoEcdsaSignature.getInstance(signature.bytesCopy)
-
-            val r = ecSig.r
-            val s = ecSig.s
-
-            return@async signer.verifySignature(hashData(byteArray), r, s)
-
         }
 
         private fun hashData (byteArray: ByteArray) : ByteArray {

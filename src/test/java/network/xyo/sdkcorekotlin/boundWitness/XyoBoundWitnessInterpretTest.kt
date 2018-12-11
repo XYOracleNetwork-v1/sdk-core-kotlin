@@ -27,6 +27,20 @@ class XyoBoundWitnessInterpretTest : XyoTestBase() {
         Assert.assertArrayEquals(expectedWitnessOne, createdBoundWitness.getWitnessOfParty(0)?.bytesCopy)
         Assert.assertArrayEquals(expectedFetterTwo, createdBoundWitness.getFetterOfParty(1)?.bytesCopy)
         Assert.assertArrayEquals(expectedWitnessTwo, createdBoundWitness.getWitnessOfParty(1)?.bytesCopy)
+
+        Assert.assertEquals(null, createdBoundWitness.getWitnessOfParty(2))
+        Assert.assertEquals(null, createdBoundWitness.getFetterOfParty(2))
+    }
+
+    @Test
+    fun testNotCompletedBoundWitness () {
+        val boundWitnessBytes = "2002DE201547201944000C41B76AE59BB079817B8735E3E216D68E991F2B4F86E982C2DA635B779265E904E5D8E26756E67B72077F510AFF37F5C9EC04F9A1B16C73B07E1F1CA299BA9CFAF4201547201944000C41B946583242B36DDB3650FED6617A12E68DE7D80A686DF84F5FD268122502AA8FC3B873B38B6F4637009593BB9DC32AF2EC88DBC7841DF18EEB540FE21E4969BC201749201A46000943203AC4736260B427B2895250E15BC73B27AD2B3EE78460172F7CD856CFD15AE67D205911C0CDD962616BAC95D9AB4DCE689AF0826A0D92FB4980F2ADBB089844340A".hexStringToByteArray()
+        val createdBoundWitness = XyoBoundWitness.getInstance(boundWitnessBytes)
+
+        Assert.assertFalse(createdBoundWitness.completed)
+        Assert.assertEquals(null, createdBoundWitness.getWitnessOfParty(2))
+        Assert.assertEquals(null, createdBoundWitness.getFetterOfParty(2))
+        Assert.assertEquals(null, createdBoundWitness.numberOfParties)
     }
 
     @Test
@@ -37,7 +51,6 @@ class XyoBoundWitnessInterpretTest : XyoTestBase() {
 
         Assert.assertArrayEquals(expectedSigningBytes, createdBoundWitness.signingData)
     }
-
 
     @Test
     fun testBoundWitnessHash () {

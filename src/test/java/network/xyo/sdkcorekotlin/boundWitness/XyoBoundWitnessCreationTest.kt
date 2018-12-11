@@ -20,7 +20,7 @@ class XyoBoundWitnessCreationTest : XyoTestBase() {
         runBlocking {
             XyoRsaWithSha256.enable()
             XyoSha256WithSecp256K.enable()
-            val aliceSigners = arrayOf<XyoSigner>(XyoSha256WithSecp256K.newInstance(), XyoRsaWithSha256.newInstance())
+            val aliceSigners = arrayOf(XyoSha256WithSecp256K.newInstance(), XyoRsaWithSha256.newInstance())
             val aliceBoundWitness = XyoZigZagBoundWitness(aliceSigners, arrayOf(), arrayOf())
             aliceBoundWitness.incomingData(null, true).await()
 

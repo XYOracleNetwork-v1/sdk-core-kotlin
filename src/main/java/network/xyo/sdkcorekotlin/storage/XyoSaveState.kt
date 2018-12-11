@@ -6,12 +6,11 @@ import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
-import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 import java.lang.Exception
 
 class XyoSaveState (private val storageProvider: XyoStorageProviderInterface) {
     fun saveIndex (index : XyoBuff) : Deferred<Exception?> {
-        return writeFromKey(INDEX, index.valueCopy)
+        return writeFromKey(INDEX_KEY, index.valueCopy)
     }
 
     fun saveSigners (privateKeys: Array<XyoBuff>) : Deferred<Exception?> {
@@ -26,7 +25,7 @@ class XyoSaveState (private val storageProvider: XyoStorageProviderInterface) {
     }
 
     fun getIndex () : Deferred<XyoBuff?> {
-        return readBuffFromKey(INDEX)
+        return readBuffFromKey(INDEX_KEY)
     }
 
     fun getPreviousHash () : Deferred<XyoBuff?> {
@@ -57,6 +56,6 @@ class XyoSaveState (private val storageProvider: XyoStorageProviderInterface) {
     companion object {
         const val PREV_HASH_KEY = "prevHash"
         const val SIGNERS_KEY = "privateKeys"
-        const val INDEX = "index"
+        const val INDEX_KEY = "index"
     }
 }

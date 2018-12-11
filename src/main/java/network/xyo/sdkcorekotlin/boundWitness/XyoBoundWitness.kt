@@ -62,7 +62,7 @@ abstract class XyoBoundWitness : XyoIterableObject() {
         val numOfParties = numberOfParties
 
         if (completed && numOfParties != null) {
-             if (numOfParties < partyNum) {
+             if (numOfParties <= partyNum) {
                  return null
              }
 
@@ -83,7 +83,7 @@ abstract class XyoBoundWitness : XyoIterableObject() {
 
         if (completed && numOfParties != null) {
 
-            if (numOfParties < partyNum) {
+            if (numOfParties <= partyNum) {
                 return null
             }
 
@@ -173,7 +173,7 @@ abstract class XyoBoundWitness : XyoIterableObject() {
          */
         fun getNumberOfParties (boundWitness: XyoBoundWitness) : Int? {
             val numberOfFetters = boundWitness[XyoSchemas.FETTER.id].size
-            val numberOfWitnesses= boundWitness[XyoSchemas.FETTER.id].size
+            val numberOfWitnesses= boundWitness[XyoSchemas.WITNESS.id].size
 
             if (numberOfFetters == numberOfWitnesses) {
                 return numberOfFetters
