@@ -32,7 +32,7 @@ git clone git@github.com:XYOracleNetwork/sdk-core-kotlin.git
 2) Add project to settings.gradle
 ```
 include ':sdk-core-kotlin'
-project(':mod-tcp-kotlin').projectDir = new File('../mod-tcp-kotlin')
+project(':sdk-core-kotlin').projectDir = new File('../sdk-core-kotlin')
 ```
 
 3) Include in project
