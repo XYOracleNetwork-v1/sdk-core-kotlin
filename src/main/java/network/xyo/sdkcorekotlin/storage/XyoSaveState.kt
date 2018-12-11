@@ -25,8 +25,12 @@ class XyoSaveState (private val storageProvider: XyoStorageProviderInterface) {
         return writeFromKey(PREV_HASH_KEY, hash.bytesCopy)
     }
 
-    fun getIndex () : Deferred<XyoBuff?> = GlobalScope.async {
-        return@async XyoBuff.wrap(readFromKey(INDEX).await() ?: return@async null)
+    fun getIndex () : Deferred<XyoBuff?> {
+        return readBuffFromKey(INDEX)
+    }
+
+    fun getPreviousHash () : Deferred<XyoBuff?> {
+        return readBuffFromKey(PREV_HASH_KEY)
     }
 
     fun getSigners () : Deferred<Iterator<XyoBuff>?> = GlobalScope.async {
@@ -37,9 +41,6 @@ class XyoSaveState (private val storageProvider: XyoStorageProviderInterface) {
         }.iterator
     }
 
-    fun getPreviousHash () : Deferred<XyoBuff?> = GlobalScope.async {
-        return@async XyoBuff.wrap(readFromKey(PREV_HASH_KEY).await() ?: return@async null)
-    }
 
     private fun readFromKey (key : String) = GlobalScope.async {
         return@async storageProvider.read(key.toByteArray()).await()
@@ -47,6 +48,10 @@ class XyoSaveState (private val storageProvider: XyoStorageProviderInterface) {
 
     private fun writeFromKey (key: String, value : ByteArray) = GlobalScope.async {
         return@async storageProvider.write(key.toByteArray(), value).await()
+    }
+
+    private fun readBuffFromKey (key : String) : Deferred<XyoBuff> = GlobalScope.async {
+        return@async XyoBuff.wrap(readFromKey(key).await() ?: return@async null)
     }
 
     companion object {

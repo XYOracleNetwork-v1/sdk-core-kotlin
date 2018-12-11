@@ -11,13 +11,16 @@ object XyoAES : XyoEncrypter {
     override val iVSize: Int = 16
 
     override fun encrypt(password: ByteArray, value: ByteArray, iV: ByteArray): ByteArray {
-        cipher.init(Cipher.ENCRYPT_MODE, SecretKeySpec(hashPassword(password), "AES"), IvParameterSpec(iV))
-        return cipher.doFinal(value)
+        return doAes(Cipher.ENCRYPT_MODE, value, password, iV)
     }
 
     override fun decrypt(password: ByteArray, encryptedValue: ByteArray, iV: ByteArray): ByteArray {
-        cipher.init(Cipher.DECRYPT_MODE, SecretKeySpec(hashPassword(password), "AES"), IvParameterSpec(iV))
-        return cipher.doFinal(encryptedValue)
+        return doAes(Cipher.DECRYPT_MODE, encryptedValue, password, iV)
+    }
+
+    private fun doAes (mode : Int, value : ByteArray, password: ByteArray, iV: ByteArray) : ByteArray {
+        cipher.init(mode, SecretKeySpec(hashPassword(password), "AES"), IvParameterSpec(iV))
+        return cipher.doFinal(value)
     }
 
     private fun hashPassword (password: ByteArray) : ByteArray {
