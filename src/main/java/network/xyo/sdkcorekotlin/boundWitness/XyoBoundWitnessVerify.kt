@@ -20,7 +20,6 @@ class XyoBoundWitnessVerify (private val allowUnknown : Boolean) {
      */
     fun verify (boundWitness: XyoBoundWitness) : Deferred<Boolean?> = GlobalScope.async {
         if (!boundWitness.completed) {
-            println("d")
             return@async false
         }
 
@@ -34,18 +33,12 @@ class XyoBoundWitnessVerify (private val allowUnknown : Boolean) {
             val sigSet = boundWitness.getWitnessOfParty(partyNum)?.get(XyoSchemas.SIGNATURE_SET.id)?.getOrNull(0) as? XyoIterableObject
 
             if (keySet is XyoIterableObject && sigSet is XyoIterableObject) {
-                val isSigValid = checkSinglePartySignatures(keySet, sigSet, signingData).await()
+                return@async checkSinglePartySignatures(keySet, sigSet, signingData).await()
 
-                if (!isSigValid) {
-                    return@async false
-                }
-            } else {
-                return@async false
             }
         }
 
-
-        return@async true
+        return@async false
     }
 
     private fun checkSinglePartySignatures (keys: XyoIterableObject, signatures : XyoIterableObject, signingData : ByteArray) : Deferred<Boolean> = GlobalScope.async {

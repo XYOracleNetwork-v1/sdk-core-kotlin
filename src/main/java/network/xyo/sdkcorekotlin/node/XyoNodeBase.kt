@@ -169,12 +169,18 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
         }
     }
 
-
     private fun onBoundWitnessEndSuccess (boundWitness: XyoBoundWitness) = GlobalScope.async {
         loadCreatedBoundWitness(boundWitness).await()
 
         for ((_, listener) in listeners) {
             listener.onBoundWitnessEndSucess(boundWitness)
+        }
+    }
+
+    private fun onBoundWitnessEndFailure(error: Exception?) {
+        currentBoundWitnessSession = null
+        for ((_, listener) in listeners) {
+            listener.onBoundWitnessEndFailure(error)
         }
     }
 
@@ -216,13 +222,6 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
         }
 
         return null
-    }
-
-    private fun onBoundWitnessEndFailure(error: Exception?) {
-        currentBoundWitnessSession = null
-        for ((_, listener) in listeners) {
-            listener.onBoundWitnessEndFailure(error)
-        }
     }
 
     protected suspend fun doBoundWitness (startingData : ByteArray?, pipe: XyoNetworkPipe) {

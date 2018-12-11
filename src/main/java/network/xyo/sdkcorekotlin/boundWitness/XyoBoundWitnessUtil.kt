@@ -33,19 +33,29 @@ object XyoBoundWitnessUtil {
 
     fun getPartyNumberFromPublicKey (boundWitness: XyoBoundWitness, publicKey: XyoBuff) : Int? {
         for (i in 0 until (boundWitness.numberOfParties ?: 0)) {
-            val fetter = boundWitness.getFetterOfParty(i) ?: return null
 
-            for (keySet in fetter[XyoSchemas.KEY_SET.id]) {
-                if (keySet is XyoIterableObject) {
-                    for (key in keySet.iterator) {
-                        if (key == publicKey) {
-                            return i
-                        }
-                    }
+            val fetter = boundWitness.getFetterOfParty(i) ?: return null
+            if (checkPartyForPublicKey(fetter, publicKey) == true) {
+                return i
+            }
+
+        }
+
+        return null
+    }
+
+    private fun checkPartyForPublicKey (fetter : XyoIterableObject, publicKey : XyoBuff) : Boolean? {
+
+        for (keySet in fetter[XyoSchemas.KEY_SET.id]) {
+            if (!(keySet is XyoIterableObject)) return null
+
+            for (key in keySet.iterator) {
+                if (key == publicKey) {
+                    return true
                 }
             }
         }
 
-        return null
+        return false
     }
 }
