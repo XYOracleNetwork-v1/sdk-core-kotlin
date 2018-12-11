@@ -47,8 +47,6 @@ dependencies {
 ```
 
 ### Using JitPack with Gitpack
-[![](https://jitpack.io/v/XYOracleNetwork/sdk-core-kotlin.svg)](https://jitpack.io/#XYOracleNetwork/sdk-core-kotlin)
-
 #### With Gradle
 ```gradle
 allprojects {
