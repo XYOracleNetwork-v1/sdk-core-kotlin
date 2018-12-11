@@ -44,6 +44,20 @@ object XyoBoundWitnessUtil {
         return null
     }
 
+    fun getBridgedBlocks (boundWitness: XyoBoundWitness) : Iterator<XyoBuff>? {
+        for (witness in boundWitness[XyoSchemas.WITNESS.id]) {
+            if (witness is XyoIterableObject) {
+                for (item in witness[XyoSchemas.BRIDGE_BLOCK_SET.id].iterator()) {
+                    if (item is XyoIterableObject) {
+                        return item.iterator
+                    }
+                }
+            }
+        }
+
+        return null
+    }
+
     private fun checkPartyForPublicKey (fetter : XyoIterableObject, publicKey : XyoBuff) : Boolean? {
 
         for (keySet in fetter[XyoSchemas.KEY_SET.id]) {
