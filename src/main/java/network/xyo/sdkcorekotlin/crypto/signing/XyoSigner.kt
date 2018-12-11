@@ -143,7 +143,6 @@ abstract class XyoSigner {
                 return@async creator.verifySign(signature, data, publicKey).await()
             }
 
-            println("here")
             return@async null
         }
     }

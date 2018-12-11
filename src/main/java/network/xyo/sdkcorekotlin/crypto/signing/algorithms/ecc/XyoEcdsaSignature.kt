@@ -35,8 +35,8 @@ open class XyoEcdsaSignature(val r : BigInteger, val s : BigInteger) : XyoBuff()
         protected fun getRAndS(byteArray: ByteArray) : XyoRAndS {
             val sizeOfR = byteArray[0].toInt()
             val sizeOfS = (byteArray[sizeOfR + 1]).toInt()
-            val r = BigInteger(byteArray.copyOfRange(1, sizeOfR + 1))
-            val s = BigInteger(byteArray.copyOfRange(sizeOfR + 2, sizeOfS + sizeOfR + 2))
+            val r = BigInteger(1, byteArray.copyOfRange(1, sizeOfR + 1))
+            val s = BigInteger(1, byteArray.copyOfRange(sizeOfR + 2, sizeOfS + sizeOfR + 2))
 
             return XyoRAndS(r, s)
         }

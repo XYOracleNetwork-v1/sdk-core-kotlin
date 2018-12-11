@@ -4,10 +4,7 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.XyoLog
-import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
-import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitnessUtil
-import network.xyo.sdkcorekotlin.boundWitness.XyoZigZagBoundWitness
-import network.xyo.sdkcorekotlin.boundWitness.XyoZigZagBoundWitnessSession
+import network.xyo.sdkcorekotlin.boundWitness.*
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.hashing.basic.XyoBasicHashBase
 import network.xyo.sdkcorekotlin.network.XyoNetworkPipe
@@ -175,7 +172,6 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
 
     private fun onBoundWitnessEndSuccess (boundWitness: XyoBoundWitness) = GlobalScope.async {
         loadCreatedBoundWitness(boundWitness).await()
-        println(XyoBasicHashBase.createHashType(XyoSchemas.SHA_256, "SHA-256").createHash(boundWitness.signingData).await().bytesCopy.toHexString())
 
         for ((_, listener) in listeners) {
             listener.onBoundWitnessEndSucess(boundWitness)

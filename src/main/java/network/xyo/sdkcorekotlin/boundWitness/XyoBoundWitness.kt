@@ -62,7 +62,6 @@ abstract class XyoBoundWitness : XyoIterableObject() {
         val numOfParties = numberOfParties
 
         if (completed && numOfParties != null) {
-
              if (numOfParties < partyNum) {
                  return null
              }
