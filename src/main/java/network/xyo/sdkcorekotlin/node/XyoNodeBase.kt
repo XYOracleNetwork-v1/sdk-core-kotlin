@@ -265,7 +265,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
 
     private fun makeSignedPayload (options: Array<XyoBoundWitnessOption>) = GlobalScope.async {
         val payloads = getBoundWitnessOptionPayloads(options).await()
-        val signedPayloads = ArrayList<XyoBuff>()
+        val signedPayloads = ArrayList<XyoBuff>(getHeuristics().asList())
         val previousHash = originState.previousHash
         val index = originState.index
         val nextPublicKey = originState.nextPublicKey
@@ -285,7 +285,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
     }
 
     private fun makeUnsignedPayload (options: Array<XyoBoundWitnessOption>) = GlobalScope.async {
-        val unsignedPayloads = ArrayList<XyoBuff>(getHeuristics().asList())
+        val unsignedPayloads = ArrayList<XyoBuff>()
         val payloads = getBoundWitnessOptionPayloads(options).await()
 
         unsignedPayloads.addAll(payloads.unsignedOptions)

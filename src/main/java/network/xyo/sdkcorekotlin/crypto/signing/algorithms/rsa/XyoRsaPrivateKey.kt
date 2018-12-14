@@ -1,6 +1,7 @@
 package network.xyo.sdkcorekotlin.crypto.signing.algorithms.rsa
 
 import network.xyo.sdkcorekotlin.XyoFromSelf
+import network.xyo.sdkcorekotlin.crypto.signing.XyoPrivateKey
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
@@ -11,7 +12,7 @@ import java.security.interfaces.RSAPrivateKey
 /**
  * A Xyo Encoded RSA Private key.
  */
-open class XyoRsaPrivateKey (private val mod : BigInteger, private val privateExponent : BigInteger) : RSAPrivateKey, XyoBuff() {
+open class XyoRsaPrivateKey (private val mod : BigInteger, private val privateExponent : BigInteger) : XyoPrivateKey(), RSAPrivateKey {
 
     override fun getAlgorithm(): String {
         return "RSA"

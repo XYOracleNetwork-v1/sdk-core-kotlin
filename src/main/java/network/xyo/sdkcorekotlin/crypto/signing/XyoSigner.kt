@@ -24,7 +24,7 @@ abstract class XyoSigner {
     /**
      * The private key of the XyoSigner, this can be used to restore signer state.
      */
-    abstract val privateKey : PrivateKey
+    abstract val privateKey : XyoPrivateKey
 
     /**
      * Cryptographically signs a given ByteArray so that it can verified with verify().

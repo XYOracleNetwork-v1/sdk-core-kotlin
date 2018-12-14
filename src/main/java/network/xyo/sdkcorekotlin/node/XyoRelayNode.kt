@@ -11,6 +11,7 @@ import network.xyo.sdkcorekotlin.network.XyoNetworkProcedureCatalogueInterface
 import network.xyo.sdkcorekotlin.network.XyoProcedureCatalogue
 import network.xyo.sdkcorekotlin.storage.XyoStorageProviderInterface
 import java.nio.ByteBuffer
+import kotlin.concurrent.thread
 
 /**
  * A base class for nodes creating data, then relaying it (e.g.) sentinels and bridges.
@@ -114,9 +115,11 @@ abstract class XyoRelayNode (storageProvider : XyoStorageProviderInterface,
     }
 
     private fun loop () {
-        GlobalScope.launch {
-            while (running) {
-                doConnection().await()
+        thread {
+            GlobalScope.launch {
+                while (running) {
+                    doConnection().await()
+                }
             }
         }
     }

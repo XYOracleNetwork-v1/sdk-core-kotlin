@@ -21,7 +21,7 @@ object XyoSchemas {
     val STUB_HASH = XyoObjectSchema.createFromHeader(byteArrayOf(           0x80.toByte(),        15.toByte()))
     val SHA_256 =  XyoObjectSchema.createFromHeader(byteArrayOf(            0x80.toByte(),        16.toByte()))
     val SHA_3 = XyoObjectSchema.createFromHeader(byteArrayOf(               0x80.toByte(),        17.toByte()))
-    val GPS = XyoObjectSchema.createFromHeader(byteArrayOf(                 0x80.toByte(),        18.toByte()))
+    val GPS = XyoObjectSchema.createFromHeader(byteArrayOf(                 0xA0.toByte(),        18.toByte()))
     val RSSI = XyoObjectSchema.createFromHeader(byteArrayOf(                0x80.toByte(),        19.toByte()))
     val UNIX_TIME = XyoObjectSchema.createFromHeader(byteArrayOf(           0x80.toByte(),        20.toByte()))
     val FETTER = XyoObjectSchema.createFromHeader(byteArrayOf(              0xA0.toByte(),        21.toByte()))
@@ -31,6 +31,8 @@ object XyoSchemas {
     val KEY_SET = XyoObjectSchema.createFromHeader(byteArrayOf(             0xA0.toByte(),        25.toByte()))
     val SIGNATURE_SET = XyoObjectSchema.createFromHeader(byteArrayOf(       0xA0.toByte(),        26.toByte()))
     val BW_FRAGMENT =  XyoObjectSchema.createFromHeader(byteArrayOf(        0xA0.toByte(),        27.toByte()))
+    val LAT =  XyoObjectSchema.createFromHeader(byteArrayOf(                0x00.toByte(),        28.toByte()))
+    val LNG =  XyoObjectSchema.createFromHeader(byteArrayOf(                0x00.toByte(),        29.toByte()))
 
     val EC_PRIVATE_KEY = XyoObjectSchema.createFromHeader(byteArrayOf(      0x80.toByte(),        0xFF.toByte()))
     val RSA_PRIVATE_KEY = XyoObjectSchema.createFromHeader(byteArrayOf(     0x80.toByte(),        0xFF.toByte()))
