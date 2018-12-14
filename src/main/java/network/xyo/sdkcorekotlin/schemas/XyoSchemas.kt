@@ -36,4 +36,5 @@ object XyoSchemas {
 
     val EC_PRIVATE_KEY = XyoObjectSchema.createFromHeader(byteArrayOf(      0x80.toByte(),        0xFF.toByte()))
     val RSA_PRIVATE_KEY = XyoObjectSchema.createFromHeader(byteArrayOf(     0x80.toByte(),        0xFF.toByte()))
+    val BLOB = XyoObjectSchema.createFromHeader(byteArrayOf(                0x80.toByte(),        0xFF.toByte()))
 }
