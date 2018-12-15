@@ -3,6 +3,7 @@ package network.xyo.sdkcorekotlin.crypto.signing.algorithms
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import network.xyo.sdkcorekotlin.crypto.signing.XyoPrivateKey
 import network.xyo.sdkcorekotlin.crypto.signing.XyoPublicKey
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
@@ -11,8 +12,8 @@ import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 import java.security.PrivateKey
 
 class XyoStubSigner : XyoSigner() {
-    override val privateKey: PrivateKey
-        get() = object : PrivateKey {
+    override val privateKey: XyoPrivateKey
+        get() = object : XyoPrivateKey() {
             override fun getAlgorithm(): String {
                 return "stub"
             }
@@ -20,6 +21,10 @@ class XyoStubSigner : XyoSigner() {
             override fun getEncoded(): ByteArray {
                 return byteArrayOf(0x00)
             }
+
+            override val allowedOffset: Int = 0
+
+            override var item: ByteArray = XyoBuff.newInstance(XyoSchemas.BLOB, byteArrayOf(0x00)).bytesCopy
 
             override fun getFormat(): String {
                 return "stub"
