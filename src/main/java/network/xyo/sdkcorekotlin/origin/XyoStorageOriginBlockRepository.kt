@@ -94,7 +94,7 @@ open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoSto
         }
 
         val newIndexEncoded = XyoIterableObject.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, newIndex.toTypedArray())
-        storageProvider.write(BLOCKS_INDEX_KEY, newIndexEncoded.valueCopy)
+        storageProvider.write(BLOCKS_INDEX_KEY, newIndexEncoded.bytesCopy).await()
     }
 
     companion object {

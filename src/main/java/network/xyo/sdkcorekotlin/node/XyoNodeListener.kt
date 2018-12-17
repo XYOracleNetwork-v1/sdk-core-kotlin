@@ -24,5 +24,5 @@ interface XyoNodeListener {
     /**
      * This function will be called every time a bound witness is completed successfully.
      */
-    fun onBoundWitnessEndSucess (boundWitness: XyoBoundWitness)
+    fun onBoundWitnessEndSuccess (boundWitness: XyoBoundWitness)
 }

@@ -1,6 +1,7 @@
 package network.xyo.sdkcorekotlin.node
 
 import com.sun.corba.se.impl.encoding.CodeSetConversion
+import network.xyo.sdkcorekotlin.XyoLog
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 
 /**
@@ -66,6 +67,7 @@ open class XyoBridgeQueue {
         val toBridge = ArrayList<XyoBridgeQueueItem>()
 
         for (i in 0 until Math.min(sendLimit, blocksToBridge.size)) {
+            XyoLog.logDebug("Bridging Block", TAG)
             toBridge.add(blocksToBridge[i])
         }
 
@@ -106,7 +108,9 @@ open class XyoBridgeQueue {
      * @return an array of Ints that are the weights in the queue.
      */
     fun getAllWeights () : Array<Int> {
-        return Array(blocksToBridge.size) { i -> blocksToBridge[i].weight }
+        return Array(blocksToBridge.size) { i ->
+            blocksToBridge[i].weight
+        }
     }
 
     /**
@@ -145,5 +149,7 @@ open class XyoBridgeQueue {
                 return boundWitnessHash.bytesCopy.contentHashCode()
             }
         }
+
+        const val TAG = "BQU"
     }
 }

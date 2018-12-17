@@ -29,7 +29,7 @@ abstract class XyoRelayNode (storageProvider : XyoStorageProviderInterface,
     private val mainBoundWitnessListener = object : XyoNodeListener {
         override fun onBoundWitnessEndFailure(error: Exception?) {}
 
-        override fun onBoundWitnessEndSucess(boundWitness: XyoBoundWitness) {
+        override fun onBoundWitnessEndSuccess(boundWitness: XyoBoundWitness) {
             for (hash in originBlocksToBridge.getToRemove()) {
                 runBlocking {
                     originBlocks.removeOriginBlock(hash).await()

@@ -6,11 +6,9 @@ import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.XyoLog
 import network.xyo.sdkcorekotlin.boundWitness.*
 import network.xyo.sdkcorekotlin.hashing.XyoHash
-import network.xyo.sdkcorekotlin.hashing.basic.XyoBasicHashBase
 import network.xyo.sdkcorekotlin.network.XyoNetworkPipe
 import network.xyo.sdkcorekotlin.origin.XyoIndexableOriginBlockRepository
 import network.xyo.sdkcorekotlin.origin.XyoOriginChainStateManager
-import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas.BRIDGE_BLOCK_SET
 import network.xyo.sdkcorekotlin.storage.XyoStorageProviderInterface
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
@@ -173,7 +171,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
         loadCreatedBoundWitness(boundWitness).await()
 
         for ((_, listener) in listeners) {
-            listener.onBoundWitnessEndSucess(boundWitness)
+            listener.onBoundWitnessEndSuccess(boundWitness)
         }
     }
 
@@ -193,7 +191,6 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
             val boundWitnessWithoutBlocks = XyoBoundWitness.getInstance(
                     XyoBoundWitnessUtil.removeTypeFromUnsignedPayload(BRIDGE_BLOCK_SET.id, boundWitness).bytesCopy
             )
-
             originBlocks.addBoundWitness(boundWitnessWithoutBlocks).await()
 
             for ((_, listener) in listeners) {

@@ -1,5 +1,6 @@
 package network.xyo.sdkcorekotlin.boundWitness
 
+import network.xyo.sdkcorekotlin.XyoLog
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
@@ -21,6 +22,8 @@ object XyoBoundWitnessUtil {
                 for (item in witness.iterator) {
                     if (item.schema.id != type) {
                         items.add(item)
+                    } else {
+                        XyoLog.logDebug("Found Item", "BWU")
                     }
                 }
 
