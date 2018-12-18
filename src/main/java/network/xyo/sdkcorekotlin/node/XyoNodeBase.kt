@@ -130,7 +130,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
             }
         }
 
-        return@async XyoOptionPayload(signedPayloads.toTypedArray(), unsignedPayloads.toTypedArray())
+        return@async XyoOptionPayload(unsignedPayloads.toTypedArray(), signedPayloads.toTypedArray())
     }
 
     private fun getBoundWitnessOptions (bitFlag: Int) = GlobalScope.async {

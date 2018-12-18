@@ -63,6 +63,6 @@ open class XyoBridgingOption (private val originBlocks: XyoStorageProviderInterf
             }
         }
 
-        originBlocksToSend = WeakReference(XyoIterableObject.createTypedIterableObject(XyoSchemas.BRIDGE_BLOCK_SET, blocks.toTypedArray()))
+        originBlocksToSend = WeakReference(XyoIterableObject.createUntypedIterableObject(XyoSchemas.BRIDGE_BLOCK_SET, blocks.toTypedArray()))
     }
 }
