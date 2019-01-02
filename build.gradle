@@ -1,23 +1,73 @@
-apply plugin: 'kotlin'
-group 'com.github.XYOracleNetwork'
-version '1.0-SNAPSHOT'
-apply plugin: "jacoco"
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'jacoco'
+group = 'com.github.XYOracleNetwork'
 
 sourceCompatibility = 1.8
+
+android {
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
+    defaultPublishConfig "jitpackRelease"
+    flavorDimensions "xylibs"
+
+    compileOptions {
+        kotlinOptions {
+            allWarningsAsErrors = true
+        }
+    }
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 28
+    }
+    
+    productFlavors {
+        local {
+            dimension "xylibs"
+        }
+
+        jitpack {
+            dimension "xylibs"
+        }
+    }
+
+    buildTypes {
+        release {
+            debuggable false
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            testCoverageEnabled true
+            minifyEnabled false
+            debuggable true
+        }
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+}
 
 buildscript {
     repositories {
         mavenCentral()
+        maven {
+            url 'https://maven.google.com/'
+            name 'Google'
+        }
     }
 
     dependencies {
+        classpath "com.android.tools.build:gradle:3.2.1"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.11"
         classpath "org.junit.platform:junit-platform-gradle-plugin:1.0.0-M4"
     }
 }
 
 
-jacocoTestReport {
+task jacocoTestReport(type: JacocoReport, dependsOn: "connectedDebugAndroidTest")  {
     reports {
         xml.enabled=true
         html.enabled=false
@@ -25,14 +75,21 @@ jacocoTestReport {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.0"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.11"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.1"
     implementation "org.bouncycastle:bcpkix-jdk15on:1.58"
+
+    localImplementation project(":sdk-objectmodel-kotlin")
+    jitpackImplementation 'com.github.XYOracleNetwork:sdk-objectmodel-kotlin:v0.1.1-beta.2'
+
     testImplementation "junit:junit:4.11"
-    implementation 'com.github.XYOracleNetwork:sdk-objectmodel-kotlin:v0.1.1-beta.2'
 }
 
 repositories {
     mavenCentral()
     maven { url 'https://jitpack.io' }
+    maven {
+        url 'https://maven.google.com/'
+        name 'Google'
+    }
 }
