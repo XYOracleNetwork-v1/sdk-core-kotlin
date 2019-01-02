@@ -3,7 +3,7 @@ package network.xyo.sdkcorekotlin.node
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import network.xyo.sdkcorekotlin.XyoLog
+import network.xyo.sdkcorekotlin.log.XyoLog
 import network.xyo.sdkcorekotlin.boundWitness.*
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.network.XyoNetworkPipe
@@ -13,7 +13,6 @@ import network.xyo.sdkcorekotlin.schemas.XyoSchemas.BRIDGE_BLOCK_SET
 import network.xyo.sdkcorekotlin.storage.XyoStorageProviderInterface
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
-import network.xyo.sdkobjectmodelkotlin.objects.toHexString
 import java.nio.ByteBuffer
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -22,8 +21,8 @@ import kotlin.collections.ArrayList
 /**
  * A base class for all things creating an managing an origin chain (e.g. Sentinel, Bridge).
  *
- * @param storageProvider A place to store all origin blocks.
- * @param hashingProvider A hashing provider to use hashing utilises.
+ * @property storageProvider A place to store all origin blocks.
+ * @property hashingProvider A hashing provider to use hashing utilises.
  */
 abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
                             private val hashingProvider : XyoHash.XyoHashProvider) {

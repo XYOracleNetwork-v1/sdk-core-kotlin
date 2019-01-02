@@ -6,7 +6,6 @@ import network.xyo.sdkcorekotlin.hashing.basic.XyoBasicHashBase
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import org.junit.Assert
 import org.junit.Test
-import java.math.BigInteger
 
 class XyoBoundWitnessInterpretTest : XyoTestBase() {
 

@@ -1,10 +1,10 @@
-package network.xyo.sdkcorekotlin
+package network.xyo.sdkcorekotlin.log
 
 import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 
-object XyoLog {
+object XyoLog : XyoLogger {
     private val isInDebug = System.getenv("debug") == "true"
 
     private const val ANSI_RESET = "\u001B[0m"
@@ -20,7 +20,7 @@ object XyoLog {
     /**
      * Logs a debug message.
      */
-    fun logDebug (info: String, tag : String) {
+    override fun logDebug (info: String, tag : String) {
         if (isInDebug) {
             logInfo(info, tag)
         }
@@ -29,21 +29,21 @@ object XyoLog {
     /**
      * Logs any info.
      */
-    fun logInfo(info : String, tag: String) {
+    override fun logInfo(info : String, tag: String) {
         println("${createHeader(tag)} $info")
     }
 
     /**
      * Logs a special message
      */
-    fun logSpecial (info : String, tag: String) {
+    override fun logSpecial (info : String, tag: String) {
         println("${createHeader(tag)} $ANSI_PURPLE$info$ANSI_RESET")
     }
 
     /**
      * Logs an error.
      */
-    fun logError (info: String, tag: String, exception: Exception?) {
+    override fun logError (info: String, tag: String, exception: Exception?) {
         println("${createHeader(tag)} $ANSI_RED$info$ANSI_RESET")
         exception?.printStackTrace()
     }
@@ -59,6 +59,6 @@ object XyoLog {
     }
 
     init {
-        XyoLog.logDebug("Debug mode on.", "LOG")
+        logDebug("Debug mode on.", "LOG")
     }
 }

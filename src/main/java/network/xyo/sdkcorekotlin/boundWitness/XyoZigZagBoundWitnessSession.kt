@@ -2,7 +2,7 @@ package network.xyo.sdkcorekotlin.boundWitness
 
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import network.xyo.sdkcorekotlin.XyoLog
+import network.xyo.sdkcorekotlin.log.XyoLog
 import network.xyo.sdkcorekotlin.exceptions.XyoBoundWitnessCreationException
 import network.xyo.sdkcorekotlin.exceptions.XyoException
 import network.xyo.sdkcorekotlin.network.XyoNetworkPipe

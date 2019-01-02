@@ -8,7 +8,7 @@ import java.util.*
 /**
  * A XyoStorageProviderInterface that uses weak references to add a caching layer.
  *
- * @param layerToAddCacheTo The layer to cache on top of.
+ * @property layerToAddCacheTo The layer to cache on top of.
  */
 class XyoWeakReferenceCaching (private val layerToAddCacheTo : XyoStorageProviderInterface) : XyoStorageProviderInterface {
     private val cache = WeakHashMap<Int, ByteArray>()

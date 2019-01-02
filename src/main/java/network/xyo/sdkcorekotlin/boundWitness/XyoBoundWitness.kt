@@ -9,17 +9,14 @@ import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
-import network.xyo.sdkobjectmodelkotlin.objects.toHexString
-import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 
 /**
  * A Xyo Bound Witness Object
  */
-
 abstract class XyoBoundWitness : XyoIterableObject() {
 
     /**
-     * If the bound witness is completed or not. This is represented by the number of fetters eqlaing the number of
+     * If the bound witness is completed or not. This is represented by the number of fetters and the number of
      * witnesses and not 0.
      */
     val completed: Boolean

@@ -55,14 +55,13 @@ abstract class XyoSigner {
          * Cryptographically verify a signature given data, a signature, and a public
          * key that the XyoSigner supports.
          *
-         * @param signature The signature that was created using the cryptographic function that
+         * @param signature The signature that was created using the cryptographic function that the XyoSigner
+         * supports.
+         * @param byteArray The data that was signed using the cryptographic function that the XyoSigner supports.
+         * @param publicKey The public key of the party that signed the data with the the cryptographic function that
          * the XyoSigner supports.
-         * @param byteArray The data that was signed using the cryptographic function that the
-         * XyoSigner supports.
-         * @param publicKey The public key of the party that signed the data with the the
-         * cryptographic function that the XyoSigner supports.
-         * @return If the signature is valid, the deferred Boolean will be true, if it
-         * is invalid the deferred <Boolean will be false.
+         * @return If the signature is valid, the deferred Boolean will be true, if it is invalid the deferred
+         * <Boolean will be false.
          */
         abstract fun verifySign (signature: XyoBuff,
                                  byteArray: ByteArray,

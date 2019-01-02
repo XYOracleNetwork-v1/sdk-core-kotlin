@@ -15,15 +15,4 @@ abstract class XyoSigningObjectCreatorVerify : XyoSigner.XyoSignerProvider() {
      * The instance of a standard Java Signature object to use toi very the signature.
      */
     abstract val signatureInstance : Signature
-
-//    override fun verifySign(signature: XyoBuff,
-//                            byteArray: ByteArray,
-//                            publicKey: PublicKey): Deferred<Boolean> {
-//
-//        return GlobalScope.async {
-//            signatureInstance.initVerify(publicKey)
-//            signatureInstance.update(byteArray)
-//            return@async signatureInstance.verify(signature.valueCopy)
-//        }
-//    }
 }

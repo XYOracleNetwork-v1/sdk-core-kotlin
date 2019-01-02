@@ -1,27 +1,9 @@
 apply plugin: 'kotlin'
-
 group 'com.github.XYOracleNetwork'
 version '1.0-SNAPSHOT'
 apply plugin: "jacoco"
 
 sourceCompatibility = 1.8
-
-/**
- * If set to true, will build with local versions of the dependencies.
- */
-def buildWithLocalProjects = false
-
-ext {
-    if (!project.hasProperty('local')) {
-        local = buildWithLocalProjects
-    }
-}
-
-subprojects {
-    ext {
-        local=this.ext.local
-    }
-}
 
 buildscript {
     repositories {
@@ -33,6 +15,7 @@ buildscript {
         classpath "org.junit.platform:junit-platform-gradle-plugin:1.0.0-M4"
     }
 }
+
 
 jacocoTestReport {
     reports {
@@ -46,12 +29,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.0"
     implementation "org.bouncycastle:bcpkix-jdk15on:1.58"
     testImplementation "junit:junit:4.11"
-
-    if (local) {
-        implementation project(":sdk-objectmodel-kotlin")
-    } else {
-        implementation 'com.github.XYOracleNetwork:sdk-objectmodel-kotlin:v0.1.1-beta.2'
-    }
+    implementation 'com.github.XYOracleNetwork:sdk-objectmodel-kotlin:v0.1.1-beta.2'
 }
 
 repositories {

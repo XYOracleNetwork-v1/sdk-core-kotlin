@@ -1,15 +1,11 @@
 package network.xyo.sdkcorekotlin.boundWitness
 
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import network.xyo.sdkcorekotlin.XyoTestBase
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
-import network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.secp256k.XyoEcSecp256K1
 import network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.secp256k.XyoSha256WithSecp256K
 import network.xyo.sdkcorekotlin.crypto.signing.algorithms.rsa.XyoRsaWithSha256
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
-import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
-import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
 import org.junit.Assert
 import org.junit.Test
 

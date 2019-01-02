@@ -15,7 +15,7 @@ import java.nio.ByteBuffer
 /**
  * An implementation of the XyoOriginStateRepository.
  *
- * @param indexOffset This value is used to create a state manager where the index does not doBoundWitness
+ * @property indexOffset This value is used to create a state manager where the index does not doBoundWitness
  * at 0. This is used when re-starting a origin chain.
  */
 open class XyoOriginChainStateManager (private val indexOffset : Int) : XyoOriginStateRepository {

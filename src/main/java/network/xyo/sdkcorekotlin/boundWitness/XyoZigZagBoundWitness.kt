@@ -13,10 +13,10 @@ import kotlin.collections.ArrayList
 /**
  * A zig-zag bound witness protocol.
  *
- * @param signers the signers to sign the bound witness with.
- * @param payload the payload to pur in the bound witness.
+ * @property signers the signers to sign the bound witness with.
+ * @property signedPayload the signed payload to pur in the bound witness fetter.
+ * @property unsignedPayload the un-signed payload to pur in the bound witness witness.
  */
-
 open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
                                  private val signedPayload : Array<XyoBuff>,
                                  private val unsignedPayload: Array<XyoBuff>) : XyoBoundWitness() {

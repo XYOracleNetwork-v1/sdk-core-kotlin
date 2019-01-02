@@ -7,7 +7,6 @@ import network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.secp256k.XyoEcSec
 import network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.secp256k.XyoSha256WithSecp256K
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas.EC_PRIVATE_KEY
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
-import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
 import org.junit.Assert
 import org.junit.Test
 

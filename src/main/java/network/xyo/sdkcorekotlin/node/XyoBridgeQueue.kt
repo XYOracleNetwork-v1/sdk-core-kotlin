@@ -1,7 +1,6 @@
 package network.xyo.sdkcorekotlin.node
 
-import com.sun.corba.se.impl.encoding.CodeSetConversion
-import network.xyo.sdkcorekotlin.XyoLog
+import network.xyo.sdkcorekotlin.log.XyoLog
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 
 /**
