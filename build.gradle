@@ -21,7 +21,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 28
     }
-    
+
     productFlavors {
         local {
             dimension "xylibs"
@@ -82,7 +82,7 @@ dependencies {
     localImplementation project(":sdk-objectmodel-kotlin")
     jitpackImplementation 'com.github.XYOracleNetwork:sdk-objectmodel-kotlin:v0.1.1-beta.2'
 
-    testImplementation "junit:junit:4.11"
+    testImplementation "junit:junit:4.12"
 }
 
 repositories {
