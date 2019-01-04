@@ -17,9 +17,8 @@ abstract class XyoRsaSignature : XyoBuff() {
     override val allowedOffset: Int
         get() = 0
 
-    override var item: ByteArray
+    override var item: ByteArray = byteArrayOf()
         get() = XyoBuff.newInstance(XyoSchemas.RSA_SIGNATURE, signature).bytesCopy
-        set(value) {}
 
     /**
      * The base class for creating RSA Signatures.

@@ -38,9 +38,8 @@ abstract class XyoUncompressedEcPublicKey : ECPublicKey, XyoPublicKey() {
         return "EC"
     }
 
-    override var item: ByteArray
+    override var item: ByteArray = byteArrayOf()
         get() = XyoBuff.getObjectEncoded(XyoSchemas.EC_PUBLIC_KEY, encoded)
-        set(value) {}
 
     override fun getEncoded(): ByteArray {
         val buffer = ByteBuffer.allocate(64)

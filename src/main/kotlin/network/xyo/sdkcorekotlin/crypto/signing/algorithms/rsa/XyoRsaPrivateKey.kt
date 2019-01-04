@@ -45,9 +45,8 @@ open class XyoRsaPrivateKey (private val mod : BigInteger, private val privateEx
     override val allowedOffset: Int
         get() = 0
 
-    override var item: ByteArray
+    override var item: ByteArray = byteArrayOf()
         get() = XyoBuff.newInstance(XyoSchemas.RSA_PRIVATE_KEY, encoded).bytesCopy
-        set(value) {}
 
     companion object : XyoFromSelf {
 

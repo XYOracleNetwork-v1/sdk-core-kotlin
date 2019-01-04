@@ -26,9 +26,8 @@ abstract class XyoEcPrivateKey : ECPrivateKey, XyoPrivateKey() {
     override val allowedOffset: Int
         get() = 0
 
-    override var item: ByteArray
+    override var item: ByteArray = byteArrayOf()
         get() = XyoBuff.newInstance(XyoSchemas.EC_PRIVATE_KEY, d.toByteArray()).bytesCopy
-        set(value) {}
 
     companion object {
 

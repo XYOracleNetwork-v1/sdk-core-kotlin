@@ -36,9 +36,8 @@ class XyoStubSigner : XyoSigner() {
             override val allowedOffset: Int
                 get() = 0
 
-            override var item: ByteArray
+            override var item: ByteArray = byteArrayOf()
                 get() = XyoBuff.newInstance(XyoSchemas.STUB_PUBLIC_KEY, byteArrayOf(0x00)).bytesCopy
-                set(value) {}
 
             override fun getAlgorithm(): String {
                 return "stub"

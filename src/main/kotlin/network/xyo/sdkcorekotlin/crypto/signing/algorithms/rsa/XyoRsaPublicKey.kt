@@ -39,9 +39,8 @@ class XyoRsaPublicKey(private val modulus : BigInteger) : RSAPublicKey, XyoPubli
     override val allowedOffset: Int
         get() = 0
 
-    override var item: ByteArray
+    override var item: ByteArray = byteArrayOf()
         get() = XyoBuff.newInstance(XyoSchemas.RSA_PUBLIC_KEY, encoded).bytesCopy
-        set(value) {}
 
 
     companion object : XyoFromSelf {

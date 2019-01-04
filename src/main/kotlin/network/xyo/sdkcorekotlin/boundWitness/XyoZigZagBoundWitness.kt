@@ -26,11 +26,11 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
     override val allowedOffset: Int
         get() = 0
 
-    override var item: ByteArray
+    override var item: ByteArray = byteArrayOf()
         get() {
             return XyoIterableObject.createUntypedIterableObject(XyoSchemas.BW, dynamicLeader.toTypedArray()).bytesCopy
         }
-        set(value) {}
+
 
     private var hasSentKeysAndPayload = false
 
