@@ -7,6 +7,5 @@ script:
   ./gradlew assemble &&
   mkdir -p ~/junit/ &&
   find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} ~/junit/ \; &&
-  JACOCO_SOURCE_PATH=src/main/java ./cc-test-reporter format-coverage ./build/reports/jacoco/test/jacocoTestReport.xml     \
-  --input-type jacoco &&
+  JACOCO_SOURCE_PATH=src/main/java ./cc-test-reporter format-coverage ./build/reports/jacoco/test/jacocoTestReport.xml     --input-type jacoco &&
   ./cc-test-reporter upload-coverage
