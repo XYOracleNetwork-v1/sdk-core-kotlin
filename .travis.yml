@@ -4,6 +4,7 @@ script:
   chmod +x ./cc-test-reporter &&
   ./cc-test-reporter before-build &&
   ./gradlew test &&
+  ./gradlew jacocoTestReport &&
   ./gradlew assemble &&
   mkdir -p ~/junit/ &&
   find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} ~/junit/ \; &&
