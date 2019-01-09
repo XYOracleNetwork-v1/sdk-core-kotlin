@@ -84,7 +84,6 @@ abstract class XyoBoundWitness : XyoIterableObject() {
                 return null
             }
 
-
             return this[(numOfParties * 2) - (partyNum + 1)] as? XyoIterableObject
         }
 
