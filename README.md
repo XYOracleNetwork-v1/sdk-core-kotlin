@@ -11,41 +11,38 @@
 | Master      | [![](https://travis-ci.org/XYOracleNetwork/sdk-core-kotlin.svg?branch=master)](https://travis-ci.org/XYOracleNetwork/sdk-core-kotlin) |
 | Develop      | [![](https://travis-ci.org/XYOracleNetwork/sdk-core-kotlin.svg?branch=develop)](https://travis-ci.org/XYOracleNetwork/sdk-core-kotlin) |
 
-A library to preform all basic XYO Network functions.
+A library to preform all core XYO Network functions.
 This includes creating an origin chain, maintaining an origin chain, negotiations for talking to other nodes, and other basic functionality.
 The library has heavily abstracted modules so that all operations will work with any crypto, storage, networking, ect.
+
+The XYO protocol for creating origin-blocks is specified in the [XYO Yellow Paper](https://docs.xyo.network/XYO-Yellow-Paper.pdf). In it, it describes the behavior of how a node on the XYO network should create Bound Witnesses. Note, the behavior is not coupled with any particular technology constraints around transport layers, cryptographic algorithms, or hashing algorithms.
+
+[Here](https://github.com/XYOracleNetwork/spec-coreobjectmodel-tex) is a link to the core object model that contains an index of major/minor values and their respective objects.
 
 ## Installing
 You can add sdk-core-kotlin to your existing app by cloning the project and manually adding it to your build.gradle or by using JitPack.
 
 ### Build From Source
 
-#### Clone from github
+1) Clone from github
 ```
 git clone git@github.com:XYOracleNetwork/sdk-core-kotlin.git
 ```
 
-#### Add project to settings.gradle
+2) Add project to settings.gradle
 ```
 include ':sdk-core-kotlin'
-project(':mod-tcp-kotlin').projectDir = new File('../mod-tcp-kotlin')
+project(':sdk-core-kotlin').projectDir = new File('../sdk-core-kotlin')
 ```
 
-#### Include in project
+3) Include in project
 ```
 implementation project (':sdk-core-kotlin')
 ```
 
-```gradle
-dependencies {
-    implementation 'com.github.XYOracleNetwork:sdk-core-kotlin:v0.1.0-beta'
-}
-```
-
-### Using JitPack with Gitpack
-[![](https://jitpack.io/v/XYOracleNetwork/sdk-core-kotlin.svg)](https://jitpack.io/#XYOracleNetwork/sdk-core-kotlin)
-
+### Using JitPack
 #### With Gradle
+1. Point maven to `https://jitpack.io`
 ```gradle
 allprojects {
 	repositories {
@@ -55,13 +52,15 @@ allprojects {
 }
 ```
 
+2. Inlucde sdk-core-kotlin in dependencies
 ```gradle
 dependencies {
-	implementation 'com.github.XYOracleNetwork:sdk-core-kotlin:Tag'
+	implementation 'com.github.XYOracleNetwork:sdk-core-kotlin:v0.1.1-beta.0'
 }
 ```
 
 #### With Maven
+1. Point maven to `https://jitpack.io`
 ```maven
 <repositories>
 	<repository>
@@ -71,6 +70,7 @@ dependencies {
 </repositories>
 ```
 
+2. Inlucde sdk-core-kotlin in dependencies
 ```maven
 <dependency>
     <groupId>com.github.XYOracleNetwork</groupId>
@@ -79,9 +79,19 @@ dependencies {
 </dependency>
 ```
 
-#### Prerequisites
-* JDK 1.8
-* Kotlin
+## Building and Testing with Gralde
+
+**Building**
+Source ius located in /src/main/*
+```
+gradle build
+```
+
+**Testing**
+All tests can be found in /src/test/*
+```
+gradle test
+```
 
 ## License
 This project is licensed under the MIT License - see the LICENSE.md file for details
