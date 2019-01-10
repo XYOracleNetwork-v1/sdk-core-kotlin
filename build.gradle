@@ -1,26 +1,47 @@
-plugins {
-    id 'java'
-    id 'org.jetbrains.kotlin.jvm' version '1.3.0'
-}
-
-group 'com.github.XYOracleNetwork'
-version '1.0-SNAPSHOT'
+apply plugin: 'kotlin'
+apply plugin: 'jacoco'
+group = 'com.github.XYOracleNetwork'
 
 sourceCompatibility = 1.8
 
-repositories {
-    mavenCentral()
+
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url 'https://maven.google.com/'
+            name 'Google'
+        }
+    }
+
+    dependencies {
+        classpath "com.android.tools.build:gradle:3.2.1"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.11"
+        classpath "org.junit.platform:junit-platform-gradle-plugin:1.0.0-M4"
+    }
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled=true
+        html.enabled=false
+    }
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.0"
-    implementation "org.rocksdb:rocksdbjni:5.5.1"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.11"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.1"
     implementation "org.bouncycastle:bcpkix-jdk15on:1.58"
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    implementation 'com.github.XYOracleNetwork:sdk-objectmodel-kotlin:v0.1.1-beta.2'
+
+    testImplementation "junit:junit:4.12"
 }
 
 repositories {
     mavenCentral()
     maven { url 'https://jitpack.io' }
+    maven {
+        url 'https://maven.google.com/'
+        name 'Google'
+    }
 }
