@@ -19,7 +19,7 @@ open class XyoIndexableOriginBlockRepository(storageProviderInterface: XyoHash.X
         indexers.remove(key)
     }
 
-    override fun addBoundWitness(originBlock: XyoBoundWitness): Deferred<Exception?> = GlobalScope.async {
+    override fun addBoundWitness(originBlock: XyoBoundWitness) = GlobalScope.async {
         val key = originBlock.getHash(hashingObject).await()
 
         for ((_, indexer) in indexers) {
@@ -29,7 +29,7 @@ open class XyoIndexableOriginBlockRepository(storageProviderInterface: XyoHash.X
         return@async super.addBoundWitness(originBlock).await()
     }
 
-    override fun removeOriginBlock(originBlockHash: XyoBuff): Deferred<Exception?> {
+    override fun removeOriginBlock(originBlockHash: XyoBuff) : Deferred<Unit> {
         for ((_, indexer) in indexers) {
             indexer.removeIndex(originBlockHash)
         }
@@ -37,10 +37,8 @@ open class XyoIndexableOriginBlockRepository(storageProviderInterface: XyoHash.X
         return super.removeOriginBlock(originBlockHash)
     }
 
-    companion object {
-        interface XyoOriginBlockIndexerInterface {
-            fun createIndex(blockKey: XyoBuff, block: XyoBoundWitness)
-            fun removeIndex(blockKey: XyoBuff)
-        }
+    interface XyoOriginBlockIndexerInterface {
+        fun createIndex(blockKey: XyoBuff, block: XyoBoundWitness)
+        fun removeIndex(blockKey: XyoBuff)
     }
 }

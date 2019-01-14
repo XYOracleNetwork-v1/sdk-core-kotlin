@@ -31,7 +31,6 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
             return XyoIterableObject.createUntypedIterableObject(XyoSchemas.BW, dynamicLeader.toTypedArray()).bytesCopy
         }
 
-
     private var hasSentKeysAndPayload = false
 
     private val numberOfFetters : Int

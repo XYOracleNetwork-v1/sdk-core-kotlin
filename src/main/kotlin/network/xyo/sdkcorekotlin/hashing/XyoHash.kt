@@ -13,7 +13,6 @@ abstract class XyoHash : XyoBuff() {
      */
     abstract val hash : ByteArray
 
-
     /**
      * A base class for creating hashes.
      */

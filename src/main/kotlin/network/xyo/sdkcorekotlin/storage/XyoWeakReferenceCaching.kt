@@ -13,26 +13,17 @@ import java.util.*
 class XyoWeakReferenceCaching (private val layerToAddCacheTo : XyoStorageProviderInterface) : XyoStorageProviderInterface {
     private val cache = WeakHashMap<Int, ByteArray>()
 
-    override fun write(key: ByteArray, value: ByteArray): Deferred<Exception?> = GlobalScope.async {
-        try {
+    override fun write(key: ByteArray, value: ByteArray) : Deferred<Unit> = GlobalScope.async {
             cache[key.contentHashCode()] = value
             layerToAddCacheTo.write(key, value).await()
-            return@async null
-        } catch (exception : Exception) {
-            return@async exception
-        }
     }
 
     override fun read(key: ByteArray): Deferred<ByteArray?> = GlobalScope.async {
-        try {
-            val cachedValue = cache[key.contentHashCode()]
-            if (cachedValue != null) {
-                return@async cachedValue
-            }
-            return@async layerToAddCacheTo.read(key).await()
-        } catch (exception : Exception) {
-            return@async null
+        val cachedValue = cache[key.contentHashCode()]
+        if (cachedValue != null) {
+            return@async cachedValue
         }
+        return@async layerToAddCacheTo.read(key).await()
     }
 
     override fun containsKey(key: ByteArray): Deferred<Boolean> = GlobalScope.async {
@@ -43,13 +34,9 @@ class XyoWeakReferenceCaching (private val layerToAddCacheTo : XyoStorageProvide
         return@async layerToAddCacheTo.containsKey(key).await()
     }
 
-    override fun delete(key: ByteArray): Deferred<Exception?> = GlobalScope.async {
-        try {
-            cache.remove(key.contentHashCode())
-            return@async layerToAddCacheTo.delete(key).await()
-        } catch (exception : Exception) {
-            return@async exception
-        }
+    override fun delete(key: ByteArray): Deferred<Unit> = GlobalScope.async {
+        cache.remove(key.contentHashCode())
+        layerToAddCacheTo.delete(key).await()
     }
 
     override fun getAllKeys(): Deferred<Iterator<ByteArray>> = GlobalScope.async {

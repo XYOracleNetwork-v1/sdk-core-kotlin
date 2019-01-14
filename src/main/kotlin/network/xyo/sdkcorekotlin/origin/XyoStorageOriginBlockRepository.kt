@@ -21,10 +21,9 @@ import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
 open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoStorageProviderInterface,
                                            protected val hashingObject: XyoHash.XyoHashProvider) : XyoOriginBlockRepository {
 
-
     override fun removeOriginBlock(originBlockHash: XyoBuff) = GlobalScope.async {
         removeIndex(originBlockHash.bytesCopy).await()
-        return@async storageProvider.delete(originBlockHash.bytesCopy).await()
+        storageProvider.delete(originBlockHash.bytesCopy).await()
     }
 
     override fun containsOriginBlock(originBlockHash: XyoBuff) = GlobalScope.async {
@@ -53,12 +52,11 @@ open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoSto
         val blockData = originBlock.bytesCopy
         val blockHash = originBlock.getHash(hashingObject).await()
         updateIndex(blockHash).await()
-        return@async storageProvider.write(blockHash.bytesCopy, blockData).await()
+        storageProvider.write(blockHash.bytesCopy, blockData).await()
     }
 
     override fun getOriginBlockByBlockHash(originBlockHash: ByteArray) = GlobalScope.async {
-        val packedOriginBlock = storageProvider.read(originBlockHash).await()
-                ?: return@async null
+        val packedOriginBlock = storageProvider.read(originBlockHash).await() ?: return@async null
         return@async XyoBoundWitness.getInstance(packedOriginBlock)
     }
 
@@ -78,7 +76,7 @@ open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoSto
         }
 
         val newIndexEncoded = XyoIterableObject.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, newIndex.toTypedArray())
-        return@async storageProvider.write(BLOCKS_INDEX_KEY, newIndexEncoded.bytesCopy)
+        storageProvider.write(BLOCKS_INDEX_KEY, newIndexEncoded.bytesCopy)
     }
 
     private fun removeIndex (blockHash: ByteArray) = GlobalScope.async {

@@ -9,18 +9,18 @@ import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
 import java.lang.Exception
 
 class XyoSaveState (private val storageProvider: XyoStorageProviderInterface) {
-    fun saveIndex (index : XyoBuff) : Deferred<Exception?> {
+    fun saveIndex (index : XyoBuff) : Deferred<Unit> {
         return writeFromKey(INDEX_KEY, index.valueCopy)
     }
 
-    fun saveSigners (privateKeys: Array<XyoBuff>) : Deferred<Exception?> {
+    fun saveSigners (privateKeys: Array<XyoBuff>) : Deferred<Unit> {
         return writeFromKey(
                 SIGNERS_KEY,
                 XyoIterableObject.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, privateKeys).bytesCopy
         )
     }
 
-    fun savePreviousHash (hash : XyoBuff) : Deferred<Exception?>{
+    fun savePreviousHash (hash : XyoBuff) : Deferred<Unit> {
         return writeFromKey(PREV_HASH_KEY, hash.bytesCopy)
     }
 
