@@ -125,6 +125,9 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
     }
 
     private fun addTransfer (transfer : XyoIterableObject) : Deferred<Unit> = GlobalScope.async {
+        // drill down on transfer to make sure its valid
+        transfer.toString()
+
         for (item in transfer.iterator) {
             dynamicLeader.add(item)
         }
