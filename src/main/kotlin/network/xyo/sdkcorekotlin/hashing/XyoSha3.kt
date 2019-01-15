@@ -8,6 +8,9 @@ import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 import org.bouncycastle.jcajce.provider.digest.SHA3
 
+/**
+ * A SHA-3 32 byte (256 bit) hash. Sometimes known as a Keccak hash.
+ */
 object XyoSha3 : XyoBasicHashBase.XyoBasicHashBaseProvider() {
     override val standardDigestKey: String = "SHA_3"
     override val schema: XyoObjectSchema = XyoSchemas.SHA_3
