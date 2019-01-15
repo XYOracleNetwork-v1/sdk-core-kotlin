@@ -6,7 +6,8 @@ import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
 
 /**
- * A helper object to preform operations on bound witnesses.
+ * A helper object to preform PURE operations on bound witnesses, meaning irrelevant to origin related topics. For
+ * Origin related items, please see XyoOriginBoundWitnessUtil.
  */
 object XyoBoundWitnessUtil {
 
@@ -55,30 +56,10 @@ object XyoBoundWitnessUtil {
         for (i in 0 until (boundWitness.numberOfParties ?: 0)) {
 
             val fetter = boundWitness.getFetterOfParty(i) ?: return null
-            if (checkPartyForPublicKey(fetter, publicKey)) {
+            if (XyoBoundWitnessUtil.checkPartyForPublicKey(fetter, publicKey)) {
                 return i
             }
 
-        }
-
-        return null
-    }
-
-    /**
-     * Gets the bridged blocks from a bound witness.
-     *
-     * @param boundWitness The bound witness to get the bridge blocks from
-     * @return Bridged blocks from the bound witness. Will return null if none are found.
-     */
-    fun getBridgedBlocks (boundWitness: XyoBoundWitness) : Iterator<XyoBuff>? {
-        for (witness in boundWitness[XyoSchemas.WITNESS.id]) {
-            if (witness is XyoIterableObject) {
-                for (item in witness[XyoSchemas.BRIDGE_BLOCK_SET.id].iterator()) {
-                    if (item is XyoIterableObject) {
-                        return item.iterator
-                    }
-                }
-            }
         }
 
         return null

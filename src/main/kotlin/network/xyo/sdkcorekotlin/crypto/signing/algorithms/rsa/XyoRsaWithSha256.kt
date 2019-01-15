@@ -3,11 +3,10 @@ package network.xyo.sdkcorekotlin.crypto.signing.algorithms.rsa
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
-import network.xyo.sdkcorekotlin.crypto.signing.XyoSigningObjectCreatorVerify
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import org.bouncycastle.jce.provider.BouncyCastleProvider
-import java.security.PublicKey
 import java.security.Signature
 
 /**
@@ -27,8 +26,8 @@ class XyoRsaWithSha256 (privateKey: XyoRsaPrivateKey?) : XyoGeneralRsa (1024, pr
         }
     }
 
-    companion object : XyoSigningObjectCreatorVerify() {
-        override val signatureInstance: Signature = Signature.getInstance("SHA256withRSA", BouncyCastleProvider())
+    companion object : XyoSigner.XyoSignerProvider() {
+        private val signatureInstance: Signature = Signature.getInstance("SHA256withRSA", BouncyCastleProvider())
         override val key: Byte = 0x08
 
         override fun newInstance(): XyoRsaWithSha256 {

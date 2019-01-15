@@ -9,6 +9,7 @@ import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.heuristics.XyoHeuristicGetter
 import network.xyo.sdkcorekotlin.network.XyoNetworkPipe
 import network.xyo.sdkcorekotlin.origin.XyoIndexableOriginBlockRepository
+import network.xyo.sdkcorekotlin.origin.XyoOriginBoundWitnessUtil
 import network.xyo.sdkcorekotlin.origin.XyoOriginChainStateManager
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas.BRIDGE_BLOCK_SET
 import network.xyo.sdkcorekotlin.persist.XyoStorageProviderInterface
@@ -25,8 +26,8 @@ import kotlin.collections.ArrayList
  * @param storageProvider A place to store all origin blocks.
  * @property hashingProvider A hashing provider to use hashing utilises.
  */
-abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
-                            private val hashingProvider : XyoHash.XyoHashProvider) {
+abstract class XyoOriginChainCreator (storageProvider : XyoStorageProviderInterface,
+                                      private val hashingProvider : XyoHash.XyoHashProvider) {
 
     private val boundWitnessOptions = ConcurrentHashMap<Int, XyoBoundWitnessOption>()
     private val heuristics = ConcurrentHashMap<String, XyoHeuristicGetter>()
@@ -187,7 +188,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
         val hash = boundWitness.getHash(hashingProvider).await()
 
         if (!originBlocks.containsOriginBlock(hash).await()) {
-            val subBlocks = XyoBoundWitnessUtil.getBridgedBlocks(boundWitness)
+            val subBlocks = XyoOriginBoundWitnessUtil.getBridgedBlocks(boundWitness)
             val boundWitnessWithoutBlocks = XyoBoundWitness.getInstance(
                     XyoBoundWitnessUtil.removeTypeFromUnsignedPayload(BRIDGE_BLOCK_SET.id, boundWitness).bytesCopy
             )

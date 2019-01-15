@@ -20,7 +20,7 @@ import kotlin.concurrent.thread
  * @property hashingProvider A hashing provider to use hashing utilises.
  */
 abstract class XyoRelayNode (storageProvider : XyoStorageProviderInterface,
-                             private val hashingProvider : XyoHash.XyoHashProvider) : XyoNodeBase(storageProvider, hashingProvider) {
+                             private val hashingProvider : XyoHash.XyoHashProvider) : XyoOriginChainCreator(storageProvider, hashingProvider) {
 
     val originBlocksToBridge = XyoBridgeQueue()
     private val selfToOtherQueue = XyoBridgingOption(storageProvider, originBlocksToBridge)

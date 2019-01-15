@@ -11,7 +11,8 @@ import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
 
 /**
- * A Xyo Bound Witness Object
+ * A Bound Witness Object that is independent of origin state. This implements the cryptographic structure discussed
+ * in the XYO Network Yellow Paper, and White Paper.
  */
 abstract class XyoBoundWitness : XyoIterableObject() {
 
@@ -50,6 +51,22 @@ abstract class XyoBoundWitness : XyoIterableObject() {
         get() = getNumberOfParties(this)
 
     /**
+     * Gets the number of fetters in the current bound witness.
+     */
+    protected val numberOfFetters : Int
+        get() {
+            return this[XyoSchemas.FETTER.id].size
+        }
+
+    /**
+     * Gets the number of witnesses in the current bound witness.
+     */
+    protected val numberOfWitnesses : Int
+        get() {
+            return this[XyoSchemas.WITNESS.id].size
+        }
+
+    /**
      * Gets a fetter from a party in a bound witness.
      *
      * @param partyNum The index of the party in the bound witness.
@@ -70,6 +87,12 @@ abstract class XyoBoundWitness : XyoIterableObject() {
         return getBoundWitnessItemAtIndex((numOfParties * 2) - (partyNum + 1))
     }
 
+    /**
+     * Gets party information for an index (should only be fetters or witnesses)
+     *
+     * @param posIndex The index to grab from.
+     * @return Will return null if the pos index is out of range or if the bound witness is incomplete.
+     */
     private fun getBoundWitnessItemAtIndex (posIndex : Int) : XyoIterableObject? {
         val numOfParties = numberOfParties
 

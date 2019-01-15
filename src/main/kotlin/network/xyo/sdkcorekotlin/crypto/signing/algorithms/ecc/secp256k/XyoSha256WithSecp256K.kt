@@ -5,7 +5,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
-import network.xyo.sdkcorekotlin.crypto.signing.XyoSigningObjectCreatorVerify
 import network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.XyoEcPrivateKey
 import network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.XyoEcdsaSignature
 import network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.XyoUncompressedEcPublicKey
@@ -42,8 +41,8 @@ class XyoSha256WithSecp256K (privateKey : ECPrivateKey?) : XyoEcSecp256K1(privat
         }
     }
 
-    companion object : XyoSigningObjectCreatorVerify() {
-        override val signatureInstance: Signature = Signature.getInstance("SHA256withECDSA", BouncyCastleProvider())
+    companion object : XyoSigner.XyoSignerProvider() {
+        private val signatureInstance: Signature = Signature.getInstance("SHA256withECDSA", BouncyCastleProvider())
         override val key: Byte = 0x01
         override val supportedKeys: Array<Byte> = arrayOf(XyoSchemas.EC_PUBLIC_KEY.id)
         override val supportedSignatures: Array<Byte> = arrayOf(XyoSchemas.EC_SIGNATURE.id)
