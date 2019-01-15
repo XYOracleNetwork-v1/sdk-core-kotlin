@@ -1,0 +1,16 @@
+package network.xyo.sdkcorekotlin.heuristics
+
+import network.xyo.sdkcorekotlin.XyoTestBase
+import org.junit.Assert
+import org.junit.Test
+
+class XyoUnixTimeTest : XyoTestBase() {
+
+    @Test
+    fun testUnixTime () {
+        val newUnixTime = XyoUnixTime.getter.getHeuristic() ?: throw Exception("Can not be null!")
+        val createdUnixTime = XyoUnixTime.getInstance(newUnixTime.bytesCopy)
+
+        Assert.assertArrayEquals(newUnixTime.bytesCopy, createdUnixTime.bytesCopy)
+    }
+}

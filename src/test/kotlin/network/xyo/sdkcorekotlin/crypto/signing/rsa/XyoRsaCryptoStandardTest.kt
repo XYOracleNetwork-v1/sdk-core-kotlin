@@ -1,4 +1,4 @@
-package network.xyo.sdkcorekotlin.crypto.signing.rsa.roundtrip
+package network.xyo.sdkcorekotlin.crypto.signing.rsa
 
 import kotlinx.coroutines.runBlocking
 import network.xyo.sdkcorekotlin.XyoTestBase

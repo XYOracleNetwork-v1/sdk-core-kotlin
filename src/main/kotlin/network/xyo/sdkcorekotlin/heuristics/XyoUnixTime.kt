@@ -27,7 +27,10 @@ abstract class XyoUnixTime : XyoBuff() {
                 val time = System.currentTimeMillis()
                 val buffer = ByteBuffer.allocate(8).putLong(time)
 
-                return XyoBuff.newInstance(XyoSchemas.UNIX_TIME, buffer.array())
+                return object : XyoUnixTime() {
+                    override val allowedOffset: Int = 0
+                    override var item: ByteArray = XyoBuff.getObjectEncoded(XyoSchemas.UNIX_TIME, buffer.array())
+                }
             }
         }
 

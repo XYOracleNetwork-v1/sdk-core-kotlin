@@ -1,4 +1,4 @@
-package network.xyo.sdkcorekotlin.crypto.signing.ec.roundtrip
+package network.xyo.sdkcorekotlin.crypto.signing.ecdsa
 
 import kotlinx.coroutines.runBlocking
 import network.xyo.sdkcorekotlin.XyoTestBase

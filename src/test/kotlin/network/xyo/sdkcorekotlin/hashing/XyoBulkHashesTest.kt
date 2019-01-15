@@ -7,7 +7,7 @@ import org.junit.Assert.assertArrayEquals
 import org.junit.Test
 
 
-class XyoBulkTestHashes : XyoTestBase() {
+class XyoBulkHashesTest : XyoTestBase() {
     private val calibrationSeed = byteArrayOf(0x01, 0x02, 0x03)
 
     @Test

@@ -8,7 +8,7 @@ import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
 import org.junit.Assert
 import org.junit.Test
 
-class XyoTestBoundWitnessUtil : XyoTestBase() {
+class XyoBoundWitnessUtilTest : XyoTestBase() {
 
     @Test
     fun testRemoveTypeFromWitnesses () {

@@ -5,7 +5,7 @@ import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
 import org.junit.Assert
 import org.junit.Test
 
-class XyoTestOriginBoundWitnessUtil : XyoTestBase() {
+class XyoOriginBoundWitnessUtilTest : XyoTestBase() {
 
     @Test
     fun testGetBridgeBlocks () {
