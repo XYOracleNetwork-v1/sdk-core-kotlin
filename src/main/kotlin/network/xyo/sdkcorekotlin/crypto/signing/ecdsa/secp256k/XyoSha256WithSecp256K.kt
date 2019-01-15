@@ -1,13 +1,13 @@
-package network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.secp256k
+package network.xyo.sdkcorekotlin.crypto.signing.ecdsa.secp256k
 
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
-import network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.XyoEcPrivateKey
-import network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.XyoEcdsaSignature
-import network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.XyoUncompressedEcPublicKey
+import network.xyo.sdkcorekotlin.crypto.signing.ecdsa.XyoEcPrivateKey
+import network.xyo.sdkcorekotlin.crypto.signing.ecdsa.XyoEcdsaSignature
+import network.xyo.sdkcorekotlin.crypto.signing.ecdsa.XyoUncompressedEcPublicKey
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import org.bouncycastle.crypto.params.ECDomainParameters
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters

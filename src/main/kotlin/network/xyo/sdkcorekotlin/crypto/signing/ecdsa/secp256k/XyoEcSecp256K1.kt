@@ -1,9 +1,9 @@
-package network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.secp256k
+package network.xyo.sdkcorekotlin.crypto.signing.ecdsa.secp256k
 
 import network.xyo.sdkcorekotlin.crypto.signing.XyoPublicKey
-import network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.XyoEcPrivateKey
-import network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.XyoGeneralEc
-import network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.XyoUncompressedEcPublicKey
+import network.xyo.sdkcorekotlin.crypto.signing.ecdsa.XyoEcPrivateKey
+import network.xyo.sdkcorekotlin.crypto.signing.ecdsa.XyoGeneralEc
+import network.xyo.sdkcorekotlin.crypto.signing.ecdsa.XyoUncompressedEcPublicKey
 import org.bouncycastle.crypto.params.ECDomainParameters
 import org.bouncycastle.jce.ECNamedCurveTable
 import org.bouncycastle.jce.interfaces.ECPrivateKey
@@ -35,7 +35,6 @@ abstract class XyoEcSecp256K1 (privateKey: ECPrivateKey?) : XyoGeneralEc(private
 
                     override val y: BigInteger
                         get() = ecPublicKey.q.yCoord.toBigInteger()
-
 
                     override val allowedOffset: Int
                         get() = 0

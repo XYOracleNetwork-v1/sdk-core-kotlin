@@ -1,4 +1,4 @@
-package network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc
+package network.xyo.sdkcorekotlin.crypto.signing.ecdsa
 
 import network.xyo.sdkcorekotlin.schemas.XyoInterpret
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas

@@ -1,4 +1,4 @@
-package network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc
+package network.xyo.sdkcorekotlin.crypto.signing.ecdsa
 
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
 import org.bouncycastle.crypto.params.ECDomainParameters

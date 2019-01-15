@@ -1,4 +1,4 @@
-package network.xyo.sdkcorekotlin.crypto.signing.algorithms.rsa
+package network.xyo.sdkcorekotlin.crypto.signing.rsa
 
 import network.xyo.sdkcorekotlin.crypto.signing.XyoPublicKey
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner

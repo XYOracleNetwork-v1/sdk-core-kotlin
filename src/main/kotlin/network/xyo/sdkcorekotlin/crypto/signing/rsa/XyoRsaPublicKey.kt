@@ -1,9 +1,9 @@
-package network.xyo.sdkcorekotlin.crypto.signing.algorithms.rsa
+package network.xyo.sdkcorekotlin.crypto.signing.rsa
 
 import network.xyo.sdkcorekotlin.schemas.XyoInterpret
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.crypto.signing.XyoPublicKey
-import network.xyo.sdkcorekotlin.crypto.signing.algorithms.rsa.XyoGeneralRsa.Companion.RSA_PUBLIC_EXPONENT
+import network.xyo.sdkcorekotlin.crypto.signing.rsa.XyoGeneralRsa.Companion.RSA_PUBLIC_EXPONENT
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import java.math.BigInteger
 import java.security.interfaces.RSAPublicKey

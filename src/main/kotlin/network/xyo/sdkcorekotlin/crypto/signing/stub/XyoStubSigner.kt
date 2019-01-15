@@ -1,4 +1,4 @@
-package network.xyo.sdkcorekotlin.crypto.signing.algorithms
+package network.xyo.sdkcorekotlin.crypto.signing.stub
 
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope

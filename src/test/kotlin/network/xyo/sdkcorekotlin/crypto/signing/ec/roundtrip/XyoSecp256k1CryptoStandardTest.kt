@@ -2,9 +2,9 @@ package network.xyo.sdkcorekotlin.crypto.signing.ec.roundtrip
 
 import kotlinx.coroutines.runBlocking
 import network.xyo.sdkcorekotlin.XyoTestBase
-import network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.XyoEcPrivateKey
-import network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.secp256k.XyoEcSecp256K1
-import network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.secp256k.XyoSha256WithSecp256K
+import network.xyo.sdkcorekotlin.crypto.signing.ecdsa.XyoEcPrivateKey
+import network.xyo.sdkcorekotlin.crypto.signing.ecdsa.secp256k.XyoEcSecp256K1
+import network.xyo.sdkcorekotlin.crypto.signing.ecdsa.secp256k.XyoSha256WithSecp256K
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas.EC_PRIVATE_KEY
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import org.junit.Assert
