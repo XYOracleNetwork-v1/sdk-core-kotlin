@@ -1,9 +1,8 @@
-package network.xyo.sdkcorekotlin.hashing.basic
+package network.xyo.sdkcorekotlin.hashing
 
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 import java.security.MessageDigest
@@ -42,8 +41,7 @@ abstract class XyoBasicHashBase : XyoHash() {
 
         override fun getInstance(byteArray: ByteArray): XyoBuff {
             return object : XyoBasicHashBase() {
-                override val allowedOffset: Int
-                    get() = 0
+                override val allowedOffset: Int = 0
 
                 override var item: ByteArray = byteArray
 

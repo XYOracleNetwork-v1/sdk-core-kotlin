@@ -1,7 +1,7 @@
 package network.xyo.sdkcorekotlin.hashing
 
 import kotlinx.coroutines.Deferred
-import network.xyo.sdkcorekotlin.XyoFromSelf
+import network.xyo.sdkcorekotlin.schemas.XyoFromSelf
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 
 /**

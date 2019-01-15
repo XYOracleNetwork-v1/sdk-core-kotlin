@@ -1,10 +1,8 @@
 package network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc
 
-import network.xyo.sdkcorekotlin.XyoFromSelf
+import network.xyo.sdkcorekotlin.schemas.XyoFromSelf
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
-import network.xyo.sdkobjectmodelkotlin.objects.XyoNumberEncoder
-import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 import java.math.BigInteger
 import java.nio.ByteBuffer
 

@@ -1,10 +1,9 @@
 package network.xyo.sdkcorekotlin.crypto.signing.algorithms.rsa
 
-import network.xyo.sdkcorekotlin.XyoFromSelf
+import network.xyo.sdkcorekotlin.schemas.XyoFromSelf
 import network.xyo.sdkcorekotlin.crypto.signing.XyoPrivateKey
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
-import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 import java.math.BigInteger
 import java.nio.ByteBuffer
 import java.security.interfaces.RSAPrivateKey

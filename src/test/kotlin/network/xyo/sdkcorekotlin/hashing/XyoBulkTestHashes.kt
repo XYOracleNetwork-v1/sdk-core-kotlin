@@ -2,8 +2,6 @@ package network.xyo.sdkcorekotlin.hashing
 
 import kotlinx.coroutines.runBlocking
 import network.xyo.sdkcorekotlin.XyoTestBase
-import network.xyo.sdkcorekotlin.hashing.basic.XyoBasicHashBase
-import network.xyo.sdkcorekotlin.hashing.basic.XyoSha3
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import org.junit.Assert.assertArrayEquals
 import org.junit.Test

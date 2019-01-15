@@ -21,7 +21,7 @@ import kotlin.collections.ArrayList
 /**
  * A base class for all things creating an managing an origin chain (e.g. Sentinel, Bridge).
  *
- * @property storageProvider A place to store all origin blocks.
+ * @param storageProvider A place to store all origin blocks.
  * @property hashingProvider A hashing provider to use hashing utilises.
  */
 abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,

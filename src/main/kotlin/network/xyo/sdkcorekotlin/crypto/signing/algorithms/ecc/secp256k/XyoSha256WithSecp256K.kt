@@ -9,7 +9,6 @@ import network.xyo.sdkcorekotlin.crypto.signing.XyoSigningObjectCreatorVerify
 import network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.XyoEcPrivateKey
 import network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.XyoEcdsaSignature
 import network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.XyoUncompressedEcPublicKey
-import network.xyo.sdkcorekotlin.hashing.basic.XyoBasicHashBase
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import org.bouncycastle.crypto.params.ECDomainParameters
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters
@@ -19,7 +18,6 @@ import org.bouncycastle.crypto.params.ECPublicKeyParameters
 import org.bouncycastle.jce.interfaces.ECPrivateKey
 import org.bouncycastle.jce.spec.ECParameterSpec
 import java.security.MessageDigest
-import java.security.PublicKey
 import java.security.Signature
 
 

@@ -2,7 +2,7 @@ package network.xyo.sdkcorekotlin.boundWitness
 
 import kotlinx.coroutines.runBlocking
 import network.xyo.sdkcorekotlin.XyoTestBase
-import network.xyo.sdkcorekotlin.hashing.basic.XyoBasicHashBase
+import network.xyo.sdkcorekotlin.hashing.XyoBasicHashBase
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import org.junit.Assert
 import org.junit.Test

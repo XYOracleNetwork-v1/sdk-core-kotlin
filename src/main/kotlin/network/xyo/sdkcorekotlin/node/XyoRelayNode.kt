@@ -16,7 +16,7 @@ import kotlin.concurrent.thread
 /**
  * A base class for nodes creating data, then relaying it (e.g.) sentinels and bridges.
  *
- * @property storageProvider A place to store all origin blocks.
+ * @param storageProvider A place to store all origin blocks.
  * @property hashingProvider A hashing provider to use hashing utilises.
  */
 abstract class XyoRelayNode (storageProvider : XyoStorageProviderInterface,

@@ -6,7 +6,7 @@ import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
 import network.xyo.sdkcorekotlin.boundWitness.XyoZigZagBoundWitness
 import network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc.secp256k.XyoSha256WithSecp256K
 import network.xyo.sdkcorekotlin.hashing.XyoHash
-import network.xyo.sdkcorekotlin.hashing.basic.XyoSha3
+import network.xyo.sdkcorekotlin.hashing.XyoSha3
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals

@@ -1,4 +1,4 @@
-package network.xyo.sdkcorekotlin
+package network.xyo.sdkcorekotlin.schemas
 
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 

@@ -42,11 +42,10 @@ class XyoBoundWitnessVerify (private val allowUnknown : Boolean) {
             val keySet = boundWitness.getFetterOfParty(partyNum)?.get(XyoSchemas.KEY_SET.id)?.getOrNull(0) as? XyoIterableObject
             val sigSet = boundWitness.getWitnessOfParty(partyNum)?.get(XyoSchemas.SIGNATURE_SET.id)?.getOrNull(0) as? XyoIterableObject
 
-            if (keySet is XyoIterableObject && sigSet is XyoIterableObject) {
-                if (!checkSinglePartySignatures(keySet, sigSet, signingData).await()) {
-                    return@async false
-                }
-            } else {
+            if (!(keySet is XyoIterableObject
+                            && sigSet is XyoIterableObject
+                            && !checkSinglePartySignatures(keySet, sigSet, signingData).await())) {
+
                 return@async false
             }
         }
