@@ -44,7 +44,7 @@ class XyoBoundWitnessVerify (private val allowUnknown : Boolean) {
 
             if (!(keySet is XyoIterableObject
                             && sigSet is XyoIterableObject
-                            && !checkSinglePartySignatures(keySet, sigSet, signingData).await())) {
+                            && checkSinglePartySignatures(keySet, sigSet, signingData).await())) {
 
                 return@async false
             }

@@ -73,6 +73,12 @@ abstract class XyoBoundWitness : XyoIterableObject() {
      * @return The party's fetter. Will return null if out of index.
      */
     fun getFetterOfParty(partyNum : Int) : XyoIterableObject? {
+        val numOfParties = numberOfParties ?: return null
+
+        if (numOfParties <= partyNum) {
+            return null
+        }
+
         return getBoundWitnessItemAtIndex(partyNum)
     }
 
@@ -84,6 +90,11 @@ abstract class XyoBoundWitness : XyoIterableObject() {
      */
     fun getWitnessOfParty(partyNum: Int) : XyoIterableObject? {
         val numOfParties = numberOfParties ?: return null
+
+        if (numOfParties <= partyNum) {
+            return null
+        }
+
         return getBoundWitnessItemAtIndex((numOfParties * 2) - (partyNum + 1))
     }
 
@@ -94,14 +105,7 @@ abstract class XyoBoundWitness : XyoIterableObject() {
      * @return Will return null if the pos index is out of range or if the bound witness is incomplete.
      */
     private fun getBoundWitnessItemAtIndex (posIndex : Int) : XyoIterableObject? {
-        val numOfParties = numberOfParties
-
-        if (completed && numOfParties != null) {
-
-            if (numOfParties <= posIndex) {
-                return null
-            }
-
+        if (completed) {
             return this[posIndex] as? XyoIterableObject
         }
 
@@ -111,6 +115,7 @@ abstract class XyoBoundWitness : XyoIterableObject() {
     /**
      * Gets the signing data of the bound witness. This is all of the fetters.
      */
+
     internal val signingData : ByteArray
         get() = valueCopy.copyOfRange(0, witnessFetterBoundary)
 
