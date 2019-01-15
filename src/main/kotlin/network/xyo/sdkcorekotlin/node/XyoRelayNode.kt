@@ -78,23 +78,17 @@ abstract class XyoRelayNode (storageProvider : XyoStorageProviderInterface,
         }
     }
 
-    /**
-     * Calls purgeQueue on the current bridging queue. This is useful to call in low
-     * memory situations.
-     */
-    fun purgeQueue (mask : Int) {
-        originBlocksToBridge.purgeQueue(mask)
+    private fun canDo (catalog: Int, item : Int) : Boolean {
+        return catalog and item == item
+                && procedureCatalogue.canDo(ByteBuffer.allocate(4).putInt(item).array())
     }
 
     override fun getChoice(catalog: Int, strict: Boolean): Int {
-        if (catalog and XyoProcedureCatalogue.TAKE_ORIGIN_CHAIN == XyoProcedureCatalogue.TAKE_ORIGIN_CHAIN
-                && procedureCatalogue.canDo(ByteBuffer.allocate(4).putInt(XyoProcedureCatalogue.TAKE_ORIGIN_CHAIN).array())) {
+        if (canDo(XyoProcedureCatalogue.TAKE_ORIGIN_CHAIN, catalog)) {
             return  XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN
-        } else if (catalog and XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN == XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN
-                && procedureCatalogue.canDo(ByteBuffer.allocate(4).putInt(XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN).array())) {
+        } else if (canDo(XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN, catalog)) {
             return XyoProcedureCatalogue.TAKE_ORIGIN_CHAIN
         }
-
         return XyoProcedureCatalogue.BOUND_WITNESS
     }
 

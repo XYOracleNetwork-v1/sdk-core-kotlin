@@ -56,17 +56,7 @@ abstract class XyoBoundWitness : XyoIterableObject() {
      * @return The party's fetter. Will return null if out of index.
      */
     fun getFetterOfParty(partyNum : Int) : XyoIterableObject? {
-        val numOfParties = numberOfParties
-
-        if (completed && numOfParties != null) {
-             if (numOfParties <= partyNum) {
-                 return null
-             }
-
-            return this[partyNum] as? XyoIterableObject
-        }
-
-        return null
+        return getBoundWitnessItemAtIndex(partyNum)
     }
 
     /**
@@ -76,15 +66,20 @@ abstract class XyoBoundWitness : XyoIterableObject() {
      * @return The party's witness. Will return null if out of index.
      */
     fun getWitnessOfParty(partyNum: Int) : XyoIterableObject? {
+        val numOfParties = numberOfParties ?: return null
+        return getBoundWitnessItemAtIndex((numOfParties * 2) - (partyNum + 1))
+    }
+
+    private fun getBoundWitnessItemAtIndex (posIndex : Int) : XyoIterableObject? {
         val numOfParties = numberOfParties
 
         if (completed && numOfParties != null) {
 
-            if (numOfParties <= partyNum) {
+            if (numOfParties <= posIndex) {
                 return null
             }
 
-            return this[(numOfParties * 2) - (partyNum + 1)] as? XyoIterableObject
+            return this[posIndex] as? XyoIterableObject
         }
 
         return null
