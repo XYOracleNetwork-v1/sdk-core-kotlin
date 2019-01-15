@@ -1,4 +1,4 @@
-package network.xyo.sdkcorekotlin.storage
+package network.xyo.sdkcorekotlin.persist
 
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
@@ -6,7 +6,6 @@ import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
-import java.lang.Exception
 
 class XyoSaveState (private val storageProvider: XyoStorageProviderInterface) {
     fun saveIndex (index : XyoBuff) : Deferred<Unit> {

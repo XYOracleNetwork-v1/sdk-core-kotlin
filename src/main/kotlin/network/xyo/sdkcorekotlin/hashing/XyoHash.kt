@@ -1,7 +1,7 @@
 package network.xyo.sdkcorekotlin.hashing
 
 import kotlinx.coroutines.Deferred
-import network.xyo.sdkcorekotlin.schemas.XyoFromSelf
+import network.xyo.sdkcorekotlin.schemas.XyoInterpret
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 
 /**
@@ -16,7 +16,7 @@ abstract class XyoHash : XyoBuff() {
     /**
      * A base class for creating hashes.
      */
-    abstract class XyoHashProvider : XyoFromSelf {
+    abstract class XyoHashProvider : XyoInterpret {
 
         /**
          * Creates a hash given a ByteArray.

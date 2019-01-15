@@ -1,4 +1,4 @@
-package network.xyo.sdkcorekotlin.node
+package network.xyo.sdkcorekotlin.heuristics
 
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 

@@ -1,6 +1,6 @@
 package network.xyo.sdkcorekotlin.crypto.signing.algorithms.rsa
 
-import network.xyo.sdkcorekotlin.schemas.XyoFromSelf
+import network.xyo.sdkcorekotlin.schemas.XyoInterpret
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.crypto.signing.XyoPublicKey
 import network.xyo.sdkcorekotlin.crypto.signing.algorithms.rsa.XyoGeneralRsa.Companion.RSA_PUBLIC_EXPONENT
@@ -41,7 +41,7 @@ class XyoRsaPublicKey(private val modulus : BigInteger) : RSAPublicKey, XyoPubli
         get() = XyoBuff.newInstance(XyoSchemas.RSA_PUBLIC_KEY, encoded).bytesCopy
 
 
-    companion object : XyoFromSelf {
+    companion object : XyoInterpret {
         override fun getInstance(byteArray: ByteArray): XyoRsaPublicKey {
             val value = object : XyoBuff() {
                 override val allowedOffset: Int = 0

@@ -1,6 +1,6 @@
 package network.xyo.sdkcorekotlin.crypto.signing.algorithms.rsa
 
-import network.xyo.sdkcorekotlin.schemas.XyoFromSelf
+import network.xyo.sdkcorekotlin.schemas.XyoInterpret
 import network.xyo.sdkcorekotlin.crypto.signing.XyoPrivateKey
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
@@ -47,7 +47,7 @@ open class XyoRsaPrivateKey (private val mod : BigInteger, private val privateEx
     override var item: ByteArray = byteArrayOf()
         get() = XyoBuff.newInstance(XyoSchemas.RSA_PRIVATE_KEY, encoded).bytesCopy
 
-    companion object : XyoFromSelf {
+    companion object : XyoInterpret {
 
         override fun getInstance(byteArray: ByteArray): XyoRsaPrivateKey {
             val value = object : XyoBuff() {

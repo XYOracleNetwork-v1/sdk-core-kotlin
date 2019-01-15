@@ -1,4 +1,4 @@
-package network.xyo.sdkcorekotlin.exceptions
+package network.xyo.sdkcorekotlin
 
 /**
  * A base class for XyoExceptions.

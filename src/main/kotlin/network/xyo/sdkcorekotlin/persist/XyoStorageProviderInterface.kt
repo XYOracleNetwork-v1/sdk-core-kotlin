@@ -1,16 +1,15 @@
-package network.xyo.sdkcorekotlin.storage
+package network.xyo.sdkcorekotlin.persist
 
 import kotlinx.coroutines.Deferred
-import network.xyo.sdkcorekotlin.exceptions.XyoStorageException
 
 /**
  * A XyoStorageProviderInterface is meant to provide a persistence layer. It abstracts exactly
- * how that is done. This could be in-memory storage or some disk strategy. It aims to persist data
+ * how that is done. This could be in-memory persist or some disk strategy. It aims to persist data
  * in anon-volatile way.
  */
 interface XyoStorageProviderInterface {
     /**
-     * Writes to the storage.
+     * Writes to the persist.
      *
      * @param key A key so that data can be received at a future point.
      * @param value The value that is held under a key.
@@ -20,7 +19,7 @@ interface XyoStorageProviderInterface {
     fun write(key: ByteArray, value: ByteArray) : Deferred<Unit>
 
     /**
-     * Read from storage.
+     * Read from persist.
      *
      * @param key A key to retrieve the data from. This key is set from write()
      * @return Returns a deferred that contains a ByteArray. Contains the value of
@@ -50,9 +49,9 @@ interface XyoStorageProviderInterface {
     fun delete(key: ByteArray) : Deferred<Unit>
 
     /**
-     * Checks if a key exists in storage.
+     * Checks if a key exists in persist.
      *
-     * @return Returns a deferred Boolean, contains a boolean. If the storage
+     * @return Returns a deferred Boolean, contains a boolean. If the persist
      * provider contains the key, this will be null, and vice versa.
      * @throws XyoStorageException if there is an error reading.
      */

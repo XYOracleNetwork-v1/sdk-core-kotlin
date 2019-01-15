@@ -1,6 +1,6 @@
 package network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc
 
-import network.xyo.sdkcorekotlin.schemas.XyoFromSelf
+import network.xyo.sdkcorekotlin.schemas.XyoInterpret
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.crypto.signing.XyoPublicKey
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
@@ -80,7 +80,7 @@ abstract class XyoUncompressedEcPublicKey : ECPublicKey, XyoPublicKey() {
     /**
      * A base class for creating uncompressed EC public keys.
      */
-    abstract class XyoUncompressedEcPublicKeyProvider : XyoFromSelf {
+    abstract class XyoUncompressedEcPublicKeyProvider : XyoInterpret {
         /**
          * The Java ECParameterSpec to understand the public key (x and y).
          */

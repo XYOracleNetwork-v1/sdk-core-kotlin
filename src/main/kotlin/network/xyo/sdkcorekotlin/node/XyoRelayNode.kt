@@ -9,7 +9,7 @@ import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.network.XyoNetworkPipe
 import network.xyo.sdkcorekotlin.network.XyoNetworkProcedureCatalogueInterface
 import network.xyo.sdkcorekotlin.network.XyoProcedureCatalogue
-import network.xyo.sdkcorekotlin.storage.XyoStorageProviderInterface
+import network.xyo.sdkcorekotlin.persist.XyoStorageProviderInterface
 import java.nio.ByteBuffer
 import kotlin.concurrent.thread
 
@@ -26,7 +26,7 @@ abstract class XyoRelayNode (storageProvider : XyoStorageProviderInterface,
     private val selfToOtherQueue = XyoBridgingOption(storageProvider, originBlocksToBridge)
     private var running = false
 
-    private val mainBoundWitnessListener = object : XyoNodeListener {
+    private val mainBoundWitnessListener = object : XyoNodeListener() {
         override fun onBoundWitnessEndFailure(error: Exception?) {}
 
         override fun onBoundWitnessEndSuccess(boundWitness: XyoBoundWitness) {

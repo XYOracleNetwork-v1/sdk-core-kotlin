@@ -6,7 +6,7 @@ import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
-import network.xyo.sdkcorekotlin.storage.XyoStorageProviderInterface
+import network.xyo.sdkcorekotlin.persist.XyoStorageProviderInterface
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
 
@@ -14,8 +14,8 @@ import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
 /**
  * This class is used as a bucket to store origin blocks, and find links between them.
  *
- * @property storageProvider The storage provider to use when writing encoded origin blocks
- * to storage.
+ * @property storageProvider The persist provider to use when writing encoded origin blocks
+ * to persist.
  * @property hashingObject The hashing provider object to hash origin blocks when storing.
  */
 open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoStorageProviderInterface,

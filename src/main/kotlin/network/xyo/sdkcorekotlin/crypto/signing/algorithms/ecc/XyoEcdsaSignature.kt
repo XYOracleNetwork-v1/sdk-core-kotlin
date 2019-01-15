@@ -1,6 +1,6 @@
 package network.xyo.sdkcorekotlin.crypto.signing.algorithms.ecc
 
-import network.xyo.sdkcorekotlin.schemas.XyoFromSelf
+import network.xyo.sdkcorekotlin.schemas.XyoInterpret
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import java.math.BigInteger
@@ -27,7 +27,7 @@ open class XyoEcdsaSignature(val r : BigInteger, val s : BigInteger) : XyoBuff()
         return buffer.array()
     }
 
-    companion object : XyoFromSelf {
+    companion object : XyoInterpret {
         class XyoRAndS(val r : BigInteger, val s : BigInteger)
 
         protected fun getRAndS(byteArray: ByteArray) : XyoRAndS {

@@ -5,24 +5,24 @@ import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
 /**
  * THe listener for Xyo Nodes.
  */
-interface XyoNodeListener {
+abstract class XyoNodeListener {
     /**
      * This function will be called on every bound witness start.
      */
-    fun onBoundWitnessStart()
+    open fun onBoundWitnessStart() {}
 
     /**
      * This function will be called on evey time a bound witness discovered for the first time successfully.
      */
-    fun onBoundWitnessDiscovered(boundWitness : XyoBoundWitness)
+    open fun onBoundWitnessDiscovered(boundWitness : XyoBoundWitness) {}
 
     /**
      * This function will be called on evey time a bound witness did not end successfully.
      */
-    fun onBoundWitnessEndFailure(error : Exception?)
+    open fun onBoundWitnessEndFailure(error : Exception?) {}
 
     /**
      * This function will be called every time a bound witness is completed successfully.
      */
-    fun onBoundWitnessEndSuccess (boundWitness: XyoBoundWitness)
+    open fun onBoundWitnessEndSuccess (boundWitness: XyoBoundWitness) {}
 }

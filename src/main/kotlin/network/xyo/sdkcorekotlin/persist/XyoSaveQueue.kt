@@ -1,4 +1,4 @@
-package network.xyo.sdkcorekotlin.storage
+package network.xyo.sdkcorekotlin.persist
 
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope

@@ -5,7 +5,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
 import network.xyo.sdkcorekotlin.hashing.XyoHash
-import network.xyo.sdkcorekotlin.storage.XyoStorageProviderInterface
+import network.xyo.sdkcorekotlin.persist.XyoStorageProviderInterface
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 
 open class XyoIndexableOriginBlockRepository(storageProviderInterface: XyoHash.XyoHashProvider, hashingProviderInterface: XyoStorageProviderInterface) : XyoStorageOriginBlockRepository(hashingProviderInterface, storageProviderInterface) {

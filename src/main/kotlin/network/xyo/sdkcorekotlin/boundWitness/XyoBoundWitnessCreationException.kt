@@ -1,4 +1,6 @@
-package network.xyo.sdkcorekotlin.exceptions
+package network.xyo.sdkcorekotlin.boundWitness
+
+import network.xyo.sdkcorekotlin.XyoException
 
 /**
  * This will be thrown when an error happens during the creation of a bound witness.

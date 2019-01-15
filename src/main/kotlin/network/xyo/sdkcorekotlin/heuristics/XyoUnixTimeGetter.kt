@@ -1,5 +1,6 @@
-package network.xyo.sdkcorekotlin.node
+package network.xyo.sdkcorekotlin.heuristics
 
+import network.xyo.sdkcorekotlin.heuristics.XyoHeuristicGetter
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import java.nio.ByteBuffer

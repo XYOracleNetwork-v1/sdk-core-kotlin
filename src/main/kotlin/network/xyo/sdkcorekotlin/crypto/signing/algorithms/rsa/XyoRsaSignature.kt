@@ -1,6 +1,6 @@
 package network.xyo.sdkcorekotlin.crypto.signing.algorithms.rsa
 
-import network.xyo.sdkcorekotlin.schemas.XyoFromSelf
+import network.xyo.sdkcorekotlin.schemas.XyoInterpret
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 
@@ -21,7 +21,7 @@ abstract class XyoRsaSignature : XyoBuff() {
     /**
      * The base class for creating RSA Signatures.
      */
-    companion object : XyoFromSelf {
+    companion object : XyoInterpret {
 
         override fun getInstance(byteArray: ByteArray): XyoRsaSignature {
             return object : XyoRsaSignature() {

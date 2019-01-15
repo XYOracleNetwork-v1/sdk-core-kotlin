@@ -3,7 +3,7 @@ package network.xyo.sdkcorekotlin.boundWitness
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import network.xyo.sdkcorekotlin.schemas.XyoFromSelf
+import network.xyo.sdkcorekotlin.schemas.XyoInterpret
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
@@ -140,7 +140,7 @@ abstract class XyoBoundWitness : XyoIterableObject() {
     }
 
 
-    companion object : XyoFromSelf {
+    companion object : XyoInterpret {
 
         /**
          * Gets a new instance of the bound witness from bytes.
