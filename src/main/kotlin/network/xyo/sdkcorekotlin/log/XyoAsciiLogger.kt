@@ -5,7 +5,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 object XyoAsciiLogger : XyoLogger {
-    private val isInDebug = System.getenv("DEBUG") == "true"
+//    private val isInDebug = System.getenv("DEBUG") == "true"
+    private val isInDebug = true
 
     private const val ANSI_RESET = "\u001B[0m"
     private const val ANSI_BLACK = "\u001B[30m"

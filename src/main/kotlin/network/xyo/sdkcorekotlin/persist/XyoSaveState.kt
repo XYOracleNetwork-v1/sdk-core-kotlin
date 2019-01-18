@@ -9,7 +9,7 @@ import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
 
 class XyoSaveState (private val storageProvider: XyoStorageProviderInterface) {
     fun saveIndex (index : XyoBuff) : Deferred<Unit> {
-        return writeFromKey(INDEX_KEY, index.valueCopy)
+        return writeFromKey(INDEX_KEY, index.bytesCopy)
     }
 
     fun saveSigners (privateKeys: Array<XyoBuff>) : Deferred<Unit> {

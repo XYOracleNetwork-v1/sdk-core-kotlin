@@ -1,0 +1,2 @@
+include ':sdk-objectmodel-kotlin'
+project(':sdk-objectmodel-kotlin').projectDir = new File('../sdk-objectmodel-kotlin')
