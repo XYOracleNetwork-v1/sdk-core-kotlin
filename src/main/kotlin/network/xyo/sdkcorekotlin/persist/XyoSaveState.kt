@@ -32,7 +32,7 @@ class XyoSaveState (private val storageProvider: XyoStorageProviderInterface) {
     }
 
     fun getSigners () : Deferred<Iterator<XyoBuff>?> = GlobalScope.async {
-        val encodedSigners = readFromKey(PREV_HASH_KEY).await() ?: return@async null
+        val encodedSigners = readFromKey(SIGNERS_KEY).await() ?: return@async null
         return@async object : XyoIterableObject() {
             override val allowedOffset: Int = 0
             override var item: ByteArray = encodedSigners
