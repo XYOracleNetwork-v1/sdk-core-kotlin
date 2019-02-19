@@ -3,6 +3,7 @@ package network.xyo.sdkcorekotlin.node
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import network.xyo.sdkcorekotlin.XyoException
 import network.xyo.sdkcorekotlin.log.XyoLog
 import network.xyo.sdkcorekotlin.boundWitness.*
 import network.xyo.sdkcorekotlin.hashing.XyoHash
@@ -209,11 +210,21 @@ abstract class XyoOriginChainCreator (storageProvider : XyoStorageProviderInterf
 
     }
 
-    protected suspend fun doBoundWitness (startingData : ByteArray?, pipe: XyoNetworkPipe) {
+    private fun getEncodedChoice (bytes: ByteArray) : Int {
+        when (bytes.size) {
+            1 -> return ByteBuffer.wrap(bytes).get().toInt()
+            2 -> return ByteBuffer.wrap(bytes).short.toInt()
+            4 -> ByteBuffer.wrap(bytes).int
+        }
+
+        throw XyoBoundWitnessCreationException("Can not read choice.")
+    }
+
+    suspend fun doBoundWitness (startingData : ByteArray?, pipe: XyoNetworkPipe) {
         if (currentBoundWitnessSession != null) return
         onBoundWitnessStart()
 
-        val choice = getChoice(ByteBuffer.wrap(pipe.peer.getRole()).int, startingData == null)
+        val choice = getChoice(getEncodedChoice(pipe.peer.getRole()), startingData == null)
         val options = getBoundWitnessOptions(choice).await()
 
         currentBoundWitnessSession = XyoZigZagBoundWitnessSession(

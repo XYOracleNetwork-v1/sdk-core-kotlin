@@ -27,11 +27,11 @@ abstract class XyoBoundWitnessOption {
      */
     abstract suspend fun getUnsignedPayload() : XyoBuff?
 
-    /**
+    /**-> XyoObjectStructure
      * This function will be called after the current bound witness has been completed. If the bound witness is null,
      * there was an error creating the bound witness.
      *
-     * @param boundWitness The bound witness just
+     * @param boundWitness The bound witness just completed
      */
     open fun onCompleted (boundWitness: XyoBoundWitness?) {
 
