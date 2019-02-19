@@ -214,7 +214,7 @@ abstract class XyoOriginChainCreator (storageProvider : XyoStorageProviderInterf
         when (bytes.size) {
             1 -> return ByteBuffer.wrap(bytes).get().toInt()
             2 -> return ByteBuffer.wrap(bytes).short.toInt()
-            4 -> ByteBuffer.wrap(bytes).int
+            4 -> return ByteBuffer.wrap(bytes).int
         }
 
         throw XyoBoundWitnessCreationException("Can not read choice.")
