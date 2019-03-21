@@ -62,8 +62,33 @@ class XyoSaveQueue(private val storageProvider: XyoStorageProviderInterface) {
         return@async null
     }
 
+    fun saveStaticts (staticts: Array<XyoBuff>) : Deferred<Unit> = GlobalScope.async {
+        val encoded = XyoIterableObject.createUntypedIterableObject(XyoSchemas.PAYMENT_KEY, staticts)
+
+        storageProvider.write(STATICTS_KET.toByteArray(), encoded.bytesCopy).await()
+
+        return@async
+    }
+
+    fun getStacticts () : Deferred<Array<XyoBuff>> = GlobalScope.async {
+        val encoded = storageProvider.read(STATICTS_KET.toByteArray()).await() ?: return@async arrayOf<XyoBuff>()
+
+        val returnArray = ArrayList<XyoBuff>()
+        val array = object : XyoIterableObject() {
+            override val allowedOffset: Int = 0
+            override var item: ByteArray = encoded
+        }.iterator
+
+        for (item in array) {
+            returnArray.add(item)
+        }
+        
+        return@async returnArray.toTypedArray()
+    }
+
     companion object {
         const val KEYS_KEY = "queueValue"
         const val WEIGHT_KEY = "weightValue"
+        const val STATICTS_KET = "statictsValue"
     }
 }

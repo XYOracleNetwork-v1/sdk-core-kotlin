@@ -11,6 +11,7 @@ object XyoSchemas {
     val NEXT_PUBLIC_KEY = XyoObjectSchema.createFromHeader(byteArrayOf(     0x80.toByte(),        4.toByte()))
     val BRIDGE_BLOCK_SET = XyoObjectSchema.createFromHeader(byteArrayOf(    0xA0.toByte(),        5.toByte()))
     val BRIDGE_HASH_SET =  XyoObjectSchema.createFromHeader(byteArrayOf(    0xB0.toByte(),        6.toByte()))
+    val PAYMENT_KEY =  XyoObjectSchema.createFromHeader(byteArrayOf(        0x00.toByte(),        7.toByte()))
     val PREVIOUS_HASH = XyoObjectSchema.createFromHeader(byteArrayOf(       0xB0.toByte(),        8.toByte()))
     val EC_SIGNATURE = XyoObjectSchema.createFromHeader(byteArrayOf(        0x80.toByte(),        9.toByte()))
     val RSA_SIGNATURE = XyoObjectSchema.createFromHeader(byteArrayOf(       0x80.toByte(),        10.toByte()))
