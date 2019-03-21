@@ -43,6 +43,8 @@ open class XyoOriginChainStateManager (private val indexOffset : Int) : XyoOrigi
      */
     val allPublicKeys = ArrayList<XyoBuff>()
 
+    var statics = ArrayList<XyoBuff>()
+
     override var nextPublicKey : XyoBuff? = null
 
     override val index : XyoBuff
