@@ -276,6 +276,7 @@ abstract class XyoNodeBase (storageProvider : XyoStorageProviderInterface,
 
         signedPayloads.add(index)
         signedPayloads.addAll(payloads.signedOptions)
+        signedPayloads.addAll(originState.statics)
 
         return@async signedPayloads.toTypedArray()
     }
