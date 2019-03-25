@@ -10,6 +10,9 @@ import network.xyo.sdkcorekotlin.network.XyoNetworkPipe
 import network.xyo.sdkcorekotlin.network.XyoNetworkProcedureCatalogueInterface
 import network.xyo.sdkcorekotlin.network.XyoProcedureCatalogue
 import network.xyo.sdkcorekotlin.persist.XyoStorageProviderInterface
+import network.xyo.sdkcorekotlin.repositories.XyoBridgeQueueRepository
+import network.xyo.sdkcorekotlin.repositories.XyoOriginBlockRepository
+import network.xyo.sdkcorekotlin.repositories.XyoOriginChainStateRepository
 import java.nio.ByteBuffer
 import kotlin.concurrent.thread
 
@@ -20,19 +23,21 @@ import kotlin.concurrent.thread
  * @property hashingProvider A hashing provider to use hashing utilises.
  */
 abstract class XyoRelayNode (storageProvider : XyoStorageProviderInterface,
-                             private val hashingProvider : XyoHash.XyoHashProvider) : XyoOriginChainCreator(storageProvider, hashingProvider) {
+                             blockRepository: XyoOriginBlockRepository,
+                             stateRepository: XyoOriginChainStateRepository,
+                             bridgeQueueRepository: XyoBridgeQueueRepository,
+                             private val hashingProvider : XyoHash.XyoHashProvider) : XyoOriginChainCreator(blockRepository, stateRepository, hashingProvider) {
 
-    val originBlocksToBridge = XyoBridgeQueue()
-    private val selfToOtherQueue = XyoBridgingOption(storageProvider, originBlocksToBridge)
-    private var running = false
+    val originBlocksToBridge = XyoBridgeQueue(bridgeQueueRepository)
+    private val selfToOtherQueue = XyoBridgingOption(blockRepository, originBlocksToBridge)
 
     private val mainBoundWitnessListener = object : XyoNodeListener() {
         override fun onBoundWitnessEndFailure(error: Exception?) {}
 
         override fun onBoundWitnessEndSuccess(boundWitness: XyoBoundWitness) {
-            for (hash in originBlocksToBridge.getToRemove()) {
+            for (hash in originBlocksToBridge.getBlocksToRemove()) {
                 runBlocking {
-                    originBlocks.removeOriginBlock(hash).await()
+                    blockRepository.removeOriginBlock(hash).await()
                 }
             }
         }
@@ -59,24 +64,6 @@ abstract class XyoRelayNode (storageProvider : XyoStorageProviderInterface,
      */
     abstract suspend fun findSomeoneToTalkTo() : XyoNetworkPipe
 
-    /**
-     * Stop the node from doing all operations.
-     */
-    fun stop () {
-        if (running) {
-            running = false
-        }
-    }
-
-    /**
-     * Start the node to do all operations.
-     */
-    fun start () {
-        if (!running) {
-            running =  true
-            loop()
-        }
-    }
 
     private fun canDo (catalog: Int, item : Int) : Boolean {
         return catalog and item == item
@@ -90,32 +77,6 @@ abstract class XyoRelayNode (storageProvider : XyoStorageProviderInterface,
             return XyoProcedureCatalogue.TAKE_ORIGIN_CHAIN
         }
         return XyoProcedureCatalogue.BOUND_WITNESS
-    }
-
-    private fun doConnection() = GlobalScope.async {
-        val connectionToOtherPartyFrom = findSomeoneToTalkTo()
-        if (!running) return@async
-
-        if (connectionToOtherPartyFrom.initiationData == null) {
-            val whatTheOtherPartyWantsToDo = connectionToOtherPartyFrom.peer.getRole()
-            if (procedureCatalogue.canDo(whatTheOtherPartyWantsToDo)) {
-                doBoundWitness(null, connectionToOtherPartyFrom)
-            } else {
-                connectionToOtherPartyFrom.close().await()
-            }
-        } else {
-            doBoundWitness(connectionToOtherPartyFrom.initiationData, connectionToOtherPartyFrom)
-        }
-    }
-
-    private fun loop () {
-        thread {
-            GlobalScope.launch {
-                while (running) {
-                    doConnection().await()
-                }
-            }
-        }
     }
 
     init {

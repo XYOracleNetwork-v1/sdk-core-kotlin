@@ -1,4 +1,4 @@
-package network.xyo.sdkcorekotlin.origin
+package network.xyo.sdkcorekotlin.repositories
 
 import kotlinx.coroutines.Deferred
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
@@ -26,7 +26,7 @@ interface XyoOriginBlockRepository : XyoGetOriginBlockByHash {
      * @throws XyoStorageException if there is an error reading.
      */
     @Throws(XyoStorageException::class)
-    fun containsOriginBlock (originBlockHash: XyoBuff) : Deferred<Boolean?>
+    fun containsOriginBlock (originBlockHash: XyoBuff) : Deferred<Boolean>
 
     /**
      * Gets all of the origin blocks in persist.

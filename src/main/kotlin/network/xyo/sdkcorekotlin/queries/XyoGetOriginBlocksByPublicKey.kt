@@ -2,7 +2,7 @@ package network.xyo.sdkcorekotlin.queries
 
 import kotlinx.coroutines.Deferred
 import network.xyo.sdkcorekotlin.persist.XyoStorageException
-import network.xyo.sdkcorekotlin.origin.XyoIndexableOriginBlockRepository
+import network.xyo.sdkcorekotlin.persist.repositories.XyoIndexableOriginBlockRepository
 
 interface XyoGetOriginBlocksByPublicKey : XyoIndexableOriginBlockRepository.XyoOriginBlockIndexerInterface {
     /**

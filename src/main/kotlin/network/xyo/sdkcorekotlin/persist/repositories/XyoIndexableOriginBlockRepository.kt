@@ -1,4 +1,4 @@
-package network.xyo.sdkcorekotlin.origin
+package network.xyo.sdkcorekotlin.persist.repositories
 
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope

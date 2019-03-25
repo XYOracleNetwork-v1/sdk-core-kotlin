@@ -1,4 +1,4 @@
-package network.xyo.sdkcorekotlin.origin
+package network.xyo.sdkcorekotlin.persist.repositories
 
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
@@ -7,6 +7,7 @@ import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.persist.XyoStorageProviderInterface
+import network.xyo.sdkcorekotlin.repositories.XyoOriginBlockRepository
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
 

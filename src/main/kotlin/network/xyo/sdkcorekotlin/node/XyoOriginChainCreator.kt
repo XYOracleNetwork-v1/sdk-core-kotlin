@@ -3,23 +3,27 @@ package network.xyo.sdkcorekotlin.node
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import network.xyo.sdkcorekotlin.XyoException
 import network.xyo.sdkcorekotlin.log.XyoLog
 import network.xyo.sdkcorekotlin.boundWitness.*
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.heuristics.XyoHeuristicGetter
-import network.xyo.sdkcorekotlin.network.XyoNetworkPipe
-import network.xyo.sdkcorekotlin.origin.XyoIndexableOriginBlockRepository
+import network.xyo.sdkcorekotlin.network.*
+import network.xyo.sdkcorekotlin.persist.repositories.XyoIndexableOriginBlockRepository
 import network.xyo.sdkcorekotlin.origin.XyoOriginBoundWitnessUtil
 import network.xyo.sdkcorekotlin.origin.XyoOriginChainStateManager
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas.BRIDGE_BLOCK_SET
 import network.xyo.sdkcorekotlin.persist.XyoStorageProviderInterface
+import network.xyo.sdkcorekotlin.repositories.XyoOriginBlockRepository
+import network.xyo.sdkcorekotlin.repositories.XyoOriginChainStateRepository
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
 import java.nio.ByteBuffer
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.ArrayList
+import kotlin.experimental.and
+import kotlin.math.min
+import kotlin.math.sign
 
 /**
  * A base class for all things creating an managing an origin chain (e.g. Sentinel, Bridge).
@@ -27,7 +31,8 @@ import kotlin.collections.ArrayList
  * @param storageProvider A place to store all origin blocks.
  * @property hashingProvider A hashing provider to use hashing utilises.
  */
-abstract class XyoOriginChainCreator (storageProvider : XyoStorageProviderInterface,
+class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
+                                      val stateRepository: XyoOriginChainStateRepository,
                                       private val hashingProvider : XyoHash.XyoHashProvider) {
 
     private val boundWitnessOptions = ConcurrentHashMap<Int, XyoBoundWitnessOption>()
@@ -35,23 +40,7 @@ abstract class XyoOriginChainCreator (storageProvider : XyoStorageProviderInterf
     private val listeners = ConcurrentHashMap<String, XyoNodeListener>()
     private var currentBoundWitnessSession : XyoZigZagBoundWitnessSession? = null
 
-    /**
-     * Gets the choice of a catalog from another party.
-     *
-     * @param catalog The catalog of the other party.
-     * @return The choice to preform in the bound witness.
-     */
-    abstract fun getChoice (catalog : Int, strict : Boolean) : Int
-
-    /**
-     * All of the origin blocks that the node contains.
-     */
-    open val originBlocks : XyoIndexableOriginBlockRepository = XyoIndexableOriginBlockRepository(hashingProvider, storageProvider)
-
-    /**
-     * The current origin state of the origin node.
-     */
-    open var originState = XyoOriginChainStateManager(0)
+    val originState = XyoOriginChainStateManager(stateRepository)
 
     /**
      * Adds a heuristic to be used when creating bound witnesses.
@@ -100,7 +89,7 @@ abstract class XyoOriginChainCreator (storageProvider : XyoStorageProviderInterf
         val bitFlag = flag ?: 0
         val options = getBoundWitnessOptions(bitFlag).await()
         val boundWitness = XyoZigZagBoundWitness(
-                originState.getSigners(),
+                originState.signers,
                 makeSignedPayload(options.toTypedArray()).await(),
                 makeUnsignedPayload(options.toTypedArray()).await()
         )
@@ -120,8 +109,9 @@ abstract class XyoOriginChainCreator (storageProvider : XyoStorageProviderInterf
         val unsignedPayloads = ArrayList<XyoBuff>()
 
         for (option in options) {
-            val unsignedPayload = option.getUnsignedPayload()
-            val signedPayload = option.getSignedPayload()
+            val optionPayload = option.getPayload()
+            val unsignedPayload = optionPayload?.signedPayload
+            val signedPayload = optionPayload?.unsignedPayload
 
             if (unsignedPayload != null) {
                 unsignedPayloads.add(unsignedPayload)
@@ -135,16 +125,23 @@ abstract class XyoOriginChainCreator (storageProvider : XyoStorageProviderInterf
         return@async XyoOptionPayload(unsignedPayloads.toTypedArray(), signedPayloads.toTypedArray())
     }
 
-    private fun getBoundWitnessOptions (bitFlag: Int) = GlobalScope.async {
+    private fun getBoundWitnessOptions (flags: ByteArray): Array<XyoBoundWitnessOption> {
         val options = ArrayList<XyoBoundWitnessOption>()
 
-        for ((flag, option) in boundWitnessOptions) {
-            if (flag and bitFlag != 0) {
-                options.add(option)
+        for ((_, option) in boundWitnessOptions) {
+            if (min(option.flag.size, flags.size) != 0) {
+                for (i in 0..(min(option.flag.size, flags.size) - 1)) {
+                    val otherCatSection = option.flag[option.flag.size - i - 1]
+                    val thisCatSection = flags[flags.size - i - 1]
+
+                    if (otherCatSection and thisCatSection != 0.toByte()) {
+                        options.add(option)
+                    }
+                }
             }
         }
 
-        return@async options
+        return options.toTypedArray()
     }
 
 
@@ -188,13 +185,13 @@ abstract class XyoOriginChainCreator (storageProvider : XyoStorageProviderInterf
     private fun loadCreatedBoundWitness (boundWitness: XyoBoundWitness) : Deferred<Unit> = GlobalScope.async {
         val hash = boundWitness.getHash(hashingProvider).await()
 
-        if (!originBlocks.containsOriginBlock(hash).await()) {
+        if (!blockRepository.containsOriginBlock(hash).await()) {
             val subBlocks = XyoOriginBoundWitnessUtil.getBridgedBlocks(boundWitness)
             val boundWitnessWithoutBlocks = XyoBoundWitness.getInstance(
                     XyoBoundWitnessUtil.removeTypeFromUnsignedPayload(BRIDGE_BLOCK_SET.id, boundWitness).bytesCopy
             )
 
-            originBlocks.addBoundWitness(boundWitnessWithoutBlocks).await()
+            blockRepository.addBoundWitness(boundWitnessWithoutBlocks).await()
 
             for ((_, listener) in listeners) {
                 listener.onBoundWitnessDiscovered(boundWitnessWithoutBlocks)
@@ -220,18 +217,42 @@ abstract class XyoOriginChainCreator (storageProvider : XyoStorageProviderInterf
         throw XyoBoundWitnessCreationException("Can not read choice.")
     }
 
-    suspend fun doBoundWitness (startingData : ByteArray?, pipe: XyoNetworkPipe) {
-        if (currentBoundWitnessSession != null) return
+    fun boundWitness (handler: XyoNetworkHandler, procedureCatalogue: XyoNetworkProcedureCatalogueInterface): Deferred<XyoBoundWitness?> = GlobalScope.async {
+        if (currentBoundWitnessSession != null) {
+            onBoundWitnessEndFailure(XyoBoundWitnessCreationException("Bound witness is session"))
+            return@async null
+        }
+
         onBoundWitnessStart()
 
-        val choice = getChoice(getEncodedChoice(pipe.peer.getRole()), startingData == null)
+        if (handler.pipe.initiationData == null) {
+            // is client
+
+            val responseWithChoice = handler.sendCataloguePacket(procedureCatalogue.getEncodedCanDo()).await()
+
+            if (responseWithChoice == null) {
+                onBoundWitnessEndFailure(XyoBoundWitnessCreationException("Response is null"))
+                return@async null
+            }
+
+            val adv = XyoChoicePacket(responseWithChoice)
+            val startingData = createStartingData(adv.getResponse())
+        }
+
+        return@async null
+    }
+
+    private suspend fun doBoundWitnessWithPipe (pipe: XyoNetworkPipe,
+                                                startingData: XyoIterableObject?,
+                                                choice: ByteArray): XyoBoundWitness? {
+
         val options = getBoundWitnessOptions(choice).await()
 
         currentBoundWitnessSession = XyoZigZagBoundWitnessSession(
                 pipe,
                 makeSignedPayload(options.toTypedArray()).await(),
                 makeUnsignedPayload(options.toTypedArray()).await(),
-                originState.getSigners(),
+                originState.signers,
                 ByteBuffer.allocate(4).putInt(choice).array()
         )
 
@@ -245,11 +266,12 @@ abstract class XyoOriginChainCreator (storageProvider : XyoStorageProviderInterf
             updateOriginState(currentBoundWitnessSession!!).await()
             onBoundWitnessEndSuccess(currentBoundWitnessSession!!).await()
             currentBoundWitnessSession = null
-            return
+            return null
         }
 
         onBoundWitnessEndFailure(error)
         currentBoundWitnessSession = null
+        return null
     }
 
     private fun createStartingData (startingData : ByteArray?) : XyoIterableObject? {
