@@ -4,7 +4,6 @@ group = 'com.github.XYOracleNetwork'
 
 sourceCompatibility = 1.8
 
-
 buildscript {
     repositories {
         mavenCentral()
