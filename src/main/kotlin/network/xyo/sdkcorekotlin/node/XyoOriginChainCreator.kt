@@ -260,7 +260,7 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
             updateOriginState(currentBoundWitnessSession!!).await()
             onBoundWitnessEndSuccess(currentBoundWitnessSession!!).await()
             currentBoundWitnessSession = null
-            return currentBoundWitnessSession
+            return bw
         }
 
         onBoundWitnessEndFailure(error)
