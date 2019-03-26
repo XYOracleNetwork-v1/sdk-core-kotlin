@@ -1,4 +1,4 @@
-package network.xyo.sdkcorekotlin.origin
+package network.xyo.sdkcorekotlin.persist.repositories
 
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
@@ -6,7 +6,8 @@ import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
-import network.xyo.sdkcorekotlin.persist.XyoStorageProviderInterface
+import network.xyo.sdkcorekotlin.persist.XyoStorageProvider
+import network.xyo.sdkcorekotlin.repositories.XyoOriginBlockRepository
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
 
@@ -18,7 +19,7 @@ import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
  * to persist.
  * @property hashingObject The hashing provider object to hash origin blocks when storing.
  */
-open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoStorageProviderInterface,
+open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoStorageProvider,
                                            protected val hashingObject: XyoHash.XyoHashProvider) : XyoOriginBlockRepository {
 
     override fun removeOriginBlock(originBlockHash: XyoBuff) = GlobalScope.async {

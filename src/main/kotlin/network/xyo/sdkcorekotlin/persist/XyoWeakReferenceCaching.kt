@@ -6,11 +6,11 @@ import kotlinx.coroutines.async
 import java.util.*
 
 /**
- * A XyoStorageProviderInterface that uses weak references to add a caching layer.
+ * A XyoStorageProvider that uses weak references to add a caching layer.
  *
  * @property layerToAddCacheTo The layer to cache on top of.
  */
-class XyoWeakReferenceCaching (private val layerToAddCacheTo : XyoStorageProviderInterface) : XyoStorageProviderInterface {
+class XyoWeakReferenceCaching (private val layerToAddCacheTo : XyoStorageProvider) : XyoStorageProvider {
     private val cache = WeakHashMap<Int, ByteArray>()
 
     override fun write(key: ByteArray, value: ByteArray) : Deferred<Unit> = GlobalScope.async {

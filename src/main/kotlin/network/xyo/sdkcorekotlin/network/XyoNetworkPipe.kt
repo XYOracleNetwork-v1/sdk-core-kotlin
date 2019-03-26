@@ -5,16 +5,12 @@ import kotlinx.coroutines.Deferred
 /**
  * A network abstraction to communicate with another peer.
  */
-abstract class XyoNetworkPipe {
-    /**
-     * The peer at the other end of the pipe.
-     */
-    abstract val peer : XyoNetworkPeer
+interface  XyoNetworkPipe {
 
     /**
      * The data that was sent when the pipe was created.
      */
-    abstract val initiationData : ByteArray?
+    val initiationData : XyoAdvertisePacket?
 
     /**
      * Send data to the other end of the peer.
@@ -22,10 +18,10 @@ abstract class XyoNetworkPipe {
      * @param data The data to send to the other peer.
      * @return A deferred response from the other peer.
      */
-    abstract fun send (data : ByteArray, waitForResponse : Boolean) : Deferred<ByteArray?>
+    fun send (data : ByteArray, waitForResponse : Boolean) : Deferred<ByteArray?>
 
     /**
      * Closes the pipe.
      */
-    abstract fun close() : Deferred<Any?>
+    fun close() : Deferred<Any?>
 }

@@ -1,13 +1,12 @@
-package network.xyo.sdkcorekotlin.origin
+package network.xyo.sdkcorekotlin.repositories
 
 import kotlinx.coroutines.Deferred
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
 import network.xyo.sdkcorekotlin.persist.XyoStorageException
-import network.xyo.sdkcorekotlin.queries.XyoGetOriginBlockByHash
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 
 
-interface XyoOriginBlockRepository : XyoGetOriginBlockByHash {
+interface XyoOriginBlockRepository {
     /**
      * Removes an origin block from the navigator and from persist
      *
@@ -26,7 +25,7 @@ interface XyoOriginBlockRepository : XyoGetOriginBlockByHash {
      * @throws XyoStorageException if there is an error reading.
      */
     @Throws(XyoStorageException::class)
-    fun containsOriginBlock (originBlockHash: XyoBuff) : Deferred<Boolean?>
+    fun containsOriginBlock (originBlockHash: XyoBuff) : Deferred<Boolean>
 
     /**
      * Gets all of the origin blocks in persist.
@@ -46,4 +45,7 @@ interface XyoOriginBlockRepository : XyoGetOriginBlockByHash {
      */
     @Throws(XyoStorageException::class)
     fun addBoundWitness (originBlock : XyoBoundWitness) : Deferred<Unit>
+
+    @Throws(XyoStorageException::class)
+    fun getOriginBlockByBlockHash(originBlockHash: ByteArray): Deferred<XyoBoundWitness?>
 }
