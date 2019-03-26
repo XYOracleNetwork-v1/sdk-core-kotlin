@@ -88,7 +88,8 @@ class XyoStorageOriginStateRepository (private val store: XyoStorageProvider) : 
         store.write(ORIGIN_STATICS_KEY, encodedStatics.bytesCopy).await()
     }
 
-    fun restore () = GlobalScope.async {
+    fun restore (signers: ArrayList<XyoSigner>) = GlobalScope.async {
+        signersCache = signers
         val encodedIndex = store.read(ORIGIN_STATE_INDEX_KEY).await()
         val encodedHash = store.read(ORIGIN_HASH_INDEX_KEY).await()
         val encodedStaticts = store.read(ORIGIN_STATICS_KEY).await()
