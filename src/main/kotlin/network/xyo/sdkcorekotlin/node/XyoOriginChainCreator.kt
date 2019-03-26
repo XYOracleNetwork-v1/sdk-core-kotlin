@@ -240,13 +240,15 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
         val signedPayload = makeSignedPayload().await()
         signedPayload.addAll(payloads.signedOptions)
 
-        currentBoundWitnessSession = XyoZigZagBoundWitnessSession(
+        val bw = XyoZigZagBoundWitnessSession(
                 handler,
                 signedPayload.toTypedArray(),
                 payloads.unsignedOptions,
                 originState.signers,
                 choice
         )
+
+        currentBoundWitnessSession = bw
 
         val error = currentBoundWitnessSession?.doBoundWitness(startingData)
         handler.pipe.close().await()
@@ -258,7 +260,7 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
             updateOriginState(currentBoundWitnessSession!!).await()
             onBoundWitnessEndSuccess(currentBoundWitnessSession!!).await()
             currentBoundWitnessSession = null
-            return null
+            return currentBoundWitnessSession
         }
 
         onBoundWitnessEndFailure(error)
