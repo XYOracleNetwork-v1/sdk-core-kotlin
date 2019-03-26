@@ -74,6 +74,7 @@ open class XyoBridgeQueue (val repo: XyoBridgeQueueRepository) {
         }
 
         repo.removeQueueItems(toRemoveHashes.toTypedArray())
+
         return toRemoveHashes.toTypedArray()
 
     }

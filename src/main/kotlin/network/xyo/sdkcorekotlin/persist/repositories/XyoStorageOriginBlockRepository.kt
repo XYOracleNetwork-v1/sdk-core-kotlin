@@ -86,7 +86,7 @@ open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoSto
 
         if (currentIndex != null) {
             for (hash in currentIndex) {
-                if (!hash.valueCopy.contentEquals(blockHash)) {
+                if (!hash.bytesCopy.contentEquals(blockHash)) {
                     newIndex.add(hash)
                 }
             }
