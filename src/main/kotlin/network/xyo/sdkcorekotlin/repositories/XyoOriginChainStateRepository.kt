@@ -12,7 +12,7 @@ interface XyoOriginChainStateRepository {
     fun getSigners(): Array<XyoSigner>
     fun removeOldestSigner()
     fun putSigner(signer: XyoSigner)
-    fun getStaticts(): Array<XyoBuff>
+    fun getStatics(): Array<XyoBuff>
     fun setStaticts (statics: Array<XyoBuff>)
     fun onBoundWitness ()
     fun getLastBoundWitnessTime () : Long?

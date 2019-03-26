@@ -14,6 +14,7 @@ class XyoNetworkHandler (val pipe: XyoNetworkPipe) {
         val buffer = ByteBuffer.allocate(catalogue.size + response.size + 1)
                 .put(getSizeEncodedCatalogue(catalogue))
                 .put(response)
+                .array()
         return pipe.send(buffer, false)
     }
 

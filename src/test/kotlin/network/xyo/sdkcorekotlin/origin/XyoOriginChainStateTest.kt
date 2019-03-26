@@ -7,6 +7,9 @@ import network.xyo.sdkcorekotlin.boundWitness.XyoZigZagBoundWitness
 import network.xyo.sdkcorekotlin.crypto.signing.ecdsa.secp256k.XyoSha256WithSecp256K
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.hashing.XyoSha3
+import network.xyo.sdkcorekotlin.persist.XyoInMemoryStorageProvider
+import network.xyo.sdkcorekotlin.persist.repositories.XyoStorageOriginBlockRepository
+import network.xyo.sdkcorekotlin.persist.repositories.XyoStorageOriginStateRepository
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
@@ -17,7 +20,9 @@ import java.nio.ByteBuffer
 class XyoOriginChainStateTest : XyoTestBase() {
     private val numberOfBlocks = 10
     private val hashCreator = XyoSha3
-    private val originChainState = XyoOriginChainStateManager(0)
+    private val storage = XyoInMemoryStorageProvider()
+    private val repo = XyoStorageOriginStateRepository(storage)
+    private val originChainState = XyoOriginChainStateManager(repo)
     private var lastHash : XyoHash? = null
     private var nextKey : XyoBuff? = null
 
@@ -47,7 +52,7 @@ class XyoOriginChainStateTest : XyoTestBase() {
                 }
 
                 val aliceBoundWitness = XyoZigZagBoundWitness(
-                        originChainState.getSigners(),
+                        originChainState.signers,
                         elementsInSignedPayload.toTypedArray(),
                         elementsInUnsignedPayload
                 )

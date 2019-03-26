@@ -5,10 +5,10 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
 import network.xyo.sdkcorekotlin.hashing.XyoHash
-import network.xyo.sdkcorekotlin.persist.XyoStorageProviderInterface
+import network.xyo.sdkcorekotlin.persist.XyoStorageProvider
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 
-open class XyoIndexableOriginBlockRepository(storageProviderInterface: XyoHash.XyoHashProvider, hashingProviderInterface: XyoStorageProviderInterface) : XyoStorageOriginBlockRepository(hashingProviderInterface, storageProviderInterface) {
+open class XyoIndexableOriginBlockRepository(storageProviderInterface: XyoHash.XyoHashProvider, hashingProviderInterface: XyoStorageProvider) : XyoStorageOriginBlockRepository(hashingProviderInterface, storageProviderInterface) {
     private val indexers = HashMap<String, XyoOriginBlockIndexerInterface>()
 
     fun addIndexer(key: String, indexer: XyoOriginBlockIndexerInterface) {

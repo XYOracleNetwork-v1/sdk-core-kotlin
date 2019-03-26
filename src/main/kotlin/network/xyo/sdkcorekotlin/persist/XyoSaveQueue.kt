@@ -8,7 +8,7 @@ import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
 import java.nio.ByteBuffer
 
-class XyoSaveQueue(private val storageProvider: XyoStorageProviderInterface) {
+class XyoSaveQueue(private val storageProvider: XyoStorageProvider) {
     fun saveKeys(keys: Array<XyoBuff>) = GlobalScope.async {
         storageProvider.write(
                 KEYS_KEY.toByteArray(),

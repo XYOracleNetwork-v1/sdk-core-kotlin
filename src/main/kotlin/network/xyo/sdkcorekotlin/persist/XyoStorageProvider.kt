@@ -3,11 +3,11 @@ package network.xyo.sdkcorekotlin.persist
 import kotlinx.coroutines.Deferred
 
 /**
- * A XyoStorageProviderInterface is meant to provide a persistence layer. It abstracts exactly
+ * A XyoStorageProvider is meant to provide a persistence layer. It abstracts exactly
  * how that is done. This could be in-memory persist or some disk strategy. It aims to persist data
  * in anon-volatile way.
  */
-interface XyoStorageProviderInterface {
+interface XyoStorageProvider {
     /**
      * Writes to the persist.
      *

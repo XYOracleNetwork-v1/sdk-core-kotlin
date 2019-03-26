@@ -6,7 +6,6 @@ import network.xyo.sdkcorekotlin.schemas.XyoSchemas.NEXT_PUBLIC_KEY
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
 import network.xyo.sdkcorekotlin.repositories.XyoOriginChainStateRepository
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
-import network.xyo.sdkcorekotlin.schemas.XyoSchemas.PREVIOUS_HASH
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
 import java.nio.ByteBuffer
@@ -18,7 +17,7 @@ open class XyoOriginChainStateManager (val repo: XyoOriginChainStateRepository) 
     var nextPublicKey : XyoBuff? = null
 
     val statics: Array<XyoBuff>
-        get() = repo.getStaticts()
+        get() = repo.getStatics()
 
     val index : XyoBuff
         get() = repo.getIndex() ?: XyoBuff.newInstance(INDEX, ByteBuffer.allocate(4).putInt(0).array())

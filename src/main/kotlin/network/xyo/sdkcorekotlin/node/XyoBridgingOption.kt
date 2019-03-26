@@ -1,16 +1,11 @@
 package network.xyo.sdkcorekotlin.node
 
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
 import network.xyo.sdkcorekotlin.network.XyoProcedureCatalogue
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
-import network.xyo.sdkcorekotlin.persist.XyoStorageProviderInterface
 import network.xyo.sdkcorekotlin.repositories.XyoOriginBlockRepository
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
-import java.lang.ref.WeakReference
 
 /**
  * A bound witness options where when the XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN flag is set will call the bridge queue
@@ -25,7 +20,7 @@ open class XyoBridgingOption (private val originBlocks: XyoOriginBlockRepository
 
     private var blocksInTransit : Array<XyoBridgeQueueItem> = arrayOf()
 
-    override val flag: Int = XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN
+    override val flag: ByteArray = byteArrayOf(XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN.toByte())
 
     override fun onCompleted(boundWitness: XyoBoundWitness?) {
         if (boundWitness != null) {

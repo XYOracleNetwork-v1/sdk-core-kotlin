@@ -10,7 +10,7 @@ interface  XyoNetworkPipe {
     /**
      * The data that was sent when the pipe was created.
      */
-    val initiationData : ByteArray?
+    val initiationData : XyoAdvertisePacket?
 
     /**
      * Send data to the other end of the peer.
