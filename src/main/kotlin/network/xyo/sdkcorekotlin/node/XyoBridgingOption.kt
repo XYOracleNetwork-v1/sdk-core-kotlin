@@ -20,7 +20,7 @@ open class XyoBridgingOption (private val originBlocks: XyoOriginBlockRepository
 
     private var blocksInTransit : Array<XyoBridgeQueueItem> = arrayOf()
 
-    override val flag: ByteArray = byteArrayOf(XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN.toByte())
+    override val flag: ByteArray = byteArrayOf(XyoProcedureCatalogue.TAKE_ORIGIN_CHAIN.toByte())
 
     override fun onCompleted(boundWitness: XyoBoundWitness?) {
         if (boundWitness != null) {
@@ -32,6 +32,7 @@ open class XyoBridgingOption (private val originBlocks: XyoOriginBlockRepository
         blocksInTransit = bridgeQueue.getBlocksToBridge()
         val blocksToSend = ArrayList<XyoBoundWitness>()
         val blockHashesToSend = ArrayList<XyoBuff>()
+
 
         for (block in blocksInTransit) {
             val boundWitness = originBlocks.getOriginBlockByBlockHash(block.hash.bytesCopy).await()
@@ -48,6 +49,7 @@ open class XyoBridgingOption (private val originBlocks: XyoOriginBlockRepository
 
             return XyoBoundWitnessPair(hashSet, blockSet)
         }
+
 
         return null
     }

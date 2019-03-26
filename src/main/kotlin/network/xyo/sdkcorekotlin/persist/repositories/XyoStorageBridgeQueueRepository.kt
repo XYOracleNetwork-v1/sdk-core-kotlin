@@ -52,11 +52,11 @@ class XyoStorageBridgeQueueRepository (private val store: XyoStorageProvider) : 
 
     override fun incrementWeights (hashes: Array<XyoBuff>) {
         for (hash in hashes) {
-            val indexToRemove = queueCache.indexOfFirst { cachedItem ->
+            val indexToAdd = queueCache.indexOfFirst { cachedItem ->
                 return@indexOfFirst cachedItem.hash.bytesCopy.contentEquals(hash.bytesCopy)
             }
 
-            queueCache.removeAt(indexToRemove)
+            queueCache[indexToAdd].weight += 1
         }
     }
 

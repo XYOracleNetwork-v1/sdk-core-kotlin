@@ -15,6 +15,7 @@ import network.xyo.sdkcorekotlin.repositories.XyoOriginBlockRepository
 import network.xyo.sdkcorekotlin.repositories.XyoOriginChainStateRepository
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
+import network.xyo.sdkobjectmodelkotlin.objects.toHexString
 import java.nio.ByteBuffer
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -83,11 +84,10 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
      * @param flag The optional flag to use when self signing.
      */
     fun selfSignOriginChain () : Deferred<Unit> = GlobalScope.async {
-        val options = getBoundWitnessOptions(byteArrayOf())
         val boundWitness = XyoZigZagBoundWitness(
                 originState.signers,
-                makeSignedPayload(options).await(),
-                makeUnsignedPayload(options).await()
+                makeSignedPayload().await().toTypedArray(),
+                arrayOf()
         )
         boundWitness.incomingData(null, true).await()
         updateOriginState(boundWitness).await()
@@ -106,8 +106,8 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
 
         for (option in options) {
             val optionPayload = option.getPayload()
-            val unsignedPayload = optionPayload?.signedPayload
-            val signedPayload = optionPayload?.unsignedPayload
+            val unsignedPayload = optionPayload?.unsignedPayload
+            val signedPayload = optionPayload?.signedPayload
 
             if (unsignedPayload != null) {
                 unsignedPayloads.add(unsignedPayload)
@@ -223,6 +223,7 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
 
             val adv = XyoChoicePacket(responseWithChoice)
             val startingData = createStartingData(adv.getResponse())
+
             return@async doBoundWitnessWithPipe(handler, startingData, adv.getChoice())
         }
 
@@ -235,11 +236,14 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
                                                 choice: ByteArray): XyoBoundWitness? {
 
         val options = getBoundWitnessOptions(choice)
+        val payloads = getBoundWitnessOptionPayloads(options).await()
+        val signedPayload = makeSignedPayload().await()
+        signedPayload.addAll(payloads.signedOptions)
 
         currentBoundWitnessSession = XyoZigZagBoundWitnessSession(
                 handler,
-                makeSignedPayload(options).await(),
-                makeUnsignedPayload(options).await(),
+                signedPayload.toTypedArray(),
+                payloads.unsignedOptions,
                 originState.signers,
                 choice
         )
@@ -284,8 +288,7 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
         XyoLog.logSpecial("Updating Origin State. Awaiting Index: ${ByteBuffer.wrap(originState.index.valueCopy).int}", TAG)
     }
 
-    private fun makeSignedPayload (options: Array<XyoBoundWitnessOption>) = GlobalScope.async {
-        val payloads = getBoundWitnessOptionPayloads(options).await()
+    private fun makeSignedPayload (): Deferred<ArrayList<XyoBuff>> = GlobalScope.async {
         val signedPayloads = ArrayList<XyoBuff>(getHeuristics().asList())
         val previousHash = originState.previousHash
         val index = originState.index
@@ -300,19 +303,9 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
         }
 
         signedPayloads.add(index)
-        signedPayloads.addAll(payloads.signedOptions)
         signedPayloads.addAll(originState.statics)
 
-        return@async signedPayloads.toTypedArray()
-    }
-
-    private fun makeUnsignedPayload (options: Array<XyoBoundWitnessOption>) = GlobalScope.async {
-        val unsignedPayloads = ArrayList<XyoBuff>()
-        val payloads = getBoundWitnessOptionPayloads(options).await()
-
-        unsignedPayloads.addAll(payloads.unsignedOptions)
-
-        return@async unsignedPayloads.toTypedArray()
+        return@async signedPayloads
     }
 
     companion object {
