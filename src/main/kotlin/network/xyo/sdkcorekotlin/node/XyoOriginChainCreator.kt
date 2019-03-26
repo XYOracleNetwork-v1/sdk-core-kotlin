@@ -3,6 +3,7 @@ package network.xyo.sdkcorekotlin.node
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import network.xyo.sdkcorekotlin.XyoException
 import network.xyo.sdkcorekotlin.log.XyoLog
 import network.xyo.sdkcorekotlin.boundWitness.*
 import network.xyo.sdkcorekotlin.hashing.XyoHash
@@ -14,6 +15,7 @@ import network.xyo.sdkcorekotlin.schemas.XyoSchemas.BRIDGE_BLOCK_SET
 import network.xyo.sdkcorekotlin.repositories.XyoOriginBlockRepository
 import network.xyo.sdkcorekotlin.repositories.XyoOriginChainStateRepository
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
+import network.xyo.sdkobjectmodelkotlin.exceptions.XyoObjectException
 import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
 import network.xyo.sdkobjectmodelkotlin.objects.toHexString
 import java.nio.ByteBuffer
@@ -204,31 +206,39 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
     }
 
     fun boundWitness (handler: XyoNetworkHandler, procedureCatalogue: XyoNetworkProcedureCatalogueInterface): Deferred<XyoBoundWitness?> = GlobalScope.async {
-        if (currentBoundWitnessSession != null) {
-            onBoundWitnessEndFailure(XyoBoundWitnessCreationException("Bound witness is session"))
-            return@async null
-        }
-
-        onBoundWitnessStart()
-
-        if (handler.pipe.initiationData == null) {
-            // is client
-
-            val responseWithChoice = handler.sendCataloguePacket(procedureCatalogue.getEncodedCanDo()).await()
-
-            if (responseWithChoice == null) {
-                onBoundWitnessEndFailure(XyoBoundWitnessCreationException("Response is null"))
+        try {
+            if (currentBoundWitnessSession != null) {
+                onBoundWitnessEndFailure(XyoBoundWitnessCreationException("Bound witness is session"))
                 return@async null
             }
 
-            val adv = XyoChoicePacket(responseWithChoice)
-            val startingData = createStartingData(adv.getResponse())
+            onBoundWitnessStart()
 
-            return@async doBoundWitnessWithPipe(handler, startingData, adv.getChoice())
+            if (handler.pipe.initiationData == null) {
+                // is client
+
+                val responseWithChoice = handler.sendCataloguePacket(procedureCatalogue.getEncodedCanDo()).await()
+
+                if (responseWithChoice == null) {
+                    onBoundWitnessEndFailure(XyoBoundWitnessCreationException("Response is null"))
+                    return@async null
+                }
+
+                val adv = XyoChoicePacket(responseWithChoice)
+                val startingData = createStartingData(adv.getResponse())
+
+                return@async doBoundWitnessWithPipe(handler, startingData, adv.getChoice())
+            }
+
+            val choice = procedureCatalogue.choose(handler.pipe.initiationData!!.getChoice())
+            return@async doBoundWitnessWithPipe(handler, null, choice)
+        } catch (e: XyoObjectException) {
+            onBoundWitnessEndFailure(e)
+        } catch (e: XyoException) {
+            onBoundWitnessEndFailure(e)
         }
 
-        val choice = procedureCatalogue.choose(handler.pipe.initiationData!!.getChoice())
-        return@async doBoundWitnessWithPipe(handler, null, choice)
+        return@async null
     }
 
     private suspend fun doBoundWitnessWithPipe (handler: XyoNetworkHandler,
@@ -239,6 +249,7 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
         val payloads = getBoundWitnessOptionPayloads(options).await()
         val signedPayload = makeSignedPayload().await()
         signedPayload.addAll(payloads.signedOptions)
+        signedPayload.addAll(handler.pipe.getNetworkHeretics())
 
         val bw = XyoZigZagBoundWitnessSession(
                 handler,

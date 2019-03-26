@@ -11,6 +11,4 @@ interface XyoNetworkProcedureCatalogueInterface {
     fun getEncodedCanDo() : ByteArray
 
     fun choose (byteArray: ByteArray): ByteArray
-
-    fun getNetworlHuerestics (): Array<XyoBuff>
 }

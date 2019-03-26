@@ -32,10 +32,6 @@ class XyoTcpPipeTest : XyoTestBase( ){
         override fun getEncodedCanDo(): ByteArray {
             return byteArrayOf(0x00, 0x00, 0x00, XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN.toByte())
         }
-
-        override fun getNetworlHuerestics(): Array<XyoBuff> {
-            return arrayOf()
-        }
     }
 
     @Test

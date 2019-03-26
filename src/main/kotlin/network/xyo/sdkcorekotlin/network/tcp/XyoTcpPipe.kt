@@ -7,6 +7,7 @@ import kotlinx.coroutines.withTimeout
 import network.xyo.sdkcorekotlin.log.XyoLog
 import network.xyo.sdkcorekotlin.network.XyoAdvertisePacket
 import network.xyo.sdkcorekotlin.network.XyoNetworkPipe
+import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.objects.toHexString
 import java.io.DataInputStream
 import java.io.DataOutputStream
@@ -35,6 +36,10 @@ open class XyoTcpPipe(private val socket: Socket,
             return@async null
         }
         return@async null
+    }
+
+    override fun getNetworkHeretics(): Array<XyoBuff> {
+        return arrayOf()
     }
 
     override fun send(data: ByteArray, waitForResponse: Boolean) = GlobalScope.async {
