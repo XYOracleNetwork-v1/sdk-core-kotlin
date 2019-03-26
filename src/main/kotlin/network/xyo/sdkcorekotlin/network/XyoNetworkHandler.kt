@@ -15,7 +15,7 @@ class XyoNetworkHandler (val pipe: XyoNetworkPipe) {
                 .put(getSizeEncodedCatalogue(catalogue))
                 .put(response)
                 .array()
-        return pipe.send(buffer, false)
+        return pipe.send(buffer, true)
     }
 
     private fun getSizeEncodedCatalogue (catalogue: ByteArray): ByteArray {
