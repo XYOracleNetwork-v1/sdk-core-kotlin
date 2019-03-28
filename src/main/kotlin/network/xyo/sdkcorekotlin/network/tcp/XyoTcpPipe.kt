@@ -71,6 +71,11 @@ open class XyoTcpPipe(private val socket: Socket,
                 val size = ByteArray(4)
                 inStream.readFully(size, 0, size.size)
                 XyoLog.logDebug("Waiting to read size ${ByteBuffer.wrap(size).int - 4} ${size.toHexString()}", TAG)
+
+                if ((ByteBuffer.wrap(size).int - 4) > (MAX_READ_SIZE_K_BYTES * 1024)) {
+                    return@async null
+                }
+                
                 val message = ByteArray(ByteBuffer.wrap(size).int - 4)
                 inStream.readFully(message, 0, message.size)
 
@@ -91,6 +96,7 @@ open class XyoTcpPipe(private val socket: Socket,
     }
 
     companion object {
+        const val MAX_READ_SIZE_K_BYTES = 200
         const val NO_RESPONSE_TIMEOUT = 3_000
         const val TAG = "TCP"
     }
