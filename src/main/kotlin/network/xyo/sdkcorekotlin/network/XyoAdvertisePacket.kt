@@ -11,6 +11,6 @@ class XyoAdvertisePacket (val bytes : ByteArray) {
             throw XyoObjectException("Invalid choice! XyoAdvertisePacket")
         }
 
-        return bytes.copyOfRange(1, sizeOfChoice - 1)
+        return bytes.copyOfRange(1, sizeOfChoice + 1)
     }
 }
