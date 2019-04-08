@@ -256,7 +256,7 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
                 signedPayload.toTypedArray(),
                 payloads.unsignedOptions,
                 originState.signers,
-                choice
+                XyoProcedureCatalogue.flip(choice)
         )
 
         currentBoundWitnessSession = bw
