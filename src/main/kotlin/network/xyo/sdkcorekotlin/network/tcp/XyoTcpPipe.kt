@@ -75,7 +75,7 @@ open class XyoTcpPipe(private val socket: Socket,
                 if ((ByteBuffer.wrap(size).int - 4) > (MAX_READ_SIZE_K_BYTES * 1024)) {
                     return@async null
                 }
-                
+
                 val message = ByteArray(ByteBuffer.wrap(size).int - 4)
                 inStream.readFully(message, 0, message.size)
 

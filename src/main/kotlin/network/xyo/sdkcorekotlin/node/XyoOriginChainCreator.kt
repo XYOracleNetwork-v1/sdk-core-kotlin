@@ -230,7 +230,7 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
                 return@async doBoundWitnessWithPipe(handler, startingData, adv.getChoice())
             }
 
-            val choice = procedureCatalogue.choose(handler.pipe.initiationData!!.getChoice())
+            val choice = procedureCatalogue.choose(XyoProcedureCatalogue.flip(handler.pipe.initiationData!!.getChoice()))
             return@async doBoundWitnessWithPipe(handler, null, choice)
         } catch (e: XyoObjectException) {
             onBoundWitnessEndFailure(e)

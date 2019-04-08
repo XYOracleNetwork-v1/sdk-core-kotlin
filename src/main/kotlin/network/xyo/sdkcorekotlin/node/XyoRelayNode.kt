@@ -44,21 +44,6 @@ open class XyoRelayNode (blockRepository: XyoOriginBlockRepository,
         override fun onBoundWitnessStart() {}
     }
 
-
-//    private fun canDo (catalog: Int, item : Int) : Boolean {
-//        return catalog and item == item
-//                && procedureCatalogue.canDo(ByteBuffer.allocate(4).putInt(item).array())
-//    }
-//
-//    override fun getChoice(catalog: Int, strict: Boolean): Int {
-//        if (canDo(XyoProcedureCatalogue.TAKE_ORIGIN_CHAIN, catalog)) {
-//            return  XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN
-//        } else if (canDo(XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN, catalog)) {
-//            return XyoProcedureCatalogue.TAKE_ORIGIN_CHAIN
-//        }
-//        return XyoProcedureCatalogue.BOUND_WITNESS
-//    }
-
     init {
         addListener(this.toString(), mainBoundWitnessListener)
         addBoundWitnessOption("BRIDGE_OPTION", selfToOtherQueue)

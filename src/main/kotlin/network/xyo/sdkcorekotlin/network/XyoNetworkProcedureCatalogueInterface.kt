@@ -1,7 +1,5 @@
 package network.xyo.sdkcorekotlin.network
 
-import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
-
 /**
  * Used for advertising what a device can do and support
  */
