@@ -2,7 +2,6 @@ package network.xyo.sdkcorekotlin.schemas
 
 import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 
-
 object XyoSchemas {
     val ARRAY_TYPED = XyoObjectSchema.createFromHeader(byteArrayOf(         0xB0.toByte(),        1.toByte()))
     val ARRAY_UNTYPED =  XyoObjectSchema.createFromHeader(byteArrayOf(      0xA0.toByte(),        1.toByte()))
@@ -34,6 +33,7 @@ object XyoSchemas {
     val BW_FRAGMENT =  XyoObjectSchema.createFromHeader(byteArrayOf(        0xA0.toByte(),        27.toByte()))
     val LAT =  XyoObjectSchema.createFromHeader(byteArrayOf(                0x00.toByte(),        28.toByte()))
     val LNG =  XyoObjectSchema.createFromHeader(byteArrayOf(                0x00.toByte(),        29.toByte()))
+    val BLE_POWER_LVL = XyoObjectSchema.createFromHeader(byteArrayOf(       0x80.toByte(),        30.toByte()))
 
     val EC_PRIVATE_KEY = XyoObjectSchema.createFromHeader(byteArrayOf(      0x80.toByte(),        0xFF.toByte()))
     val RSA_PRIVATE_KEY = XyoObjectSchema.createFromHeader(byteArrayOf(     0x80.toByte(),        0xFF.toByte()))
