@@ -11,7 +11,7 @@ import java.math.BigInteger
 abstract class XyoEcPrivateKey : ECPrivateKey, XyoPrivateKey() {
 
     override fun getAlgorithm(): String {
-        return "EC"
+        return "ECDSA"
     }
 
     override fun getEncoded(): ByteArray {

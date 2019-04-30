@@ -1,26 +1,26 @@
 package network.xyo.sdkcorekotlin.node
 
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
-import network.xyo.sdkcorekotlin.network.XyoProcedureCatalogue
+import network.xyo.sdkcorekotlin.network.XyoProcedureCatalogFlags
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.repositories.XyoOriginBlockRepository
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
 
 /**
- * A bound witness options where when the XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN flag is set will call the bridge queue
+ * A bound witness options where when the XyoProcedureCatalogFlags.GIVE_ORIGIN_CHAIN flag is set will call the bridge queue
  * to get the latest bridge blocks.
  *
  * @property originBlocks Where the origin blocks are stored to get from the bridge queue. The bridge queue should provide
  * compatible keys.
- * @property bridgeQueue The queue to talk to when the XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN flag is set.
+ * @property bridgeQueue The queue to talk to when the XyoProcedureCatalogFlags.GIVE_ORIGIN_CHAIN flag is set.
  */
 open class XyoBridgingOption (private val originBlocks: XyoOriginBlockRepository,
                               private val bridgeQueue: XyoBridgeQueue): XyoBoundWitnessOption {
 
     private var blocksInTransit : Array<XyoBridgeQueueItem> = arrayOf()
 
-    override val flag: ByteArray = byteArrayOf(XyoProcedureCatalogue.TAKE_ORIGIN_CHAIN.toByte())
+    override val flag: ByteArray = byteArrayOf(XyoProcedureCatalogFlags.TAKE_ORIGIN_CHAIN.toByte())
 
     override fun onCompleted(boundWitness: XyoBoundWitness?) {
         if (boundWitness != null) {

@@ -62,39 +62,8 @@ abstract class XyoUncompressedEcPublicKey : ECPublicKey, XyoPublicKey() {
         val encodedPoint = point.toByteArray()
         if (encodedPoint.size == 32) {
             return encodedPoint
-        } else if (encodedPoint.size < 32) {
-            val biggerPoint = ByteArray(32)
-            val difference = biggerPoint.size - encodedPoint.size
-
-            for (i in 0 until biggerPoint.size) {
-                if (i > difference - 1) {
-                    biggerPoint[i] = encodedPoint[i - difference]
-                }
-            }
-
-            return biggerPoint
         }
+        
         return encodedPoint.copyOfRange(1, 33)
-    }
-
-    /**
-     * A base class for creating uncompressed EC public keys.
-     */
-    abstract class XyoUncompressedEcPublicKeyProvider : XyoInterpret {
-        /**
-         * The Java ECParameterSpec to understand the public key (x and y).
-         */
-        abstract val ecPramSpec : ECParameterSpec
-
-        override fun getInstance(byteArray: ByteArray): XyoUncompressedEcPublicKey {
-            return object : XyoUncompressedEcPublicKey() {
-                override val ecSpec: ECParameterSpec = ecPramSpec
-                override val allowedOffset: Int
-                    get() = 0
-
-                override var item: ByteArray = byteArray
-            }
-
-        }
     }
 }

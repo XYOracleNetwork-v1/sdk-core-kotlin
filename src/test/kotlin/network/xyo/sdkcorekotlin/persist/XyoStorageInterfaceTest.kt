@@ -7,7 +7,7 @@ import org.junit.Test
 
 class XyoStorageInterfaceTest : XyoTestBase() {
 
-    private fun testStorageInterface (storageProviderInterface: XyoStorageProvider) = runBlocking {
+    private fun testStorageInterface (storageProviderInterface: XyoKeyValueStore) = runBlocking {
         val keyOfItemOne = byteArrayOf(0x00)
         val valueOfItemTwo = byteArrayOf(0x13, 37)
 

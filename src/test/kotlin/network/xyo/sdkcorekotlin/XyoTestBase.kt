@@ -1,5 +1,13 @@
 package network.xyo.sdkcorekotlin
 
+import network.xyo.sdkcorekotlin.hashing.XyoBasicHashBase
+import network.xyo.sdkcorekotlin.node.XyoRelayNode
+import network.xyo.sdkcorekotlin.persist.XyoInMemoryStorageProvider
+import network.xyo.sdkcorekotlin.persist.repositories.XyoStorageBridgeQueueRepository
+import network.xyo.sdkcorekotlin.persist.repositories.XyoStorageOriginBlockRepository
+import network.xyo.sdkcorekotlin.persist.repositories.XyoStorageOriginStateRepository
+import network.xyo.sdkcorekotlin.schemas.XyoSchemas
+
 open class XyoTestBase {
     fun String.hexStringToByteArray() : ByteArray {
         val hexChars = "0123456789ABCDEF"
@@ -25,5 +33,15 @@ open class XyoTestBase {
         }
 
         return builder.toString()
+    }
+
+    fun createRelayNode (): XyoRelayNode {
+        val storage = XyoInMemoryStorageProvider()
+        val hasher = XyoBasicHashBase.createHashType(XyoSchemas.SHA_256, "SHA-256")
+        val blockRepo = XyoStorageOriginBlockRepository(storage, hasher)
+        val stateRepo = XyoStorageOriginStateRepository(storage)
+        val queueRepo = XyoStorageBridgeQueueRepository(storage)
+
+        return XyoRelayNode(blockRepo, stateRepo, queueRepo, hasher)
     }
 }

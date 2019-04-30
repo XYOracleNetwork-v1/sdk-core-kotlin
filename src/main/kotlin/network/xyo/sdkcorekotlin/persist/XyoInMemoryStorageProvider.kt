@@ -5,9 +5,9 @@ import kotlinx.coroutines.async
 import java.util.concurrent.ConcurrentHashMap
 
 /**
- * A simple in-memory persist implementation of the XyoStorageProvider.
+ * A simple in-memory persist implementation of the XyoKeyValueStore.
  */
-class XyoInMemoryStorageProvider : XyoStorageProvider {
+class XyoInMemoryStorageProvider : XyoKeyValueStore {
     private val keys = ArrayList<ByteArray>()
     private val storageHashMap = ConcurrentHashMap<Int, ByteArray>()
 

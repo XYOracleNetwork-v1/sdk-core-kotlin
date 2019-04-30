@@ -16,7 +16,7 @@ abstract class XyoRsaSignature : XyoBuff() {
         get() = 0
 
     override var item: ByteArray = byteArrayOf()
-        get() = XyoBuff.newInstance(XyoSchemas.RSA_SIGNATURE, signature).bytesCopy
+        get() = XyoBuff.newInstance(XyoSchemas.RSA_SIGNATURE, this@XyoRsaSignature.signature).bytesCopy
 
     /**
      * The base class for creating RSA Signatures.

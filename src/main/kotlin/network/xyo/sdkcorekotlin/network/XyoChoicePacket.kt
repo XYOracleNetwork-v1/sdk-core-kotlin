@@ -7,7 +7,7 @@ class XyoChoicePacket (private val bytes: ByteArray) {
     fun getChoice (): ByteArray {
         val size = getSizeOfChoice()
 
-        if (size + 1 > bytes.size) {
+        if (size + 1 > bytes.size && bytes.isNotEmpty()) {
             throw XyoObjectException("Invalid choice!")
         }
 
@@ -17,7 +17,7 @@ class XyoChoicePacket (private val bytes: ByteArray) {
     fun getResponse (): ByteArray {
         val size = getSizeOfChoice()
 
-        if (size > bytes.size) {
+        if (size > bytes.size && bytes.isNotEmpty()) {
             throw XyoObjectException("Invalid response!")
         }
 

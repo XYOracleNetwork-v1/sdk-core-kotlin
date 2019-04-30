@@ -3,6 +3,7 @@ package network.xyo.sdkcorekotlin.boundWitness
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import network.xyo.sdkcorekotlin.XyoException
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
@@ -171,6 +172,9 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
         transfer.toString()
 
         for (item in transfer.iterator) {
+            if (item.schema.id != XyoSchemas.FETTER.id && item.schema.id != XyoSchemas.WITNESS.id) {
+                throw XyoBoundWitnessCreationException("Item must be fetter or witness")
+            }
             dynamicLeader.add(item)
         }
     }
