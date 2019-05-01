@@ -4,92 +4,68 @@ import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas.INDEX
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas.NEXT_PUBLIC_KEY
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
+import network.xyo.sdkcorekotlin.repositories.XyoOriginChainStateRepository
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
-import network.xyo.sdkcorekotlin.schemas.XyoSchemas.PREVIOUS_HASH
-import network.xyo.sdkcorekotlin.schemas.XyoSchemas.STUB_HASH
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
 import java.nio.ByteBuffer
 
 
-/**
- * An implementation of the XyoOriginStateRepository.
- *
- * @property indexOffset This value is used to create a state manager where the index does not doBoundWitness
- * at 0. This is used when re-starting a origin chain.
- */
-open class XyoOriginChainStateManager (private val indexOffset : Int) : XyoOriginStateRepository {
-    private var currentSigners = ArrayList<XyoSigner>()
+
+open class XyoOriginChainStateManager (val repo: XyoOriginChainStateRepository) {
     private var waitingSigners = ArrayList<XyoSigner>()
-    private var latestHash : XyoBuff? = null
+    var nextPublicKey : XyoBuff? = null
 
-    constructor(indexOffset: Int, signers : Array<XyoSigner>, previousHash: XyoBuff): this(indexOffset) {
-        latestHash = previousHash
-        currentSigners = ArrayList(signers.toList())
+    val statics: Array<XyoBuff>
+        get() = repo.getStatics()
+
+    val index : XyoBuff
+        get() = repo.getIndex() ?: XyoBuff.newInstance(INDEX, ByteBuffer.allocate(4).putInt(0).array())
+
+    val previousHash : XyoBuff?
+        get() = repo.getPreviousHash()
+
+    val signers: Array<XyoSigner>
+        get() = repo.getSigners()
+
+    fun removeOldestSigner () {
+        repo.removeOldestSigner()
     }
 
-    /**
-     * The total number of elements since creation, NOT including the indexOffset.
-     * */
-    var count = 0
+    fun addSigner (signer : XyoSigner) {
+        val indexAsNumber = ByteBuffer.wrap(index.valueCopy).int
 
-    /**
-     * All of the hashes in the origin chain.
-     */
-    val allHashes = ArrayList<XyoHash>()
-
-    /**
-     * All of the public keys used in the origin chain.
-     */
-    val allPublicKeys = ArrayList<XyoBuff>()
-
-    var statics = ArrayList<XyoBuff>()
-
-    override var nextPublicKey : XyoBuff? = null
-
-    override val index : XyoBuff
-        get() = XyoBuff.newInstance(INDEX, ByteBuffer.allocate(4).putInt(count + indexOffset).array())
-
-    override val previousHash : XyoBuff?
-        get() {
-            val latestHashValue = latestHash
-            if (latestHashValue != null) {
-                return XyoIterableObject.createTypedIterableObject(XyoSchemas.PREVIOUS_HASH, arrayOf(latestHashValue))
-            }
-            return null
-        }
-
-
-    override fun getSigners () : Array<XyoSigner> {
-        return currentSigners.toTypedArray()
-    }
-
-    override fun addSigner (signer : XyoSigner) {
-        if (ByteBuffer.wrap(index.valueCopy).int == 0) {
-            currentSigners.add(signer)
+        if (indexAsNumber == 0) {
+            repo.putSigner(signer)
             return
         }
 
-        nextPublicKey = XyoBuff.newInstance(NEXT_PUBLIC_KEY, signer.publicKey.bytesCopy)
         waitingSigners.add(signer)
-        allPublicKeys.add(signer.publicKey)
+        nextPublicKey = XyoBuff.newInstance(NEXT_PUBLIC_KEY, signer.publicKey.bytesCopy)
     }
 
-    override fun removeOldestSigner () {
-        currentSigners.removeAt(0)
-    }
+    fun newOriginBlock (hash : XyoHash) {
+        val previousHash = XyoIterableObject.createTypedIterableObject(XyoSchemas.PREVIOUS_HASH, arrayOf(hash))
 
-    override fun newOriginBlock (hash : XyoHash) {
         nextPublicKey = null
-        allHashes.add(hash)
-        latestHash = hash
-        count++
         addWaitingSigner()
+        repo.putPreviousHash(previousHash)
+        incrementIndex()
+        repo.onBoundWitness()
+    }
+
+    private fun incrementIndex() {
+        val indexAsNumber = ByteBuffer.wrap(index.valueCopy).int
+        val nextIndex = XyoBuff.newInstance(
+                INDEX,
+                ByteBuffer.allocate(4).putInt(indexAsNumber + 1).array()
+        )
+        repo.putIndex(nextIndex)
     }
 
     private fun addWaitingSigner () {
         if (waitingSigners.size > 0) {
-            currentSigners.add(waitingSigners.first())
+            repo.putSigner(waitingSigners[0])
             waitingSigners.removeAt(0)
         }
     }

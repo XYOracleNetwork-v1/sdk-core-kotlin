@@ -1,4 +1,4 @@
-[logo]: https://www.xy.company/img/home/logo_xy.png
+[logo]: https://cdn.xy.company/img/brand/XY_Logo_GitHub.png
 
 ![logo]
 
@@ -11,15 +11,26 @@
 | Master      | [![](https://travis-ci.org/XYOracleNetwork/sdk-core-kotlin.svg?branch=master)](https://travis-ci.org/XYOracleNetwork/sdk-core-kotlin) |
 | Develop      | [![](https://travis-ci.org/XYOracleNetwork/sdk-core-kotlin.svg?branch=develop)](https://travis-ci.org/XYOracleNetwork/sdk-core-kotlin) |
 
-A library to preform all core XYO Network functions.
-This includes creating an origin chain, maintaining an origin chain, negotiations for talking to other nodes, and other basic functionality.
+## Library to preform all core XYO Network functions
+
+### Includes
+- Creating an origin chain
+- Maintaining an origin chain
+- Negotiations for talking to other nodes
+- Other basic functionality
+
 The library has heavily abstracted modules so that all operations will work with any crypto, storage, networking, ect.
 
+## XYO Origin-Block Protocol
+
 The XYO protocol for creating origin-blocks is specified in the [XYO Yellow Paper](https://docs.xyo.network/XYO-Yellow-Paper.pdf). In it, it describes the behavior of how a node on the XYO network should create Bound Witnesses. Note, the behavior is not coupled with any particular technology constraints around transport layers, cryptographic algorithms, or hashing algorithms.
+
+## Core Object Model
 
 [Here](https://github.com/XYOracleNetwork/spec-coreobjectmodel-tex) is a link to the core object model that contains an index of major/minor values and their respective objects.
 
 ## Installing
+
 You can add sdk-core-kotlin to your existing app by cloning the project and manually adding it to your build.gradle or by using JitPack.
 
 ### Build From Source
@@ -41,6 +52,7 @@ implementation project (':sdk-core-kotlin')
 ```
 
 ### Using JitPack
+
 #### With Gradle
 1. Point maven to `https://jitpack.io`
 ```gradle
@@ -59,7 +71,8 @@ dependencies {
 }
 ```
 
-#### With Maven
+### With Maven
+
 1. Point maven to `https://jitpack.io`
 ```maven
 <repositories>
@@ -79,7 +92,7 @@ dependencies {
 </dependency>
 ```
 
-## Building and Testing with Gralde
+## Building and Testing with Gradle
 
 **Building**
 Source ius located in /src/main/*
@@ -96,5 +109,4 @@ gradle test
 ## License
 This project is licensed under the MIT License - see the LICENSE.md file for details
 
-
-<br><hr><br><p align="center">Made with  ❤️  by [**XY - The Persistent Company**] (https://xy.company)</p>
+Made with  ❤️  by [**XY - The Persistent Company**](https://xy.company)

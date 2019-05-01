@@ -1,15 +1,13 @@
 package network.xyo.sdkcorekotlin.node
 
 import network.xyo.sdkcorekotlin.log.XyoLog
+import network.xyo.sdkcorekotlin.repositories.XyoBridgeQueueRepository
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 
 /**
  * A class to manage outgoing origin blocks for bridges and sentinels.
  */
-open class XyoBridgeQueue {
-    private var blocksToBridge = ArrayList<XyoBridgeQueueItem>()
-    private var removed = ArrayList<XyoBuff>()
-
+open class XyoBridgeQueue (val repo: XyoBridgeQueueRepository) {
     /**
      * The maximum number of blocks to send at a given time.
      */
@@ -26,8 +24,7 @@ open class XyoBridgeQueue {
      * @param blockHash The block to add.
      */
     fun addBlock (blockHash : XyoBuff) {
-        blocksToBridge.add(XyoBridgeQueueItem(blockHash, 0))
-        sortQueue()
+        addBlock(blockHash, 0)
     }
 
     /**
@@ -37,22 +34,8 @@ open class XyoBridgeQueue {
      * @param weight The weight to add the block to the queue with.
      */
     fun addBlock (blockHash : XyoBuff, weight : Int) {
-        blocksToBridge.add(XyoBridgeQueueItem(blockHash, weight))
-        sortQueue()
-    }
-
-    /**
-     * Will filter to queue for a given weight/mask. For example purgeQueue(1) will remove all
-     * blocks with a weight of 1 or higher.
-     *
-     * @param mask The weight to remove.
-     */
-    fun purgeQueue (mask : Int) {
-        for (block in blocksToBridge) {
-            if (block.weight >= mask) {
-                removed.add(block.boundWitnessHash)
-            }
-        }
+        val queueItem = XyoBridgeQueueItem(weight, blockHash)
+        repo.addQueueItem(queueItem)
     }
 
     /**
@@ -60,95 +43,39 @@ open class XyoBridgeQueue {
      *
      * @return An array of blocks to send to the bridge.
      */
-    fun getBlocksToBridge () : XyoBridgeJob {
-        sortQueue()
-
-        val toBridge = ArrayList<XyoBridgeQueueItem>()
-
-        for (i in 0 until Math.min(sendLimit, blocksToBridge.size)) {
-            XyoLog.logDebug("Bridging Block", TAG)
-            toBridge.add(blocksToBridge[i])
-        }
-
-        return XyoBridgeJob(toBridge.toTypedArray())
+    fun getBlocksToBridge () : Array<XyoBridgeQueueItem> {
+        return repo.getLowestWeight(sendLimit)
     }
 
-    private fun sortQueue () {
-        blocksToBridge.sort()
+    fun onBlocksBridges (blocks: Array<XyoBridgeQueueItem>) {
+        val hashes = ArrayList<XyoBuff>()
+
+        for (block in blocks) {
+            hashes.add(block.hash)
+        }
+
+        repo.incrementWeights(hashes.toTypedArray())
     }
 
     /**
      * Get the blocks that have exceeded the removeWeight and are out of the queue
      */
-    fun getToRemove () : Array<XyoBuff> {
-        val result = removed.toTypedArray()
-        removed.clear()
-        return result
-    }
+    fun getBlocksToRemove () : Array<XyoBuff> {
+        val blocksToBridge = repo.getQueue()
+        val toRemoveHashes = ArrayList<XyoBuff>()
 
-    fun setQueue (blocks : Array<XyoBuff>, weights: Array<Int>) {
-        blocksToBridge = ArrayList(Array(blocks.size) { i ->
-            XyoBridgeQueueItem(blocks[i], weights[i]) }.asList()
-        )
-    }
+        for (block in blocksToBridge) {
+            val hash = block.hash
+            val weight = block.weight
 
-    /**
-     * Get all block hashes in the origin block queue. This aligns with getAllBlocks()
-     *
-     * @return An array of origin block hashes
-     */
-    fun getAllBlocks () : Array<XyoBuff> {
-        return Array(blocksToBridge.size) { i -> blocksToBridge[i].boundWitnessHash }
-    }
-
-    /**
-     * Get all of the wrights in the queue. This aligns with getAllBlocks()
-     *
-     * @return an array of Ints that are the weights in the queue.
-     */
-    fun getAllWeights () : Array<Int> {
-        return Array(blocksToBridge.size) { i ->
-            blocksToBridge[i].weight
-        }
-    }
-
-    /**
-     * This object is returned from the function getBlocksToBridge()
-     *
-     * @param blocks The blocks to bridge
-     */
-    open inner class XyoBridgeJob (val blocks: Array<XyoBridgeQueueItem>) {
-
-        /**
-         * The function onSucceed() should be called if bridge job succeed
-         */
-        open fun onSucceed () {
-           for (block in blocks) {
-               block.weight++
-
-               if (block.weight >= removeWeight) {
-                   blocksToBridge.remove(block)
-                   removed.add(block.boundWitnessHash)
-               }
-           }
-        }
-    }
-
-    companion object {
-        class XyoBridgeQueueItem (val boundWitnessHash: XyoBuff, var weight: Int) : Comparable<XyoBridgeQueueItem> {
-            override fun compareTo(other: XyoBridgeQueueItem): Int {
-                return weight.compareTo(other.weight)
-            }
-
-            override fun equals(other: Any?): Boolean {
-                return boundWitnessHash.bytesCopy.contentEquals((other as XyoBridgeQueueItem).boundWitnessHash.bytesCopy)
-            }
-
-            override fun hashCode(): Int {
-                return boundWitnessHash.bytesCopy.contentHashCode()
+            if (weight >= removeWeight) {
+                toRemoveHashes.add(hash)
             }
         }
 
-        const val TAG = "BQU"
+        repo.removeQueueItems(toRemoveHashes.toTypedArray())
+
+        return toRemoveHashes.toTypedArray()
+
     }
 }

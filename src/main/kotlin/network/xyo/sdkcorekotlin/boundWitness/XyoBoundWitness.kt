@@ -3,7 +3,7 @@ package network.xyo.sdkcorekotlin.boundWitness
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import network.xyo.sdkcorekotlin.XyoFromSelf
+import network.xyo.sdkcorekotlin.schemas.XyoInterpret
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
@@ -11,7 +11,8 @@ import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
 
 /**
- * A Xyo Bound Witness Object
+ * A Bound Witness Object that is independent of origin state. This implements the cryptographic structure discussed
+ * in the XYO Network Yellow Paper, and White Paper.
  */
 abstract class XyoBoundWitness : XyoIterableObject() {
 
@@ -50,23 +51,35 @@ abstract class XyoBoundWitness : XyoIterableObject() {
         get() = getNumberOfParties(this)
 
     /**
+     * Gets the number of fetters in the current bound witness.
+     */
+    protected val numberOfFetters : Int
+        get() {
+            return this[XyoSchemas.FETTER.id].size
+        }
+
+    /**
+     * Gets the number of witnesses in the current bound witness.
+     */
+    protected val numberOfWitnesses : Int
+        get() {
+            return this[XyoSchemas.WITNESS.id].size
+        }
+
+    /**
      * Gets a fetter from a party in a bound witness.
      *
      * @param partyNum The index of the party in the bound witness.
      * @return The party's fetter. Will return null if out of index.
      */
     fun getFetterOfParty(partyNum : Int) : XyoIterableObject? {
-        val numOfParties = numberOfParties
+        val numOfParties = numberOfParties ?: return null
 
-        if (completed && numOfParties != null) {
-             if (numOfParties <= partyNum) {
-                 return null
-             }
-
-            return this[partyNum] as? XyoIterableObject
+        if (numOfParties <= partyNum) {
+            return null
         }
 
-        return null
+        return getBoundWitnessItemAtIndex(partyNum)
     }
 
     /**
@@ -76,15 +89,24 @@ abstract class XyoBoundWitness : XyoIterableObject() {
      * @return The party's witness. Will return null if out of index.
      */
     fun getWitnessOfParty(partyNum: Int) : XyoIterableObject? {
-        val numOfParties = numberOfParties
+        val numOfParties = numberOfParties ?: return null
 
-        if (completed && numOfParties != null) {
+        if (numOfParties <= partyNum) {
+            return null
+        }
 
-            if (numOfParties <= partyNum) {
-                return null
-            }
+        return getBoundWitnessItemAtIndex((numOfParties * 2) - (partyNum + 1))
+    }
 
-            return this[(numOfParties * 2) - (partyNum + 1)] as? XyoIterableObject
+    /**
+     * Gets party information for an index (should only be fetters or witnesses)
+     *
+     * @param posIndex The index to grab from.
+     * @return Will return null if the pos index is out of range or if the bound witness is incomplete.
+     */
+    fun getBoundWitnessItemAtIndex (posIndex : Int) : XyoIterableObject? {
+        if (completed) {
+            return this[posIndex] as? XyoIterableObject
         }
 
         return null
@@ -93,6 +115,7 @@ abstract class XyoBoundWitness : XyoIterableObject() {
     /**
      * Gets the signing data of the bound witness. This is all of the fetters.
      */
+
     internal val signingData : ByteArray
         get() = valueCopy.copyOfRange(0, witnessFetterBoundary)
 
@@ -145,7 +168,7 @@ abstract class XyoBoundWitness : XyoIterableObject() {
     }
 
 
-    companion object : XyoFromSelf {
+    companion object : XyoInterpret {
 
         /**
          * Gets a new instance of the bound witness from bytes.

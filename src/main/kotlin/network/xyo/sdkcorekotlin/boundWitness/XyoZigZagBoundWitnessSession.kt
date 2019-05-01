@@ -3,17 +3,15 @@ package network.xyo.sdkcorekotlin.boundWitness
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.log.XyoLog
-import network.xyo.sdkcorekotlin.exceptions.XyoBoundWitnessCreationException
-import network.xyo.sdkcorekotlin.exceptions.XyoException
-import network.xyo.sdkcorekotlin.network.XyoNetworkPipe
+import network.xyo.sdkcorekotlin.XyoException
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
+import network.xyo.sdkcorekotlin.network.XyoNetworkHandler
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.exceptions.XyoObjectException
 import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
-import java.nio.ByteBuffer
 
 
-class XyoZigZagBoundWitnessSession(private val pipe : XyoNetworkPipe,
+class XyoZigZagBoundWitnessSession(private val handler : XyoNetworkHandler,
                                    signedPayload : Array<XyoBuff>,
                                    unsignedPayload : Array<XyoBuff>,
                                    signers : Array<XyoSigner>,
@@ -34,7 +32,6 @@ class XyoZigZagBoundWitnessSession(private val pipe : XyoNetworkPipe,
                 }
             }
 
-            return null
         } catch (exception: XyoException) {
             XyoLog.logError("Bound witness creation error: $exception", TAG, exception)
             return exception
@@ -42,6 +39,8 @@ class XyoZigZagBoundWitnessSession(private val pipe : XyoNetworkPipe,
             XyoLog.logError("Bound witness creation error: $exception", TAG, exception)
             return exception
         }
+
+        return null
     }
 
     private fun sendAndReceive (didHaveData : Boolean, transfer : XyoIterableObject?) = GlobalScope.async {
@@ -49,13 +48,9 @@ class XyoZigZagBoundWitnessSession(private val pipe : XyoNetworkPipe,
         val returnData = incomingData(transfer, cycles == 0 && didHaveData).await()
 
         if (cycles == 0 && !didHaveData) {
-            val buffer = ByteBuffer.allocate(1 + choice.size + returnData.sizeBytes + 2)
-            buffer.put(choice.size.toByte())
-            buffer.put(choice)
-            buffer.put(returnData.bytesCopy)
-            response = pipe.send(buffer.array(), true).await() ?: throw XyoBoundWitnessCreationException("Response is null!")
+            response = handler.sendChoicePacket(choice, returnData.bytesCopy).await() ?: throw XyoBoundWitnessCreationException("Response is null!")
         } else {
-            response = pipe.send(returnData.bytesCopy, cycles == 0).await()
+            response = handler.pipe.send(returnData.bytesCopy, cycles == 0).await()
             if (cycles == 0 && response == null) throw XyoBoundWitnessCreationException("Response is null!")
         }
 

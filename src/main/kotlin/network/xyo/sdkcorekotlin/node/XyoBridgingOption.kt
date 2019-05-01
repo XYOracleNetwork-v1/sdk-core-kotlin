@@ -1,66 +1,56 @@
 package network.xyo.sdkcorekotlin.node
 
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
-import network.xyo.sdkcorekotlin.network.XyoProcedureCatalogue
+import network.xyo.sdkcorekotlin.network.XyoProcedureCatalogFlags
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
-import network.xyo.sdkcorekotlin.storage.XyoStorageProviderInterface
+import network.xyo.sdkcorekotlin.repositories.XyoOriginBlockRepository
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
-import java.lang.ref.WeakReference
 
 /**
- * A bound witness options where when the XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN flag is set will call the bridge queue
+ * A bound witness options where when the XyoProcedureCatalogFlags.GIVE_ORIGIN_CHAIN flag is set will call the bridge queue
  * to get the latest bridge blocks.
  *
  * @property originBlocks Where the origin blocks are stored to get from the bridge queue. The bridge queue should provide
  * compatible keys.
- * @property bridgeQueue The queue to talk to when the XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN flag is set.
+ * @property bridgeQueue The queue to talk to when the XyoProcedureCatalogFlags.GIVE_ORIGIN_CHAIN flag is set.
  */
-open class XyoBridgingOption (private val originBlocks: XyoStorageProviderInterface, private val bridgeQueue: XyoBridgeQueue): XyoBoundWitnessOption() {
-    private var hashOfOriginBlocks : XyoBuff? = null
-    private var currentBridgingOption : XyoBridgeQueue.XyoBridgeJob? = null
-    private var originBlocksToSend : WeakReference<XyoBuff?> = WeakReference(null)
+open class XyoBridgingOption (private val originBlocks: XyoOriginBlockRepository,
+                              private val bridgeQueue: XyoBridgeQueue): XyoBoundWitnessOption {
 
-    override val flag: Int = XyoProcedureCatalogue.GIVE_ORIGIN_CHAIN
+    private var blocksInTransit : Array<XyoBridgeQueueItem> = arrayOf()
 
-    override suspend fun getSignedPayload(): XyoBuff? {
-        updateOriginChain().await()
-        return hashOfOriginBlocks
-    }
-
-    override suspend fun getUnsignedPayload(): XyoBuff? {
-        return originBlocksToSend.get()
-    }
+    override val flag: ByteArray = byteArrayOf(XyoProcedureCatalogFlags.TAKE_ORIGIN_CHAIN.toByte())
 
     override fun onCompleted(boundWitness: XyoBoundWitness?) {
-        super.onCompleted(boundWitness)
-
         if (boundWitness != null) {
-            currentBridgingOption?.onSucceed()
+           bridgeQueue.onBlocksBridges(blocksInTransit)
         }
     }
 
-    private fun updateOriginChain() = GlobalScope.async {
-        val job = bridgeQueue.getBlocksToBridge()
-        currentBridgingOption = job
-        val blockHashes = Array(job.blocks.size) { i ->
-            job.blocks[i].boundWitnessHash
-        }
+    override suspend fun getPayload(): XyoBoundWitnessPair? {
+        blocksInTransit = bridgeQueue.getBlocksToBridge()
+        val blocksToSend = ArrayList<XyoBoundWitness>()
+        val blockHashesToSend = ArrayList<XyoBuff>()
 
-        val blocks = ArrayList<XyoBuff>()
-        hashOfOriginBlocks = XyoIterableObject.createTypedIterableObject(XyoSchemas.BRIDGE_HASH_SET, blockHashes)
 
-        if (hashOfOriginBlocks != null) {
-            for (hash in blockHashes) {
-                val blockEncoded = originBlocks.read(hash.bytesCopy).await()
-                if (blockEncoded != null) {
-                    blocks.add(XyoBoundWitness.getInstance(blockEncoded))
-                }
+        for (block in blocksInTransit) {
+            val boundWitness = originBlocks.getOriginBlockByBlockHash(block.hash.bytesCopy).await()
+
+            if (boundWitness != null) {
+                blocksToSend.add(boundWitness)
+                blockHashesToSend.add(block.hash)
             }
         }
 
-        originBlocksToSend = WeakReference(XyoIterableObject.createUntypedIterableObject(XyoSchemas.BRIDGE_BLOCK_SET, blocks.toTypedArray()))
+        if (blockHashesToSend.isNotEmpty()) {
+            val hashSet = XyoIterableObject.createTypedIterableObject(XyoSchemas.BRIDGE_HASH_SET, blockHashesToSend.toTypedArray())
+            val blockSet = XyoIterableObject.createUntypedIterableObject(XyoSchemas.BRIDGE_BLOCK_SET, blocksToSend.toTypedArray())
+
+            return XyoBoundWitnessPair(hashSet, blockSet)
+        }
+
+
+        return null
     }
 }
