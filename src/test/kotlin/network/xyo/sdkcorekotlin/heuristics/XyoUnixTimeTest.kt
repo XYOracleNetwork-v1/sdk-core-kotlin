@@ -12,5 +12,6 @@ class XyoUnixTimeTest : XyoTestBase() {
         val createdUnixTime = XyoUnixTime.getInstance(newUnixTime.bytesCopy)
 
         Assert.assertArrayEquals(newUnixTime.bytesCopy, createdUnixTime.bytesCopy)
+        Assert.assertEquals(createdUnixTime.time, (newUnixTime as XyoUnixTime).time)
     }
 }

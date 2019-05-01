@@ -7,7 +7,7 @@ class XyoAdvertisePacket (val bytes : ByteArray) {
     fun getChoice () : ByteArray {
         val sizeOfChoice = ByteBuffer.wrap(bytes)[0].toUInt().toInt()
 
-        if (sizeOfChoice > bytes.size) {
+        if (sizeOfChoice > bytes.size && bytes.isNotEmpty()) {
             throw XyoObjectException("Invalid choice! XyoAdvertisePacket")
         }
 

@@ -38,18 +38,6 @@ abstract class XyoBasicHashBase : XyoHash() {
         private fun hash(data: ByteArray): ByteArray {
             return MessageDigest.getInstance(standardDigestKey).digest(data)
         }
-
-        override fun getInstance(byteArray: ByteArray): XyoBuff {
-            return object : XyoBasicHashBase() {
-                override val allowedOffset: Int = 0
-
-                override var item: ByteArray = byteArray
-
-                override val hash: ByteArray
-                    get() = item.copyOfRange(2, item.size + 2)
-
-            }
-        }
     }
 
     companion object {

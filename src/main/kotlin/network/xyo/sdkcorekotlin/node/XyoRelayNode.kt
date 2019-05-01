@@ -3,7 +3,6 @@ package network.xyo.sdkcorekotlin.node
 import kotlinx.coroutines.runBlocking
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
 import network.xyo.sdkcorekotlin.hashing.XyoHash
-import network.xyo.sdkcorekotlin.persist.XyoStorageProvider
 import network.xyo.sdkcorekotlin.repositories.XyoBridgeQueueRepository
 import network.xyo.sdkcorekotlin.repositories.XyoOriginBlockRepository
 import network.xyo.sdkcorekotlin.repositories.XyoOriginChainStateRepository
@@ -15,9 +14,9 @@ import network.xyo.sdkcorekotlin.repositories.XyoOriginChainStateRepository
  * @property hashingProvider A hashing provider to use hashing utilises.
  */
 open class XyoRelayNode (blockRepository: XyoOriginBlockRepository,
-                             stateRepository: XyoOriginChainStateRepository,
-                             bridgeQueueRepository: XyoBridgeQueueRepository,
-                             private val hashingProvider : XyoHash.XyoHashProvider) : XyoOriginChainCreator(blockRepository, stateRepository, hashingProvider) {
+                         stateRepository: XyoOriginChainStateRepository,
+                         bridgeQueueRepository: XyoBridgeQueueRepository,
+                         private val hashingProvider : XyoHash.XyoHashProvider) : XyoOriginChainCreator(blockRepository, stateRepository, hashingProvider) {
 
     val originBlocksToBridge = XyoBridgeQueue(bridgeQueueRepository)
     private val selfToOtherQueue = XyoBridgingOption(blockRepository, originBlocksToBridge)

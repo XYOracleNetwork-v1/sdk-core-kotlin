@@ -124,16 +124,6 @@ abstract class XyoSigner {
         private val verifiers = HashMap<Byte, HashMap<Byte, XyoSignerProvider>>()
         private val signingCreators = HashMap<Byte, XyoSignerProvider>()
 
-        /**
-         * Gets a signer provider by its key.
-         *
-         * @param byte The key of the signer provider.
-         * @return A signer provider if it exists.
-         */
-        fun getCreator (byte : Byte) : XyoSignerProvider? {
-            return signingCreators[byte]
-        }
-
         fun verify (publicKey: XyoBuff, signature: XyoBuff, data : ByteArray) : Deferred<Boolean?> = GlobalScope.async {
             val headerPublicKey = publicKey.schema.id
             val creator = verifiers[headerPublicKey]?.get(signature.schema.id)

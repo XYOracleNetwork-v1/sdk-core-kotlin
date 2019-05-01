@@ -5,18 +5,13 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 object XyoAsciiLogger : XyoLogger {
-//    private val isInDebug = System.getenv("DEBUG") == "true"
-    private val isInDebug = true
+    var isInDebug = System.getenv("DEBUG") == "true"
 
     private const val ANSI_RESET = "\u001B[0m"
-    private const val ANSI_BLACK = "\u001B[30m"
     private const val ANSI_RED = "\u001B[31m"
     private const val ANSI_GREEN = "\u001B[32m"
     private const val ANSI_YELLOW = "\u001B[33m"
-    private const val ANSI_BLUE = "\u001B[34m"
     private const val ANSI_PURPLE = "\u001B[35m"
-    private const val ANSI_CYAN = "\u001B[36m"
-    private const val ANSI_WHITE = "\u001B[37m"
 
     /**
      * Logs a debug message.

@@ -4,7 +4,7 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.node.XyoBridgeQueueItem
-import network.xyo.sdkcorekotlin.persist.XyoStorageProvider
+import network.xyo.sdkcorekotlin.persist.XyoKeyValueStore
 import network.xyo.sdkcorekotlin.repositories.XyoBridgeQueueRepository
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
@@ -12,7 +12,7 @@ import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
 import java.lang.Math.min
 import java.nio.ByteBuffer
 
-class XyoStorageBridgeQueueRepository (private val store: XyoStorageProvider) : XyoBridgeQueueRepository {
+class XyoStorageBridgeQueueRepository (private val store: XyoKeyValueStore) : XyoBridgeQueueRepository {
     private var queueCache = ArrayList<XyoBridgeQueueItem>()
 
     override fun getQueue (): Array<XyoBridgeQueueItem> {
