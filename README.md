@@ -110,6 +110,8 @@ server.listen { pipe ->
 }
 ```
 
+Further examples of interacting through a socket can be found [here](https://github.com/XYOracleNetwork/sdk-core-kotlin/blob/feature/getting-started/src/test/kotlin/network/xyo/sdkcorekotlin/node/interaction/XyoStandardInteractionTest.kt).
+
 ## Installing
 
 You can add sdk-core-kotlin to your existing app by cloning the project and manually adding it to your build.gradle or by using JitPack.
