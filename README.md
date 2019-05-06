@@ -11,23 +11,76 @@
 | Master      | [![](https://travis-ci.org/XYOracleNetwork/sdk-core-kotlin.svg?branch=master)](https://travis-ci.org/XYOracleNetwork/sdk-core-kotlin) |
 | Develop      | [![](https://travis-ci.org/XYOracleNetwork/sdk-core-kotlin.svg?branch=develop)](https://travis-ci.org/XYOracleNetwork/sdk-core-kotlin) |
 
-## Library to preform all core XYO Network functions
-
-### Includes
-- Creating an origin chain
-- Maintaining an origin chain
-- Negotiations for talking to other nodes
-- Other basic functionality
-
-The library has heavily abstracted modules so that all operations will work with any crypto, storage, networking, ect.
-
-## XYO Origin-Block Protocol
+A library to preform all core XYO Network functions.
+This includes creating an origin chain, maintaining an origin chain, negotiations for talking to other nodes, and other basic functionality.
+The library has heavily abstracted modules so that all operations will work with any crypto, storage, networking, etc.
 
 The XYO protocol for creating origin-blocks is specified in the [XYO Yellow Paper](https://docs.xyo.network/XYO-Yellow-Paper.pdf). In it, it describes the behavior of how a node on the XYO network should create Bound Witnesses. Note, the behavior is not coupled with any particular technology constraints around transport layers, cryptographic algorithms, or hashing algorithms.
 
-## Core Object Model
-
 [Here](https://github.com/XYOracleNetwork/spec-coreobjectmodel-tex) is a link to the core object model that contains an index of major/minor values and their respective objects.
+
+## Getting Started
+
+Change your gradle file and add our dependency
+
+For build instructions - [click here to go to the repo](https://github.com/XYOracleNetwork/sdk-core-kotlin)
+
+[Click here for our sdk package](https://jitpack.io/#XYOracleNetwork/sdk-core-kotlin)
+
+**You should start by setting up an interface to this library through creating an origin chain creator object.**
+
+- Through an origin chain creator object one can create and maintain an origin chain. 
+
+```kotlin
+val originChain = XyoOriginChainCreator(blockRepo, stateRepo, hash)
+```
+
+```kotlin
+// this object will be used to hash items whiten the node
+val hasher = XyoBasicHashBaseProvider()
+
+// this is used as a key value store to persist
+val storage = XyoInMemoryStorageProvider()
+
+// this is used as a place to store all of the bound witnesses/origin blocks
+val chainRepo = XyoStorageOriginBlockRepository(storage, hasher)
+
+// this is used to save the state of the node (keys, index, previous hash)
+val stateRepo = XyoStorageOriginChainStateRepository(storage)
+
+// this simply holds the state and the chain repository together
+val chainManager = XyoOriginChainStateManager(stateRepo, chainRepo)
+
+// the node to interface with creating an origin chain
+val node = XyoOriginChainCreator(hasher, configuration)
+
+// this is used to create a storage provider that uses weak references to add a caching layer
+val cachingLayer = XyoWeakReferenceChaching()
+```
+
+After creating a node, it is standard to add a signer, and create a genesis block.
+
+```kotlin
+// creates a signer with a random private key
+val signer = XyoRsaWithSha256()
+    
+// adds the signer to the node
+chainManager.addSigner(signer: signer)
+
+// creates a origin block with its self (genesis block if this is the first block you make)
+node.selfSignOriginChain()
+
+```
+
+After creating a genesis block, your origin chain has officially started. Remember, all of the state is stored in the state repository (`XyoOriginChainStateRepository`) and the block repository (`XyoOriginBlockRepository`) that are constructed with the node. Both repositories are very high level and can be implemented for ones needs. Out of the box, this library comes with an implementation for key value store databases (`XyoStorageOriginBlockRepository`) and (`XyoStorageOriginChainStateRepository`). The `XyoStorageProvider` interface defines the methods for a simple key value store. There is a default implementation of an in memory key value store that comes with this library (`XyoInMemoryStorage`).
+
+
+### Creating Origin Blocks
+
+After a node has been created, it can be used to create origin blocks with other nodes. The process of talking to other nodes has been abstracted through use of a pipe (e.g. tcp, ble, memory) that handles all of the transport logic. This interface is defined as `XyoNetworkPipe`. This library ships with a memory pipe, and a tcp pipe.
+
+#### Using a TCP Pipe
+`XyoTcpPipe(socket, initiationData, peer)` Is an implementation of an XYO Network Pipe using TCP sockets.
 
 ## Installing
 
