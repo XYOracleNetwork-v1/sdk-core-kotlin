@@ -36,36 +36,30 @@ val originChain = XyoOriginChainCreator(blockRepo, stateRepo, hash)
 ```
 
 ```kotlin
-// this object will be used to hash items whiten the node
-val hasher = XyoBasicHashBaseProvider()
-
-// this is used as a key value store to persist
+// a key value store to store persist state and bound witnesses
 val storage = XyoInMemoryStorageProvider()
 
-// this is used as a place to store all of the bound witnesses/origin blocks
-val chainRepo = XyoStorageOriginBlockRepository(storage, hasher)
+// a hash implementation for the node to hash with
+val hasher = XyoBasicHashBase.createHashType(XyoSchemas.SHA_256, "SHA-256")
 
-// this is used to save the state of the node (keys, index, previous hash)
-val stateRepo = XyoStorageOriginChainStateRepository(storage)
+// a place to store all off the blocks that the node makes
+val blockRepo = XyoStorageOriginBlockRepository(storage, hasher)
 
-// this simply holds the state and the chain repository together
-val chainManager = XyoOriginChainStateManager(stateRepo, chainRepo)
+// a place to store all of the origin state (index, keys, previous hash)
+val stateRepo = XyoStorageOriginStateRepository(storage)
 
-// the node to interface with creating an origin chain
-val node = XyoOriginChainCreator(hasher, configuration)
-
-// this is used to create a storage provider that uses weak references to add a caching layer
-val cachingLayer = XyoWeakReferenceChaching()
+// the node object to create origin blocks
+val node = XyoOriginChainCreator(blockRepo, stateRepo, hasher)
 ```
 
 After creating a node, it is standard to add a signer, and create a genesis block.
 
 ```kotlin
 // creates a signer with a random private key
-val signer = XyoRsaWithSha256()
+val signer = XyoSha256WithSecp256K.newInstance()
     
 // adds the signer to the node
-chainManager.addSigner(signer: signer)
+node.originState.addSigner(signer: signer)
 
 // creates a origin block with its self (genesis block if this is the first block you make)
 node.selfSignOriginChain()
