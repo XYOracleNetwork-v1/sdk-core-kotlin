@@ -92,6 +92,7 @@ val newBoundWitness = node.boundWitness(handler, testProcedureCatalogue).await()
 ```
 
 **Server**
+```kotlin
 // create a tcp server on port 11000
 val server = XyoTcpServer(11000)
 
@@ -107,6 +108,7 @@ server.listen { pipe ->
 	    	val newBoundWitness = nodeTwo.boundWitness(handler, XyoBoundWitnessCatalog).await()
 	}
 }
+```
 
 ## Installing
 
