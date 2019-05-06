@@ -129,6 +129,28 @@ node.addHeuristic("MyHeuristic", object : XyoHeuristicGetter {
 })
 ```
 
+### Adding a Listener to a Node
+
+```kotlin
+node.addListener("MyListener", object : XyoNodeListener {
+	override fun onBoundWitnessDiscovered(boundWitness: XyoBoundWitness) {
+		// will get called when a new bound witness if found
+	}
+
+	override fun onBoundWitnessEndFailure(error: Exception?) {
+		// will get called when a bound witness errors out
+	}
+
+	override fun onBoundWitnessEndSuccess(boundWitness: XyoBoundWitness) {
+		// will get called when a bound witness is completed
+	}
+
+	override fun onBoundWitnessStart() {
+		// will get called when a bound witness starts
+	} 
+})
+```
+
 ## Installing
 
 You can add sdk-core-kotlin to your existing app by cloning the project and manually adding it to your build.gradle or by using JitPack.
