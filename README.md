@@ -71,10 +71,42 @@ After creating a genesis block, your origin chain has officially started. Rememb
 
 ### Creating Origin Blocks
 
-After a node has been created, it can be used to create origin blocks with other nodes. The process of talking to other nodes has been abstracted through use of a pipe (e.g. tcp, ble, memory) that handles all of the transport logic. This interface is defined as `XyoNetworkPipe`. This library ships with a memory pipe, and a tcp pipe.
+After a node has been created, it can be used to create origin blocks with other nodes. The process of talking to other nodes has been abstracted through use of a pipe (e.g. tcp, ble, memory) that handles all of the transport logic. This interface is defined as `XyoNetworkPipe`. This library ships with a and a tcp client and server pipe.
 
 #### Using a TCP Pipe
-`XyoTcpPipe(socket, initiationData, peer)` Is an implementation of an XYO Network Pipe using TCP sockets.
+
+**Client**
+
+```kotlin
+// creates a socket with the peer
+val socket = Socket("myarchivist.com", 11000)
+
+// creates a pipe so that we can send formated data through the socket
+val pipe = XyoTcpPipe(socket, null)
+
+// create a handler so that we can do the starting handshake with the node
+val handler = XyoNetworkHandler(pipe)
+
+// create the bound witness with the node on the socket
+val newBoundWitness = node.boundWitness(handler, testProcedureCatalogue).await()
+```
+
+**Server**
+// create a tcp server on port 11000
+val server = XyoTcpServer(11000)
+
+// listen from the server for connection events
+server.listen { pipe ->
+	// put bound witness into new thread (optional)
+	GlobalScope.launch {
+	
+		// create a handler so that we can do the starting handshake with the node
+	    	val handler = XyoNetworkHandler(pipe)
+		
+		// do the bound witness with the node
+	    	val newBoundWitness = nodeTwo.boundWitness(handler, XyoBoundWitnessCatalog).await()
+	}
+}
 
 ## Installing
 
