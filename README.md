@@ -6,10 +6,20 @@
 
 [![](https://jitpack.io/v/XYOracleNetwork/sdk-core-kotlin.svg)](https://jitpack.io/#XYOracleNetwork/sdk-core-kotlin) [![](https://img.shields.io/gitter/room/XYOracleNetwork/Stardust.svg)](https://gitter.im/XYOracleNetwork/Dev) [![Maintainability](https://api.codeclimate.com/v1/badges/af641257b27ecea22a9f/maintainability)](https://codeclimate.com/github/XYOracleNetwork/sdk-core-kotlin/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/af641257b27ecea22a9f/test_coverage)](https://codeclimate.com/github/XYOracleNetwork/sdk-core-kotlin/test_coverage)
 
-| Branches        | Status           |
-| ------------- |:-------------:|
-| Master      | [![](https://travis-ci.org/XYOracleNetwork/sdk-core-kotlin.svg?branch=master)](https://travis-ci.org/XYOracleNetwork/sdk-core-kotlin) |
-| Develop      | [![](https://travis-ci.org/XYOracleNetwork/sdk-core-kotlin.svg?branch=develop)](https://travis-ci.org/XYOracleNetwork/sdk-core-kotlin) |
+[![](https://travis-ci.org/XYOracleNetwork/sdk-core-kotlin.svg?branch=master)](https://travis-ci.org/XYOracleNetwork/sdk-core-kotlin) [![BCH compliance](https://bettercodehub.com/edge/badge/XYOracleNetwork/sdk-core-kotlin?branch=master)](https://bettercodehub.com/) [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=XYOracleNetwork_sdk-core-kotlin&metric=alert_status)](https://sonarcloud.io/dashboard?id=XYOracleNetwork_sdk-core-kotlin)
+
+Table of Contents
+
+- [Title](#sdk-core-kotlin)
+- [Long Description](#long-description)
+- [Read the Yellow](#long-description)
+- [Getting Started](#getting-started)
+- [Installing](#installing)
+- [Building and Testing with Gradle](#building-and-testing-with-gradle)
+- [License](#license)
+- [Credits](#credits)
+
+## Long Description
 
 A library to preform all core XYO Network functions.
 This includes creating an origin chain, maintaining an origin chain, negotiations for talking to other nodes, and other basic functionality.
@@ -229,6 +239,9 @@ gradle test
 ```
 
 ## License
+
 This project is licensed under the MIT License - see the LICENSE.md file for details
+
+## Credits
 
 Made with  ❤️  by [**XY - The Persistent Company**](https://xy.company)

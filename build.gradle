@@ -1,5 +1,7 @@
 apply plugin: 'kotlin'
 apply plugin: 'jacoco'
+apply plugin: 'org.sonarqube'
+
 group = 'com.github.XYOracleNetwork'
 
 sourceCompatibility = 1.8
@@ -17,8 +19,10 @@ buildscript {
         classpath "com.android.tools.build:gradle:3.2.1"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.30"
         classpath "org.junit.platform:junit-platform-gradle-plugin:1.0.0-M4"
+        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.7"
     }
 }
+
 
 jacocoTestReport {
     reports {
@@ -26,6 +30,7 @@ jacocoTestReport {
         html.enabled=false
     }
 }
+
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.30"
