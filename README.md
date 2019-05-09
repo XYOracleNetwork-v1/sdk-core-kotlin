@@ -8,17 +8,16 @@
 
 [![](https://travis-ci.org/XYOracleNetwork/sdk-core-kotlin.svg?branch=master)](https://travis-ci.org/XYOracleNetwork/sdk-core-kotlin) [![BCH compliance](https://bettercodehub.com/edge/badge/XYOracleNetwork/sdk-core-kotlin?branch=master)](https://bettercodehub.com/) [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=XYOracleNetwork_sdk-core-kotlin&metric=alert_status)](https://sonarcloud.io/dashboard?id=XYOracleNetwork_sdk-core-kotlin) [![Known Vulnerabilities](https://snyk.io/test/github/XYOracleNetwork/sdk-core-kotlin/badge.svg)](https://snyk.io/test/github/XYOracleNetwork/sdk-core-kotlin)
 
-
 Table of Contents
 
-- [Title](#sdk-core-kotlin)
-- [Long Description](#long-description)
-- [Read the Yellow](#long-description)
-- [Getting Started](#getting-started)
-- [Installing](#installing)
-- [Building and Testing with Gradle](#building-and-testing-with-gradle)
-- [License](#license)
-- [Credits](#credits)
+  - [Title](#sdk-core-kotlin)
+  - [Long Description](#long-description)
+  - [Read the Yellow](#long-description)
+  - [Getting Started](#getting-started)
+  - [Installing](#installing)
+  - [Building and Testing with Gradle](#building-and-testing-with-gradle)
+  - [License](#license)
+  - [Credits](#credits)
 
 ## Long Description
 
@@ -40,7 +39,7 @@ For build instructions - [click here to go to the repo](https://github.com/XYOra
 
 **You should start by setting up an interface to this library through creating an origin chain creator object.**
 
-- Through an origin chain creator object one can create and maintain an origin chain. 
+  - Through an origin chain creator object one can create and maintain an origin chain. 
 
 ```kotlin
 val originChain = XyoOriginChainCreator(blockRepo, stateRepo, hash)
@@ -78,7 +77,6 @@ node.selfSignOriginChain()
 ```
 
 After creating a genesis block, your origin chain has officially started. Remember, all of the state is stored in the state repository (`XyoOriginChainStateRepository`) and the block repository (`XyoOriginBlockRepository`) that are constructed with the node. Both repositories are very high level and can be implemented for ones needs. Out of the box, this library comes with an implementation for key value store databases (`XyoStorageOriginBlockRepository`) and (`XyoStorageOriginChainStateRepository`). The `XyoStorageProvider` interface defines the methods for a simple key value store. There is a default implementation of an in memory key value store that comes with this library (`XyoInMemoryStorage`).
-
 
 ### Creating Origin Blocks
 
@@ -122,7 +120,6 @@ server.listen { pipe ->
 ```
 
 Further examples of interacting through a socket can be found [here](https://github.com/XYOracleNetwork/sdk-core-kotlin/blob/feature/getting-started/src/test/kotlin/network/xyo/sdkcorekotlin/node/interaction/XyoStandardInteractionTest.kt).
-
 
 ### Adding Custom Data to a Bound Witness
 ```kotlin
