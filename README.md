@@ -12,7 +12,7 @@ Table of Contents
 
 - [Title](#sdk-core-kotlin)
 - [Long Description](#long-description)
-- [Read the Yellow](#long-description)
+- [Read the Yellow Paper](#read-the-yellow-paper)
 - [Getting Started](#getting-started)
 - [Installing](#installing)
 - [Building and Testing with Gradle](#building-and-testing-with-gradle)
@@ -24,6 +24,8 @@ Table of Contents
 A library to preform all core XYO Network functions.
 This includes creating an origin chain, maintaining an origin chain, negotiations for talking to other nodes, and other basic functionality.
 The library has heavily abstracted modules so that all operations will work with any crypto, storage, networking, etc.
+
+## Read the Yellow Paper
 
 The XYO protocol for creating origin-blocks is specified in the [XYO Yellow Paper](https://docs.xyo.network/XYO-Yellow-Paper.pdf). In it, it describes the behavior of how a node on the XYO network should create Bound Witnesses. Note, the behavior is not coupled with any particular technology constraints around transport layers, cryptographic algorithms, or hashing algorithms.
 
