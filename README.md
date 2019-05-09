@@ -10,14 +10,14 @@
 
 Table of Contents
 
-  - [Title](#sdk-core-kotlin)
-  - [Long Description](#long-description)
-  - [Read the Yellow](#long-description)
-  - [Getting Started](#getting-started)
-  - [Installing](#installing)
-  - [Building and Testing with Gradle](#building-and-testing-with-gradle)
-  - [License](#license)
-  - [Credits](#credits)
+- [Title](#sdk-core-kotlin)
+- [Long Description](#long-description)
+- [Read the Yellow](#long-description)
+- [Getting Started](#getting-started)
+- [Installing](#installing)
+- [Building and Testing with Gradle](#building-and-testing-with-gradle)
+- [License](#license)
+- [Credits](#credits)
 
 ## Long Description
 
@@ -39,7 +39,7 @@ For build instructions - [click here to go to the repo](https://github.com/XYOra
 
 **You should start by setting up an interface to this library through creating an origin chain creator object.**
 
-  - Through an origin chain creator object one can create and maintain an origin chain. 
+> Through an origin chain creator object one can create and maintain an origin chain. 
 
 ```kotlin
 val originChain = XyoOriginChainCreator(blockRepo, stateRepo, hash)
