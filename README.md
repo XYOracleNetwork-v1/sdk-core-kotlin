@@ -4,12 +4,10 @@
 
 # sdk-core-kotlin
 
+[![](https://travis-ci.org/XYOracleNetwork/sdk-core-kotlin.svg?branch=master)](https://travis-ci.org/XYOracleNetwork/sdk-core-kotlin) 
+
 [![](https://jitpack.io/v/XYOracleNetwork/sdk-core-kotlin.svg)](https://jitpack.io/#XYOracleNetwork/sdk-core-kotlin) [![](https://img.shields.io/gitter/room/XYOracleNetwork/Stardust.svg)](https://gitter.im/XYOracleNetwork/Dev) [![Maintainability](https://api.codeclimate.com/v1/badges/af641257b27ecea22a9f/maintainability)](https://codeclimate.com/github/XYOracleNetwork/sdk-core-kotlin/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/af641257b27ecea22a9f/test_coverage)](https://codeclimate.com/github/XYOracleNetwork/sdk-core-kotlin/test_coverage)
 
-| Branches        | Status           |
-| ------------- |:-------------:|
-| Master      | [![](https://travis-ci.org/XYOracleNetwork/sdk-core-kotlin.svg?branch=master)](https://travis-ci.org/XYOracleNetwork/sdk-core-kotlin) |
-| Develop      | [![](https://travis-ci.org/XYOracleNetwork/sdk-core-kotlin.svg?branch=develop)](https://travis-ci.org/XYOracleNetwork/sdk-core-kotlin) |
 
 ## Library to preform all core XYO Network functions
 
@@ -107,6 +105,11 @@ gradle test
 ```
 
 ## License
-This project is licensed under the MIT License - see the LICENSE.md file for details
 
-<br><hr><br><p align="center">Made with  ❤️  by [**XY - The Persistent Company**] (https://xy.company)</p>
+This project is licensed under the GNU Lesser General Public License
+Version 3 License - see the LICENSE.md file for details
+
+## Credits
+
+Made with 🔥and ❄️ by [XY - The Persistent Company](https://www.xy.company)
+
