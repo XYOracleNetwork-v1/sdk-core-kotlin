@@ -5,7 +5,7 @@ import kotlin.experimental.and
 /**
  * This object is used when creating bit flags for negations between two parties.
  */
-object XyoProcedureCatalogue {
+object XyoProcedureCatalogFlags {
     /**
      * Can do a standard bound witness.
      */

@@ -27,11 +27,7 @@ abstract class XyoGeneralRsa(private val keySize : Int, privateKey: XyoRsaPrivat
 
     override val publicKey: XyoPublicKey
         get() {
-            val rsaKeyPair = keyPair.public as? XyoRsaPublicKey
-            if (rsaKeyPair != null) {
-                return rsaKeyPair
-            }
-            throw Exception("Key can not be casted!")
+            return keyPair.public as XyoRsaPublicKey
         }
 
     open val keyPair: KeyPair = if (privateKey != null) {

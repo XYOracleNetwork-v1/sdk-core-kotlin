@@ -5,7 +5,7 @@ import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
-object XyoAES : XyoEncrypter {
+object XyoAes : XyoEncrypter {
     private val cipher  = Cipher.getInstance("AES/CFB/NoPadding")
     override val algorithmName: String = "AES"
     override val iVSize: Int = 16

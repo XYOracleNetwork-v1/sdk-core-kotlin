@@ -16,7 +16,7 @@ abstract class XyoHash : XyoBuff() {
     /**
      * A base class for creating hashes.
      */
-    abstract class XyoHashProvider : XyoInterpret {
+    abstract class XyoHashProvider {
 
         /**
          * Creates a hash given a ByteArray.

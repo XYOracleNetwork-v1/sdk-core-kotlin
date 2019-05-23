@@ -43,6 +43,8 @@ class XyoBoundWitnessCreationTest : XyoTestBase() {
             val bobToAliceOne = boundWitnessBob.incomingData(aliceToBobOne, true).await()
             Assert.assertFalse(boundWitnessAlice.completed)
             Assert.assertFalse(boundWitnessBob.completed)
+            Assert.assertNull(boundWitnessBob.getBoundWitnessItemAtIndex(0))
+            Assert.assertFalse(XyoBoundWitnessVerify(false).verify(boundWitnessBob).await()!!)
             val aliceToBobTwo = boundWitnessAlice.incomingData(bobToAliceOne, false).await()
             boundWitnessBob.incomingData(aliceToBobTwo, false).await()
 
