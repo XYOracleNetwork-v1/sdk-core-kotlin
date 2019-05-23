@@ -34,7 +34,7 @@ abstract class XyoUnixTime : XyoBuff() {
             }
         }
 
-        override fun getInstance(byteArray: ByteArray): XyoBuff {
+        override fun getInstance(byteArray: ByteArray): XyoUnixTime {
             return object : XyoUnixTime() {
                 override val allowedOffset: Int = 0
                 override var item: ByteArray = byteArray

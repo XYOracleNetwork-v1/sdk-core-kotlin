@@ -17,7 +17,6 @@ import network.xyo.sdkcorekotlin.repositories.XyoOriginChainStateRepository
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.exceptions.XyoObjectException
 import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
-import network.xyo.sdkobjectmodelkotlin.objects.toHexString
 import java.nio.ByteBuffer
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -205,7 +204,7 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
 
     }
 
-    fun boundWitness (handler: XyoNetworkHandler, procedureCatalogue: XyoNetworkProcedureCatalogueInterface): Deferred<XyoBoundWitness?> = GlobalScope.async {
+    fun boundWitness (handler: XyoNetworkHandler, procedureCatalogue: XyoProcedureCatalog): Deferred<XyoBoundWitness?> = GlobalScope.async {
         try {
             if (currentBoundWitnessSession != null) {
                 onBoundWitnessEndFailure(XyoBoundWitnessCreationException("Bound witness is session"))
@@ -230,7 +229,7 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
                 return@async doBoundWitnessWithPipe(handler, startingData, adv.getChoice())
             }
 
-            val choice = procedureCatalogue.choose(XyoProcedureCatalogue.flip(handler.pipe.initiationData!!.getChoice()))
+            val choice = procedureCatalogue.choose(XyoProcedureCatalogFlags.flip(handler.pipe.initiationData!!.getChoice()))
             return@async doBoundWitnessWithPipe(handler, null, choice)
         } catch (e: XyoObjectException) {
             onBoundWitnessEndFailure(e)
@@ -256,7 +255,7 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
                 signedPayload.toTypedArray(),
                 payloads.unsignedOptions,
                 originState.signers,
-                XyoProcedureCatalogue.flip(choice)
+                XyoProcedureCatalogFlags.flip(choice)
         )
 
         currentBoundWitnessSession = bw

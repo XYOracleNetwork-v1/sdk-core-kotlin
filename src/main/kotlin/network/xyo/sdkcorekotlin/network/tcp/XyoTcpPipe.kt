@@ -1,9 +1,6 @@
 package network.xyo.sdkcorekotlin.network.tcp
 
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.TimeoutCancellationException
-import kotlinx.coroutines.async
-import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.*
 import network.xyo.sdkcorekotlin.log.XyoLog
 import network.xyo.sdkcorekotlin.network.XyoAdvertisePacket
 import network.xyo.sdkcorekotlin.network.XyoNetworkPipe
@@ -20,7 +17,6 @@ import java.nio.ByteBuffer
  *
  * @param socket The current socket.
  * @param initiationData The data that was sent with the first request.
- * @param peer The peer at the end of the pipe.
  */
 open class XyoTcpPipe(private val socket: Socket,
                       override var initiationData: XyoAdvertisePacket?) : XyoNetworkPipe {
@@ -54,6 +50,24 @@ open class XyoTcpPipe(private val socket: Socket,
         }
     }
 
+    fun waitForResponse (): ByteArray? {
+        XyoLog.logDebug("Waiting for response...", TAG)
+        val inStream = DataInputStream(socket.getInputStream())
+        val size = ByteArray(4)
+        inStream.readFully(size, 0, size.size)
+        XyoLog.logDebug("Waiting to read size ${ByteBuffer.wrap(size).int - 4} ${size.toHexString()}", TAG)
+
+        if ((ByteBuffer.wrap(size).int - 4) > (MAX_READ_SIZE_K_BYTES * 1024)) {
+            return null
+        }
+
+        val message = ByteArray(ByteBuffer.wrap(size).int - 4)
+        inStream.readFully(message, 0, message.size)
+
+        XyoLog.logDebug("Read fully: ${message.toHexString()}", TAG)
+        return message
+    }
+
     private fun send(waitForResponse: Boolean, data: ByteArray) = GlobalScope.async {
         try {
             val buffer = ByteBuffer.allocate(4 + data.size)
@@ -66,26 +80,8 @@ open class XyoTcpPipe(private val socket: Socket,
             outStream.write(buffer.array())
 
             if (waitForResponse) {
-                XyoLog.logDebug("Waiting for response...", TAG)
-                val inStream = DataInputStream(socket.getInputStream())
-                val size = ByteArray(4)
-                inStream.readFully(size, 0, size.size)
-                XyoLog.logDebug("Waiting to read size ${ByteBuffer.wrap(size).int - 4} ${size.toHexString()}", TAG)
-
-                if ((ByteBuffer.wrap(size).int - 4) > (MAX_READ_SIZE_K_BYTES * 1024)) {
-                    return@async null
-                }
-
-                val message = ByteArray(ByteBuffer.wrap(size).int - 4)
-                inStream.readFully(message, 0, message.size)
-
-                XyoLog.logDebug("Read fully: ${message.toHexString()}", TAG)
-                /**
-                 * Cancel the timeout or you will be stuck
-                 */
-                return@async message
+                return@async waitForResponse()
             }
-
 
             return@async null
 

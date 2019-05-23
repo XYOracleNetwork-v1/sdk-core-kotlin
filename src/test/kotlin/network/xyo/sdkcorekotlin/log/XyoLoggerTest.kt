@@ -11,6 +11,8 @@ class XyoLoggerTest : XyoTestBase() {
         logger.logError("Test 2", "TEST", Exception("Test Exception"))
         logger.logInfo("Test 3", "TEST")
         logger.logSpecial("Test 4", "TEST")
+        XyoAsciiLogger.isInDebug = true
+        logger.logDebug("Test 1", "TEST")
     }
 
     @Test

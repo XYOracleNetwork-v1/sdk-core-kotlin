@@ -32,7 +32,6 @@ class XyoZigZagBoundWitnessSession(private val handler : XyoNetworkHandler,
                 }
             }
 
-            return null
         } catch (exception: XyoException) {
             XyoLog.logError("Bound witness creation error: $exception", TAG, exception)
             return exception
@@ -40,6 +39,8 @@ class XyoZigZagBoundWitnessSession(private val handler : XyoNetworkHandler,
             XyoLog.logError("Bound witness creation error: $exception", TAG, exception)
             return exception
         }
+
+        return null
     }
 
     private fun sendAndReceive (didHaveData : Boolean, transfer : XyoIterableObject?) = GlobalScope.async {

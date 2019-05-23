@@ -104,7 +104,7 @@ abstract class XyoBoundWitness : XyoIterableObject() {
      * @param posIndex The index to grab from.
      * @return Will return null if the pos index is out of range or if the bound witness is incomplete.
      */
-    private fun getBoundWitnessItemAtIndex (posIndex : Int) : XyoIterableObject? {
+    fun getBoundWitnessItemAtIndex (posIndex : Int) : XyoIterableObject? {
         if (completed) {
             return this[posIndex] as? XyoIterableObject
         }

@@ -4,14 +4,14 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
-import network.xyo.sdkcorekotlin.persist.XyoStorageProvider
+import network.xyo.sdkcorekotlin.persist.XyoKeyValueStore
 import network.xyo.sdkcorekotlin.repositories.XyoOriginChainStateRepository
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
 import java.nio.ByteBuffer
 
-class XyoStorageOriginStateRepository (private val store: XyoStorageProvider) : XyoOriginChainStateRepository {
+class XyoStorageOriginStateRepository (private val store: XyoKeyValueStore) : XyoOriginChainStateRepository {
     private var signersCache = ArrayList<XyoSigner>()
     private var staticsCache = ArrayList<XyoBuff>()
     private var indexCache: XyoBuff? = null
@@ -52,7 +52,7 @@ class XyoStorageOriginStateRepository (private val store: XyoStorageProvider) : 
         return staticsCache.toTypedArray()
     }
 
-    override fun setStaticts (statics: Array<XyoBuff>) {
+    override fun setStatics (statics: Array<XyoBuff>) {
         staticsCache = ArrayList(statics.asList())
     }
 

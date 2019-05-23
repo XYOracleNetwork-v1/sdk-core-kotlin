@@ -30,7 +30,7 @@ open class XyoRsaPrivateKey (private val mod : BigInteger, private val privateEx
     }
 
     override fun getFormat(): String {
-        return "RSA"
+        return "XyoRsaPrivateKey"
     }
 
     override fun getModulus(): BigInteger {
