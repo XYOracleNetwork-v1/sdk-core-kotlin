@@ -204,6 +204,7 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
 
     }
 
+    @kotlin.ExperimentalUnsignedTypes
     fun boundWitness (handler: XyoNetworkHandler, procedureCatalogue: XyoProcedureCatalog): Deferred<XyoBoundWitness?> = GlobalScope.async {
         try {
             if (currentBoundWitnessSession != null) {

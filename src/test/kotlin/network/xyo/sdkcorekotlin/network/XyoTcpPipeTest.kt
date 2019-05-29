@@ -42,6 +42,7 @@ class XyoTcpPipeTest : XyoTestBase( ){
     }
 
     @Test
+    @kotlin.ExperimentalUnsignedTypes
     fun testTcpBoundWitness () {
         // a node must be running on localhost:11000, for this test to pass
         if (false) {
