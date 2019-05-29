@@ -8,7 +8,7 @@ script:
 
 deploy:
   provider: script
-  script: ./gradlew build :bintrayUpload
+  script: ./gradlew assemble :bintrayUpload
   skip_cleanup: true
   file: bintray
   user: $BINTRAY_USER

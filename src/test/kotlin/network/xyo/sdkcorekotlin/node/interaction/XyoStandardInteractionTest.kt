@@ -1,6 +1,7 @@
 package network.xyo.sdkcorekotlin.node.interaction
 
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import network.xyo.sdkcorekotlin.XyoTestBase
@@ -19,10 +20,11 @@ class XyoStandardInteractionTest : XyoTestBase() {
     @Test
     fun testStandardInteraction () {
         runBlocking {
+            delay(6000)
             val nodeOne = createRelayNode()
             val nodeTwo = createRelayNode()
 
-            val server = XyoTcpServer(1343)
+            val server = XyoTcpServer(8080)
             server.listen { pipe ->
                 GlobalScope.launch {
                     val handler = XyoNetworkHandler(pipe)
@@ -30,7 +32,7 @@ class XyoStandardInteractionTest : XyoTestBase() {
                 }
             }
 
-            val socket = Socket("localhost", 1343)
+            val socket = Socket("localhost", 8080)
             val pipe = XyoTcpPipe(socket, null)
             val handler = XyoNetworkHandler(pipe)
             nodeOne.boundWitness(handler, XyoBoundWitnessCatalog).await()
@@ -42,7 +44,7 @@ class XyoStandardInteractionTest : XyoTestBase() {
     fun testByteErrorInteraction () {
         runBlocking {
             val nodeOne = createRelayNode()
-            val server = XyoTcpServer(1344)
+            val server = XyoTcpServer(8081)
             server.listen { pipe ->
                 GlobalScope.launch {
                     val handler = XyoNetworkHandler(pipe)
@@ -50,7 +52,7 @@ class XyoStandardInteractionTest : XyoTestBase() {
                 }
             }
 
-            val socket = Socket("localhost", 1344)
+            val socket = Socket("localhost", 8081)
             val pipe = XyoTcpPipe(socket, null)
             val handler = XyoNetworkHandler(pipe)
             nodeOne.boundWitness(handler, XyoBoundWitnessCatalog).await()
@@ -62,7 +64,7 @@ class XyoStandardInteractionTest : XyoTestBase() {
     fun testNotFetterOrWitnessInteraction () {
         runBlocking {
             val nodeOne = createRelayNode()
-            val server = XyoTcpServer(1345)
+            val server = XyoTcpServer(8082)
             server.listen { pipe ->
                 GlobalScope.launch {
                     val handler = XyoNetworkHandler(pipe)
@@ -71,7 +73,7 @@ class XyoStandardInteractionTest : XyoTestBase() {
                 }
             }
 
-            val socket = Socket("localhost", 1345)
+            val socket = Socket("localhost", 8082)
             val pipe = XyoTcpPipe(socket, null)
             val handler = XyoNetworkHandler(pipe)
             nodeOne.boundWitness(handler, XyoBoundWitnessCatalog).await()
