@@ -6,8 +6,8 @@ group = 'network.xyo'
 
 sourceCompatibility = 1.8
 
-def majorVersion = 2
-def minorVersion = 0
+def majorVersion = 1
+def minorVersion = 1
 
 Properties versionProps = new Properties()
 def versionPropsFile = file('version.properties')
