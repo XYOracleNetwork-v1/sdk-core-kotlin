@@ -4,6 +4,7 @@ import network.xyo.sdkobjectmodelkotlin.exceptions.XyoObjectException
 import java.nio.ByteBuffer
 
 class XyoAdvertisePacket (val bytes : ByteArray) {
+    @kotlin.ExperimentalUnsignedTypes
     fun getChoice () : ByteArray {
         val sizeOfChoice = ByteBuffer.wrap(bytes)[0].toUInt().toInt()
 
