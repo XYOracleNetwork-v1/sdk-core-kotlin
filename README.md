@@ -4,20 +4,30 @@
 
 # sdk-core-kotlin
 
-[![](https://jitpack.io/v/XYOracleNetwork/sdk-core-kotlin.svg)](https://jitpack.io/#XYOracleNetwork/sdk-core-kotlin) [![](https://img.shields.io/gitter/room/XYOracleNetwork/Stardust.svg)](https://gitter.im/XYOracleNetwork/Dev) [![Maintainability](https://api.codeclimate.com/v1/badges/af641257b27ecea22a9f/maintainability)](https://codeclimate.com/github/XYOracleNetwork/sdk-core-kotlin/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/af641257b27ecea22a9f/test_coverage)](https://codeclimate.com/github/XYOracleNetwork/sdk-core-kotlin/test_coverage)
+[![](https://travis-ci.org/XYOracleNetwork/sdk-core-kotlin.svg?branch=master)](https://travis-ci.org/XYOracleNetwork/sdk-core-kotlin) [![BCH compliance](https://bettercodehub.com/edge/badge/XYOracleNetwork/sdk-core-kotlin?branch=master)](https://bettercodehub.com/) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/2fb2eb69c1db455299ffce57b0216aa6)](https://www.codacy.com/app/XYOracleNetwork/sdk-core-kotlin?utm_source=github.com&utm_medium=referral&utm_content=XYOracleNetwork/sdk-core-kotlin&utm_campaign=Badge_Grade) [![Maintainability](https://api.codeclimate.com/v1/badges/af641257b27ecea22a9f/maintainability)](https://codeclimate.com/github/XYOracleNetwork/sdk-core-kotlin/maintainability)
+[![](https://jitpack.io/v/XYOracleNetwork/sdk-core-kotlin.svg)](https://jitpack.io/#XYOracleNetwork/sdk-core-kotlin) [![](https://img.shields.io/gitter/room/XYOracleNetwork/Stardust.svg)](https://gitter.im/XYOracleNetwork/Dev)
 
-[![](https://travis-ci.org/XYOracleNetwork/sdk-core-kotlin.svg?branch=master)](https://travis-ci.org/XYOracleNetwork/sdk-core-kotlin) [![BCH compliance](https://bettercodehub.com/edge/badge/XYOracleNetwork/sdk-core-kotlin?branch=master)](https://bettercodehub.com/) [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=XYOracleNetwork_sdk-core-kotlin&metric=alert_status)](https://sonarcloud.io/dashboard?id=XYOracleNetwork_sdk-core-kotlin) [![Known Vulnerabilities](https://snyk.io/test/github/XYOracleNetwork/sdk-core-kotlin/badge.svg)](https://snyk.io/test/github/XYOracleNetwork/sdk-core-kotlin)
+## Table of Contents
 
-Table of Contents
+-   [Title](#sdk-core-kotlin)
+-   [Description](#description)
+-   [XYO Origin Block Protocol](#xyo-origin-block-protocol)
+-   [Core Object Model](#core-object-model)
+-   [Install](#install)
+-   [Building and Testing with Gradle](#building-and-testing-with-gradle)
+-   [Maintainers](#maintainers)
+-   [Contributing](#contributing)
+-   [License](#license)
+-   [Credits](#credits)
 
-- [Title](#sdk-core-kotlin)
-- [Long Description](#long-description)
-- [Read the Yellow Paper](#read-the-yellow-paper)
-- [Getting Started](#getting-started)
-- [Installing](#installing)
-- [Building and Testing with Gradle](#building-and-testing-with-gradle)
-- [License](#license)
-- [Credits](#credits)
+## Description
+
+Library to preform all core XYO Network functions which includes
+
+-   Creating an origin chain
+-   Maintaining an origin chain
+-   Negotiations for talking to other nodes
+-   Other basic functionality
 
 ## Long Description
 
@@ -161,32 +171,31 @@ node.addListener("MyListener", object : XyoNodeListener {
 })
 ```
 
-## Installing
+## Install
 
 You can add sdk-core-kotlin to your existing app by cloning the project and manually adding it to your build.gradle or by using JitPack.
 
 ### Build From Source
 
 1) Clone from github
-```
-git clone git@github.com:XYOracleNetwork/sdk-core-kotlin.git
-```
+
+    git clone git@github.com:XYOracleNetwork/sdk-core-kotlin.git
 
 2) Add project to settings.gradle
-```
-include ':sdk-core-kotlin'
-project(':sdk-core-kotlin').projectDir = new File('../sdk-core-kotlin')
-```
+
+    include ':sdk-core-kotlin'
+    project(':sdk-core-kotlin').projectDir = new File('../sdk-core-kotlin')
 
 3) Include in project
-```
-implementation project (':sdk-core-kotlin')
-```
+
+    implementation project (':sdk-core-kotlin')
 
 ### Using JitPack
 
 #### With Gradle
-1. Point maven to `https://jitpack.io`
+
+1.  Point maven to `https://jitpack.io`
+
 ```gradle
 allprojects {
 	repositories {
@@ -196,7 +205,8 @@ allprojects {
 }
 ```
 
-2. Inlucde sdk-core-kotlin in dependencies
+2.  Inlucde sdk-core-kotlin in dependencies
+
 ```gradle
 dependencies {
 	implementation 'com.github.XYOracleNetwork:sdk-core-kotlin:v0.1.1-beta.0'
@@ -205,7 +215,8 @@ dependencies {
 
 ### With Maven
 
-1. Point maven to `https://jitpack.io`
+1.  Point maven to `https://jitpack.io`
+
 ```maven
 <repositories>
 	<repository>
@@ -215,7 +226,8 @@ dependencies {
 </repositories>
 ```
 
-2. Inlucde sdk-core-kotlin in dependencies
+2.  Inlucde sdk-core-kotlin in dependencies
+
 ```maven
 <dependency>
     <groupId>com.github.XYOracleNetwork</groupId>
@@ -227,21 +239,23 @@ dependencies {
 ## Building and Testing with Gradle
 
 **Building**
-Source ius located in /src/main/*
-```
-gradle build
-```
+Source ius located in /src/main/\*
+
+    gradle build
 
 **Testing**
-All tests can be found in /src/test/*
-```
-gradle test
-```
+All tests can be found in /src/test/\*
+
+    gradle test
+
+## Maintainers
+
+-   Carter Harrison
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE.md file for details
+See the [LICENSE.md](LICENSE) file for license details.
 
 ## Credits
 
-Made with  ❤️  by [**XY - The Persistent Company**](https://xy.company)
+Made with 🔥and ❄️ by [XY - The Persistent Company](https://www.xy.company)
