@@ -52,7 +52,7 @@ class XyoStandardInteractionTest : XyoTestBase() {
                 }
             }
 
-            val socket = Socket("localhost", 8081)
+            val socket = Socket("127.0.0.1", 8081)
             val pipe = XyoTcpPipe(socket, null)
             val handler = XyoNetworkHandler(pipe)
             nodeOne.boundWitness(handler, XyoBoundWitnessCatalog).await()
@@ -73,7 +73,7 @@ class XyoStandardInteractionTest : XyoTestBase() {
                 }
             }
 
-            val socket = Socket("localhost", 8082)
+            val socket = Socket("0.0.0.0", 8082)
             val pipe = XyoTcpPipe(socket, null)
             val handler = XyoNetworkHandler(pipe)
             nodeOne.boundWitness(handler, XyoBoundWitnessCatalog).await()
