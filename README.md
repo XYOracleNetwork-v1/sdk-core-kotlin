@@ -5,7 +5,6 @@
 # sdk-core-kotlin
 
 [![](https://travis-ci.org/XYOracleNetwork/sdk-core-kotlin.svg?branch=master)](https://travis-ci.org/XYOracleNetwork/sdk-core-kotlin) [![BCH compliance](https://bettercodehub.com/edge/badge/XYOracleNetwork/sdk-core-kotlin?branch=master)](https://bettercodehub.com/) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/2fb2eb69c1db455299ffce57b0216aa6)](https://www.codacy.com/app/XYOracleNetwork/sdk-core-kotlin?utm_source=github.com&utm_medium=referral&utm_content=XYOracleNetwork/sdk-core-kotlin&utm_campaign=Badge_Grade) [![Maintainability](https://api.codeclimate.com/v1/badges/af641257b27ecea22a9f/maintainability)](https://codeclimate.com/github/XYOracleNetwork/sdk-core-kotlin/maintainability)
-
 [![](https://jitpack.io/v/XYOracleNetwork/sdk-core-kotlin.svg)](https://jitpack.io/#XYOracleNetwork/sdk-core-kotlin) [![](https://img.shields.io/gitter/room/XYOracleNetwork/Stardust.svg)](https://gitter.im/XYOracleNetwork/Dev)
 
 ## Table of Contents
@@ -30,15 +29,147 @@ Library to preform all core XYO Network functions which includes
 -   Negotiations for talking to other nodes
 -   Other basic functionality
 
-The library has heavily abstracted modules so that all operations will work with any crypto, storage, networking, ect.
+## Long Description
 
-## XYO Origin-Block Protocol
+A library to preform all core XYO Network functions.
+This includes creating an origin chain, maintaining an origin chain, negotiations for talking to other nodes, and other basic functionality.
+The library has heavily abstracted modules so that all operations will work with any crypto, storage, networking, etc.
+
+## Read the Yellow Paper
 
 The XYO protocol for creating origin-blocks is specified in the [XYO Yellow Paper](https://docs.xyo.network/XYO-Yellow-Paper.pdf). In it, it describes the behavior of how a node on the XYO network should create Bound Witnesses. Note, the behavior is not coupled with any particular technology constraints around transport layers, cryptographic algorithms, or hashing algorithms.
 
-## Core Object Model
-
 [Here](https://github.com/XYOracleNetwork/spec-coreobjectmodel-tex) is a link to the core object model that contains an index of major/minor values and their respective objects.
+
+## Getting Started
+
+Change your gradle file and add our dependency
+
+For build instructions - [click here to go to the repo](https://github.com/XYOracleNetwork/sdk-core-kotlin)
+
+[Click here for our sdk package](https://jitpack.io/#XYOracleNetwork/sdk-core-kotlin)
+
+**You should start by setting up an interface to this library through creating an origin chain creator object.**
+
+> Through an origin chain creator object one can create and maintain an origin chain. 
+
+```kotlin
+val originChain = XyoOriginChainCreator(blockRepo, stateRepo, hash)
+```
+
+```kotlin
+// a key value store to store persist state and bound witnesses
+val storage = XyoInMemoryStorageProvider()
+
+// a hash implementation for the node to hash with
+val hasher = XyoBasicHashBase.createHashType(XyoSchemas.SHA_256, "SHA-256")
+
+// a place to store all off the blocks that the node makes
+val blockRepo = XyoStorageOriginBlockRepository(storage, hasher)
+
+// a place to store all of the origin state (index, keys, previous hash)
+val stateRepo = XyoStorageOriginStateRepository(storage)
+
+// the node object to create origin blocks
+val node = XyoOriginChainCreator(blockRepo, stateRepo, hasher)
+```
+
+After creating a node, it is standard to add a signer, and create a genesis block.
+
+```kotlin
+// creates a signer with a random private key
+val signer = XyoSha256WithSecp256K.newInstance()
+    
+// adds the signer to the node
+node.originState.addSigner(signer: signer)
+
+// creates a origin block with its self (genesis block if this is the first block you make)
+node.selfSignOriginChain()
+
+```
+
+After creating a genesis block, your origin chain has officially started. Remember, all of the state is stored in the state repository (`XyoOriginChainStateRepository`) and the block repository (`XyoOriginBlockRepository`) that are constructed with the node. Both repositories are very high level and can be implemented for ones needs. Out of the box, this library comes with an implementation for key value store databases (`XyoStorageOriginBlockRepository`) and (`XyoStorageOriginChainStateRepository`). The `XyoStorageProvider` interface defines the methods for a simple key value store. There is a default implementation of an in memory key value store that comes with this library (`XyoInMemoryStorage`).
+
+### Creating Origin Blocks
+
+After a node has been created, it can be used to create origin blocks with other nodes. The process of talking to other nodes has been abstracted through use of a pipe (e.g. tcp, ble, memory) that handles all of the transport logic. This interface is defined as `XyoNetworkPipe`. This library ships with a and a tcp client and server pipe.
+
+#### Using a TCP Pipe
+
+**Client**
+
+```kotlin
+// creates a socket with the peer
+val socket = Socket("myarchivist.com", 11000)
+
+// creates a pipe so that we can send formated data through the socket
+val pipe = XyoTcpPipe(socket, null)
+
+// create a handler so that we can do the starting handshake with the node
+val handler = XyoNetworkHandler(pipe)
+
+// create the bound witness with the node on the socket
+val newBoundWitness = node.boundWitness(handler, testProcedureCatalogue).await()
+```
+
+**Server**
+```kotlin
+// create a tcp server on port 11000
+val server = XyoTcpServer(11000)
+
+// listen from the server for connection events
+server.listen { pipe ->
+	// put bound witness into new thread (optional)
+	GlobalScope.launch {
+	
+		// create a handler so that we can do the starting handshake with the node
+	    	val handler = XyoNetworkHandler(pipe)
+		
+		// do the bound witness with the node
+	    	val newBoundWitness = nodeTwo.boundWitness(handler, XyoBoundWitnessCatalog).await()
+	}
+}
+```
+
+Further examples of interacting through a socket can be found [here](https://github.com/XYOracleNetwork/sdk-core-kotlin/blob/feature/getting-started/src/test/kotlin/network/xyo/sdkcorekotlin/node/interaction/XyoStandardInteractionTest.kt).
+
+### Adding Custom Data to a Bound Witness
+```kotlin
+node.addHeuristic("MyHeuristic", object : XyoHeuristicGetter {
+	// will get called right before the bound witness stares
+	override fun getHeuristic(): XyoBuff? {
+	    if (conditionIsMet()) {
+	    	// object will be put into the bound witness
+		return getMyHeuristic()
+	    }
+
+	    // object will not be put into the bound witness 
+	    return null
+	}
+})
+```
+
+### Adding a Listener to a Node
+
+```kotlin
+node.addListener("MyListener", object : XyoNodeListener {
+	override fun onBoundWitnessDiscovered(boundWitness: XyoBoundWitness) {
+		// will get called when a new bound witness if found
+	}
+
+	override fun onBoundWitnessEndFailure(error: Exception?) {
+		// will get called when a bound witness errors out
+	}
+
+	override fun onBoundWitnessEndSuccess(boundWitness: XyoBoundWitness) {
+		// will get called when a bound witness is completed
+	}
+
+	override fun onBoundWitnessStart() {
+		// will get called when a bound witness starts
+	} 
+})
+```
 
 ## Install
 
