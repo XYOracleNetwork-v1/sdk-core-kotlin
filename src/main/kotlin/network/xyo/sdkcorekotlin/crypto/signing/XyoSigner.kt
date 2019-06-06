@@ -3,11 +3,7 @@ package network.xyo.sdkcorekotlin.crypto.signing
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import network.xyo.sdkcorekotlin.schemas.XyoSchemas
-import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
-import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
-import java.security.PrivateKey
-import java.security.PublicKey
+import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 
 /**
  * Performs public key cryptographic operations. A XyoSigner is obtained from a
@@ -34,7 +30,7 @@ abstract class XyoSigner {
      * @return A deferred cryptographic signature of the data field, that was
      * created with the private key, in form of a XyoObject
      */
-    abstract fun signData (byteArray: ByteArray) : Deferred<XyoBuff>
+    abstract fun signData (byteArray: ByteArray) : Deferred<XyoObjectStructure>
 
     /**
      * Gives access to a XyoSigner that can preform public key cryptographic functions.
@@ -63,9 +59,9 @@ abstract class XyoSigner {
          * @return If the signature is valid, the deferred Boolean will be true, if it is invalid the deferred
          * <Boolean will be false.
          */
-        abstract fun verifySign (signature: XyoBuff,
+        abstract fun verifySign (signature: XyoObjectStructure,
                                  byteArray: ByteArray,
-                                 publicKey : XyoBuff) : Deferred<Boolean>
+                                 publicKey : XyoObjectStructure) : Deferred<Boolean>
 
         /**
          * The key to identify the signer provider by so it can be added to a mapping.
@@ -124,7 +120,7 @@ abstract class XyoSigner {
         private val verifiers = HashMap<Byte, HashMap<Byte, XyoSignerProvider>>()
         private val signingCreators = HashMap<Byte, XyoSignerProvider>()
 
-        fun verify (publicKey: XyoBuff, signature: XyoBuff, data : ByteArray) : Deferred<Boolean?> = GlobalScope.async {
+        fun verify (publicKey: XyoObjectStructure, signature: XyoObjectStructure, data : ByteArray) : Deferred<Boolean?> = GlobalScope.async {
             val headerPublicKey = publicKey.schema.id
             val creator = verifiers[headerPublicKey]?.get(signature.schema.id)
 

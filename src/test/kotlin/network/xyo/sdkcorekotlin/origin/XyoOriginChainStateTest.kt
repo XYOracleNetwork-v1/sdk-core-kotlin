@@ -8,9 +8,8 @@ import network.xyo.sdkcorekotlin.crypto.signing.ecdsa.secp256k.XyoSha256WithSecp
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.hashing.XyoSha3
 import network.xyo.sdkcorekotlin.persist.XyoInMemoryStorageProvider
-import network.xyo.sdkcorekotlin.persist.repositories.XyoStorageOriginBlockRepository
 import network.xyo.sdkcorekotlin.persist.repositories.XyoStorageOriginStateRepository
-import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
+import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -24,7 +23,7 @@ class XyoOriginChainStateTest : XyoTestBase() {
     private val repo = XyoStorageOriginStateRepository(storage)
     private val originChainState = XyoOriginChainStateManager(repo)
     private var lastHash : XyoHash? = null
-    private var nextKey : XyoBuff? = null
+    private var nextKey : XyoObjectStructure? = null
 
     @Test
     fun testOriginChainTest () {
@@ -34,8 +33,8 @@ class XyoOriginChainStateTest : XyoTestBase() {
             val originBlocks = ArrayList<XyoBoundWitness>()
             originChainState.addSigner(startingSigner)
             for (i in 0..numberOfBlocks) {
-                val elementsInSignedPayload = ArrayList<XyoBuff>()
-                val elementsInUnsignedPayload = arrayOf<XyoBuff>()
+                val elementsInSignedPayload = ArrayList<XyoObjectStructure>()
+                val elementsInUnsignedPayload = arrayOf<XyoObjectStructure>()
 
 
                 elementsInSignedPayload.add(originChainState.index)

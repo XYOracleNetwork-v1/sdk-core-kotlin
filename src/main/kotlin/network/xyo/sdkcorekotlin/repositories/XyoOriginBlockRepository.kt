@@ -3,7 +3,7 @@ package network.xyo.sdkcorekotlin.repositories
 import kotlinx.coroutines.Deferred
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
 import network.xyo.sdkcorekotlin.persist.XyoStorageException
-import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
+import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 
 
 interface XyoOriginBlockRepository {
@@ -15,7 +15,7 @@ interface XyoOriginBlockRepository {
      * @throws XyoStorageException if there is an error deleting.
      */
     @Throws(XyoStorageException::class)
-    fun removeOriginBlock (originBlockHash : XyoBuff) : Deferred<Unit>
+    fun removeOriginBlock (originBlockHash : XyoObjectStructure) : Deferred<Unit>
 
     /**
      * Checks if an origin blocks exists in persist.
@@ -25,7 +25,7 @@ interface XyoOriginBlockRepository {
      * @throws XyoStorageException if there is an error reading.
      */
     @Throws(XyoStorageException::class)
-    fun containsOriginBlock (originBlockHash: XyoBuff) : Deferred<Boolean>
+    fun containsOriginBlock (originBlockHash: XyoObjectStructure) : Deferred<Boolean>
 
     /**
      * Gets all of the origin blocks in persist.
@@ -34,7 +34,7 @@ interface XyoOriginBlockRepository {
      * @throws XyoStorageException if there is an error reading.
      */
     @Throws(XyoStorageException::class)
-    fun getAllOriginBlockHashes () : Deferred<Iterator<XyoBuff>?>
+    fun getAllOriginBlockHashes () : Deferred<Iterator<XyoObjectStructure>?>
 
     /**
      * Adds a bound bound witness to the navigator and stores it. If the bound witness is not an

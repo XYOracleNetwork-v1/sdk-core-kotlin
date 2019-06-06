@@ -2,21 +2,18 @@ package network.xyo.sdkcorekotlin.crypto.signing.rsa
 
 import network.xyo.sdkcorekotlin.schemas.XyoInterpret
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
-import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
+import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 
 /**
  * The base class for RSA Signature
  */
-abstract class XyoRsaSignature : XyoBuff() {
+abstract class XyoRsaSignature : XyoObjectStructure(byteArrayOf(), 0) {
 
     open val signature : ByteArray
         get() = valueCopy
 
-    override val allowedOffset: Int
-        get() = 0
-
     override var item: ByteArray = byteArrayOf()
-        get() = XyoBuff.newInstance(XyoSchemas.RSA_SIGNATURE, this@XyoRsaSignature.signature).bytesCopy
+        get() = XyoObjectStructure.newInstance(XyoSchemas.RSA_SIGNATURE, this@XyoRsaSignature.signature).bytesCopy
 
     /**
      * The base class for creating RSA Signatures.

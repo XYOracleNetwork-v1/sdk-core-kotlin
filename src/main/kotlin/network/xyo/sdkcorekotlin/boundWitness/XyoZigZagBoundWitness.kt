@@ -3,11 +3,10 @@ package network.xyo.sdkcorekotlin.boundWitness
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import network.xyo.sdkcorekotlin.XyoException
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
-import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
-import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
+import network.xyo.sdkobjectmodelkotlin.structure.XyoIterableStructure
+import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 import kotlin.collections.ArrayList
 
 /**
@@ -27,26 +26,16 @@ import kotlin.collections.ArrayList
  * @property unsignedPayload the un-signed payload to pur in the bound witness witness.
  */
 open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
-                                 private val signedPayload : Array<XyoBuff>,
-                                 private val unsignedPayload: Array<XyoBuff>) : XyoBoundWitness() {
+                                 private val signedPayload : Array<XyoObjectStructure>,
+                                 private val unsignedPayload: Array<XyoObjectStructure>) : XyoBoundWitness() {
 
     /**
      * A ledger to add and remove bound witness fetters and witness while constructing.
      */
-    private val dynamicLeader = ArrayList<XyoBuff>()
+    private val dynamicLeader = ArrayList<XyoObjectStructure>()
 
-    /**
-     * The offset where to read from the buffer, this is set to 0 by default (beginning of the ByteArray).
-     */
-    override val allowedOffset: Int = 0
-
-    /**
-     * The bytes of the bound witness.
-     */
     override var item: ByteArray = byteArrayOf()
-        get() {
-            return XyoIterableObject.createUntypedIterableObject(XyoSchemas.BW, dynamicLeader.toTypedArray()).bytesCopy
-        }
+        get() =  XyoIterableStructure.createUntypedIterableObject(XyoSchemas.BW, dynamicLeader.toTypedArray()).bytesCopy
 
     /**
      * The state carried, if the party creating this bound witness has sent the fetter
@@ -60,7 +49,7 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
      * @param endPoint If not already turned around, decide if what to send sign and send back.
      * @return A XyoBoundWitnessTransfer to send to the other party.
      */
-    fun incomingData (transfer : XyoIterableObject?, endPoint : Boolean) : Deferred<XyoIterableObject> = GlobalScope.async {
+    fun incomingData (transfer : XyoIterableStructure?, endPoint : Boolean) : Deferred<XyoIterableStructure?> = GlobalScope.async {
         if (transfer != null) {
             addTransfer(transfer).await()
         }
@@ -83,7 +72,7 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
      * @param transfer The transfer object to count the signatures
      * @return The number of signatures/witnesses in the transfer.
      */
-    private fun getNumberOfWitnessesFromTransfer (transfer: XyoIterableObject?) : Int {
+    private fun getNumberOfWitnessesFromTransfer (transfer: XyoIterableStructure?) : Int {
         if (transfer == null) {
             return 0
         }
@@ -99,7 +88,7 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
      * @param payload The payload to add to the bound witness.
      * @return The response to send back to the other party connected to.
      */
-    private fun getReturnFromIncoming (signatureReceivedSize : Int, endPoint: Boolean, payload : Array<XyoBuff>) : Deferred<XyoIterableObject> = GlobalScope.async {
+    private fun getReturnFromIncoming (signatureReceivedSize : Int, endPoint: Boolean, payload : Array<XyoObjectStructure>) : Deferred<XyoIterableStructure> = GlobalScope.async {
         if (numberOfWitnesses == 0 && !endPoint) {
             return@async encodeTransfer(dynamicLeader.toTypedArray())
         }
@@ -115,8 +104,8 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
      * @param payload The payload to add to the bound witness.
      * @return The response to send to the other parties.
      */
-    private fun passAndSign (signatureReceivedSize: Int, payload: Array<XyoBuff>) : Deferred<XyoIterableObject> = GlobalScope.async {
-        val toSend = ArrayList<XyoBuff>()
+    private fun passAndSign (signatureReceivedSize: Int, payload: Array<XyoObjectStructure>) : Deferred<XyoIterableStructure> = GlobalScope.async {
+        val toSend = ArrayList<XyoObjectStructure>()
 
         signForSelf(payload).await()
 
@@ -138,9 +127,9 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
      * @param itemsToTransfer The items to encode into a transfer object.
      * @return An XyoIterableObject containing the items.
      */
-    private fun encodeTransfer (itemsToTransfer : Array<XyoBuff>) : XyoIterableObject {
-        val fetters = ArrayList<XyoBuff>()
-        val witnesses =  ArrayList<XyoBuff>()
+    private fun encodeTransfer (itemsToTransfer : Array<XyoObjectStructure>) : XyoIterableStructure {
+        val fetters = ArrayList<XyoObjectStructure>()
+        val witnesses =  ArrayList<XyoObjectStructure>()
 
         for (item in itemsToTransfer) {
             when (item.schema.id) {
@@ -154,12 +143,12 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
         }
 
         if (fetters.size == 0 && witnesses.size != 0) {
-            return XyoIterableObject.createTypedIterableObject(XyoSchemas.WITNESS_SET, witnesses.toTypedArray())
+            return XyoIterableStructure.createTypedIterableObject(XyoSchemas.WITNESS_SET, witnesses.toTypedArray())
         } else if(numberOfFetters != 0 && numberOfWitnesses == 0) {
-            return XyoIterableObject.createTypedIterableObject(XyoSchemas.FETTER_SET, fetters.toTypedArray())
+            return XyoIterableStructure.createTypedIterableObject(XyoSchemas.FETTER_SET, fetters.toTypedArray())
         }
 
-        return  XyoIterableObject.createUntypedIterableObject(XyoSchemas.BW_FRAGMENT, itemsToTransfer)
+        return  XyoIterableStructure.createUntypedIterableObject(XyoSchemas.BW_FRAGMENT, itemsToTransfer)
     }
 
     /**
@@ -167,7 +156,7 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
      *
      * @param transfer The transfer to add
      */
-    private fun addTransfer (transfer : XyoIterableObject) : Deferred<Unit> = GlobalScope.async {
+    private fun addTransfer (transfer : XyoIterableStructure) : Deferred<Unit> = GlobalScope.async {
         // drill down on transfer to make sure its valid
         transfer.toString()
 
@@ -184,12 +173,12 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
      *
      * @return The key set of the acting party.
      */
-    private fun makeSelfKeySet() : XyoBuff {
-        val publicKeys = ArrayList<XyoBuff>()
+    private fun makeSelfKeySet() : XyoObjectStructure {
+        val publicKeys = ArrayList<XyoObjectStructure>()
         for (signer in signers) {
             publicKeys.add(signer.publicKey)
         }
-        return XyoIterableObject.createUntypedIterableObject(XyoSchemas.KEY_SET, publicKeys.toTypedArray())
+        return XyoIterableStructure.createUntypedIterableObject(XyoSchemas.KEY_SET, publicKeys.toTypedArray())
     }
 
     /**
@@ -198,8 +187,8 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
      * @param payload The payload to add to the witness.
      * @return The newly created witness.
      */
-    private fun signBoundWitness (payload: Array<XyoBuff>) : Deferred<XyoBuff> = GlobalScope.async {
-        return@async createWitness(payload, XyoIterableObject.createUntypedIterableObject(XyoSchemas.SIGNATURE_SET, Array(signers.size) { i ->
+    private fun signBoundWitness (payload: Array<XyoObjectStructure>) : Deferred<XyoObjectStructure> = GlobalScope.async {
+        return@async createWitness(payload, XyoIterableStructure.createUntypedIterableObject(XyoSchemas.SIGNATURE_SET, Array(signers.size) { i ->
             signCurrent(signers[i]).await()
         }))
     }
@@ -209,7 +198,7 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
      *
      * @param payload The payload to sign with (add into the witness, unsigned payload)
      */
-    private fun signForSelf (payload: Array<XyoBuff>) = GlobalScope.async {
+    private fun signForSelf (payload: Array<XyoObjectStructure>) = GlobalScope.async {
         val signatureSet = signBoundWitness(payload).await()
         dynamicLeader.add(signatureSet)
     }

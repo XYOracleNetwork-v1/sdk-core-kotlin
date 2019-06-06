@@ -1,7 +1,7 @@
 package network.xyo.sdkcorekotlin.network
 
 import kotlinx.coroutines.Deferred
-import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
+import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 
 /**
  * A network abstraction to communicate with another peer.
@@ -26,5 +26,5 @@ interface  XyoNetworkPipe {
      */
     fun close() : Deferred<Any?>
 
-    fun getNetworkHeretics (): Array<XyoBuff>
+    fun getNetworkHeretics (): Array<XyoObjectStructure>
 }

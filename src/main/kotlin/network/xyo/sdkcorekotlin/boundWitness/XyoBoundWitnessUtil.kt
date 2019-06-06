@@ -2,8 +2,8 @@ package network.xyo.sdkcorekotlin.boundWitness
 
 import network.xyo.sdkcorekotlin.log.XyoLog
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
-import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
-import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
+import network.xyo.sdkobjectmodelkotlin.structure.XyoIterableStructure
+import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 
 /**
  * A helper object to preform PURE operations on bound witnesses, meaning irrelevant to origin related topics. For
@@ -18,8 +18,8 @@ object XyoBoundWitnessUtil {
      * @param boundWitness The bound witness to remove the type from.
      * @return A bound witness without the type specified.
      */
-    fun removeTypeFromUnsignedPayload (type : Byte, boundWitness: XyoIterableObject) : XyoIterableObject {
-        val newBoundWitnessLedger = ArrayList<XyoBuff>()
+    fun removeTypeFromUnsignedPayload (type : Byte, boundWitness: XyoIterableStructure) : XyoIterableStructure {
+        val newBoundWitnessLedger = ArrayList<XyoObjectStructure>()
 
         val fetters = boundWitness[XyoSchemas.FETTER.id]
         val witnesses = boundWitness[XyoSchemas.WITNESS.id]
@@ -27,8 +27,8 @@ object XyoBoundWitnessUtil {
         newBoundWitnessLedger.addAll(fetters)
 
         for (witness in witnesses) {
-            if (witness is XyoIterableObject) {
-                val items = ArrayList<XyoBuff>()
+            if (witness is XyoIterableStructure) {
+                val items = ArrayList<XyoObjectStructure>()
 
                 for (item in witness.iterator) {
                     if (item.schema.id != type) {
@@ -38,11 +38,11 @@ object XyoBoundWitnessUtil {
                     }
                 }
 
-                newBoundWitnessLedger.add(XyoIterableObject.createUntypedIterableObject(XyoSchemas.WITNESS, items.toTypedArray()))
+                newBoundWitnessLedger.add(XyoIterableStructure.createUntypedIterableObject(XyoSchemas.WITNESS, items.toTypedArray()))
             }
         }
 
-        return XyoIterableObject.createUntypedIterableObject(XyoSchemas.BW, newBoundWitnessLedger.toTypedArray())
+        return XyoIterableStructure.createUntypedIterableObject(XyoSchemas.BW, newBoundWitnessLedger.toTypedArray())
     }
 
     /**
@@ -52,7 +52,7 @@ object XyoBoundWitnessUtil {
      * @param publicKey The public key to look for
      * @return Returns the index of the party, if no corresponding public key is found: will return null.
      */
-    fun getPartyNumberFromPublicKey (boundWitness: XyoBoundWitness, publicKey: XyoBuff) : Int? {
+    fun getPartyNumberFromPublicKey (boundWitness: XyoBoundWitness, publicKey: XyoObjectStructure) : Int? {
         for (i in 0 until (boundWitness.numberOfParties ?: 0)) {
 
             val fetter = boundWitness.getFetterOfParty(i) ?: return null
@@ -72,9 +72,9 @@ object XyoBoundWitnessUtil {
      * @param publicKey The public key to look for in the fetter.
      * @return Will return true if the public key is in the fetter, otherwise not.
      */
-    private fun checkPartyForPublicKey (fetter : XyoIterableObject, publicKey : XyoBuff) : Boolean {
+    private fun checkPartyForPublicKey (fetter : XyoIterableStructure, publicKey : XyoObjectStructure) : Boolean {
         for (keySet in fetter[XyoSchemas.KEY_SET.id]) {
-            if ((keySet !is XyoIterableObject)) return false
+            if ((keySet !is XyoIterableStructure)) return false
 
             for (key in keySet.iterator) {
                 if (key == publicKey) {

@@ -1,8 +1,7 @@
 package network.xyo.sdkcorekotlin.node
 
-import network.xyo.sdkcorekotlin.log.XyoLog
 import network.xyo.sdkcorekotlin.repositories.XyoBridgeQueueRepository
-import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
+import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 
 /**
  * A class to manage outgoing origin blocks for bridges and sentinels.
@@ -23,7 +22,7 @@ open class XyoBridgeQueue (val repo: XyoBridgeQueueRepository) {
      *
      * @param blockHash The block to add.
      */
-    fun addBlock (blockHash : XyoBuff) {
+    fun addBlock (blockHash : XyoObjectStructure) {
         addBlock(blockHash, 0)
     }
 
@@ -33,7 +32,7 @@ open class XyoBridgeQueue (val repo: XyoBridgeQueueRepository) {
      * @param blockHash The block to add.
      * @param weight The weight to add the block to the queue with.
      */
-    fun addBlock (blockHash : XyoBuff, weight : Int) {
+    fun addBlock (blockHash : XyoObjectStructure, weight : Int) {
         val queueItem = XyoBridgeQueueItem(weight, blockHash)
         repo.addQueueItem(queueItem)
     }
@@ -48,7 +47,7 @@ open class XyoBridgeQueue (val repo: XyoBridgeQueueRepository) {
     }
 
     fun onBlocksBridges (blocks: Array<XyoBridgeQueueItem>) {
-        val hashes = ArrayList<XyoBuff>()
+        val hashes = ArrayList<XyoObjectStructure>()
 
         for (block in blocks) {
             hashes.add(block.hash)
@@ -60,9 +59,9 @@ open class XyoBridgeQueue (val repo: XyoBridgeQueueRepository) {
     /**
      * Get the blocks that have exceeded the removeWeight and are out of the queue
      */
-    fun getBlocksToRemove () : Array<XyoBuff> {
+    fun getBlocksToRemove () : Array<XyoObjectStructure> {
         val blocksToBridge = repo.getQueue()
-        val toRemoveHashes = ArrayList<XyoBuff>()
+        val toRemoveHashes = ArrayList<XyoObjectStructure>()
 
         for (block in blocksToBridge) {
             val hash = block.hash

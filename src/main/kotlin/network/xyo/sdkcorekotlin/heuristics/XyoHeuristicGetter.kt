@@ -1,6 +1,6 @@
 package network.xyo.sdkcorekotlin.heuristics
 
-import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
+import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 
 interface XyoHeuristicGetter {
 
@@ -10,5 +10,5 @@ interface XyoHeuristicGetter {
      *
      * @return the Heuristic
      */
-    fun getHeuristic() : XyoBuff?
+    fun getHeuristic() : XyoObjectStructure?
 }

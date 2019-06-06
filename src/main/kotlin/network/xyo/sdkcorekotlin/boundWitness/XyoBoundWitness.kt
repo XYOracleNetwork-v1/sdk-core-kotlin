@@ -7,14 +7,15 @@ import network.xyo.sdkcorekotlin.schemas.XyoInterpret
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
-import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
-import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
+import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
+import network.xyo.sdkobjectmodelkotlin.structure.XyoIterableStructure
+
 
 /**
  * A Bound Witness Object that is independent of origin state. This implements the cryptographic structure discussed
  * in the XYO Network Yellow Paper, and White Paper.
  */
-abstract class XyoBoundWitness : XyoIterableObject() {
+open class XyoBoundWitness(byteArray: ByteArray = startingBytes, offset: Int = 0) : XyoIterableStructure(byteArray, offset) {
 
     /**
      * If the bound witness is completed or not. This is represented by the number of fetters and the number of
@@ -72,7 +73,7 @@ abstract class XyoBoundWitness : XyoIterableObject() {
      * @param partyNum The index of the party in the bound witness.
      * @return The party's fetter. Will return null if out of index.
      */
-    fun getFetterOfParty(partyNum : Int) : XyoIterableObject? {
+    fun getFetterOfParty(partyNum : Int) : XyoIterableStructure? {
         val numOfParties = numberOfParties ?: return null
 
         if (numOfParties <= partyNum) {
@@ -88,7 +89,7 @@ abstract class XyoBoundWitness : XyoIterableObject() {
      * @param partyNum The index of the party in the bound witness.
      * @return The party's witness. Will return null if out of index.
      */
-    fun getWitnessOfParty(partyNum: Int) : XyoIterableObject? {
+    fun getWitnessOfParty(partyNum: Int) : XyoIterableStructure? {
         val numOfParties = numberOfParties ?: return null
 
         if (numOfParties <= partyNum) {
@@ -104,9 +105,9 @@ abstract class XyoBoundWitness : XyoIterableObject() {
      * @param posIndex The index to grab from.
      * @return Will return null if the pos index is out of range or if the bound witness is incomplete.
      */
-    fun getBoundWitnessItemAtIndex (posIndex : Int) : XyoIterableObject? {
+    fun getBoundWitnessItemAtIndex (posIndex : Int) : XyoIterableStructure? {
         if (completed) {
-            return this[posIndex] as? XyoIterableObject
+            return this[posIndex] as? XyoIterableStructure
         }
 
         return null
@@ -126,11 +127,11 @@ abstract class XyoBoundWitness : XyoIterableObject() {
      * @param publicKeys The public keys to add to the fetter. This type should be a key set.
      * @return The newly created fetter.
      */
-    protected fun createFetter (payload: Array<XyoBuff>, publicKeys : XyoBuff) : XyoBuff {
-        val itemsInFetter = ArrayList<XyoBuff>()
+    protected fun createFetter (payload: Array<XyoObjectStructure>, publicKeys : XyoObjectStructure) : XyoObjectStructure {
+        val itemsInFetter = ArrayList<XyoObjectStructure>()
         itemsInFetter.add(publicKeys)
         itemsInFetter.addAll(payload)
-        return XyoIterableObject.createUntypedIterableObject(XyoSchemas.FETTER, itemsInFetter.toTypedArray())
+        return XyoIterableStructure.createUntypedIterableObject(XyoSchemas.FETTER, itemsInFetter.toTypedArray())
     }
 
     /**
@@ -140,11 +141,11 @@ abstract class XyoBoundWitness : XyoIterableObject() {
      * @param signatures The public keys to add to the witness. This type should be a signature set.
      * @return The newly created witness.
      */
-    protected fun createWitness (payload: Array<XyoBuff>, signatures : XyoBuff) : XyoBuff {
-        val itemsInWitness = ArrayList<XyoBuff>()
+    protected fun createWitness (payload: Array<XyoObjectStructure>, signatures : XyoObjectStructure) : XyoIterableStructure {
+        val itemsInWitness = ArrayList<XyoObjectStructure>()
         itemsInWitness.add(signatures)
         itemsInWitness.addAll(payload)
-        return XyoIterableObject.createUntypedIterableObject(XyoSchemas.WITNESS, itemsInWitness.toTypedArray())
+        return XyoIterableStructure.createUntypedIterableObject(XyoSchemas.WITNESS, itemsInWitness.toTypedArray())
     }
 
     /**
@@ -163,12 +164,14 @@ abstract class XyoBoundWitness : XyoIterableObject() {
      * @param signer A signer to sign with.
      * @return A deferred XyoObject (signature).
      */
-    fun signCurrent(signer: XyoSigner) : Deferred<XyoBuff> = GlobalScope.async {
+    fun signCurrent(signer: XyoSigner) : Deferred<XyoObjectStructure> = GlobalScope.async {
         return@async signer.signData(signingData).await()
     }
 
 
     companion object : XyoInterpret {
+
+        val startingBytes = XyoIterableStructure.createUntypedIterableObject(XyoSchemas.BW, arrayOf()).bytesCopy
 
         /**
          * Gets a new instance of the bound witness from bytes.
@@ -177,11 +180,7 @@ abstract class XyoBoundWitness : XyoIterableObject() {
          * @return The XyoBuff bound witness.
          */
         override fun getInstance(byteArray: ByteArray): XyoBoundWitness {
-            return object : XyoBoundWitness() {
-                override val allowedOffset: Int = 0
-                override var item: ByteArray = byteArray
-
-            }
+            return XyoBoundWitness(byteArray, 0)
         }
 
         /**

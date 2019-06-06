@@ -4,8 +4,8 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
-import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
+import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 import org.bouncycastle.jcajce.provider.digest.SHA3
 
 /**
@@ -20,10 +20,8 @@ object XyoSha3 : XyoBasicHashBase.XyoBasicHashBaseProvider() {
         digest.update(data)
         val hash = digest.digest()
 
-        return@async object : XyoBasicHashBase() {
-            override var item: ByteArray = XyoBuff.newInstance(XyoSha3.schema, hash).bytesCopy
+        return@async object : XyoBasicHashBase(XyoObjectStructure.newInstance(XyoSha3.schema, hash).bytesCopy) {
             override val hash: ByteArray = hash
-            override val allowedOffset: Int = 0
         }
     }
 }
