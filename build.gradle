@@ -3,19 +3,6 @@ apply plugin: 'jacoco'
 apply plugin: 'org.sonarqube'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'maven-publish'
-group = 'network.xyo'
-
-sourceCompatibility = 1.8
-
-def majorVersion = 1
-def minorVersion = 1
-
-Properties versionProps = new Properties()
-def versionPropsFile = file('version.properties')
-if (versionPropsFile.exists())
-    versionProps.load(new FileInputStream(versionPropsFile))
-def code = (versionProps['VERSION_CODE'] ?: "0").toInteger() + 1
-def verString = majorVersion + '.' + minorVersion + '.' + code
 
 buildscript {
     repositories {
@@ -36,6 +23,18 @@ buildscript {
     }
 }
 
+def majorVersion = 1
+def minorVersion = 1
+
+Properties versionProps = new Properties()
+def versionPropsFile = file('version.properties')
+if (versionPropsFile.exists())
+    versionProps.load(new FileInputStream(versionPropsFile))
+def code = (versionProps['VERSION_CODE'] ?: "0").toInteger() + 1
+def verString = majorVersion + '.' + minorVersion + '.' + code
+
+versionProps['VERSION_CODE'] = code.toString()
+versionProps.store(versionPropsFile.newWriter(), null)
 
 jacocoTestReport {
     reports {
