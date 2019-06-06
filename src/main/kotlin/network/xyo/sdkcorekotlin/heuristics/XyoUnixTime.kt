@@ -2,13 +2,13 @@ package network.xyo.sdkcorekotlin.heuristics
 
 import network.xyo.sdkcorekotlin.schemas.XyoInterpret
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
-import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
+import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 import java.nio.ByteBuffer
 
 /**
  * A simple unix time heuristic
  */
-abstract class XyoUnixTime : XyoBuff() {
+class XyoUnixTime (byteArray: ByteArray) : XyoObjectStructure(byteArray, 0) {
 
     /**
      * The time when the heuristic was created.
@@ -23,22 +23,16 @@ abstract class XyoUnixTime : XyoBuff() {
          * Bound Witnesses.
          */
         val getter = object : XyoHeuristicGetter {
-            override fun getHeuristic(): XyoBuff? {
+            override fun getHeuristic(): XyoObjectStructure? {
                 val time = System.currentTimeMillis()
                 val buffer = ByteBuffer.allocate(8).putLong(time)
 
-                return object : XyoUnixTime() {
-                    override val allowedOffset: Int = 0
-                    override var item: ByteArray = XyoBuff.getObjectEncoded(XyoSchemas.UNIX_TIME, buffer.array())
-                }
+                return XyoUnixTime(XyoObjectStructure.getObjectEncoded(XyoSchemas.UNIX_TIME, buffer.array()))
             }
         }
 
         override fun getInstance(byteArray: ByteArray): XyoUnixTime {
-            return object : XyoUnixTime() {
-                override val allowedOffset: Int = 0
-                override var item: ByteArray = byteArray
-            }
+            return XyoUnixTime(byteArray)
         }
     }
 }

@@ -1,5 +1,5 @@
 package network.xyo.sdkcorekotlin.node
 
-import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
+import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 
-class XyoBoundWitnessPair (val signedPayload: XyoBuff, val unsignedPayload: XyoBuff)
+class XyoBoundWitnessPair (val signedPayload: XyoObjectStructure, val unsignedPayload: XyoObjectStructure)

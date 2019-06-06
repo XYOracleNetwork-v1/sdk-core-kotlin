@@ -7,8 +7,8 @@ import network.xyo.sdkcorekotlin.node.XyoBridgeQueueItem
 import network.xyo.sdkcorekotlin.persist.XyoKeyValueStore
 import network.xyo.sdkcorekotlin.repositories.XyoBridgeQueueRepository
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
-import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
-import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
+import network.xyo.sdkobjectmodelkotlin.structure.XyoIterableStructure
+import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 import java.lang.Math.min
 import java.nio.ByteBuffer
 
@@ -28,7 +28,7 @@ class XyoStorageBridgeQueueRepository (private val store: XyoKeyValueStore) : Xy
         queueCache.add(insertIndex, item)
     }
 
-    override fun removeQueueItems (items: Array<XyoBuff>) {
+    override fun removeQueueItems (items: Array<XyoObjectStructure>) {
         for (item in items) {
             queueCache.removeIf { cachedItem ->
                 return@removeIf item.bytesCopy.contentEquals(cachedItem.hash.bytesCopy)
@@ -50,7 +50,7 @@ class XyoStorageBridgeQueueRepository (private val store: XyoKeyValueStore) : Xy
         return itemsToReturn.toTypedArray()
     }
 
-    override fun incrementWeights (hashes: Array<XyoBuff>) {
+    override fun incrementWeights (hashes: Array<XyoObjectStructure>) {
         for (hash in hashes) {
             val indexToAdd = queueCache.indexOfFirst { cachedItem ->
                 return@indexOfFirst cachedItem.hash.bytesCopy.contentEquals(hash.bytesCopy)
@@ -61,11 +61,11 @@ class XyoStorageBridgeQueueRepository (private val store: XyoKeyValueStore) : Xy
     }
 
     override fun commit () : Deferred<Unit> = GlobalScope.async {
-        val encodedQueueItems: Array<XyoBuff> = Array(queueCache.size) { i ->
+        val encodedQueueItems: Array<XyoObjectStructure> = Array(queueCache.size) { i ->
             return@Array this@XyoStorageBridgeQueueRepository.queueCache[i].encode()
         }
 
-        val encodedMaster = XyoIterableObject.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, encodedQueueItems)
+        val encodedMaster = XyoIterableStructure.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, encodedQueueItems)
         store.write(STORE_QUEUE_KEY, encodedMaster.bytesCopy).await()
     }
 
@@ -73,13 +73,10 @@ class XyoStorageBridgeQueueRepository (private val store: XyoKeyValueStore) : Xy
     fun restore () : Deferred<Unit> = GlobalScope.async {
         val encodedItems = store.read(STORE_QUEUE_KEY).await() ?: return@async
         val restoredQueueCache = ArrayList<XyoBridgeQueueItem>()
-        val it = object : XyoIterableObject() {
-            override val allowedOffset: Int = 0
-            override var item: ByteArray = encodedItems
-        }.iterator
+        val it = XyoIterableStructure(encodedItems, 0).iterator
 
         while (it.hasNext()) {
-            val item = it.next() as? XyoIterableObject
+            val item = it.next() as? XyoIterableStructure
 
             if (item != null) {
                 restoredQueueCache.add(decodeBridgeItem(item))
@@ -104,14 +101,14 @@ class XyoStorageBridgeQueueRepository (private val store: XyoKeyValueStore) : Xy
 
     }
 
-    private fun XyoBridgeQueueItem.encode() : XyoIterableObject {
+    private fun XyoBridgeQueueItem.encode() : XyoIterableStructure {
         val hashStructure = this.hash
-        val weightStructure = XyoBuff.newInstance(XyoSchemas.BLOB, ByteBuffer.allocate(4).putInt(this.weight).array())
+        val weightStructure = XyoObjectStructure.newInstance(XyoSchemas.BLOB, ByteBuffer.allocate(4).putInt(this.weight).array())
 
-        return XyoIterableObject.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, arrayOf(hashStructure, weightStructure))
+        return XyoIterableStructure.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, arrayOf(hashStructure, weightStructure))
     }
 
-    private fun decodeBridgeItem (item : XyoIterableObject): XyoBridgeQueueItem {
+    private fun decodeBridgeItem (item : XyoIterableStructure): XyoBridgeQueueItem {
         val hash = item[0]
         val weight = ByteBuffer.wrap(item[1].valueCopy).int
 

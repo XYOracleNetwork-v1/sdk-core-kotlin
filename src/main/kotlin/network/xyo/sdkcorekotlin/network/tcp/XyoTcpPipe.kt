@@ -4,8 +4,8 @@ import kotlinx.coroutines.*
 import network.xyo.sdkcorekotlin.log.XyoLog
 import network.xyo.sdkcorekotlin.network.XyoAdvertisePacket
 import network.xyo.sdkcorekotlin.network.XyoNetworkPipe
-import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
-import network.xyo.sdkobjectmodelkotlin.objects.toHexString
+import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
+import network.xyo.sdkobjectmodelkotlin.toHexString
 import java.io.DataInputStream
 import java.io.DataOutputStream
 import java.io.IOException
@@ -34,7 +34,7 @@ open class XyoTcpPipe(private val socket: Socket,
         return@async null
     }
 
-    override fun getNetworkHeretics(): Array<XyoBuff> {
+    override fun getNetworkHeretics(): Array<XyoObjectStructure> {
         return arrayOf()
     }
 

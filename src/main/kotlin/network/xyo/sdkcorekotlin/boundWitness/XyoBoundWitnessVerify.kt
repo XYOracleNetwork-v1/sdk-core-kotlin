@@ -5,7 +5,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
-import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
+import network.xyo.sdkobjectmodelkotlin.structure.XyoIterableStructure
 
 /**
  * A class to verify if a single bound witness is valid (does not validate indexes and hashes).
@@ -39,11 +39,11 @@ class XyoBoundWitnessVerify (private val allowUnknown : Boolean) {
      */
     private fun checkAllSignatures(signingData: ByteArray, boundWitness: XyoBoundWitness) : Deferred<Boolean> = GlobalScope.async {
         for (partyNum in 0 until (boundWitness.numberOfParties ?: 0) ) {
-            val keySet = boundWitness.getFetterOfParty(partyNum)?.get(XyoSchemas.KEY_SET.id)?.getOrNull(0) as? XyoIterableObject
-            val sigSet = boundWitness.getWitnessOfParty(partyNum)?.get(XyoSchemas.SIGNATURE_SET.id)?.getOrNull(0) as? XyoIterableObject
+            val keySet = boundWitness.getFetterOfParty(partyNum)?.get(XyoSchemas.KEY_SET.id)?.getOrNull(0) as? XyoIterableStructure
+            val sigSet = boundWitness.getWitnessOfParty(partyNum)?.get(XyoSchemas.SIGNATURE_SET.id)?.getOrNull(0) as? XyoIterableStructure
 
-            if (!(keySet is XyoIterableObject
-                            && sigSet is XyoIterableObject
+            if (!(keySet is XyoIterableStructure
+                            && sigSet is XyoIterableStructure
                             && checkSinglePartySignatures(keySet, sigSet, signingData).await())) {
 
                 return@async false
@@ -61,7 +61,7 @@ class XyoBoundWitnessVerify (private val allowUnknown : Boolean) {
      * @param signingData The data signed in the bound witness.
      * @return The validity of the signatures
      */
-    private fun checkSinglePartySignatures (keys: XyoIterableObject, signatures : XyoIterableObject, signingData : ByteArray) : Deferred<Boolean> = GlobalScope.async {
+    private fun checkSinglePartySignatures (keys: XyoIterableStructure, signatures : XyoIterableStructure, signingData : ByteArray) : Deferred<Boolean> = GlobalScope.async {
         for (keyNum in 0 until keys.count) {
             val key = keys[keyNum]
             val signature = signatures[keyNum]

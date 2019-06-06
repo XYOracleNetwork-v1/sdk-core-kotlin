@@ -6,20 +6,20 @@ import network.xyo.sdkcorekotlin.log.XyoLog
 import network.xyo.sdkcorekotlin.XyoException
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
 import network.xyo.sdkcorekotlin.network.XyoNetworkHandler
-import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.exceptions.XyoObjectException
-import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
+import network.xyo.sdkobjectmodelkotlin.structure.XyoIterableStructure
+import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 
 
 class XyoZigZagBoundWitnessSession(private val handler : XyoNetworkHandler,
-                                   signedPayload : Array<XyoBuff>,
-                                   unsignedPayload : Array<XyoBuff>,
+                                   signedPayload : Array<XyoObjectStructure>,
+                                   unsignedPayload : Array<XyoObjectStructure>,
                                    signers : Array<XyoSigner>,
                                    private val choice : ByteArray) : XyoZigZagBoundWitness(signers, signedPayload, unsignedPayload) {
 
     private var cycles = 0
 
-    suspend fun doBoundWitness(transfer: XyoIterableObject?) : Exception? {
+    suspend fun doBoundWitness(transfer: XyoIterableStructure?) : Exception? {
         try {
             if (!completed) {
                 val response = sendAndReceive(transfer != null, transfer).await()
@@ -43,9 +43,9 @@ class XyoZigZagBoundWitnessSession(private val handler : XyoNetworkHandler,
         return null
     }
 
-    private fun sendAndReceive (didHaveData : Boolean, transfer : XyoIterableObject?) = GlobalScope.async {
+    private fun sendAndReceive (didHaveData : Boolean, transfer : XyoIterableStructure?) = GlobalScope.async {
         val response : ByteArray?
-        val returnData = incomingData(transfer, cycles == 0 && didHaveData).await()
+        val returnData = incomingData(transfer, cycles == 0 && didHaveData).await() ?: throw XyoBoundWitnessCreationException("Response is null!")
 
         if (cycles == 0 && !didHaveData) {
             response = handler.sendChoicePacket(choice, returnData.bytesCopy).await() ?: throw XyoBoundWitnessCreationException("Response is null!")
@@ -57,10 +57,7 @@ class XyoZigZagBoundWitnessSession(private val handler : XyoNetworkHandler,
         return@async if (response == null) {
                 null
             } else {
-                object : XyoIterableObject() {
-                    override val allowedOffset: Int = 0
-                    override var item: ByteArray = response
-                }
+                XyoIterableStructure(response, 0)
             }
     }
 

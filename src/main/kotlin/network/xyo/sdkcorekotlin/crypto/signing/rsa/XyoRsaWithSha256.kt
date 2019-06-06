@@ -5,7 +5,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
-import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
+import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import java.security.Signature
 
@@ -16,7 +16,7 @@ class XyoRsaWithSha256 (privateKey: XyoRsaPrivateKey?) : XyoGeneralRsa (1024, pr
     override val signature: Signature
         get() = signatureInstance
 
-    override fun signData(byteArray: ByteArray): Deferred<XyoBuff> {
+    override fun signData(byteArray: ByteArray): Deferred<XyoObjectStructure> {
         return GlobalScope.async {
             signature.initSign(keyPair.private)
             signature.update(byteArray)
@@ -42,7 +42,7 @@ class XyoRsaWithSha256 (privateKey: XyoRsaPrivateKey?) : XyoGeneralRsa (1024, pr
 
         override val supportedSignatures: Array<Byte> = arrayOf(XyoSchemas.RSA_SIGNATURE.id)
 
-        override fun verifySign(signature: XyoBuff, byteArray: ByteArray, publicKey: XyoBuff): Deferred<Boolean> {
+        override fun verifySign(signature: XyoObjectStructure, byteArray: ByteArray, publicKey: XyoObjectStructure): Deferred<Boolean> {
             return GlobalScope.async {
                 signatureInstance.initVerify(XyoRsaPublicKey.getInstance(publicKey.bytesCopy))
                 signatureInstance.update(byteArray)

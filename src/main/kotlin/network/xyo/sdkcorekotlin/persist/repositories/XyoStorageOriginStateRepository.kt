@@ -7,30 +7,30 @@ import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
 import network.xyo.sdkcorekotlin.persist.XyoKeyValueStore
 import network.xyo.sdkcorekotlin.repositories.XyoOriginChainStateRepository
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
-import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
-import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
+import network.xyo.sdkobjectmodelkotlin.structure.XyoIterableStructure
+import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 import java.nio.ByteBuffer
 
 class XyoStorageOriginStateRepository (private val store: XyoKeyValueStore) : XyoOriginChainStateRepository {
     private var signersCache = ArrayList<XyoSigner>()
-    private var staticsCache = ArrayList<XyoBuff>()
-    private var indexCache: XyoBuff? = null
-    private var previousHashCache: XyoBuff? = null
+    private var staticsCache = ArrayList<XyoObjectStructure>()
+    private var indexCache: XyoObjectStructure? = null
+    private var previousHashCache: XyoObjectStructure? = null
     private var lastBlockTimeCache: Long? = null
 
-    override fun getIndex(): XyoBuff? {
+    override fun getIndex(): XyoObjectStructure? {
         return indexCache
     }
 
-    override fun putIndex(index: XyoBuff) {
+    override fun putIndex(index: XyoObjectStructure) {
         indexCache = index
     }
 
-    override fun getPreviousHash(): XyoBuff? {
+    override fun getPreviousHash(): XyoObjectStructure? {
         return previousHashCache
     }
 
-    override fun putPreviousHash(hash: XyoBuff) {
+    override fun putPreviousHash(hash: XyoObjectStructure) {
         previousHashCache = hash
     }
 
@@ -48,11 +48,11 @@ class XyoStorageOriginStateRepository (private val store: XyoKeyValueStore) : Xy
         signersCache.add(signer)
     }
 
-    override fun getStatics(): Array<XyoBuff> {
+    override fun getStatics(): Array<XyoObjectStructure> {
         return staticsCache.toTypedArray()
     }
 
-    override fun setStatics (statics: Array<XyoBuff>) {
+    override fun setStatics (statics: Array<XyoObjectStructure>) {
         staticsCache = ArrayList(statics.asList())
     }
 
@@ -79,12 +79,12 @@ class XyoStorageOriginStateRepository (private val store: XyoKeyValueStore) : Xy
 
         if (originTime != null) {
             val bytesLong = ByteBuffer.allocate(8).putLong(originTime).array()
-            val encodedTime = XyoBuff.newInstance(XyoSchemas.BLOB, bytesLong)
+            val encodedTime = XyoObjectStructure.newInstance(XyoSchemas.BLOB, bytesLong)
             store.write(ORIGIN_LAST_TIME, encodedTime.bytesCopy).await()
         }
 
 
-        val encodedStatics = XyoIterableObject.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, staticsCache.toTypedArray())
+        val encodedStatics = XyoIterableStructure.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, staticsCache.toTypedArray())
         store.write(ORIGIN_STATICS_KEY, encodedStatics.bytesCopy).await()
     }
 
@@ -96,19 +96,16 @@ class XyoStorageOriginStateRepository (private val store: XyoKeyValueStore) : Xy
         val encodedLastTime = store.read(ORIGIN_LAST_TIME).await()
 
         if (encodedIndex != null) {
-            indexCache = XyoBuff.wrap(encodedIndex)
+            indexCache = XyoObjectStructure.wrap(encodedIndex)
         }
 
         if (encodedHash != null) {
-            previousHashCache = XyoBuff.wrap(encodedHash)
+            previousHashCache = XyoObjectStructure.wrap(encodedHash)
         }
 
         if (encodedStaticts != null) {
-            val statics = ArrayList<XyoBuff>()
-            val it = object : XyoIterableObject() {
-                override val allowedOffset: Int = 0
-                override var item: ByteArray = encodedStaticts
-            }.iterator
+            val statics = ArrayList<XyoObjectStructure>()
+            val it =  XyoIterableStructure(encodedStaticts, 0).iterator
 
             for (item in it) {
                 statics.add(item)
@@ -118,7 +115,7 @@ class XyoStorageOriginStateRepository (private val store: XyoKeyValueStore) : Xy
         }
 
         if (encodedLastTime != null) {
-            val buff = XyoBuff.wrap(encodedLastTime).valueCopy
+            val buff = XyoObjectStructure.wrap(encodedLastTime).valueCopy
             lastBlockTimeCache = ByteBuffer.wrap(buff).long
         }
     }

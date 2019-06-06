@@ -1,8 +1,6 @@
 package network.xyo.sdkcorekotlin.node
 
-import kotlinx.coroutines.Deferred
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
-import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 
 /**
  * A base class for bound witness options. For example a sentinel would have an option for

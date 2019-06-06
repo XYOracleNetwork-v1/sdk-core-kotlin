@@ -8,7 +8,7 @@ import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
 import network.xyo.sdkcorekotlin.crypto.signing.ecdsa.XyoEcPrivateKey
 import network.xyo.sdkcorekotlin.crypto.signing.ecdsa.XyoEcdsaSignature
 import network.xyo.sdkcorekotlin.crypto.signing.ecdsa.XyoUncompressedEcPublicKey
-import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
+import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 import org.bouncycastle.crypto.params.ECDomainParameters
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters
 import org.bouncycastle.crypto.signers.ECDSASigner
@@ -25,7 +25,7 @@ import java.security.Signature
  */
 class XyoSha256WithSecp256K (privateKey : ECPrivateKey?) : XyoEcSecp256K1(privateKey) {
 
-    override fun signData(byteArray: ByteArray): Deferred<XyoBuff> {
+    override fun signData(byteArray: ByteArray): Deferred<XyoObjectStructure> {
         return GlobalScope.async {
             signatureInstance.initSign(keyPair.private)
             signatureInstance.update(byteArray)
@@ -55,12 +55,12 @@ class XyoSha256WithSecp256K (privateKey : ECPrivateKey?) : XyoEcSecp256K1(privat
             return XyoSha256WithSecp256K(XyoEcPrivateKey.getInstance(privateKey, XyoEcSecp256K1.ecSpec))
         }
 
-        override fun verifySign(signature: XyoBuff, byteArray: ByteArray, publicKey: XyoBuff): Deferred<Boolean> = GlobalScope.async {
+        override fun verifySign(signature: XyoObjectStructure, byteArray: ByteArray, publicKey: XyoObjectStructure): Deferred<Boolean> = GlobalScope.async {
             try {
                 val signer = ECDSASigner()
                 val uncompressedKey = object :XyoUncompressedEcPublicKey() {
                     override val ecSpec: ECParameterSpec = XyoEcSecp256K1.ecSpec
-                    override val allowedOffset: Int = 0
+                    override var allowedOffset: Int = 0
                     override var item: ByteArray = publicKey.bytesCopy
                 }
 
