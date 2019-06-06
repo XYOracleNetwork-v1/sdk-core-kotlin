@@ -14,9 +14,9 @@ import network.xyo.sdkcorekotlin.origin.XyoOriginChainStateManager
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas.BRIDGE_BLOCK_SET
 import network.xyo.sdkcorekotlin.repositories.XyoOriginBlockRepository
 import network.xyo.sdkcorekotlin.repositories.XyoOriginChainStateRepository
-import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
 import network.xyo.sdkobjectmodelkotlin.exceptions.XyoObjectException
-import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
+import network.xyo.sdkobjectmodelkotlin.structure.XyoIterableStructure
+import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 import java.nio.ByteBuffer
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -99,11 +99,11 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
         boundWitnessOptions[key] = boundWitnessOption
     }
 
-    private class XyoOptionPayload (val unsignedOptions : Array<XyoBuff>, val signedOptions : Array<XyoBuff> )
+    private class XyoOptionPayload (val unsignedOptions : Array<XyoObjectStructure>, val signedOptions : Array<XyoObjectStructure> )
 
     private fun getBoundWitnessOptionPayloads (options: Array<XyoBoundWitnessOption>) : Deferred<XyoOptionPayload> = GlobalScope.async {
-        val signedPayloads =  ArrayList<XyoBuff>()
-        val unsignedPayloads = ArrayList<XyoBuff>()
+        val signedPayloads =  ArrayList<XyoObjectStructure>()
+        val unsignedPayloads = ArrayList<XyoObjectStructure>()
 
         for (option in options) {
             val optionPayload = option.getPayload()
@@ -142,8 +142,8 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
     }
 
 
-    private fun getHeuristics () : Array<XyoBuff> {
-        val list = LinkedList<XyoBuff>()
+    private fun getHeuristics () : Array<XyoObjectStructure> {
+        val list = LinkedList<XyoObjectStructure>()
 
         for ((_, getter) in heuristics) {
             val heuristic = getter.getHeuristic()
@@ -242,7 +242,7 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
     }
 
     private suspend fun doBoundWitnessWithPipe (handler: XyoNetworkHandler,
-                                                startingData: XyoIterableObject?,
+                                                startingData: XyoIterableStructure?,
                                                 choice: ByteArray): XyoBoundWitness? {
 
         val options = getBoundWitnessOptions(choice)
@@ -279,13 +279,10 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
         return null
     }
 
-    private fun createStartingData (startingData : ByteArray?) : XyoIterableObject? {
+    private fun createStartingData (startingData : ByteArray?) : XyoIterableStructure? {
         if (startingData == null) return null
 
-        return object : XyoIterableObject() {
-            override val allowedOffset: Int = 0
-            override var item: ByteArray = startingData
-        }
+        return XyoIterableStructure(startingData, 0)
     }
 
     private fun notifyOptions (options: Array<XyoBoundWitnessOption>, boundWitness: XyoBoundWitness?) {
@@ -301,8 +298,8 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
         XyoLog.logSpecial("Updating Origin State. Awaiting Index: ${ByteBuffer.wrap(originState.index.valueCopy).int}", TAG)
     }
 
-    private fun makeSignedPayload (): Deferred<ArrayList<XyoBuff>> = GlobalScope.async {
-        val signedPayloads = ArrayList<XyoBuff>(getHeuristics().asList())
+    private fun makeSignedPayload (): Deferred<ArrayList<XyoObjectStructure>> = GlobalScope.async {
+        val signedPayloads = ArrayList<XyoObjectStructure>(getHeuristics().asList())
         val previousHash = originState.previousHash
         val index = originState.index
         val nextPublicKey = originState.nextPublicKey

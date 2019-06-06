@@ -4,8 +4,8 @@ import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
 import network.xyo.sdkcorekotlin.network.XyoProcedureCatalogFlags
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.repositories.XyoOriginBlockRepository
-import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
-import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
+import network.xyo.sdkobjectmodelkotlin.structure.XyoIterableStructure
+import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 
 /**
  * A bound witness options where when the XyoProcedureCatalogFlags.GIVE_ORIGIN_CHAIN flag is set will call the bridge queue
@@ -31,7 +31,7 @@ open class XyoBridgingOption (private val originBlocks: XyoOriginBlockRepository
     override suspend fun getPayload(): XyoBoundWitnessPair? {
         blocksInTransit = bridgeQueue.getBlocksToBridge()
         val blocksToSend = ArrayList<XyoBoundWitness>()
-        val blockHashesToSend = ArrayList<XyoBuff>()
+        val blockHashesToSend = ArrayList<XyoObjectStructure>()
 
 
         for (block in blocksInTransit) {
@@ -44,8 +44,8 @@ open class XyoBridgingOption (private val originBlocks: XyoOriginBlockRepository
         }
 
         if (blockHashesToSend.isNotEmpty()) {
-            val hashSet = XyoIterableObject.createTypedIterableObject(XyoSchemas.BRIDGE_HASH_SET, blockHashesToSend.toTypedArray())
-            val blockSet = XyoIterableObject.createUntypedIterableObject(XyoSchemas.BRIDGE_BLOCK_SET, blocksToSend.toTypedArray())
+            val hashSet = XyoIterableStructure.createTypedIterableObject(XyoSchemas.BRIDGE_HASH_SET, blockHashesToSend.toTypedArray())
+            val blockSet = XyoIterableStructure.createUntypedIterableObject(XyoSchemas.BRIDGE_BLOCK_SET, blocksToSend.toTypedArray())
 
             return XyoBoundWitnessPair(hashSet, blockSet)
         }

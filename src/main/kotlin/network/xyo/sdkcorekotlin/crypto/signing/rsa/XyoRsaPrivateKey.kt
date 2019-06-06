@@ -3,7 +3,7 @@ package network.xyo.sdkcorekotlin.crypto.signing.rsa
 import network.xyo.sdkcorekotlin.schemas.XyoInterpret
 import network.xyo.sdkcorekotlin.crypto.signing.XyoPrivateKey
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
-import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
+import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 import java.math.BigInteger
 import java.nio.ByteBuffer
 import java.security.interfaces.RSAPrivateKey
@@ -11,7 +11,7 @@ import java.security.interfaces.RSAPrivateKey
 /**
  * A Xyo Encoded RSA Private key.
  */
-open class XyoRsaPrivateKey (private val mod : BigInteger, private val privateExponent : BigInteger) : XyoPrivateKey(), RSAPrivateKey {
+open class XyoRsaPrivateKey (private val mod : BigInteger, private val privateExponent : BigInteger) : XyoPrivateKey(byteArrayOf(), 0), RSAPrivateKey {
 
     override fun getAlgorithm(): String {
         return "RSA"
@@ -41,21 +41,15 @@ open class XyoRsaPrivateKey (private val mod : BigInteger, private val privateEx
         return privateExponent
     }
 
-    override val allowedOffset: Int
-        get() = 0
+    override var allowedOffset: Int = 0
 
     override var item: ByteArray = byteArrayOf()
-        get() = XyoBuff.newInstance(XyoSchemas.RSA_PRIVATE_KEY, encoded).bytesCopy
+        get() = XyoObjectStructure.newInstance(XyoSchemas.RSA_PRIVATE_KEY, encoded).bytesCopy
 
     companion object : XyoInterpret {
 
         override fun getInstance(byteArray: ByteArray): XyoRsaPrivateKey {
-            val value = object : XyoBuff() {
-                override val allowedOffset: Int
-                    get() = 0
-
-                override var item: ByteArray = byteArray
-            }.valueCopy
+            val value = XyoObjectStructure(byteArray, 0).valueCopy
             val sizeOfPrivateExponent = value[0].toInt() and 0xff
             val privateExponent = value.copyOfRange(1, sizeOfPrivateExponent)
             val modulus = value.copyOfRange((sizeOfPrivateExponent), value.size)

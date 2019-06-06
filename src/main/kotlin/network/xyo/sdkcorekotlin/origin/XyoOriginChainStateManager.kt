@@ -6,23 +6,23 @@ import network.xyo.sdkcorekotlin.schemas.XyoSchemas.NEXT_PUBLIC_KEY
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
 import network.xyo.sdkcorekotlin.repositories.XyoOriginChainStateRepository
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
-import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
-import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
+import network.xyo.sdkobjectmodelkotlin.structure.XyoIterableStructure
+import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 import java.nio.ByteBuffer
 
 
 
 open class XyoOriginChainStateManager (val repo: XyoOriginChainStateRepository) {
     private var waitingSigners = ArrayList<XyoSigner>()
-    var nextPublicKey : XyoBuff? = null
+    var nextPublicKey : XyoObjectStructure? = null
 
-    val statics: Array<XyoBuff>
+    val statics: Array<XyoObjectStructure>
         get() = repo.getStatics()
 
-    val index : XyoBuff
-        get() = repo.getIndex() ?: XyoBuff.newInstance(INDEX, ByteBuffer.allocate(4).putInt(0).array())
+    val index : XyoObjectStructure
+        get() = repo.getIndex() ?: XyoObjectStructure.newInstance(INDEX, ByteBuffer.allocate(4).putInt(0).array())
 
-    val previousHash : XyoBuff?
+    val previousHash : XyoObjectStructure?
         get() = repo.getPreviousHash()
 
     val signers: Array<XyoSigner>
@@ -41,11 +41,11 @@ open class XyoOriginChainStateManager (val repo: XyoOriginChainStateRepository) 
         }
 
         waitingSigners.add(signer)
-        nextPublicKey = XyoBuff.newInstance(NEXT_PUBLIC_KEY, signer.publicKey.bytesCopy)
+        nextPublicKey = XyoObjectStructure.newInstance(NEXT_PUBLIC_KEY, signer.publicKey.bytesCopy)
     }
 
     fun newOriginBlock (hash : XyoHash) {
-        val previousHash = XyoIterableObject.createTypedIterableObject(XyoSchemas.PREVIOUS_HASH, arrayOf(hash))
+        val previousHash = XyoIterableStructure.createTypedIterableObject(XyoSchemas.PREVIOUS_HASH, arrayOf(hash))
 
         nextPublicKey = null
         addWaitingSigner()
@@ -56,7 +56,7 @@ open class XyoOriginChainStateManager (val repo: XyoOriginChainStateRepository) 
 
     private fun incrementIndex() {
         val indexAsNumber = ByteBuffer.wrap(index.valueCopy).int
-        val nextIndex = XyoBuff.newInstance(
+        val nextIndex = XyoObjectStructure.newInstance(
                 INDEX,
                 ByteBuffer.allocate(4).putInt(indexAsNumber + 1).array()
         )

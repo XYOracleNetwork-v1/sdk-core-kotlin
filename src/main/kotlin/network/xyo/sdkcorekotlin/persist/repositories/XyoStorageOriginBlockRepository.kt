@@ -8,8 +8,8 @@ import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.persist.XyoKeyValueStore
 import network.xyo.sdkcorekotlin.repositories.XyoOriginBlockRepository
-import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
-import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
+import network.xyo.sdkobjectmodelkotlin.structure.XyoIterableStructure
+import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 
 
 /**
@@ -22,29 +22,24 @@ import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
 open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoKeyValueStore,
                                            protected val hashingObject: XyoHash.XyoHashProvider) : XyoOriginBlockRepository {
 
-    override fun removeOriginBlock(originBlockHash: XyoBuff) = GlobalScope.async {
+    override fun removeOriginBlock(originBlockHash: XyoObjectStructure) = GlobalScope.async {
         removeIndex(originBlockHash.bytesCopy).await()
         storageProvider.delete(originBlockHash.bytesCopy).await()
     }
 
-    override fun containsOriginBlock(originBlockHash: XyoBuff) = GlobalScope.async {
+    override fun containsOriginBlock(originBlockHash: XyoObjectStructure) = GlobalScope.async {
         return@async storageProvider.containsKey(originBlockHash.bytesCopy).await()
     }
 
-    override fun getAllOriginBlockHashes() : Deferred<Iterator<XyoBuff>?> {
+    override fun getAllOriginBlockHashes() : Deferred<Iterator<XyoObjectStructure>?> {
         return readIteratorFromKey(BLOCKS_INDEX_KEY)
     }
 
-    private fun readIteratorFromKey (key : ByteArray) : Deferred<Iterator<XyoBuff>?> = GlobalScope.async {
+    private fun readIteratorFromKey (key : ByteArray) : Deferred<Iterator<XyoObjectStructure>?> = GlobalScope.async {
         val encodedIndex = storageProvider.read(key).await()
 
         if (encodedIndex != null) {
-            return@async object : XyoIterableObject() {
-                override val allowedOffset: Int
-                    get() = 0
-
-                override var item: ByteArray = encodedIndex
-            }.iterator
+            return@async XyoIterableStructure(encodedIndex, 0).iterator
         }
         return@async null
     }
@@ -62,26 +57,23 @@ open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoKey
     }
 
     private fun updateIndex (blockHash : XyoHash) = GlobalScope.async {
-        val newIndex =ArrayList<XyoBuff>()
+        val newIndex =ArrayList<XyoObjectStructure>()
         val currentIndex = storageProvider.read(BLOCKS_INDEX_KEY).await()
 
         newIndex.add(blockHash)
 
         if (currentIndex != null) {
-            for (item in object : XyoIterableObject() {
-                override val allowedOffset: Int = 0
-                override var item: ByteArray = currentIndex
-            }.iterator) {
+            for (item in XyoIterableStructure(currentIndex, 0).iterator) {
                 newIndex.add(item)
             }
         }
 
-        val newIndexEncoded = XyoIterableObject.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, newIndex.toTypedArray())
+        val newIndexEncoded = XyoIterableStructure.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, newIndex.toTypedArray())
         storageProvider.write(BLOCKS_INDEX_KEY, newIndexEncoded.bytesCopy)
     }
 
     private fun removeIndex (blockHash: ByteArray) = GlobalScope.async {
-        val newIndex = ArrayList<XyoBuff>()
+        val newIndex = ArrayList<XyoObjectStructure>()
         val currentIndex = getAllOriginBlockHashes().await()
 
         if (currentIndex != null) {
@@ -92,7 +84,7 @@ open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoKey
             }
         }
 
-        val newIndexEncoded = XyoIterableObject.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, newIndex.toTypedArray())
+        val newIndexEncoded = XyoIterableStructure.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, newIndex.toTypedArray())
         storageProvider.write(BLOCKS_INDEX_KEY, newIndexEncoded.bytesCopy).await()
     }
 

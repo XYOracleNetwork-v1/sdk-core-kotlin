@@ -10,8 +10,6 @@ import network.xyo.sdkcorekotlin.network.tcp.XyoTcpPipe
 import network.xyo.sdkcorekotlin.network.tcp.XyoTcpServer
 import network.xyo.sdkcorekotlin.node.testCatalogs.XyoBoundWitnessCatalog
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
-import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
-import network.xyo.sdkobjectmodelkotlin.objects.XyoIterableObject
 import org.junit.Test
 import java.net.Socket
 

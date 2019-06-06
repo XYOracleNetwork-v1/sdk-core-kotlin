@@ -1,6 +1,6 @@
 package network.xyo.sdkcorekotlin.crypto.signing
 
-import network.xyo.sdkobjectmodelkotlin.buffer.XyoBuff
+import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 import java.security.PublicKey
 
-abstract class XyoPublicKey : PublicKey, XyoBuff()
+abstract class XyoPublicKey (byteArray: ByteArray, offset: Int) : PublicKey, XyoObjectStructure(byteArray, offset)
