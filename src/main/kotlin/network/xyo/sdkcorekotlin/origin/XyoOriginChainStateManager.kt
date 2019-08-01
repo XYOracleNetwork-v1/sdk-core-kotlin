@@ -17,7 +17,7 @@ open class XyoOriginChainStateManager (val repo: XyoOriginChainStateRepository) 
     var nextPublicKey : XyoObjectStructure? = null
 
     val statics: Array<XyoObjectStructure>
-        get() = repo.getStatics()
+        get() = repo.getStaticHeuristics()
 
     val index : XyoObjectStructure
         get() = repo.getIndex() ?: XyoObjectStructure.newInstance(INDEX, ByteBuffer.allocate(4).putInt(0).array())

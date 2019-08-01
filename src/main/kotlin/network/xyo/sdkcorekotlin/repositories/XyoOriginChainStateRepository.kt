@@ -12,8 +12,8 @@ interface XyoOriginChainStateRepository {
     fun getSigners(): Array<XyoSigner>
     fun removeOldestSigner()
     fun putSigner(signer: XyoSigner)
-    fun getStatics(): Array<XyoObjectStructure>
-    fun setStatics (statics: Array<XyoObjectStructure>)
+    fun getStaticHeuristics(): Array<XyoObjectStructure>
+    fun setStaticHeuristics (statics: Array<XyoObjectStructure>)
     fun onBoundWitness ()
     fun getLastBoundWitnessTime () : Long?
     fun commit(): Deferred<Unit>
