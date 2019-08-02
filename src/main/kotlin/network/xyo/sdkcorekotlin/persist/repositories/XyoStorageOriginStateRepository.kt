@@ -48,11 +48,11 @@ class XyoStorageOriginStateRepository (private val store: XyoKeyValueStore) : Xy
         signersCache.add(signer)
     }
 
-    override fun getStatics(): Array<XyoObjectStructure> {
+    override fun getStaticHeuristics(): Array<XyoObjectStructure> {
         return staticsCache.toTypedArray()
     }
 
-    override fun setStatics (statics: Array<XyoObjectStructure>) {
+    override fun setStaticHeuristics (statics: Array<XyoObjectStructure>) {
         staticsCache = ArrayList(statics.asList())
     }
 

@@ -26,5 +26,5 @@ interface  XyoNetworkPipe {
      */
     fun close() : Deferred<Any?>
 
-    fun getNetworkHeretics (): Array<XyoObjectStructure>
+    fun getNetworkHeuristics (): Array<XyoObjectStructure>
 }

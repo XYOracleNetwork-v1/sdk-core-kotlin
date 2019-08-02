@@ -34,7 +34,7 @@ open class XyoTcpPipe(private val socket: Socket,
         return@async null
     }
 
-    override fun getNetworkHeretics(): Array<XyoObjectStructure> {
+    override fun getNetworkHeuristics(): Array<XyoObjectStructure> {
         return arrayOf()
     }
 

@@ -24,7 +24,7 @@ open class XyoBridgingOption (private val originBlocks: XyoOriginBlockRepository
 
     override fun onCompleted(boundWitness: XyoBoundWitness?) {
         if (boundWitness != null) {
-           bridgeQueue.onBlocksBridges(blocksInTransit)
+           bridgeQueue.onBlocksBridged(blocksInTransit)
         }
     }
 
