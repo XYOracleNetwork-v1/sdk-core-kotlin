@@ -59,9 +59,6 @@ repositories {
         url 'https://maven.google.com/'
         name 'Google'
     }
-    maven { 
-        url 'http://repo1.maven.org/maven2' 
-    }
     maven {
         url  "https://dl.bintray.com/xyoraclenetwork/xyo"
     }

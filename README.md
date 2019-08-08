@@ -13,7 +13,6 @@
 -   [Description](#description)
 -   [Long Description](#long-description)
 -   [XYO Origin Block Protocol](#xyo-origin-block-protocol)
--   [Core Object Model](#core-object-model)
 -   [Getting Started](#getting-started)
 -   [Install](#install)
 -   [Building and Testing with Gradle](#building-and-testing-with-gradle)
