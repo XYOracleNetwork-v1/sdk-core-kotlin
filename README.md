@@ -87,23 +87,23 @@ allprojects {
 
 2.  Include sdk-core-kotlin in dependencies
 
-```	gradle
-	dependencies {
-		implementation 'com.github.XYOracleNetwork:sdk-core-kotlin:v0.1.1-beta.0'
-	}
+```gradle
+dependencies {
+	implementation 'com.github.XYOracleNetwork:sdk-core-kotlin:v0.1.1-beta.0'
+}
 ```
 
 ### With Maven
 
 1.  Point maven to `https://jitpack.io`
 
-```	maven
-	<repositories>
-		<repository>
-				<id>jitpack.io</id>
-				<url>https://jitpack.io</url>
-		</repository>
-	</repositories>
+```maven
+<repositories>
+	<repository>
+			<id>jitpack.io</id>
+			<url>https://jitpack.io</url>
+	</repository>
+</repositories>
 ```
 
 2.  Include sdk-core-kotlin in dependencies
