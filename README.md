@@ -9,31 +9,31 @@
 
 ## Table of Contents
 
-- [Title](#sdk-core-kotlin)
-- [Description](#description)
-- [Long Description](#long-description)
-- [XYO Origin Block Protocol](#xyo-origin-block-protocol)
-- [Core Object Model](#core-object-model)
-- [Getting Started](#getting-started)
-- [Install](#install)
-- [Building and Testing with Gradle](#building-and-testing-with-gradle)
-- [Origin Chain](#origin-chain)
-- [Bound Witness](#bound-witness)
-- [Node Listener](#node-listener)
-- [Testing](#testing)
-- [Maintainers](#maintainers)
-- [Contributing](#contributing)
-- [License](#license)
-- [Credits](#credits)
+-   [Title](#sdk-core-kotlin)
+-   [Description](#description)
+-   [Long Description](#long-description)
+-   [XYO Origin Block Protocol](#xyo-origin-block-protocol)
+-   [Core Object Model](#core-object-model)
+-   [Getting Started](#getting-started)
+-   [Install](#install)
+-   [Building and Testing with Gradle](#building-and-testing-with-gradle)
+-   [Origin Chain](#origin-chain)
+-   [Bound Witness](#bound-witness)
+-   [Node Listener](#node-listener)
+-   [Testing](#testing)
+-   [Maintainers](#maintainers)
+-   [Contributing](#contributing)
+-   [License](#license)
+-   [Credits](#credits)
 
 ## Description
 
 Library to preform all core XYO Network functions which includes
 
-- Creating an origin chain
-- Maintaining an origin chain
-- Negotiations for talking to other nodes
-- Other basic functionality
+-   Creating an origin chain
+-   Maintaining an origin chain
+-   Negotiations for talking to other nodes
+-   Other basic functionality
 
 ## Long Description
 
@@ -74,23 +74,23 @@ You can add sdk-core-kotlin to your existing app by cloning the project and manu
 
 #### With Gradle
 
-1. Point maven to `https://jitpack.io`
+1.   Point maven to `https://jitpack.io`
 
 ```gradle
 allprojects {
-    repositories {
-        ...
-        maven { url 'https://jitpack.io' }
-    }
+	repositories {
+		...
+		maven { url 'https://jitpack.io' }
+	}
 }
 ```
 
-2. Include sdk-core-kotlin in dependencies
+2.   Include sdk-core-kotlin in dependencies
 
 ```gradle
-  dependencies {
-    implementation 'com.github.XYOracleNetwork:sdk-core-kotlin:v0.1.1-beta.0'
-  }
+dependencies {
+	implementation 'com.github.XYOracleNetwork:sdk-core-kotlin:v0.1.1-beta.0'
+}
 ```
 
 ### With Maven
@@ -98,22 +98,22 @@ allprojects {
 1.  Point maven to `https://jitpack.io`
 
 ```maven
-    <repositories>
-		<repository>
-				<id>jitpack.io</id>
-				<url>https://jitpack.io</url>
-		</repository>
-	</repositories>
+<repositories>
+	<repository>
+	    <id>jitpack.io</id>
+	    <url>https://jitpack.io</url>
+	</repository>
+</repositories>
 ```
 
 2.  Include sdk-core-kotlin in dependencies
 
 ```maven
-    <dependency>
-        <groupId>com.github.XYOracleNetwork</groupId>
-        <artifactId>sdk-core-kotlin</artifactId>
-        <version>Tag</version>
-    </dependency>
+<dependency>
+    <groupId>com.github.XYOracleNetwork</groupId>
+    <artifactId>sdk-core-kotlin</artifactId>
+    <version>Tag</version>
+</dependency>
 ```
 
 ## Building and Testing with Gradle
@@ -155,7 +155,7 @@ After creating a node, it is standard to add a signer, and create a genesis bloc
 ```kotlin
 // creates a signer with a random private key
 val signer = XyoSha256WithSecp256K.newInstance()
-
+    
 // adds the signer to the node
 node.originState.addSigner(signer: signer)
 
@@ -218,18 +218,18 @@ server.listen { pipe ->
 ### Adding Custom Data to a Bound Witness
 
 ```kotlin
-	node.addHeuristic("MyHeuristic", object : XyoHeuristicGetter {
-		// will get called right before the bound witness stares
-		override fun getHeuristic(): XyoBuff? {
-				if (conditionIsMet()) {
-					// object will be put into the bound witness
-					return getMyHeuristic()
-				}
+node.addHeuristic("MyHeuristic", object : XyoHeuristicGetter {
+	// will get called right before the bound witness stares
+	override fun getHeuristic(): XyoBuff? {
+	    if (conditionIsMet()) {
+	    	// object will be put into the bound witness
+				return getMyHeuristic()
+	    }
 
-				// object will not be put into the bound witness 
-				return null
-		}
-	})
+	    // object will not be put into the bound witness 
+	    return null
+	}
+})
 ```
 
 ## Node Listener
@@ -255,6 +255,7 @@ node.addListener("MyListener", object : XyoNodeListener {
 	} 
 })
 ```
+
 
 ## Testing
 
