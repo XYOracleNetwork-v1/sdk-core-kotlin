@@ -46,7 +46,7 @@ open class XyoBridgeQueue (val repo: XyoBridgeQueueRepository) {
         return repo.getLowestWeight(sendLimit)
     }
 
-    fun onBlocksBridges (blocks: Array<XyoBridgeQueueItem>) {
+    fun onBlocksBridged (blocks: Array<XyoBridgeQueueItem>) {
         val hashes = ArrayList<XyoObjectStructure>()
 
         for (block in blocks) {

@@ -249,7 +249,7 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
         val payloads = getBoundWitnessOptionPayloads(options).await()
         val signedPayload = makeSignedPayload().await()
         signedPayload.addAll(payloads.signedOptions)
-        signedPayload.addAll(handler.pipe.getNetworkHeretics())
+        signedPayload.addAll(handler.pipe.getNetworkHeuristics())
 
         val bw = XyoZigZagBoundWitnessSession(
                 handler,
