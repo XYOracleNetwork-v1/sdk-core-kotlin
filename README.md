@@ -87,11 +87,11 @@ allprojects {
 
 2.  Include sdk-core-kotlin in dependencies
 
-	```gradle
+```gradle
 	dependencies {
 		implementation 'com.github.XYOracleNetwork:sdk-core-kotlin:v0.1.1-beta.0'
 	}
-	```
+```
 
 ### With Maven
 
@@ -108,13 +108,13 @@ allprojects {
 
 2.  Include sdk-core-kotlin in dependencies
 
-	```maven
+```maven
 	<dependency>
-			<groupId>com.github.XYOracleNetwork</groupId>
-			<artifactId>sdk-core-kotlin</artifactId>
-			<version>Tag</version>
+		<groupId>com.github.XYOracleNetwork</groupId>
+		<artifactId>sdk-core-kotlin</artifactId>
+		<version>Tag</version>
 	</dependency>
-	```
+```
 
 ## Building and Testing with Gradle
 
@@ -217,7 +217,7 @@ server.listen { pipe ->
 
 ### Adding Custom Data to a Bound Witness
 
-	```kotlin
+```kotlin
 	node.addHeuristic("MyHeuristic", object : XyoHeuristicGetter {
 		// will get called right before the bound witness stares
 		override fun getHeuristic(): XyoBuff? {
@@ -230,7 +230,7 @@ server.listen { pipe ->
 				return null
 		}
 	})
-	```
+```
 
 ## Node Listener
 
