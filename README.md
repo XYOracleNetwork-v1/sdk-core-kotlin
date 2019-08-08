@@ -59,16 +59,16 @@ You can add sdk-core-kotlin to your existing app by cloning the project and manu
 
 2) Add project to settings.gradle
 
-	```gradle
-  	  include ':sdk-core-kotlin'
-    	project(':sdk-core-kotlin').projectDir = new File('../sdk-core-kotlin')
-	```
+```gradle
+    include ':sdk-core-kotlin'
+    project(':sdk-core-kotlin').projectDir = new File('../sdk-core-kotlin')
+```
 
 3) Include in project
 
-	```gradle
-		implementation project (':sdk-core-kotlin')
-	```
+```gradle
+    implementation project (':sdk-core-kotlin')
+```
 
 ### Using JitPack
 
@@ -76,35 +76,35 @@ You can add sdk-core-kotlin to your existing app by cloning the project and manu
 
 1.  Point maven to `https://jitpack.io`
 
-	```gradle
-		allprojects {
-		repositories {
-			...
-			maven { url 'https://jitpack.io' }
-		}
+```gradle
+allprojects {
+	repositories {
+		...
+		maven { url 'https://jitpack.io' }
 	}
-	```
+}
+```
 
 2.  Include sdk-core-kotlin in dependencies
 
 	```gradle
-		dependencies {
-			implementation 'com.github.XYOracleNetwork:sdk-core-kotlin:v0.1.1-beta.0'
-		}
+	dependencies {
+		implementation 'com.github.XYOracleNetwork:sdk-core-kotlin:v0.1.1-beta.0'
+	}
 	```
 
 ### With Maven
 
 1.  Point maven to `https://jitpack.io`
 
-	```maven
-	<repositories>
-		<repository>
-				<id>jitpack.io</id>
-				<url>https://jitpack.io</url>
-		</repository>
-	</repositories>
-	```
+```maven
+<repositories>
+	<repository>
+	    <id>jitpack.io</id>
+	    <url>https://jitpack.io</url>
+	</repository>
+</repositories>
+```
 
 2.  Include sdk-core-kotlin in dependencies
 
@@ -129,39 +129,39 @@ Source is located in /src/main/\*
 
 -   Through an origin chain creator object one can create and maintain an origin chain. 
 
-	```kotlin
-	val originChain = XyoOriginChainCreator(blockRepo, stateRepo, hash)
-	```
+```kotlin
+val originChain = XyoOriginChainCreator(blockRepo, stateRepo, hash)
+```
 
-	```kotlin
-	// a key value store to store persist state and bound witnesses
-	val storage = XyoInMemoryStorageProvider()
+```kotlin
+// a key value store to store persist state and bound witnesses
+val storage = XyoInMemoryStorageProvider()
 
-	// a hash implementation for the node to hash with
-	val hasher = XyoBasicHashBase.createHashType(XyoSchemas.SHA_256, "SHA-256")
+// a hash implementation for the node to hash with
+val hasher = XyoBasicHashBase.createHashType(XyoSchemas.SHA_256, "SHA-256")
 
-	// a place to store all off the blocks that the node makes
-	val blockRepo = XyoStorageOriginBlockRepository(storage, hasher)
+// a place to store all off the blocks that the node makes
+val blockRepo = XyoStorageOriginBlockRepository(storage, hasher)
 
-	// a place to store all of the origin state (index, keys, previous hash)
-	val stateRepo = XyoStorageOriginStateRepository(storage)
+// a place to store all of the origin state (index, keys, previous hash)
+val stateRepo = XyoStorageOriginStateRepository(storage)
 
-	// the node object to create origin blocks
-	val node = XyoOriginChainCreator(blockRepo, stateRepo, hasher)
-	```
+// the node object to create origin blocks
+val node = XyoOriginChainCreator(blockRepo, stateRepo, hasher)
+```
 
 After creating a node, it is standard to add a signer, and create a genesis block.
 
-	```kotlin
-	// creates a signer with a random private key
-	val signer = XyoSha256WithSecp256K.newInstance()
-			
-	// adds the signer to the node
-	node.originState.addSigner(signer: signer)
+```kotlin
+// creates a signer with a random private key
+val signer = XyoSha256WithSecp256K.newInstance()
+    
+// adds the signer to the node
+node.originState.addSigner(signer: signer)
 
-	// creates a origin block with itself (genesis block if this is the first block you make)
-	node.selfSignOriginChain()
-	```
+// creates a origin block with itself (genesis block if this is the first block you make)
+node.selfSignOriginChain()
+```
 
 After creating a genesis block, your origin chain has officially started. Remember, all of the state is stored in the state repository (`XyoOriginChainStateRepository`) and the block repository (`XyoOriginBlockRepository`) that are constructed with the node. 
 
@@ -177,39 +177,39 @@ After a node has been created, it can be used to create origin blocks with other
 
 **Client**
 
-	```kotlin
-	// creates a socket with the peer
-	val socket = Socket("myarchivist.com", 11000)
+```kotlin
+// creates a socket with the peer
+val socket = Socket("myarchivist.com", 11000)
 
-	// creates a pipe so that we can send formatted data through the socket
-	val pipe = XyoTcpPipe(socket, null)
+// creates a pipe so that we can send formatted data through the socket
+val pipe = XyoTcpPipe(socket, null)
 
-	// create a handler so that we can do the starting handshake with the node
-	val handler = XyoNetworkHandler(pipe)
+// create a handler so that we can do the starting handshake with the node
+val handler = XyoNetworkHandler(pipe)
 
-	// create the bound witness with the node on the socket
-	val newBoundWitness = node.boundWitness(handler, testProcedureCatalogue).await()
-	```
+// create the bound witness with the node on the socket
+val newBoundWitness = node.boundWitness(handler, testProcedureCatalogue).await()
+```
 
 **Server**
 
-	```kotlin
-	// create a tcp server on port 11000
-	val server = XyoTcpServer(11000)
+```kotlin
+// create a tcp server on port 11000
+val server = XyoTcpServer(11000)
 
-	// listen from the server for connection events
-	server.listen { pipe ->
-		// put bound witness into new thread (optional)
-		GlobalScope.launch {
+// listen from the server for connection events
+server.listen { pipe ->
+	// put bound witness into new thread (optional)
+	GlobalScope.launch {
+	
+				// create a handler so that we can do the starting handshake with the node
+	    	val handler = XyoNetworkHandler(pipe)
 		
-					// create a handler so that we can do the starting handshake with the node
-					val handler = XyoNetworkHandler(pipe)
-			
-					// do the bound witness with the node
-					val newBoundWitness = nodeTwo.boundWitness(handler, XyoBoundWitnessCatalog).await()
-		}
+				// do the bound witness with the node
+	    	val newBoundWitness = nodeTwo.boundWitness(handler, XyoBoundWitnessCatalog).await()
 	}
-	```
+}
+```
 
 > Further examples of interacting through a socket can be found [here](https://github.com/XYOracleNetwork/sdk-core-kotlin/blob/feature/getting-started/src/test/kotlin/network/xyo/sdkcorekotlin/node/interaction/XyoStandardInteractionTest.kt).
 
@@ -230,37 +230,37 @@ After a node has been created, it can be used to create origin blocks with other
 				return null
 		}
 	})
-```
+	```
 
 ## Node Listener
 
 ### Adding a Listener to a Node
 
-	```kotlin
-	node.addListener("MyListener", object : XyoNodeListener {
-		override fun onBoundWitnessDiscovered(boundWitness: XyoBoundWitness) {
-			// will get called when a new bound witness if found
-		}
+```kotlin
+node.addListener("MyListener", object : XyoNodeListener {
+	override fun onBoundWitnessDiscovered(boundWitness: XyoBoundWitness) {
+		// will get called when a new bound witness if found
+	}
 
-		override fun onBoundWitnessEndFailure(error: Exception?) {
-			// will get called when a bound witness errors out
-		}
+	override fun onBoundWitnessEndFailure(error: Exception?) {
+		// will get called when a bound witness errors out
+	}
 
-		override fun onBoundWitnessEndSuccess(boundWitness: XyoBoundWitness) {
-			// will get called when a bound witness is completed
-		}
+	override fun onBoundWitnessEndSuccess(boundWitness: XyoBoundWitness) {
+		// will get called when a bound witness is completed
+	}
 
-		override fun onBoundWitnessStart() {
-			// will get called when a bound witness starts
-		} 
-	})
-	```
+	override fun onBoundWitnessStart() {
+		// will get called when a bound witness starts
+	} 
+})
+```
 
 ## Testing
 
 All tests can be found in /src/test/\*
 
-    `gradle test`
+    gradle test
 
 ## Maintainers
 
