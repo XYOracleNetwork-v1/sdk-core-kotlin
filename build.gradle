@@ -23,8 +23,8 @@ buildscript {
     }
 }
 
-def majorVersion = 1
-def minorVersion = 1
+def majorVersion = 3
+def minorVersion = 0
 
 Properties versionProps = new Properties()
 def versionPropsFile = file('version.properties')
