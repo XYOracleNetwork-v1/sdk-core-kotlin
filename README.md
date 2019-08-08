@@ -74,7 +74,7 @@ You can add sdk-core-kotlin to your existing app by cloning the project and manu
 
 #### With Gradle
 
-1.   Point maven to `https://jitpack.io`
+1. Point maven to `https://jitpack.io`
 
 ```gradle
 allprojects {
@@ -85,7 +85,7 @@ allprojects {
 }
 ```
 
-2.   Include sdk-core-kotlin in dependencies
+2. Include sdk-core-kotlin in dependencies
 
 ```gradle
 dependencies {
@@ -255,7 +255,6 @@ node.addListener("MyListener", object : XyoNodeListener {
 	} 
 })
 ```
-
 
 ## Testing
 
