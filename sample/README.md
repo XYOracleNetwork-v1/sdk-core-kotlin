@@ -317,11 +317,78 @@ Our final `originChainCreator()` should look like this
 Now we have a chain that we can assign to our `node` for the create method tied to our button tap. Since we have included `GlobalScope` and `runOnUiThread` to our `addListener` function, we should have no collisons or build issues.
 
 ```kotlin
+// the node representing our chain for the user
+var node = originChainCreator()
+```
+
+```kotlin
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
   }
 ```
 
-This function is what creates our content view with the current state. Now we only need to add an `onClickListener`
+This function is what creates our content view with the current state. Now we only need to add an `setOnClickListener`
 
+```kotlin
+\\ use the id from the button
+
+origin_button.setOnClickListener {
+  \\ again to avoid blockages
+  GlobalScope.launch {
+    node.selfSignOriginChain().await()
+  }
+}
+```
+
+We have now set up the node to sign off and display the bound witness hash after tapping the `Origin Chain` button.
+
+Here is the complete MainActivity class
+
+```kotlin
+class MainActivity : AppCompatActivity() {
+    var node = originChainCreator()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        origin_button.setOnClickListener {
+            GlobalScope.launch {
+                node.selfSignOriginChain().await()
+            }
+        }
+    }
+
+    private fun originChainCreator() : XyoOriginChainCreator {
+        val storage = XyoInMemoryStorageProvider()
+        val hasher = XyoBasicHashBase.createHashType(XyoSchemas.SHA_256, "SHA-256")
+        val blockRepo = XyoStorageOriginBlockRepository(storage, hasher)
+        val stateRepo = XyoStorageOriginStateRepository(storage)
+        val creator = XyoOriginChainCreator(blockRepo, stateRepo, hasher)
+
+        creator.addListener("main", object: XyoNodeListener() {
+            override fun onBoundWitnessEndSuccess(boundWitness: XyoBoundWitness) {
+                super.onBoundWitnessEndSuccess(boundWitness)
+
+                GlobalScope.launch {
+                    val hash = boundWitness.getHash(hasher).await().bytesCopy.toHexString()
+
+                    runOnUiThread {
+                        textView.text = hash
+                    }
+                }
+            }
+        })
+
+        val signer = XyoSha256WithSecp256K.newInstance()
+
+        creator.originState.addSigner(signer)
+
+        return creator
+    }
+
+}
+```
+
+We have our interactivity set and our layout set. We can now click on the `run` button. 
