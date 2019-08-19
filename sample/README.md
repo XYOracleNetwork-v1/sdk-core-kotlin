@@ -5,6 +5,11 @@ If you are just getting started with Kotlin and Android development
 ## App Structure with Kotlin
 [Click here for an introduction from Google](<https://codelabs.developers.google.com/codelabs/build-your-first-android-app-kotlin/index.html?index=..%2F..index#0>)
 
+Versions used in this sample
+
+- Android Studio `3.4.2`
+- Java `12.0.1`
+
 ## Using Android Studio
 
 If we are using Android Studio to create this simple app, then make sure it is updated to the latest versions. 
