@@ -397,3 +397,17 @@ class MainActivity : AppCompatActivity() {
 ```
 
 We have our interactivity set and our layout set. We can now click on the `run` button. 
+
+The run button is on the upper right hand of the Android Studio interface, it is a play button next to the edit configurations menu and the build hammer button. 
+
+Once you click on the play button, it will build the application, and if not installed already install the application on your connected Android device or your chosen emulator. 
+
+You should now see the app appear similar to your layout from the design viewer. 
+
+Test the functionality by tapping on `create origin`, when you tap the button you should see a hash appear above in the `textArea`.
+
+Go ahead and tap the button again for a new hash. 
+
+Congratulations you have now integrated the XYO SDK Core into your Android application. Look at the rest of the code, and see what other functionality you can integrate into your app. 
+
+
