@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Sample Application</string>
+    <string name="sample_application_for_xyo_core">Sample Application for XYO Core</string>
+    <string name="xyo_sample_app">XYO Sample App Kotlin</string>
+    <string name="button">Button</string>
+    <string name="random_heading">Here is a random number between 0 and %1d</string>
+    <string name="random_number">R</string>
+    <string name="available_devices">Available Devices</string>
+</resources>
