@@ -2,7 +2,20 @@
 
 If you are just getting started with Kotlin and Android development, or if you need a simple integration guide for the XYO Core Kotlin Library
 
-## App Structure - Kotlin with Android Studio
+## Table of Contents
+
+-   [Title](#sample-kotlin-project)
+-   [App Structure](#app-structure)
+-   [Using Android Studio](#using-android-studio)
+-   [Create the Project](#create-the-project)
+-   [Project Design](#project-design)
+-   [Our First Activity](#our-first-activity)
+-   [Add Location](#add-location)
+-   [Conclusion](#conclusion)
+
+
+## App Structure 
+- Kotlin with Android Studio
 
 [Click here for an introduction from Google](<https://codelabs.developers.google.com/codelabs/build-your-first-android-app-kotlin/index.html?index=..%2F..index#0>)
 
@@ -27,7 +40,7 @@ This Sample App Example is best for mobile devices since bound witnessing is opt
 
 Please note that the complete code for part one of this guide is in the Sample folder. We encourage you to go through this tutorial to better understand the process of creating an origin chain utilizing this sdk.
 
-## Create a project 
+## Create the project 
 
 1. Open Android Studio
 
@@ -62,7 +75,7 @@ allProjects {
   repositories {
     mavenCentral()
     maven {
-      url  "<https://dl.bintray.com/xyoraclenetwork/xyo>"
+      url  "https://dl.bintray.com/xyoraclenetwork/xyo"
     }
   }
 }
@@ -84,7 +97,7 @@ packagingOptions {
 }
 ```
 
-## Design 
+## Project Design 
 
 Since this is a simple app, we won't need to do much design, we are only creating a button to create, sign and display an origin chain hash. 
 
@@ -119,7 +132,6 @@ Here is the code after adding the `TextView` for the hash and the `button` to in
         android:text="0"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent" 
-        app:fontFamily="@font/lato_bold"
         android:textSize="12sp"
         app:layout_constraintVertical_bias="0.3"
         android:textColor="@android:color/white" 
@@ -142,15 +154,19 @@ Here is the code after adding the `TextView` for the hash and the `button` to in
         app:layout_constraintEnd_toStartOf="parent"
         android:layout_marginEnd="8dp" 
         android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/textView" 
+        app:layout_constraintTop_toBottomOf="@+id/bwHashTextView" 
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"/>
 ```
-**Note** `marginStart` is the same as `marginLeft` and `marginEnd` is the same as `marginRight`
+**Note** 
+
+`marginStart` is the same as `marginLeft` and `marginEnd` is the same as `marginRight`
+
+You can bring in your own font with the `TextView` - `app:fontFamily` selector 
 
 You can create the button through code or through using the design editor by dragging in a `Button` from the `Common` or `Buttons` Palette
 
-## Logic
+## Our First Activity
 
 Once you have the layout set, let's get to creating an origin chain in our simple app. 
 
@@ -170,7 +186,7 @@ This will reduce the work you'll have to do on your end as your simple app becom
 
 ### Start with Creating a Bound Witness
 
-We will work in the kotlin class `MainAcitivity` which is the activity for our screen. 
+We will work in the kotlin class `MainAcitivity.kt` which is the activity for our screen. 
 
 To start we want to create a function to create and sign an origin chain
 ```kotlin
@@ -197,10 +213,6 @@ val stateRepo = XyoStorageOriginStateRepository(storage)
 
 // the node object to create origin blocks
 val node = XyoOriginChainCreator(blockRepo, stateRepo, hasher)
-
-// we will for the purposes of this project change the node object to a creator object, we will define node in the public onCreate function
-
-val creator = XyoOriginChainCreator(blockRepo, stateRepo, hasher)
 ```
 ### Set up the values needed for origin chain
 
@@ -212,10 +224,9 @@ private fun originChainCreator() : XyoOriginChainCreator {
     val hasher = XyoBasicHashBase.createHashType(XyoSchemas.SHA_256, "SHA-256")
     val blockRepo = XyoStorageOriginBlockRepository(storage, hasher)
     val stateRepo = XyoStorageOriginStateRepository(storage)
+    // a slightt rename for the spcific return that we want. This can be whatever you like
     val creator = XyoOriginChainCreator(blockRepo, stateRepo, hasher)
-
 }
-
 ```
 
 ### Set up the listener
@@ -233,7 +244,8 @@ creator.addListener("main", object: XyoNodeListener() {
   }
 })
 ```
-In order for us to successfully display an origin chain hash each time we tap the button, we want to avoid blocking any current threads. For this we use the GlobalScope `launch` extension function.
+
+In order for us to successfully display an origin chain hash each time we tap the button, we want to avoid blocking any current threads. For this we use the GlobalScope `launch` extension function. This is a coroutine, if you are familiar with Kotlin then you have probably worked with coroutines before. [If not, here is some reading that you can do](https://kotlinlang.org/docs/reference/coroutines-overview.html).  
 
 In this function we get our hash from the `boundWitness` that we listened for. 
 
@@ -245,7 +257,7 @@ In this function we get our hash from the `boundWitness` that we listened for.
 
 ```
 
-Now to avoid any delays or asynchronous behavior we want to provide the app with an ability to queue up UI actions should the current thread not be UI related. For this we will use the `runOnUiThread` method
+Now to avoid any delays or asynchronous behavior we want to provide the app with an ability to queue up UI actions should the current thread not be UI related. For this we will use the `runOnUiThread` method in our `GlobalScope` coroutine
 
 ```kotlin
   runOnUIThread {
@@ -253,7 +265,7 @@ Now to avoid any delays or asynchronous behavior we want to provide the app with
   }
 ```
 
-Here we are using setting the `textView.text` to the `hash` when the UI is ready for it. You should recognize the `textView` from the `activity_main.xml` file.
+Here we are using setting the `bwHashTextView.text` to the `hash` when the UI is ready for it. You should recognize the `bwHashTextView` from the `activity_main.xml` file.
 
 ```kotlin
 private fun originChainCreator() : XyoOriginChainCreator {
@@ -279,7 +291,7 @@ private fun originChainCreator() : XyoOriginChainCreator {
 }
 ```
 
-Lastly we will use the core sdk to create a signer, add the signer to the origin state, and return the origin chain
+We use the core sdk to create a signer, add the signer to the origin state, and return the origin chain
 
 ```kotlin
   val signer = XyoSha256WithSecp256K.newInstance()
@@ -322,12 +334,16 @@ Our final `originChainCreator()` should look like this
 
 ```
 
-Now we have a chain that we can assign to our `node` for the create method tied to our button tap. Since we have included `GlobalScope` and `runOnUiThread` to our `addListener` function, we should have no collisons or build issues.
+Now we have a chain that we can assign to our `node` for the create method tied to our button tap. Since we have included `GlobalScope` and `runOnUiThread` to our `addListener` function, we should have no collisons.
+
+We add the created node as a local variable in our `MainActivity` class
 
 ```kotlin
 // the node representing our chain for the user
 var node = originChainCreator()
 ```
+
+This function is what creates our content view with the current state. 
 
 ```kotlin
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -336,13 +352,13 @@ var node = originChainCreator()
   }
 ```
 
-This function is what creates our content view with the current state. Now we only need to add an `setOnClickListener`
+Now we only need to add an `setOnClickListener` for our button. We could add an `onClick` selector in our xml, but this is a preferred practice.
 
 ```kotlin
-\\ use the id from the button
+// use the id from the button
 
 origin_button.setOnClickListener {
-  \\ again to avoid blockages
+  // again to avoid blockages
   GlobalScope.launch {
     node.selfSignOriginChain().await()
   }
@@ -395,7 +411,6 @@ class MainActivity : AppCompatActivity() {
 
         return creator
     }
-
 }
 ```
 
@@ -413,9 +428,9 @@ Test the functionality by tapping on `create origin`, when you tap the button yo
 
 Go ahead and tap the button again for a new hash. 
 
-Congratulations you have now integrated the XYO SDK Core into your Android application. 
+> Congratulations you have now integrated the XYO SDK Core into your Android application. 
 
-## Add a Location Heuristic
+## Add Location
 
 Let's keep going. We want to add a heuristic and see what heuristic we are adding. We'll add a GPS location to our bound witness chain.
 
@@ -445,22 +460,26 @@ Let's add another `<TextView>` to the main activity xml
 
 We set the constraints to ensure that the gps location heuristic that we are adding is between the Create Origin button and the hash text view. 
 
-Double check the app layout. This layout is viewable in the latest android studio. This should be to the right of the text editor in the preview. If not, you can click preview on the right navigation under Flutter Outline.
+Double check the app layout. This layout is viewable in the latest android studio. This should be to the right of the text editor in the preview. If not, you can click preview on the right navigation under `Gradle`.
 
 We should be good with our views and button. Now let's add a location. 
+
+### Get permission
 
 Before we add a location heuristic we are going to need permission from the user to access the location on a smartphone. We can also use this best practice if we are working on a device simulator.
 
 Since this is a simple application we should not spend too much time or code on permissions (if you are working to integrate XYO into a production ready app, make sure to have a more robust permission handler than what is presented here)
 
 This is based on the `requestPermissions` method from the `ActivityCompat` class for activity features. 
+
+This will check permissions before the sample app runs for the first time. This will go in the `onCreate()` method.
+
 ```kotlin
 val permissions = arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION)
 
 ActivityCompat.requestPermissions(this, permissions, 0)
 ```
 
-This will check permissions before the sample app runs for the first time. This will go in the `onCreate()` method.
 
 We also need to update the android manifest xml file with the permission:
 
@@ -470,9 +489,45 @@ We also need to update the android manifest xml file with the permission:
 ```
 This permission element should be in the root and not in the `<application>` element.
 
+Your manifest should look like this:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.example.sampleapplication">
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
+    <application
+            android:allowBackup="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/app_name"
+            android:roundIcon="@mipmap/ic_launcher_round"
+            android:supportsRtl="true"
+            android:theme="@style/AppTheme">
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+        <meta-data
+                android:name="preloaded_fonts"
+                android:resource="@array/preloaded_fonts"/>
+    </application>
+
+</manifest>
+
+```
+
 So, we have cleared the permissions hurdle, now let's add the location heuristic. 
 
-Again in our main readme, you should see an example of adding a heuristic that looks like this: 
+Again in our main readme, you should see an example of adding a heuristic that looks like this:
+
+This is a pseudo code for what we need to add a heuristic
 
 ```kotlin
 node.addHeuristic("MyHeuristic", object : XyoHeuristicGetter {
@@ -502,24 +557,28 @@ Let's get the heuristic to add
     private val gpsHeuristicResolver = object : XyoHeuristicGetter {
 
         override fun getHeuristic(): XyoIterableStructure? {
+            // bring in the location manager
             val locationManager = applicationContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-
+            // check if we have permission
             if (ContextCompat.checkSelfPermission(applicationContext, android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
+                // with permission we get the last known location from the location manager
                 val lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
 
                 if (lastLocation != null) {
+                    // as long as we have a location, we take it and convert it for inclusion in the Origin Chain
                     val encodedLat = ByteBuffer.allocate(8).putDouble(lastLocation.latitude).array()
                     val encodedLng = ByteBuffer.allocate(8).putDouble(lastLocation.longitude).array()
                     val lat = XyoObjectStructure.newInstance(XyoSchemas.LAT, encodedLat)
                     val lng = XyoObjectStructure.newInstance(XyoSchemas.LNG, encodedLng)
-
+                    // let the user see the GPS in a readable format
                     runOnUiThread {
                         textViewLatLng.text = lastLocation.latitude.toString() + ", " + lastLocation.longitude.toString()
                     }
 
                     return XyoIterableStructure.createUntypedIterableObject(XyoSchemas.GPS, arrayOf(lat, lng))
                 }
+                // if we don't have permission
             } else {
                 runOnUiThread {
                     textViewLatLng.text = "no gps permission"
@@ -573,5 +632,7 @@ Now rebuild and run the app.
 
 When you tap or click (in a simulator) the `create origin` button, you should see the GPS cooridnate appear right before the hash. 
 
+## Conclusion
 You have now created an origin chain and added the gps heuristic to the origin chain. 
 
+Made with 🔥and ❄️ by [XY - The Persistent Company](https://www.xy.company)
