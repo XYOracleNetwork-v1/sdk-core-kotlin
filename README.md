@@ -221,7 +221,7 @@ server.listen { pipe ->
 
 ```kotlin
 node.addHeuristic("MyHeuristic", object : XyoHeuristicGetter {
-	// will get called right before the bound witness stares
+	// will get called right before the bound witness starts
 	override fun getHeuristic(): XyoBuff? {
 	    if (conditionIsMet()) {
 	    	// object will be put into the bound witness

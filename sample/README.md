@@ -1,8 +1,9 @@
 # Sample Kotlin Project - Android Example
 
-If you are just getting started with Kotlin and Android development
+If you are just getting started with Kotlin and Android development, or if you need a simple integration guide for the XYO Core Kotlin Library
 
-## App Structure with Kotlin
+## App Structure - Kotlin with Android Studio
+
 [Click here for an introduction from Google](<https://codelabs.developers.google.com/codelabs/build-your-first-android-app-kotlin/index.html?index=..%2F..index#0>)
 
 Versions used in this sample
@@ -12,7 +13,7 @@ Versions used in this sample
 
 ## Using Android Studio
 
-If we are using Android Studio to create this simple app, then make sure it is updated to the latest versions. 
+We are using Android Studio to create this simple app, then make sure it is updated to the latest versions. 
 
 ### Virtual Device Emulator 
 
@@ -24,7 +25,7 @@ This Sample App Example is best for mobile devices since bound witnessing is opt
 
 > For this app we will only use one screen with one activity. 
 
-Please note that the complete code for part one of this guide is in the SamplePartOne folder. We encourage you to go through this tutorial to better understand the process of creating an origin chain utilizing this sdk.
+Please note that the complete code for part one of this guide is in the Sample folder. We encourage you to go through this tutorial to better understand the process of creating an origin chain utilizing this sdk.
 
 ## Create a project 
 
@@ -54,7 +55,7 @@ We also recommend that you run your app on a physical device (if you have one av
 
 There are two gradle scripts in Android Studio that you will need to update. Please note that these are additions and not meant to replace anything generated from Android Studio
 
-build.gradle (Project: YourAppName ) as seen in the android studio project structure 
+build.gradle:  **(Project: YourAppName )** as seen in the android studio project structure 
 
 ```gradle
 allProjects {
@@ -67,7 +68,7 @@ allProjects {
 }
 ```
 
-build.gradle (Module: app) as seen in the android studio project structure 
+build.gradle **(Module: app)** as seen in the android studio project structure 
 
 ```gradle
 dependencies {
@@ -122,7 +123,7 @@ Here is the code after adding the `TextView` for the hash and the `button` to in
         android:textSize="12sp"
         app:layout_constraintVertical_bias="0.3"
         android:textColor="@android:color/white" 
-        android:id="@+id/textView"
+        android:id="@+id/bwHashTextView"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginEnd="32dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -153,8 +154,6 @@ You can create the button through code or through using the design editor by dra
 
 Once you have the layout set, let's get to creating an origin chain in our simple app. 
 
-We will use under 62 lines of code to do this.
-
 ### Set up auto imports
 
 Before we begin, we need to make sure we set up auto imports so Android Studio automatically imports any classes that are needed by the Kotlin code. 
@@ -169,7 +168,7 @@ To do this (in Android Studio)
 
 This will reduce the work you'll have to do on your end as your simple app becomes more robust. 
 
-### MainActivity code 
+### Start with Creating a Bound Witness
 
 We will work in the kotlin class `MainAcitivity` which is the activity for our screen. 
 
@@ -203,6 +202,7 @@ val node = XyoOriginChainCreator(blockRepo, stateRepo, hasher)
 
 val creator = XyoOriginChainCreator(blockRepo, stateRepo, hasher)
 ```
+### Set up the values needed for origin chain
 
 This will get us ready to get the bound witness so that we can create an origin chain
 
@@ -217,6 +217,9 @@ private fun originChainCreator() : XyoOriginChainCreator {
 }
 
 ```
+
+### Set up the listener
+
 It's time to add a listener for bound witness to our creator, without a bound witness we can't have an origin chain. This addListener takes two arguments, a key, and a callback for the listener
 
 We bring in a function that will confirm the successful boundwitness and use that bound witness object to get the byte to hex string info that we want to display
@@ -241,16 +244,16 @@ In this function we get our hash from the `boundWitness` that we listened for.
     }
 
 ```
+
 Now to avoid any delays or asynchronous behavior we want to provide the app with an ability to queue up UI actions should the current thread not be UI related. For this we will use the `runOnUiThread` method
 
 ```kotlin
   runOnUIThread {
-    textView.text = hash
+    bwHashTextView.text = hash
   }
 ```
-Here we are using setting the `textView.text` to the `hash` when the UI is ready for it. You should recognize the `textView` from the `activity_main.xml` file.
 
-Here is where we are at 
+Here we are using setting the `textView.text` to the `hash` when the UI is ready for it. You should recognize the `textView` from the `activity_main.xml` file.
 
 ```kotlin
 private fun originChainCreator() : XyoOriginChainCreator {
@@ -268,7 +271,7 @@ private fun originChainCreator() : XyoOriginChainCreator {
                     val hash = boundWitness.getHash(hasher).await().bytesCopy.toHexString()
 
                 runOnUiThread {
-                  textView.text = hash
+                  bwHashTextView.text = hash
               }
           }
       }
@@ -304,7 +307,7 @@ Our final `originChainCreator()` should look like this
                     val hash = boundWitness.getHash(hasher).await().bytesCopy.toHexString()
 
                     runOnUiThread {
-                        textView.text = hash
+                        bwHashTextView.text = hash
                     }
                 }
             }
@@ -380,7 +383,7 @@ class MainActivity : AppCompatActivity() {
                     val hash = boundWitness.getHash(hasher).await().bytesCopy.toHexString()
 
                     runOnUiThread {
-                        textView.text = hash
+                        bwHashTextView.text = hash
                     }
                 }
             }
@@ -396,6 +399,8 @@ class MainActivity : AppCompatActivity() {
 }
 ```
 
+### Run the project
+
 We have our interactivity set and our layout set. We can now click on the `run` button. 
 
 The run button is on the upper right hand of the Android Studio interface, it is a play button next to the edit configurations menu and the build hammer button. 
@@ -408,6 +413,165 @@ Test the functionality by tapping on `create origin`, when you tap the button yo
 
 Go ahead and tap the button again for a new hash. 
 
-Congratulations you have now integrated the XYO SDK Core into your Android application. Look at the rest of the code, and see what other functionality you can integrate into your app. 
+Congratulations you have now integrated the XYO SDK Core into your Android application. 
 
+## Add a Location Heuristic
+
+Let's keep going. We want to add a heuristic and see what heuristic we are adding. We'll add a GPS location to our bound witness chain.
+
+Let's add another `<TextView>` to the main activity xml
+
+`activity_main.xml`
+
+```kotlin
+    <TextView
+            android:id="@+id/textViewLatLng"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/_0"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            app:fontFamily="@font/lato_bold"
+            app:layout_constraintBottom_toTopOf="@+id/origin_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/bwHashTextView" />
+```
+
+We set the constraints to ensure that the gps location heuristic that we are adding is between the Create Origin button and the hash text view. 
+
+Double check the app layout. This layout is viewable in the latest android studio. This should be to the right of the text editor in the preview. If not, you can click preview on the right navigation under Flutter Outline.
+
+We should be good with our views and button. Now let's add a location. 
+
+Before we add a location heuristic we are going to need permission from the user to access the location on a smartphone. We can also use this best practice if we are working on a device simulator.
+
+Since this is a simple application we should not spend too much time or code on permissions (if you are working to integrate XYO into a production ready app, make sure to have a more robust permission handler than what is presented here)
+
+This is based on the `requestPermissions` method from the `ActivityCompat` class for activity features. 
+```kotlin
+val permissions = arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION)
+
+ActivityCompat.requestPermissions(this, permissions, 0)
+```
+
+This will check permissions before the sample app runs for the first time. This will go in the `onCreate()` method.
+
+We also need to update the android manifest xml file with the permission:
+
+```xml
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
+```
+This permission element should be in the root and not in the `<application>` element.
+
+So, we have cleared the permissions hurdle, now let's add the location heuristic. 
+
+Again in our main readme, you should see an example of adding a heuristic that looks like this: 
+
+```kotlin
+node.addHeuristic("MyHeuristic", object : XyoHeuristicGetter {
+	// will get called right before the bound witness starts
+	override fun getHeuristic(): XyoBuff? {
+	    if (conditionIsMet()) {
+	    	// object will be put into the bound witness
+				return getMyHeuristic()
+	    }
+
+        // object will not be put into the bound witness 
+        return null
+    }
+})
+```
+
+What we want to do is add the `heuristic` to the node in the `OnCreate()` method, this heuristic will be added right before the chain is signed.
+
+```kotlin
+node.addHeuristic("GPS", <someHeuristicResolver>)
+```
+
+Let's get the heuristic to add
+
+```kotlin
+// the gpsHeuristicResolver is what will be plugged in to the addHeuristic method
+    private val gpsHeuristicResolver = object : XyoHeuristicGetter {
+
+        override fun getHeuristic(): XyoIterableStructure? {
+            val locationManager = applicationContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
+            if (ContextCompat.checkSelfPermission(applicationContext, android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+                val lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+
+                if (lastLocation != null) {
+                    val encodedLat = ByteBuffer.allocate(8).putDouble(lastLocation.latitude).array()
+                    val encodedLng = ByteBuffer.allocate(8).putDouble(lastLocation.longitude).array()
+                    val lat = XyoObjectStructure.newInstance(XyoSchemas.LAT, encodedLat)
+                    val lng = XyoObjectStructure.newInstance(XyoSchemas.LNG, encodedLng)
+
+                    runOnUiThread {
+                        textViewLatLng.text = lastLocation.latitude.toString() + ", " + lastLocation.longitude.toString()
+                    }
+
+                    return XyoIterableStructure.createUntypedIterableObject(XyoSchemas.GPS, arrayOf(lat, lng))
+                }
+            } else {
+                runOnUiThread {
+                    textViewLatLng.text = "no gps permission"
+                }
+            }
+            return null
+        }
+    }
+}
+
+```
+
+Here we check that we have the permission to get the location, and if we have the permission, we get the last known location if there is one, then we encode the location coordinates before we create a new XyoObjectStructure for the heuristic to be compatible with our origin chain object. 
+
+We also add a `runOnUiThread` to print out the non-encoded location coordinates so that the user can see a human readable version of the location that is added to the origin chain. 
+
+We also added another text response if the permission was not obtained `no gps permission`
+
+Once we have the resolver set, we can plug it into the `addHeuristic` method
+
+```kotlin
+override fun onCreate(savedInstanceState: Bundle?) {
+  ...
+  node.addHeuristic("GPS", gpsHeuristicResolver)
+}
+```
+
+The `onCreate()` method should look like this when we are done
+
+```kotlin
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        setContentView(R.layout.activity_main)
+
+        val permissions = arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION)
+        ActivityCompat.requestPermissions(this, permissions,0)
+
+        node.addHeuristic("GPS", gpsHeuristicResolver)
+
+        origin_button.setOnClickListener {
+            GlobalScope.launch {
+                node.selfSignOriginChain().await()
+            }
+        }
+    }
+
+```
+
+Now rebuild and run the app. 
+
+When you tap or click (in a simulator) the `create origin` button, you should see the GPS cooridnate appear right before the hash. 
+
+You have now created an origin chain and added the gps heuristic to the origin chain. 
 
