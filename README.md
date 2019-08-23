@@ -26,7 +26,7 @@
 
 This `README.md` document is an overview of the common methods that you may need when integrating the XYO Core SDK into your project. 
 
-For an easy to use entry integration guide, take a look at our [Sample App Guide](/Sample/README.md)
+For an easy to use entry integration guide, take a look at our [Sample App Guide](https://github.com/XYOracleNetwork/sdk-core-kotlin/blob/master/sample/README.md)
 
 ## Description
 
