@@ -37,7 +37,7 @@ interface XyoOriginBlockRepository {
     fun getAllOriginBlockHashes () : Deferred<Iterator<XyoObjectStructure>?>
 
     /**
-     * Adds a bound bound witness to the navigator and stores it. If the bound witness is not an
+     * Adds a bound witness to the navigator and stores it. If the bound witness is not an
      * origin block, it will return an error.
      *
      * @param originBlock The bound witness to add to the navigator.

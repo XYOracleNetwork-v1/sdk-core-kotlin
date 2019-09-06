@@ -1,7 +1,7 @@
 package network.xyo.sdkobjectmodelkotlin.exceptions
 
 /**
- * An exception for schema relates issues.
+ * An exception for schema related issues.
  *
  * @property message The message of the exception.
  */
