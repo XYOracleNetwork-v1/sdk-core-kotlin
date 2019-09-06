@@ -9,7 +9,7 @@ import java.nio.ByteBuffer
 import java.security.interfaces.RSAPrivateKey
 
 /**
- * A Xyo Encoded RSA Private key.
+ * An Xyo Encoded RSA Private key.
  */
 open class XyoRsaPrivateKey (private val mod : BigInteger, private val privateExponent : BigInteger) : XyoPrivateKey(byteArrayOf(), 0), RSAPrivateKey {
 

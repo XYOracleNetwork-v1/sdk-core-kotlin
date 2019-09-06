@@ -28,7 +28,7 @@ import kotlin.math.min
  * A base class for all things creating an managing an origin chain (e.g. Sentinel, Bridge).
  *
  * @param storageProvider A place to store all origin blocks.
- * @property hashingProvider A hashing provider to use hashing utilises.
+ * @property hashingProvider A hashing provider to use hashing utilities.
  */
 open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
                                   val stateRepository: XyoOriginChainStateRepository,
@@ -45,7 +45,7 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
      * Adds a heuristic to be used when creating bound witnesses.
      *
      * @param key The key for the heuristic.
-     * @param heuristic The heuristic to use in  bound witnesses.
+     * @param heuristic The heuristic to use in bound witnesses.
      */
     fun addHeuristic (key: String, heuristic : XyoHeuristicGetter) {
         heuristics[key] = heuristic
@@ -64,7 +64,7 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
      * Adds a Node Listener to listen for bound witness creations.
      *
      * @param key The key of the listener.
-     * @param listener The XyoNodeListener to call back to.
+     * @param listener The XyoNodeListener to callback to.
      */
     fun addListener (key : String, listener : XyoNodeListener) {
         listeners[key] = listener
@@ -80,7 +80,7 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
     }
 
     /**
-     * Self signs an origin block to the devices origin chain.
+     * Self signs an origin block to the device's origin chain.
      *
      * @param flag The optional flag to use when self signing.
      */

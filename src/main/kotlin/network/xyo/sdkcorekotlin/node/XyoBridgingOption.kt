@@ -8,7 +8,7 @@ import network.xyo.sdkobjectmodelkotlin.structure.XyoIterableStructure
 import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 
 /**
- * A bound witness options where when the XyoProcedureCatalogFlags.GIVE_ORIGIN_CHAIN flag is set will call the bridge queue
+ * A bound witness option where when the XyoProcedureCatalogFlags.GIVE_ORIGIN_CHAIN flag is set will call the bridge queue
  * to get the latest bridge blocks.
  *
  * @property originBlocks Where the origin blocks are stored to get from the bridge queue. The bridge queue should provide

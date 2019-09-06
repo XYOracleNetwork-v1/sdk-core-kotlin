@@ -5,9 +5,9 @@ import java.lang.ref.WeakReference
 // import javax.xml.bind.DatatypeConverter
 
 /**
- * A simple caching file that used weak references to cache any item.
+ * A simple caching file that uses weak references to cache any item.
  *
- * @type T Is the type of the object wishing to cache, this also but me the type of the XyoCacheAble interface.
+ * @type T Is the type of the object wishing to cache, this also is the the type of the XyoCacheAble interface.
  * @property itemToCache The XyoCacheAble interface to get a FRESH item, to cache.
  */
 class XyoCache<T> (private val itemToCache : XyoCacheAble<T>) {
@@ -29,7 +29,7 @@ class XyoCache<T> (private val itemToCache : XyoCacheAble<T>) {
     }
 
     /**
-     * Gets the item from the cache, if not in the cache it item will be collected freshly and cached.
+     * Gets the item from the cache, if not in the cache it item will be freshly collected and cached.
      *
      * @return The cached or clean item of type T.
      */

@@ -4,7 +4,7 @@ import network.xyo.sdkobjectmodelkotlin.exceptions.XyoObjectException
 import java.nio.ByteBuffer
 
 /**
- * A until object for encoding sizes of structure.
+ * A util object for encoding sizes of structure.
  */
 object XyoNumberEncoder {
 

@@ -22,8 +22,8 @@ import kotlin.collections.ArrayList
  *
  *
  * @property signers the signers to sign the bound witness with.
- * @property signedPayload the signed payload to pur in the bound witness fetter.
- * @property unsignedPayload the un-signed payload to pur in the bound witness witness.
+ * @property signedPayload the signed payload to put in the bound witness fetter.
+ * @property unsignedPayload the un-signed payload to put in the bound witness witness.
  */
 open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
                                  private val signedPayload : Array<XyoObjectStructure>,
@@ -81,7 +81,7 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
     }
 
     /**
-     * Gets the incommoding data, and figures out what to send back according to a Zig-Zag Bound Witness.
+     * Gets the incoming data, and figures out what to send back according to a Zig-Zag Bound Witness.
      *
      * @param signatureReceivedSize The number of witnesses in the bound witness.
      * @param endPoint If not already turned aground, if wanting to turn the bound witness aground
@@ -194,7 +194,7 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
     }
 
     /**
-     * Signs the current bound witness and ads it to the Bound Witness ledger.
+     * Signs the current bound witness and adds it to the Bound Witness ledger.
      *
      * @param payload The payload to sign with (add into the witness, unsigned payload)
      */

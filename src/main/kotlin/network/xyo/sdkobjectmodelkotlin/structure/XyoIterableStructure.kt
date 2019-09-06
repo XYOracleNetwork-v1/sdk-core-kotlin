@@ -21,7 +21,7 @@ open class XyoIterableStructure : XyoObjectStructure {
     private var globalSchema : XyoObjectSchema? = null
 
     /**
-     * Gets an instance of a new iterator to illiterate over the set.
+     * Gets an instance of a new iterator to iterate over the set.
      *
      * @throws XyoObjectIteratorException If the bytes are malformed.
      */
@@ -218,7 +218,7 @@ open class XyoIterableStructure : XyoObjectStructure {
     /**
      * Reads the header of the iterable object. Reads the first two bytes and size.
      *
-     * @return Where the first elements offset is.
+     * @return Where the first element's offset is.
      * @throws XyoObjectIteratorException If the bytes are malformed.
      */
     private fun readOwnHeader () : Int {
@@ -263,7 +263,7 @@ open class XyoIterableStructure : XyoObjectStructure {
          * Converts an array of structure to a single type.
          *
          * @param array The array of buffs to convert.
-         * @param type The type to convert it two.
+         * @param type The type to convert it to.
          * @throws XyoObjectException if the type can not be converted (wrong IDs).
          */
         fun convertObjectsToType (array : Array<XyoObjectStructure>, type: XyoObjectSchema) : Array<XyoObjectStructure> {
@@ -309,7 +309,7 @@ open class XyoIterableStructure : XyoObjectStructure {
         }
 
         /**
-         * Creates an typed array. (An array that can only contain a single type of object).
+         * Creates a typed array. (An array that can only contain a single type of object).
          *
          * @param schema The schema of the array to encode.
          * @param values The values to encode into the typed set.
@@ -318,7 +318,7 @@ open class XyoIterableStructure : XyoObjectStructure {
          */
         fun createTypedIterableObject (schema: XyoObjectSchema, values: Array<XyoObjectStructure>) : XyoIterableStructure {
             if (!schema.isTyped) {
-                throw XyoObjectException("Can not create typed object from untyped schema!")
+                throw XyoObjectException("Cannot create typed object from untyped schema!")
             }
 
             var totalSize = 2

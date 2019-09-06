@@ -6,7 +6,7 @@ import kotlin.experimental.or
 
 /**
  * A information class used to represent all identifying factors in the XyoObjectModel. This is typically represented
- * as the first two bytes in an object (The encoding catalogue and the ID). You can create a XyoObjectSchema from an
+ * as the first two bytes in an object (The encoding catalogue and the ID). You can create a XyoObjectSchema from a
  * structure's header (first 2 bytes), or from a JSON schema.
  */
 abstract class XyoObjectSchema {
@@ -17,7 +17,7 @@ abstract class XyoObjectSchema {
 
     /**
      * The count of the count indicator. This value can be 1, 2, 4, 8, or null. If the value is null, this value will be
-     * chosen to optimised the count of the object. If the value is not 1, 2, 4, 8, or null, will through a
+     * chosen to optimize the count of the object. If the value is not 1, 2, 4, 8, or null, will throw a
      * XyoSchemaException.
      */
     abstract val sizeIdentifier : Int
@@ -71,7 +71,7 @@ abstract class XyoObjectSchema {
         }
 
     /**
-     * The 3rd most significant bit that represent sif the object is iterable. This value is obtained from
+     * The 3rd most significant bit that represents if the object is iterable. This value is obtained from
      * isIterable.
      */
     private val iterableByte : Byte
@@ -121,7 +121,7 @@ abstract class XyoObjectSchema {
         }
 
     /**
-     * The header of the schema or object, with the first byte being the encodingCatalogue, and the second catalogue ]
+     * The header of the schema or object, with the first byte being the encodingCatalogue, and the second catalogue
      * being the ID of the object.
      */
     val header : ByteArray

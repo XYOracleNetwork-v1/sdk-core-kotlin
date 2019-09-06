@@ -28,12 +28,12 @@ abstract class XyoSigner {
      * @param byteArray The data to cryptographically sign using the private key of the
      * XyoSigner.
      * @return A deferred cryptographic signature of the data field, that was
-     * created with the private key, in form of a XyoObject
+     * created with the private key, in the form of a XyoObject
      */
     abstract fun signData (byteArray: ByteArray) : Deferred<XyoObjectStructure>
 
     /**
-     * Gives access to a XyoSigner that can preform public key cryptographic functions.
+     * Gives access to a XyoSigner that can perform public key cryptographic functions.
      */
     abstract class XyoSignerProvider {
         /**
@@ -57,7 +57,7 @@ abstract class XyoSigner {
          * @param publicKey The public key of the party that signed the data with the the cryptographic function that
          * the XyoSigner supports.
          * @return If the signature is valid, the deferred Boolean will be true, if it is invalid the deferred
-         * <Boolean will be false.
+         * <Boolean> will be false.
          */
         abstract fun verifySign (signature: XyoObjectStructure,
                                  byteArray: ByteArray,
@@ -69,7 +69,7 @@ abstract class XyoSigner {
         abstract val key : Byte
 
         /**
-         * The keys types the signer supports
+         * The keys' types the signer supports
          */
         abstract val supportedKeys : Array<Byte>
 

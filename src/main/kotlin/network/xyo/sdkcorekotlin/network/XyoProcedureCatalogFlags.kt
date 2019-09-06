@@ -3,7 +3,7 @@ package network.xyo.sdkcorekotlin.network
 import kotlin.experimental.and
 
 /**
- * This object is used when creating bit flags for negations between two parties.
+ * This object is used when creating bit flags for negotiations between two parties.
  */
 object XyoProcedureCatalogFlags {
     /**

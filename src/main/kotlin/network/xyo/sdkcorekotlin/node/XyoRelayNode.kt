@@ -8,10 +8,10 @@ import network.xyo.sdkcorekotlin.repositories.XyoOriginBlockRepository
 import network.xyo.sdkcorekotlin.repositories.XyoOriginChainStateRepository
 
 /**
- * A base class for nodes creating data, then relaying it (e.g.) sentinels and bridges.
+ * A base class for nodes creating data, then relaying it (e.g.) to sentinels and bridges.
  *
  * @param storageProvider A place to store all origin blocks.
- * @property hashingProvider A hashing provider to use hashing utilises.
+ * @property hashingProvider A hashing provider to use hashing utilities.
  */
 open class XyoRelayNode (blockRepository: XyoOriginBlockRepository,
                          stateRepository: XyoOriginChainStateRepository,

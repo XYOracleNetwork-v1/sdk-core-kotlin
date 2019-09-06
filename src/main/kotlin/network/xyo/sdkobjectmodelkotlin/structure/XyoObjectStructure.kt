@@ -53,7 +53,7 @@ open class XyoObjectStructure (open var item: ByteArray, open var allowedOffset:
      *
      * @param sizeToReadForSize The number of bytes to read for the size.
      * @param offset The offset at which to read the size.
-     * @throws XyoObjectException Ig the sizeToReadForSize is not [1, 2, 4]
+     * @throws XyoObjectException If the sizeToReadForSize is not [1, 2, 4]
      */
     protected fun readSizeOfObject (sizeToReadForSize : Int, offset: Int) : Int {
         val buffer = ByteBuffer.allocate(sizeToReadForSize)
@@ -93,7 +93,7 @@ open class XyoObjectStructure (open var item: ByteArray, open var allowedOffset:
         }
 
         /**
-         * Wraps a given XyoObjectStructure in byte form and creates a XyoObjectStructure.
+         * Wraps a given XyoObjectStructure in byte form and creates an XyoObjectStructure.
          *
          * @param buff The encoded XyoObjectStructure, this value can be obtained from myBuff.bytesCopy
          * @return The represented XyoObjectStructure.
@@ -103,7 +103,7 @@ open class XyoObjectStructure (open var item: ByteArray, open var allowedOffset:
         }
 
         /**
-         * Encodes a XyoObjectStructure given a value and schema.
+         * Encodes an XyoObjectStructure given a value and schema.
          *
          * @param schema The schema of the XyoObjectStructure to create.
          * @param value The value of the XyoObjectStructure to create. This does NOT include size.
