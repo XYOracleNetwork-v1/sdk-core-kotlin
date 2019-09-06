@@ -1,6 +1,10 @@
-# Sample Kotlin Project - Android Example
+# Sample Kotlin Project 
 
-If you are just getting started with Kotlin and Android development, or if you need a simple integration guide for the XYO Core Kotlin Library
+- Android Example
+
+This is a simple integration guide for the XYO Core Kotlin Library. We do recommend experience with Kotlin and Android development but have included guides to get you started. 
+
+[For the source code refer to this link](https://github.com/XYOracleNetwork/sdk-core-kotlin/blob/master/sample/SampleApplication/app/src/main/java/com/example/sampleapplication/MainActivity.kt)
 
 ## Table of Contents
 
@@ -26,7 +30,7 @@ Versions used in this sample
 
 ## Using Android Studio
 
-We are using Android Studio to create this simple app, then make sure it is updated to the latest versions. 
+We are using Android Studio to create this simple app, make sure it is updated to the latest versions. 
 
 ### Virtual Device Emulator 
 
@@ -182,7 +186,7 @@ To do this (in Android Studio)
 5. Then go to **auto import** 
 6. Finally, click **Add Unambiguous Imports on the fly**
 
-This will reduce the work you'll have to do on your end as your simple app becomes more robust. 
+This will reduce the work you'll have to do on your end as your simple app needs to include more dependencies. 
 
 ### Start with Creating a Bound Witness
 
@@ -630,7 +634,7 @@ The `onCreate()` method should look like this when we are done
 
 Now rebuild and run the app. 
 
-When you tap or click (in a simulator) the `create origin` button, you should see the GPS cooridnate appear right before the hash. 
+When you tap or click (in a simulator) the `create origin` button, you should see the GPS coordinate appear right before the hash. 
 
 ## Conclusion
 You have now created an origin chain and added the gps heuristic to the origin chain. 
