@@ -12,7 +12,7 @@ import java.security.interfaces.RSAPublicKey
 import java.security.spec.RSAPublicKeySpec
 
 /**
- * A base class for a all RSA cryptography.
+ * A base class for all RSA cryptography.
  *
  * @param keySize The size of the keypair to generate.
  */
@@ -21,7 +21,7 @@ abstract class XyoGeneralRsa(private val keySize : Int, privateKey: XyoRsaPrivat
 
     /**
      * The Java Signature object when creating signaturePacking. This is used when switching between
-     * SHA1withRSA, SHA256withRSA ect.
+     * SHA1withRSA, SHA256withRSA etc.
      */
     abstract val signature : Signature
 

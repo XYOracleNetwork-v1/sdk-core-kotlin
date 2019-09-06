@@ -31,7 +31,7 @@ open class XyoBoundWitness(byteArray: ByteArray = startingBytes, offset: Int = 0
         }
 
     /**
-     * Gets the offset of the boundary to read for signing. This is where the fetters meet the wittiness.
+     * Gets the offset of the boundary to read for signing. This is where the fetters meet the witnesses.
      */
     private val witnessFetterBoundary: Int
         get() {

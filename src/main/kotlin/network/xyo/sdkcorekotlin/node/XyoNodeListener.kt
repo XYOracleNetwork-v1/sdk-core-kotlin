@@ -3,7 +3,7 @@ package network.xyo.sdkcorekotlin.node
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
 
 /**
- * THe listener for Xyo Nodes.
+ * The listener for Xyo Nodes.
  */
 abstract class XyoNodeListener {
     /**
@@ -12,12 +12,12 @@ abstract class XyoNodeListener {
     open fun onBoundWitnessStart() {}
 
     /**
-     * This function will be called on evey time a bound witness discovered for the first time successfully.
+     * This function will be called every time a bound witness is discovered for the first time successfully.
      */
     open fun onBoundWitnessDiscovered(boundWitness : XyoBoundWitness) {}
 
     /**
-     * This function will be called on evey time a bound witness did not end successfully.
+     * This function will be called every time a bound witness did not end successfully.
      */
     open fun onBoundWitnessEndFailure(error : Exception?) {}
 
