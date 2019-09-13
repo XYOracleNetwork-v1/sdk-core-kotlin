@@ -11,6 +11,9 @@ import network.xyo.sdkobjectmodelkotlin.structure.XyoIterableStructure
 import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 import java.nio.ByteBuffer
 
+/**
+ * An object that provides persistent storage for the XyoOriginChainStateRepository
+ */
 class XyoStorageOriginStateRepository (private val store: XyoKeyValueStore) : XyoOriginChainStateRepository {
     private var signersCache = ArrayList<XyoSigner>()
     private var staticsCache = ArrayList<XyoObjectStructure>()

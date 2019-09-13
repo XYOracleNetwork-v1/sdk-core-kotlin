@@ -2,6 +2,9 @@ package network.xyo.sdkcorekotlin.schemas
 
 import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 
+/**
+ * Schemas available
+ */
 object XyoSchemas {
     val ARRAY_TYPED = XyoObjectSchema.createFromHeader(byteArrayOf(         0xB0.toByte(),        1.toByte()))
     val ARRAY_UNTYPED =  XyoObjectSchema.createFromHeader(byteArrayOf(      0xA0.toByte(),        1.toByte()))
