@@ -4,11 +4,6 @@ import kotlinx.coroutines.Deferred
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
 import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 
-/**
- * An interface that is used to keep track of the state when creating the origin chain.
- *
- */
-
 interface XyoOriginChainStateRepository {
     fun getIndex(): XyoObjectStructure?
     fun putIndex(index: XyoObjectStructure)
