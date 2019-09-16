@@ -13,8 +13,9 @@ import java.lang.Math.min
 import java.nio.ByteBuffer
 
 /**
- * Persist storage for bridge queues.
+ * A class to persist storage for bridge queues.
  */
+ 
 class XyoStorageBridgeQueueRepository (private val store: XyoKeyValueStore) : XyoBridgeQueueRepository {
     private var queueCache = ArrayList<XyoBridgeQueueItem>()
 

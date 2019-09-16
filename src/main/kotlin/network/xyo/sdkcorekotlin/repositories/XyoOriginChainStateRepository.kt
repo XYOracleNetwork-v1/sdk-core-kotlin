@@ -7,6 +7,7 @@ import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 /**
  * An interface that is used to keep track of the state when creating the origin chain.
  */
+ 
 interface XyoOriginChainStateRepository {
     fun getIndex(): XyoObjectStructure?
     fun putIndex(index: XyoObjectStructure)

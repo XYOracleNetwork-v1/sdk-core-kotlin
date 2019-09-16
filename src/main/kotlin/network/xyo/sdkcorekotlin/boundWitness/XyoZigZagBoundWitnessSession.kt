@@ -22,7 +22,11 @@ class XyoZigZagBoundWitnessSession(private val handler : XyoNetworkHandler,
 
     private var cycles = 0
 
-// create the bound witness
+    /**
+     * create the bound witness
+     * @param transfer The object to use to create the bound witness 
+     * @return A new bound witness. 
+     */ 
     suspend fun doBoundWitness(transfer: XyoIterableStructure?) : Exception? {
         try {
             if (!completed) {
