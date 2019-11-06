@@ -208,7 +208,7 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
     fun boundWitness (handler: XyoNetworkHandler, procedureCatalogue: XyoProcedureCatalog): Deferred<XyoBoundWitness?> = GlobalScope.async {
         try {
             if (currentBoundWitnessSession != null) {
-                onBoundWitnessEndFailure(XyoBoundWitnessCreationException("Bound witness is session"))
+                onBoundWitnessEndFailure(XyoBoundWitnessCreationException("Busy - Bound witness in progress"))
                 return@async null
             }
 
