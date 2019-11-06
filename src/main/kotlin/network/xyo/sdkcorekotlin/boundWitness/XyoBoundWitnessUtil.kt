@@ -19,11 +19,23 @@ object XyoBoundWitnessUtil {
      * @return A bound witness without the type specified.
      */
     fun removeTypeFromUnsignedPayload (type : Byte, boundWitness: XyoIterableStructure) : XyoIterableStructure {
+        /**
+         * where we hold the new bound witnesses 
+         */
         val newBoundWitnessLedger = ArrayList<XyoObjectStructure>()
 
+        /** 
+         * gets the fetters of the bound witnesses
+         */
         val fetters = boundWitness[XyoSchemas.FETTER.id]
+        /** 
+         * gets the witnesses of the bound witnesses
+         */
         val witnesses = boundWitness[XyoSchemas.WITNESS.id]
-
+        
+        /** 
+         * index for newly updated bound witnesses
+         */
         newBoundWitnessLedger.addAll(fetters)
 
         for (witness in witnesses) {

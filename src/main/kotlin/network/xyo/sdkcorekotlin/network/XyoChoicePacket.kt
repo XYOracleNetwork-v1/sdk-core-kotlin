@@ -2,6 +2,10 @@ package network.xyo.sdkcorekotlin.network
 
 import network.xyo.sdkobjectmodelkotlin.exceptions.XyoObjectException
 
+/**
+ * Helper object to help parse the choice stage of the network protocol.
+ * @property bytes array of choice
+ */
 class XyoChoicePacket (private val bytes: ByteArray) {
 
     @kotlin.ExperimentalUnsignedTypes

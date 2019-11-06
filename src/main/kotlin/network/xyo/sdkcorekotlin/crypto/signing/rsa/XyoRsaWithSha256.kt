@@ -10,7 +10,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider
 import java.security.Signature
 
 /**
- *
+ * The base class for RSA Signature with SHA256
  */
 class XyoRsaWithSha256 (privateKey: XyoRsaPrivateKey?) : XyoGeneralRsa (1024, privateKey) {
     override val signature: Signature

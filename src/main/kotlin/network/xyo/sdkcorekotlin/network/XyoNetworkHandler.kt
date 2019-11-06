@@ -3,6 +3,10 @@ package network.xyo.sdkcorekotlin.network
 import kotlinx.coroutines.Deferred
 import java.nio.ByteBuffer
 
+/**
+ * Helps send network protocol packets over a XyoNetworkPipe.
+ * @property pipe the XYO pipe used for protocol packet sending
+ */
 class XyoNetworkHandler (val pipe: XyoNetworkPipe) {
 
     fun sendCataloguePacket(catalogue: ByteArray) : Deferred<ByteArray?> {
