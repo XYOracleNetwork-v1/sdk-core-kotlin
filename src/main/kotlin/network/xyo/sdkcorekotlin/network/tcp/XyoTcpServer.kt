@@ -5,6 +5,11 @@ import network.xyo.sdkcorekotlin.network.XyoAdvertisePacket
 import java.net.ServerSocket
 import kotlin.concurrent.thread
 
+/**
+ * A base server class using TCP pipes.
+ *
+ * @property port the port number for the server
+ */
 class XyoTcpServer (val port: Int) {
     fun listen (callback: (pipe: XyoTcpPipe) -> (Unit)) = thread {
         val serverSocket = ServerSocket(port)

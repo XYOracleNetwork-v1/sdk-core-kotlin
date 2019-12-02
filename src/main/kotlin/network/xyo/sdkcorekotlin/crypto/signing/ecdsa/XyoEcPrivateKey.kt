@@ -7,7 +7,9 @@ import org.bouncycastle.jce.interfaces.ECPrivateKey
 import org.bouncycastle.jce.spec.ECParameterSpec
 import java.math.BigInteger
 
-
+/**
+ * A base class for EC private key generation.
+ */
 abstract class XyoEcPrivateKey : ECPrivateKey, XyoPrivateKey(byteArrayOf(), 0) {
 
     override fun getAlgorithm(): String {

@@ -5,6 +5,11 @@ import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
+/**
+ * XYOEncrypter interface implementation of the Advanced Encryption Standard 
+ *   
+*/
+
 object XyoAes : XyoEncrypter {
     private val cipher  = Cipher.getInstance("AES/CFB/NoPadding")
     override val algorithmName: String = "AES"

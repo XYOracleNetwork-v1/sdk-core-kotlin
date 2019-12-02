@@ -1,10 +1,11 @@
-[logo]: https://cdn.xy.company/img/brand/XY_Logo_GitHub.png
+[logo]: https://cdn.xy.company/img/brand/XYO_full_colored.png
 
-![logo]
+[![logo]](https://xyo.network)
 
 # sdk-core-kotlin
 
-[![](https://travis-ci.org/XYOracleNetwork/sdk-core-kotlin.svg?branch=master)](https://travis-ci.org/XYOracleNetwork/sdk-core-kotlin) [![Download](https://api.bintray.com/packages/xyoraclenetwork/xyo/sdk-core-kotlin/images/download.svg?version=3.0.3)](https://bintray.com/xyoraclenetwork/xyo/sdk-core-kotlin/3.0.3/link) [![BCH compliance](https://bettercodehub.com/edge/badge/XYOracleNetwork/sdk-core-kotlin?branch=master)](https://bettercodehub.com/) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/2fb2eb69c1db455299ffce57b0216aa6)](https://www.codacy.com/app/XYOracleNetwork/sdk-core-kotlin?utm_source=github.com&utm_medium=referral&utm_content=XYOracleNetwork/sdk-core-kotlin&utm_campaign=Badge_Grade) [![Maintainability](https://api.codeclimate.com/v1/badges/af641257b27ecea22a9f/maintainability)](https://codeclimate.com/github/XYOracleNetwork/sdk-core-kotlin/maintainability) [![](https://img.shields.io/gitter/room/XYOracleNetwork/Stardust.svg)](https://gitter.im/XYOracleNetwork/Dev)
+[![](https://travis-ci.org/XYOracleNetwork/sdk-core-kotlin.svg?branch=master)](https://travis-ci.org/XYOracleNetwork/sdk-core-kotlin) [![Download](https://api.bintray.com/packages/xyoraclenetwork/xyo/sdk-core-kotlin/images/download.svg?version=3.0.3)](https://bintray.com/xyoraclenetwork/xyo/sdk-core-kotlin/3.0.3/link) [![BCH compliance](https://bettercodehub.com/edge/badge/XYOracleNetwork/sdk-core-kotlin?branch=master)](https://bettercodehub.com/) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/2fb2eb69c1db455299ffce57b0216aa6)](https://www.codacy.com/app/XYOracleNetwork/sdk-core-kotlin?utm_source=github.com&utm_medium=referral&utm_content=XYOracleNetwork/sdk-core-kotlin&utm_campaign=Badge_Grade) [![Maintainability](https://api.codeclimate.com/v1/badges/af641257b27ecea22a9f/maintainability)](https://codeclimate.com/github/XYOracleNetwork/sdk-core-kotlin/maintainability) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=XYOracleNetwork_sdk-core-kotlin&metric=alert_status)](https://sonarcloud.io/dashboard?id=XYOracleNetwork_sdk-core-kotlin)
+
 
 ## Table of Contents
 
@@ -274,4 +275,4 @@ See the [LICENSE.md](LICENSE) file for license details.
 
 ## Credits
 
-Made with 🔥and ❄️ by [XY - The Persistent Company](https://www.xy.company)
+Made with 🔥and ❄️ by [XYO](https://www.xyo.network)

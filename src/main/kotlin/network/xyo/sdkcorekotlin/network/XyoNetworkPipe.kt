@@ -4,7 +4,9 @@ import kotlinx.coroutines.Deferred
 import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 
 /**
- * A network abstraction to communicate with another peer.
+ * Network abstraction that can be used for doing bound witnesses with other devices. 
+ * This library comes with two implementations, a memory pipe used for testing and simulations, 
+ * and a tcp device with for communicating with tcp/ip devices.
  */
 interface  XyoNetworkPipe {
 
