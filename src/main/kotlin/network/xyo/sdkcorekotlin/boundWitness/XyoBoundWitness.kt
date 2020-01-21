@@ -88,7 +88,7 @@ open class XyoBoundWitness(byteArray: ByteArray = startingBytes, offset: Int = 0
      *
      * @param partyNum The index of the party in the bound witness.
      * @return The party's witness. Will return null if out of index.
-     */
+     */     
     fun getWitnessOfParty(partyNum: Int) : XyoIterableStructure? {
         val numOfParties = numberOfParties ?: return null
 
@@ -170,6 +170,10 @@ open class XyoBoundWitness(byteArray: ByteArray = startingBytes, offset: Int = 0
 
 
     companion object : XyoInterpret {
+
+        /**
+        * Gets bytes from an untyped bound witness
+        */
 
         val startingBytes = XyoIterableStructure.createUntypedIterableObject(XyoSchemas.BW, arrayOf()).bytesCopy
 

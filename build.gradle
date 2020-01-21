@@ -1,7 +1,6 @@
 apply plugin: 'kotlin'
 apply plugin: 'jacoco'
 apply plugin: 'org.sonarqube'
-apply plugin: 'com.jfrog.bintray'
 apply plugin: 'maven-publish'
 
 buildscript {
@@ -20,7 +19,6 @@ buildscript {
         classpath 'org.jacoco:org.jacoco.core:0.8.3'
         classpath "org.junit.platform:junit-platform-gradle-plugin:1.0.0-M4"
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.7"
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
     }
 }
 
@@ -66,6 +64,16 @@ repositories {
 }
 
 publishing {
+    repositories {
+        maven {
+            name = "Github"
+            url = uri("https://maven.pkg.github.com/XYOracleNetwork/sdk-core-kotlin")
+            credentials {
+                username = findProperty("GITHUB_USERNAME")
+                password = findProperty("GITHUB_API_TOKEN")
+            }
+        }
+    }
     publications {
         Production(MavenPublication) {
             artifact("$buildDir/libs/sdk-core-kotlin.jar")
@@ -88,26 +96,4 @@ publishing {
             }
         }
     }
-}
-
-bintray {
-    user = System.getenv('BINTRAY_USER')
-    key = System.getenv('BINTRAY_KEY')
-    dryRun = false
-    override = false
-    publish = true
-    pkg {
-        repo = 'xyo'
-        name = 'sdk-core-kotlin'
-        userOrg = 'xyoraclenetwork'
-        licenses = ['LGPL-3.0']
-        desc = 'XYO Core Kotlin Classes'
-        vcsUrl = 'https://github.com/xyoraclenetwork/sdk-core-kotlin.git'
-
-        version {
-            name = verString
-            vcsTag = verString
-        }
-    }
-    publications = ['Production']
 }

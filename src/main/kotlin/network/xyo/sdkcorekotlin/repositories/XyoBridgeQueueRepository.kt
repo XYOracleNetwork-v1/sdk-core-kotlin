@@ -4,6 +4,9 @@ import kotlinx.coroutines.Deferred
 import network.xyo.sdkcorekotlin.node.XyoBridgeQueueItem
 import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 
+/**
+ * An interface for bridge queue storage.
+ */
 interface XyoBridgeQueueRepository {
     fun getQueue (): Array<XyoBridgeQueueItem>
     fun setQueue (queue:  Array<XyoBridgeQueueItem>)

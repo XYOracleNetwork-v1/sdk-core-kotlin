@@ -10,7 +10,10 @@ import network.xyo.sdkobjectmodelkotlin.exceptions.XyoObjectException
 import network.xyo.sdkobjectmodelkotlin.structure.XyoIterableStructure
 import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 
-
+/**
+ * This object is a class for creating a bound witness with a pipe interface (send and receive), 
+ * but does not handle network handshake
+ */
 class XyoZigZagBoundWitnessSession(private val handler : XyoNetworkHandler,
                                    signedPayload : Array<XyoObjectStructure>,
                                    unsignedPayload : Array<XyoObjectStructure>,
@@ -19,6 +22,11 @@ class XyoZigZagBoundWitnessSession(private val handler : XyoNetworkHandler,
 
     private var cycles = 0
 
+    /**
+     * create the bound witness
+     * @param transfer The object to use to create the bound witness 
+     * @return A new bound witness. 
+     */ 
     suspend fun doBoundWitness(transfer: XyoIterableStructure?) : Exception? {
         try {
             if (!completed) {

@@ -1,0 +1,45 @@
+name: Release 
+
+on: 
+  push:
+    branches:
+      - 'master'
+
+jobs:         
+  publish:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@master
+      - uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - name: pre-build
+        run: chmod +x gradlew
+      - name: install
+        run: ./gradlew install
+      - name: build
+        run: ./gradlew build
+      - name: bintray upload
+        env: 
+          BINTRAY_USER: ${{ secrets.BINTRAY_USER }}
+          BINTRAY_KEY: ${{ secrets.BINTRAY_KEY }}
+        run: ./gradlew assemble bintrayUpload
+        
+      - name: Bump version and push tag
+        uses: anothrNick/github-tag-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WITH_V: false
+          DEFAULT_BUMP: patch
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with: 
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: true
+          prerelease: false
