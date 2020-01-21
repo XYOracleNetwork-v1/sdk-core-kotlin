@@ -2,6 +2,8 @@ apply plugin: 'kotlin'
 apply plugin: 'jacoco'
 apply plugin: 'org.sonarqube'
 apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
+
 
 buildscript {
     repositories {
@@ -19,6 +21,7 @@ buildscript {
         classpath 'org.jacoco:org.jacoco.core:0.8.3'
         classpath "org.junit.platform:junit-platform-gradle-plugin:1.0.0-M4"
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.7"
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.+'
     }
 }
 
@@ -46,8 +49,7 @@ jacocoTestReport {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.50"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.0"
-    implementation "org.bouncycastle:bcpkix-jdk15on:1.58"
-
+    api 'org.bouncycastle:bcpkix-jdk15on:1.64'
     testImplementation "junit:junit:4.12"
 }
 
@@ -64,16 +66,6 @@ repositories {
 }
 
 publishing {
-    repositories {
-        maven {
-            name = "Github"
-            url = uri("https://maven.pkg.github.com/XYOracleNetwork/sdk-core-kotlin")
-            credentials {
-                username = findProperty("GITHUB_USERNAME")
-                password = findProperty("GITHUB_API_TOKEN")
-            }
-        }
-    }
     publications {
         Production(MavenPublication) {
             artifact("$buildDir/libs/sdk-core-kotlin.jar")
@@ -83,9 +75,9 @@ publishing {
 
             //The publication doesn't know about our dependencies, so we have to manually add them to the pom
             pom.withXml {
-                //def dependenciesNode = asNode().appendNode('dependencies')
+                def dependenciesNode = asNode().getAt('dependencies')[0] ?: asNode().appendNode('dependencies')
                 //Iterate over the compile dependencies (we don't want the test ones), adding a <dependency> node for each
-                configurations.compile.allDependencies.each {
+                configurations.implementation.allDependencies.each {
                     if (it.name != 'unspecified') {
                         def dependencyNode = dependenciesNode.appendNode('dependency')
                         dependencyNode.appendNode('groupId', it.group)
@@ -96,4 +88,26 @@ publishing {
             }
         }
     }
+}
+
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
+    dryRun = false
+    override = false
+    publish = true
+    pkg {
+        repo = 'xyo'
+        name = 'sdk-core-kotlin'
+        userOrg = 'xyoraclenetwork'
+        licenses = ['LGPL-3.0']
+        desc = 'Kotlin Core Library'
+        vcsUrl = 'https://github.com/xyoraclenetwork/sdk-core-kotlin.git'
+
+        version {
+            name = verString
+            vcsTag = verString
+        }
+    }
+    publications = ['Production']
 }
