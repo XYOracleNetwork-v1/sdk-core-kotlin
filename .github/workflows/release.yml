@@ -24,13 +24,6 @@ jobs:
           BINTRAY_USER: ${{ secrets.BINTRAY_USER }}
           BINTRAY_KEY: ${{ secrets.BINTRAY_KEY }}
         run: ./gradlew assemble bintrayUpload
-        
-      - name: Bump version and push tag
-        uses: anothrNick/github-tag-action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          WITH_V: false
-          DEFAULT_BUMP: patch
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
