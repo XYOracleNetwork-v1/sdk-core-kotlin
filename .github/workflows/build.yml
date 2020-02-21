@@ -18,7 +18,7 @@ jobs:
     - name: check in local changes
       run: |       
         git status
-        git add base-android-library/version.properties
+        git add version.properties
     - name: commit file
       run: |
         git config --local user.email "action@github.com"

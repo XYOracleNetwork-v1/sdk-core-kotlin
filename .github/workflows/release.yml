@@ -18,7 +18,7 @@ jobs:
       - name: pre-build
         run: chmod +x gradlew
       - name: build
-        run: ./gradlew assemble
+        run: ./gradlew clean build
       - name: bintray upload
         env: 
           BINTRAY_USER: ${{ secrets.BINTRAY_USER }}
