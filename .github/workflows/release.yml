@@ -18,19 +18,24 @@ jobs:
       - name: pre-build
         run: chmod +x gradlew
       - name: build
-        run: ./gradlew build
+        run: ./gradlew assemble
       - name: bintray upload
         env: 
           BINTRAY_USER: ${{ secrets.BINTRAY_USER }}
           BINTRAY_KEY: ${{ secrets.BINTRAY_KEY }}
         run: ./gradlew assemble bintrayUpload
+      - name: get commit message
+        run: |
+          echo ::set-env name=commitmsg::$(git log --format=%B -n 1 ${{ github.event.after }})
+      - name: show commit message
+        run: echo $commitmsg
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env: 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with: 
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: ${{ steps.release_version.outputs.version }}
+          release_name: Release ${{ env.commitmsg }}
           draft: true
           prerelease: false
