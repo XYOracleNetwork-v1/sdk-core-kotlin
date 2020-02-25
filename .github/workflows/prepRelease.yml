@@ -1,23 +1,20 @@
-name: Build
+name: Prepare Release
 
 on:
   push: 
     branches: 
-      - 'develop'
-  pull_request: 
-    branches: 
-      - 'master'
+      - 'release'
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - name: pre-build
       run:  chmod +x ./gradlew
     - name: build
-      run: ./gradlew build
+      run: ./gradlew :xyo-android-library:assemble
     - name: check in local changes
       run: |       
         git status
@@ -31,4 +28,4 @@ jobs:
       uses: ad-m/github-push-action@master
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: 'develop' 
+        branch: 'release' 
