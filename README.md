@@ -92,7 +92,7 @@ allprojects {
 
  ```gradle
  dependencies {
-	implementation 'com.github.XYOracleNetwork:sdk-core-kotlin:v0.1.1-beta.0'
+	implementation 'com.github.XYOracleNetwork:sdk-core-kotlin:v3.0.36'
  }
  ```
 
