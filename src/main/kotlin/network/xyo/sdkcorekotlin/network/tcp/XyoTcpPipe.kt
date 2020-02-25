@@ -15,7 +15,7 @@ import java.nio.ByteBuffer
 /**
  * An implementation of a XyoNetworkPipe using TCP sockets.
  *
- * @param socket The current socket.
+ * @property socket The current socket.
  * @param initiationData The data that was sent with the first request.
  */
 open class XyoTcpPipe(private val socket: Socket,

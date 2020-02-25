@@ -3,6 +3,10 @@ package network.xyo.sdkcorekotlin.network
 import network.xyo.sdkobjectmodelkotlin.exceptions.XyoObjectException
 import java.nio.ByteBuffer
 
+/**
+ * Helper object to help parse the advertising stage of the network protocol.   
+ */
+ 
 class XyoAdvertisePacket (val bytes : ByteArray) {
     @kotlin.ExperimentalUnsignedTypes
     fun getChoice () : ByteArray {

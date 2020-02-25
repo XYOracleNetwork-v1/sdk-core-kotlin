@@ -3,7 +3,8 @@ package network.xyo.sdkcorekotlin.node
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
 
 /**
- * The listener for Xyo Nodes.
+ * A node listener, added through the .addListener() method from XyoOriginChainCreator 
+ * to receive callbacks to when a bound witness starts, occurs, discovered, and/or fails.
  */
 abstract class XyoNodeListener {
     /**
