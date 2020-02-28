@@ -12,3 +12,4 @@ google-services.json
 .settings
 .project
 out
+.classpath
