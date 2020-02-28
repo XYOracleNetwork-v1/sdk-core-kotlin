@@ -13,3 +13,4 @@ google-services.json
 .project
 out
 .classpath
+bin/
