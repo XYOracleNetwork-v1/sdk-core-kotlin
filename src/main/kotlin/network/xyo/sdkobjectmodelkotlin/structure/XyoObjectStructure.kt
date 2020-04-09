@@ -8,7 +8,37 @@ import java.nio.*
 /**
  * A base class for <i>XyoObjects</i>. This is used for obtaining the schema, value, and size of the item.
  */
-open class XyoObjectStructure (open var item: ByteArray, open var allowedOffset: Int, open var headerSize: Int = 2) {
+open class XyoObjectStructure {
+
+    constructor (item: ByteArray, allowedOffset: Int) {
+        this.item = item
+        this.allowedOffset = allowedOffset
+    }
+
+    constructor (item: ByteArray, allowedOffset: Int, headerSize: Int) {
+        this.item = item
+        this.allowedOffset = allowedOffset
+        this.headerSize = headerSize
+    }
+
+
+    /**
+     * The primary data input for the XyoObjectStructure. This buffer will not be read before the allowedOffset.
+     */
+    var item : ByteArray
+
+    /**
+     * The starting offset of where to read. This buffer will not be read past this buffer.
+     */
+    var allowedOffset : Int
+
+    /**
+     * The sizes of the headers to read. This should align with XyoObjectSchema. This value should be set to 0 when
+     * dealing with typed elements in a typed array.
+     */
+    private var headerSize : Int = 2
+
+
 
     /**
      * The XyoObjectSchema of the XyoObjectStructure
@@ -53,7 +83,7 @@ open class XyoObjectStructure (open var item: ByteArray, open var allowedOffset:
      *
      * @param sizeToReadForSize The number of bytes to read for the size.
      * @param offset The offset at which to read the size.
-     * @throws XyoObjectException If the sizeToReadForSize is not [1, 2, 4]
+     * @throws XyoObjectException Ig the sizeToReadForSize is not [1, 2, 4]
      */
     protected fun readSizeOfObject (sizeToReadForSize : Int, offset: Int) : Int {
         val buffer = ByteBuffer.allocate(sizeToReadForSize)
@@ -93,7 +123,7 @@ open class XyoObjectStructure (open var item: ByteArray, open var allowedOffset:
         }
 
         /**
-         * Wraps a given XyoObjectStructure in byte form and creates an XyoObjectStructure.
+         * Wraps a given XyoObjectStructure in byte form and creates a XyoObjectStructure.
          *
          * @param buff The encoded XyoObjectStructure, this value can be obtained from myBuff.bytesCopy
          * @return The represented XyoObjectStructure.
@@ -103,7 +133,7 @@ open class XyoObjectStructure (open var item: ByteArray, open var allowedOffset:
         }
 
         /**
-         * Encodes an XyoObjectStructure given a value and schema.
+         * Encodes a XyoObjectStructure given a value and schema.
          *
          * @param schema The schema of the XyoObjectStructure to create.
          * @param value The value of the XyoObjectStructure to create. This does NOT include size.
