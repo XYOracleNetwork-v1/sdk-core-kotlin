@@ -32,13 +32,7 @@ open class XyoObjectStructure {
      */
     var allowedOffset : Int
 
-    /**
-     * The sizes of the headers to read. This should align with XyoObjectSchema. This value should be set to 0 when
-     * dealing with typed elements in a typed array.
-     */
     private var headerSize : Int = 2
-
-
 
     /**
      * The XyoObjectSchema of the XyoObjectStructure
