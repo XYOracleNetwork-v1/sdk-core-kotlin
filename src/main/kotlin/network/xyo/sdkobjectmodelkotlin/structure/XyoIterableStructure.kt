@@ -4,6 +4,7 @@ import network.xyo.sdkobjectmodelkotlin.exceptions.XyoObjectException
 import network.xyo.sdkobjectmodelkotlin.exceptions.XyoObjectIteratorException
 import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 import network.xyo.sdkobjectmodelkotlin.toHexString
+import org.json.JSONArray
 import java.nio.ByteBuffer
 
 /**
@@ -244,17 +245,17 @@ open class XyoIterableStructure : XyoObjectStructure {
      * @return A JSON encoded string.
      */
     override fun toString(): String {
-        var rootString = ""
+        val rootJsonObject = JSONArray()
 
         if (schema.isIterable) {
             for (subItem in iterator) {
-                rootString += XyoIterableStructure(subItem.bytesCopy, 0).toString()
+                rootJsonObject.put(JSONArray((XyoIterableStructure(subItem.bytesCopy, 0)).toString()))
             }
         } else {
-            rootString += item.toHexString()
+            rootJsonObject.put(item.toHexString())
         }
 
-        return rootString
+        return rootJsonObject.toString()
     }
 
     companion object {

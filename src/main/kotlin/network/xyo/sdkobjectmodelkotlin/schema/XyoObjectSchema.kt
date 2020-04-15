@@ -1,6 +1,8 @@
 package network.xyo.sdkobjectmodelkotlin.schema
 
 import network.xyo.sdkobjectmodelkotlin.exceptions.XyoSchemaException
+import org.json.JSONObject
+import java.math.BigInteger
 import kotlin.experimental.and
 import kotlin.experimental.or
 
@@ -191,5 +193,18 @@ abstract class XyoObjectSchema {
 
             throw XyoSchemaException("Invalid Size: ${encodingCatalogue.toString(2)}")
         }
+        
+        /**
+         * Gets a schema meta object from a json object.
+         *
+         * @param jsonObject The meta JSON Object
+         * @return The XyoObjectSchemaMeta of the object from JSON
+         */        
+        private fun getMetaFromJsonObject (jsonObject: JSONObject) : XyoObjectSchemaMeta {
+            return object : XyoObjectSchemaMeta() {
+                override val desc: String? = jsonObject["desc"] as String?
+                override val name: String? = jsonObject["name"] as String?
+            }
+        }        
     }
 }
