@@ -65,7 +65,7 @@ class XyoTcpPipeTest : XyoTestBase( ){
                         val pipe = XyoTcpPipe(socket, null)
                         val handler = XyoNetworkHandler(pipe)
 
-                        val bw = node.boundWitness(handler, testProcedureCatalogue).await()
+                        val bw = node.boundWitness(handler, testProcedureCatalogue)
                         println("BOUND WITNESS DONE: " + bw?.getHash(hasher)?.bytesCopy?.toHexString())
 
                         val all = originQueueRepo.getAllOriginBlockHashes()!!

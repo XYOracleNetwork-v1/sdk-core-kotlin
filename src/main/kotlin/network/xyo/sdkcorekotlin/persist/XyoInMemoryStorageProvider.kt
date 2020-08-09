@@ -1,7 +1,5 @@
 package network.xyo.sdkcorekotlin.persist
 
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import java.util.concurrent.ConcurrentHashMap
 
 /**

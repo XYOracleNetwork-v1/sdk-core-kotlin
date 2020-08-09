@@ -1,8 +1,5 @@
 package network.xyo.sdkcorekotlin.boundWitness
 
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
 import network.xyo.sdkobjectmodelkotlin.structure.XyoIterableStructure
@@ -51,7 +48,7 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
      */
     suspend fun incomingData (transfer : XyoIterableStructure?, endPoint : Boolean) : XyoIterableStructure? {
         if (transfer != null) {
-            addTransfer(transfer).await()
+            addTransfer(transfer)
         }
 
         if (!hasSentFetter) {
@@ -156,7 +153,7 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
      *
      * @param transfer The transfer to add
      */
-    private fun addTransfer (transfer : XyoIterableStructure) : Deferred<Unit> = GlobalScope.async {
+    private fun addTransfer (transfer : XyoIterableStructure) {
         // drill down on transfer to make sure its valid
         transfer.toString()
 

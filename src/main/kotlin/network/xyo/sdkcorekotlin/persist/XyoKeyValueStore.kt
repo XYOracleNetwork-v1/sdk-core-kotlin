@@ -1,7 +1,5 @@
 package network.xyo.sdkcorekotlin.persist
 
-import kotlinx.coroutines.Deferred
-
 /**
  * A XyoKeyValueStore is meant to provide a persistence layer. It abstracts exactly
  * how that is done. This could be in-memory persist or some disk strategy. It aims to persist data

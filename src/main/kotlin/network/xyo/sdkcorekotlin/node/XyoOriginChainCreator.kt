@@ -1,8 +1,5 @@
 package network.xyo.sdkcorekotlin.node
 
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.XyoException
 import network.xyo.sdkcorekotlin.log.XyoLog
 import network.xyo.sdkcorekotlin.boundWitness.*
@@ -87,7 +84,7 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
     suspend fun selfSignOriginChain () {
         val boundWitness = XyoZigZagBoundWitness(
                 originState.signers,
-                makeSignedPayload().await().toTypedArray(),
+                makeSignedPayload().toTypedArray(),
                 arrayOf()
         )
         boundWitness.incomingData(null, true)
@@ -205,11 +202,11 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
     }
 
     @kotlin.ExperimentalUnsignedTypes
-    fun boundWitness (handler: XyoNetworkHandler, procedureCatalogue: XyoProcedureCatalog): Deferred<XyoBoundWitness?> = GlobalScope.async {
+    suspend fun boundWitness (handler: XyoNetworkHandler, procedureCatalogue: XyoProcedureCatalog): XyoBoundWitness? {
         try {
             if (currentBoundWitnessSession != null) {
                 onBoundWitnessEndFailure(XyoBoundWitnessCreationException("Busy - Bound witness in progress"))
-                return@async null
+                return null
             }
 
             onBoundWitnessStart()
@@ -221,24 +218,24 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
 
                 if (responseWithChoice == null) {
                     onBoundWitnessEndFailure(XyoBoundWitnessCreationException("Response is null"))
-                    return@async null
+                    return null
                 }
 
                 val adv = XyoChoicePacket(responseWithChoice)
                 val startingData = createStartingData(adv.getResponse())
 
-                return@async doBoundWitnessWithPipe(handler, startingData, adv.getChoice())
+                return doBoundWitnessWithPipe(handler, startingData, adv.getChoice())
             }
 
             val choice = procedureCatalogue.choose(XyoProcedureCatalogFlags.flip(handler.pipe.initiationData!!.getChoice()))
-            return@async doBoundWitnessWithPipe(handler, null, choice)
+            return doBoundWitnessWithPipe(handler, null, choice)
         } catch (e: XyoObjectException) {
             onBoundWitnessEndFailure(e)
         } catch (e: XyoException) {
             onBoundWitnessEndFailure(e)
         }
 
-        return@async null
+        return null
     }
 
     private suspend fun doBoundWitnessWithPipe (handler: XyoNetworkHandler,
@@ -247,7 +244,7 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
 
         val options = getBoundWitnessOptions(choice)
         val payloads = getBoundWitnessOptionPayloads(options)
-        val signedPayload = makeSignedPayload().await()
+        val signedPayload = makeSignedPayload()
         signedPayload.addAll(payloads.signedOptions)
         signedPayload.addAll(handler.pipe.getNetworkHeuristics())
 
@@ -294,11 +291,11 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
     private suspend fun updateOriginState (boundWitness: XyoBoundWitness) {
         val hash = boundWitness.getHash(hashingProvider)
         originState.newOriginBlock(hash)
-        originState.repo.commit().await()
+        originState.repo.commit()
         XyoLog.logSpecial("Updating Origin State. Awaiting Index: ${ByteBuffer.wrap(originState.index.valueCopy).int}", TAG)
     }
 
-    private fun makeSignedPayload (): Deferred<ArrayList<XyoObjectStructure>> = GlobalScope.async {
+    private fun makeSignedPayload (): ArrayList<XyoObjectStructure> {
         val signedPayloads = ArrayList<XyoObjectStructure>(getHeuristics().asList())
         val previousHash = originState.previousHash
         val index = originState.index
@@ -315,7 +312,7 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
         signedPayloads.add(index)
         signedPayloads.addAll(originState.statics)
 
-        return@async signedPayloads
+        return signedPayloads
     }
 
     companion object {

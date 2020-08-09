@@ -1,6 +1,5 @@
 package network.xyo.sdkcorekotlin.network
 
-import kotlinx.coroutines.Deferred
 import java.nio.ByteBuffer
 
 /**

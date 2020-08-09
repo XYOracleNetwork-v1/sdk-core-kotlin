@@ -1,6 +1,5 @@
 package network.xyo.sdkcorekotlin.repositories
 
-import kotlinx.coroutines.Deferred
 import network.xyo.sdkcorekotlin.node.XyoBridgeQueueItem
 import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 

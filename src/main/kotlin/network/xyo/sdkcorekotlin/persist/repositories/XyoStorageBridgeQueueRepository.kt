@@ -1,8 +1,5 @@
 package network.xyo.sdkcorekotlin.persist.repositories
 
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.node.XyoBridgeQueueItem
 import network.xyo.sdkcorekotlin.persist.XyoKeyValueStore
 import network.xyo.sdkcorekotlin.repositories.XyoBridgeQueueRepository

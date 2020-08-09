@@ -1,8 +1,5 @@
 package network.xyo.sdkcorekotlin.persist.repositories
 
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
 import network.xyo.sdkcorekotlin.persist.XyoKeyValueStore
 import network.xyo.sdkcorekotlin.repositories.XyoOriginChainStateRepository
@@ -65,7 +62,7 @@ class XyoStorageOriginStateRepository (private val store: XyoKeyValueStore) : Xy
         return lastBlockTimeCache
     }
 
-    override fun commit(): Deferred<Unit> = GlobalScope.async {
+    override suspend fun commit() {
         val index = indexCache
         val previousHash = previousHashCache
         val originTime = lastBlockTimeCache
@@ -89,7 +86,7 @@ class XyoStorageOriginStateRepository (private val store: XyoKeyValueStore) : Xy
         store.write(ORIGIN_STATICS_KEY, encodedStatics.bytesCopy)
     }
 
-    fun restore (signers: ArrayList<XyoSigner>) = GlobalScope.async {
+    suspend fun restore (signers: ArrayList<XyoSigner>) {
         signersCache = signers
         val encodedIndex = store.read(ORIGIN_STATE_INDEX_KEY)
         val encodedHash = store.read(ORIGIN_HASH_INDEX_KEY)
