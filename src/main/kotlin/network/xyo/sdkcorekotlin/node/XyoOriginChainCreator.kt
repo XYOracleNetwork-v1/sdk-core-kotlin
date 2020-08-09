@@ -182,13 +182,13 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
     private fun loadCreatedBoundWitness (boundWitness: XyoBoundWitness) : Deferred<Unit> = GlobalScope.async {
         val hash = boundWitness.getHash(hashingProvider).await()
 
-        if (!blockRepository.containsOriginBlock(hash).await()) {
+        if (!blockRepository.containsOriginBlock(hash)) {
             val subBlocks = XyoOriginBoundWitnessUtil.getBridgedBlocks(boundWitness)
             val boundWitnessWithoutBlocks = XyoBoundWitness.getInstance(
                     XyoBoundWitnessUtil.removeTypeFromUnsignedPayload(BRIDGE_BLOCK_SET.id, boundWitness).bytesCopy
             )
 
-            blockRepository.addBoundWitness(boundWitnessWithoutBlocks).await()
+            blockRepository.addBoundWitness(boundWitnessWithoutBlocks)
 
             for ((_, listener) in listeners) {
                 listener.onBoundWitnessDiscovered(boundWitnessWithoutBlocks)

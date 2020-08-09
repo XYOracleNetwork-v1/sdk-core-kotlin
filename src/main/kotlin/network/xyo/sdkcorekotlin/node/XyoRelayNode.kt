@@ -27,7 +27,7 @@ open class XyoRelayNode (blockRepository: XyoOriginBlockRepository,
         override fun onBoundWitnessEndSuccess(boundWitness: XyoBoundWitness) {
             runBlocking {
                 for (hash in originBlocksToBridge.getBlocksToRemove()) {
-                    blockRepository.removeOriginBlock(hash).await()
+                    blockRepository.removeOriginBlock(hash)
                 }
 
                 bridgeQueueRepository.commit().await()

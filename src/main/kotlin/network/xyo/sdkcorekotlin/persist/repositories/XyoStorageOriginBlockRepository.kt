@@ -22,38 +22,38 @@ import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoKeyValueStore,
                                            protected val hashingObject: XyoHash.XyoHashProvider) : XyoOriginBlockRepository {
 
-    override fun removeOriginBlock(originBlockHash: XyoObjectStructure) = GlobalScope.async {
-        removeIndex(originBlockHash.bytesCopy).await()
+    override suspend fun removeOriginBlock(originBlockHash: XyoObjectStructure) {
+        removeIndex(originBlockHash.bytesCopy)
         storageProvider.delete(originBlockHash.bytesCopy).await()
     }
 
-    override fun containsOriginBlock(originBlockHash: XyoObjectStructure) = GlobalScope.async {
-        return@async storageProvider.containsKey(originBlockHash.bytesCopy).await()
+    override suspend fun containsOriginBlock(originBlockHash: XyoObjectStructure): Boolean {
+        return storageProvider.containsKey(originBlockHash.bytesCopy).await()
     }
 
-    override fun getAllOriginBlockHashes() : Deferred<Iterator<XyoObjectStructure>?> {
+    override suspend fun getAllOriginBlockHashes() : Iterator<XyoObjectStructure>? {
         return readIteratorFromKey(BLOCKS_INDEX_KEY)
     }
 
-    private fun readIteratorFromKey (key : ByteArray) : Deferred<Iterator<XyoObjectStructure>?> = GlobalScope.async {
+    private suspend fun readIteratorFromKey (key : ByteArray) : Iterator<XyoObjectStructure>? {
         val encodedIndex = storageProvider.read(key).await()
 
         if (encodedIndex != null) {
-            return@async XyoIterableStructure(encodedIndex, 0).iterator
+            return XyoIterableStructure(encodedIndex, 0).iterator
         }
-        return@async null
+        return null
     }
 
-    override fun addBoundWitness(originBlock: XyoBoundWitness) = GlobalScope.async {
+    override suspend fun addBoundWitness(originBlock: XyoBoundWitness) {
         val blockData = originBlock.bytesCopy
         val blockHash = originBlock.getHash(hashingObject).await()
         updateIndex(blockHash).await()
         storageProvider.write(blockHash.bytesCopy, blockData).await()
     }
 
-    override fun getOriginBlockByBlockHash(originBlockHash: ByteArray) = GlobalScope.async {
-        val packedOriginBlock = storageProvider.read(originBlockHash).await() ?: return@async null
-        return@async XyoBoundWitness.getInstance(packedOriginBlock)
+    override suspend fun getOriginBlockByBlockHash(originBlockHash: ByteArray): XyoBoundWitness? {
+        val packedOriginBlock = storageProvider.read(originBlockHash).await() ?: return null
+        return XyoBoundWitness.getInstance(packedOriginBlock)
     }
 
     private fun updateIndex (blockHash : XyoHash) = GlobalScope.async {
@@ -72,9 +72,9 @@ open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoKey
         storageProvider.write(BLOCKS_INDEX_KEY, newIndexEncoded.bytesCopy)
     }
 
-    private fun removeIndex (blockHash: ByteArray) = GlobalScope.async {
+    private suspend fun removeIndex (blockHash: ByteArray) {
         val newIndex = ArrayList<XyoObjectStructure>()
-        val currentIndex = getAllOriginBlockHashes().await()
+        val currentIndex = getAllOriginBlockHashes()
 
         if (currentIndex != null) {
             for (hash in currentIndex) {

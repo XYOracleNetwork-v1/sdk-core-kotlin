@@ -35,7 +35,7 @@ open class XyoBridgingOption (private val originBlocks: XyoOriginBlockRepository
 
 
         for (block in blocksInTransit) {
-            val boundWitness = originBlocks.getOriginBlockByBlockHash(block.hash.bytesCopy).await()
+            val boundWitness = originBlocks.getOriginBlockByBlockHash(block.hash.bytesCopy)
 
             if (boundWitness != null) {
                 blocksToSend.add(boundWitness)

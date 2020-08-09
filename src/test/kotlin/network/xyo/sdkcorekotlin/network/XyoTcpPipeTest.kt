@@ -67,7 +67,7 @@ class XyoTcpPipeTest : XyoTestBase( ){
                     val bw = node.boundWitness(handler, testProcedureCatalogue).await()
                     println("BOUND WITNESS DONE: " + bw?.getHash(hasher)?.await()?.bytesCopy?.toHexString())
 
-                    val all = originQueueRepo.getAllOriginBlockHashes().await()!!
+                    val all = originQueueRepo.getAllOriginBlockHashes()!!
 
                     while (all.hasNext()) {
                         println("BLOCK IN INDEX: " + all.next().bytesCopy.toHexString())
