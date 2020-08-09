@@ -45,7 +45,7 @@ class XyoTcpPipeTest : XyoTestBase( ){
     @kotlin.ExperimentalUnsignedTypes
     fun testTcpBoundWitness () {
         // a node must be running on localhost:11000, for this test to pass
-        if (false) {
+        /*if (false) {
             runBlocking {
 
                 val storage = XyoInMemoryStorageProvider()
@@ -56,7 +56,7 @@ class XyoTcpPipeTest : XyoTestBase( ){
                 val node = XyoRelayNode(originQueueRepo, originStateRepo, bridgeQueueRepo, hasher)
                 val signer = XyoSha256WithSecp256K.newInstance()
                 node.originState.addSigner(signer)
-                node.selfSignOriginChain().await()
+                node.selfSignOriginChain()
 
 
                 while (true) {
@@ -64,10 +64,10 @@ class XyoTcpPipeTest : XyoTestBase( ){
                     val pipe = XyoTcpPipe(socket, null)
                     val handler = XyoNetworkHandler(pipe)
 
-                    val bw = node.boundWitness(handler, testProcedureCatalogue).await()
-                    println("BOUND WITNESS DONE: " + bw?.getHash(hasher)?.await()?.bytesCopy?.toHexString())
+                    val bw = node.boundWitness(handler, testProcedureCatalogue)
+                    println("BOUND WITNESS DONE: " + bw?.getHash(hasher)?.bytesCopy?.toHexString())
 
-                    val all = originQueueRepo.getAllOriginBlockHashes().await()!!
+                    val all = originQueueRepo.getAllOriginBlockHashes()!!
 
                     while (all.hasNext()) {
                         println("BLOCK IN INDEX: " + all.next().bytesCopy.toHexString())
@@ -77,7 +77,7 @@ class XyoTcpPipeTest : XyoTestBase( ){
                 }
             }
 
-        }
+        }*/
 
     }
 }

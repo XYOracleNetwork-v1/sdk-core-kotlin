@@ -21,7 +21,7 @@ import java.nio.ByteBuffer
 open class XyoTcpPipe(private val socket: Socket,
                       override var initiationData: XyoAdvertisePacket?) : XyoNetworkPipe {
 
-    override fun close() = GlobalScope.async {
+    override suspend fun close(): Any? {
         try {
             socket.shutdownInput()
             socket.shutdownOutput()
@@ -29,24 +29,24 @@ open class XyoTcpPipe(private val socket: Socket,
             XyoLog.logDebug("Closing Socket", TAG)
         } catch (exception: IOException) {
             XyoLog.logDebug("Unknown IO While Closing Socket: $exception", TAG)
-            return@async null
+            return null
         }
-        return@async null
+        return null
     }
 
     override fun getNetworkHeuristics(): Array<XyoObjectStructure> {
         return arrayOf()
     }
 
-    override fun send(data: ByteArray, waitForResponse: Boolean) = GlobalScope.async {
+    override suspend fun send(data: ByteArray, waitForResponse: Boolean): ByteArray? {
         try {
             XyoLog.logDebug("Send Request", TAG)
-            return@async withTimeout(NO_RESPONSE_TIMEOUT.toLong()) { send(waitForResponse, data).await() }
+            return withTimeout(NO_RESPONSE_TIMEOUT.toLong()) { send(waitForResponse, data) }
 
         } catch (exception: TimeoutCancellationException) {
             XyoLog.logError("Timeout Network Error $exception", TAG, null)
             socket.close()
-            return@async null
+            return null
         }
     }
 
@@ -68,7 +68,7 @@ open class XyoTcpPipe(private val socket: Socket,
         return message
     }
 
-    private fun send(waitForResponse: Boolean, data: ByteArray) = GlobalScope.async {
+    private fun send(waitForResponse: Boolean, data: ByteArray): ByteArray? {
         try {
             val buffer = ByteBuffer.allocate(4 + data.size)
             buffer.putInt(data.size + 4)
@@ -80,14 +80,14 @@ open class XyoTcpPipe(private val socket: Socket,
             outStream.write(buffer.array())
 
             if (waitForResponse) {
-                return@async waitForResponse()
+                return waitForResponse()
             }
 
-            return@async null
+            return null
 
         } catch (exception: IOException) {
             XyoLog.logDebug("Unknown Network Error $exception", TAG)
-            return@async null
+            return null
         }
     }
 

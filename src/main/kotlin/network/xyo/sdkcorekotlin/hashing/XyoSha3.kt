@@ -1,11 +1,7 @@
 package network.xyo.sdkcorekotlin.hashing
 
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
-import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 import org.bouncycastle.jcajce.provider.digest.SHA3
 
 /**
@@ -15,12 +11,12 @@ object XyoSha3 : XyoBasicHashBase.XyoBasicHashBaseProvider() {
     override val standardDigestKey: String = "SHA_3"
     override val schema: XyoObjectSchema = XyoSchemas.SHA_3
 
-    override fun createHash(data: ByteArray): Deferred<XyoHash> = GlobalScope.async {
+    override suspend fun createHash(data: ByteArray): XyoHash {
         val digest = SHA3.DigestSHA3(256)
         digest.update(data)
         val hash = digest.digest()
 
-        return@async object : XyoBasicHashBase(XyoObjectStructure.newInstance(XyoSha3.schema, hash).bytesCopy) {
+        return object : XyoBasicHashBase(newInstance(schema, hash).bytesCopy) {
             override val hash: ByteArray = hash
         }
     }

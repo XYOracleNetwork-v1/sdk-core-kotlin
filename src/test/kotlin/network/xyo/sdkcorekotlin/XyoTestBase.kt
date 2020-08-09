@@ -14,8 +14,8 @@ open class XyoTestBase {
         val result = ByteArray(length / 2)
 
         for (i in 0 until length step 2) {
-            val firstIndex = hexChars.indexOf(this[i]);
-            val secondIndex = hexChars.indexOf(this[i + 1]);
+            val firstIndex = hexChars.indexOf(this[i])
+            val secondIndex = hexChars.indexOf(this[i + 1])
 
             val octet = firstIndex.shl(4).or(secondIndex)
             result.set(i.shr(1), octet.toByte())

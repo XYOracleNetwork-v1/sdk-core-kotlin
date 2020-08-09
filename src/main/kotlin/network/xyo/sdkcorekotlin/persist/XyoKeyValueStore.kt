@@ -1,7 +1,5 @@
 package network.xyo.sdkcorekotlin.persist
 
-import kotlinx.coroutines.Deferred
-
 /**
  * A XyoKeyValueStore is meant to provide a persistence layer. It abstracts exactly
  * how that is done. This could be in-memory persist or some disk strategy. It aims to persist data
@@ -16,7 +14,7 @@ interface XyoKeyValueStore {
      * @throws XyoStorageException if there is an error writing.
      */
     @Throws(XyoStorageException::class)
-    fun write(key: ByteArray, value: ByteArray) : Deferred<Unit>
+    suspend fun write(key: ByteArray, value: ByteArray)
 
     /**
      * Read from persist.
@@ -27,7 +25,7 @@ interface XyoKeyValueStore {
      * @throws XyoStorageException if there is an error reading.
      */
     @Throws(XyoStorageException::class)
-    fun read(key: ByteArray): Deferred<ByteArray?>
+    suspend fun read(key: ByteArray): ByteArray?
 
     /**
      * The provider returns all the corresponding keys for the values stored.
@@ -37,7 +35,7 @@ interface XyoKeyValueStore {
      * @throws XyoStorageException if there is an error reading.
      */
     @Throws(XyoStorageException::class)
-    fun getAllKeys(): Deferred<Iterator<ByteArray>>
+    suspend fun getAllKeys(): Iterator<ByteArray>
 
     /**
      * Deletes the value for the corresponding key.
@@ -46,7 +44,7 @@ interface XyoKeyValueStore {
      * @throws XyoStorageException if there is an error deleting.
      */
     @Throws(XyoStorageException::class)
-    fun delete(key: ByteArray) : Deferred<Unit>
+    suspend fun delete(key: ByteArray)
 
     /**
      * Checks if a key exists in persist.
@@ -56,5 +54,5 @@ interface XyoKeyValueStore {
      * @throws XyoStorageException if there is an error reading.
      */
     @Throws(XyoStorageException::class)
-    fun containsKey(key: ByteArray): Deferred<Boolean>
+    suspend fun containsKey(key: ByteArray): Boolean
 }

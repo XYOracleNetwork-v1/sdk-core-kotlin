@@ -1,8 +1,5 @@
 package network.xyo.sdkcorekotlin.boundWitness
 
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.schemas.XyoInterpret
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
@@ -131,7 +128,7 @@ open class XyoBoundWitness(byteArray: ByteArray = startingBytes, offset: Int = 0
         val itemsInFetter = ArrayList<XyoObjectStructure>()
         itemsInFetter.add(publicKeys)
         itemsInFetter.addAll(payload)
-        return XyoIterableStructure.createUntypedIterableObject(XyoSchemas.FETTER, itemsInFetter.toTypedArray())
+        return createUntypedIterableObject(XyoSchemas.FETTER, itemsInFetter.toTypedArray())
     }
 
     /**
@@ -145,7 +142,7 @@ open class XyoBoundWitness(byteArray: ByteArray = startingBytes, offset: Int = 0
         val itemsInWitness = ArrayList<XyoObjectStructure>()
         itemsInWitness.add(signatures)
         itemsInWitness.addAll(payload)
-        return XyoIterableStructure.createUntypedIterableObject(XyoSchemas.WITNESS, itemsInWitness.toTypedArray())
+        return createUntypedIterableObject(XyoSchemas.WITNESS, itemsInWitness.toTypedArray())
     }
 
     /**
@@ -154,8 +151,8 @@ open class XyoBoundWitness(byteArray: ByteArray = startingBytes, offset: Int = 0
      * @param hashCreator A hash provider to create the hash with.
      * @return A deferred XyoHash
      */
-    fun getHash(hashCreator: XyoHash.XyoHashProvider) = GlobalScope.async {
-        return@async hashCreator.createHash(signingData).await()
+    suspend fun getHash(hashCreator: XyoHash.XyoHashProvider): XyoHash {
+        return hashCreator.createHash(signingData)
     }
 
     /**
@@ -164,8 +161,8 @@ open class XyoBoundWitness(byteArray: ByteArray = startingBytes, offset: Int = 0
      * @param signer A signer to sign with.
      * @return A deferred XyoObject (signature).
      */
-    fun signCurrent(signer: XyoSigner) : Deferred<XyoObjectStructure> = GlobalScope.async {
-        return@async signer.signData(signingData).await()
+    suspend fun signCurrent(signer: XyoSigner) : XyoObjectStructure {
+        return signer.signData(signingData)
     }
 
 
@@ -175,7 +172,7 @@ open class XyoBoundWitness(byteArray: ByteArray = startingBytes, offset: Int = 0
         * Gets bytes from an untyped bound witness
         */
 
-        val startingBytes = XyoIterableStructure.createUntypedIterableObject(XyoSchemas.BW, arrayOf()).bytesCopy
+        val startingBytes = createUntypedIterableObject(XyoSchemas.BW, arrayOf()).bytesCopy
 
         /**
          * Gets a new instance of the bound witness from bytes.

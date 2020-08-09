@@ -162,7 +162,7 @@ After creating a node, it is standard to add a signer, and create a genesis bloc
 val signer = XyoSha256WithSecp256K.newInstance()
     
 // adds the signer to the node
-node.originState.addSigner(signer: signer)
+node.originState.addSigner(signer)
 
 // creates a origin block with itself (genesis block if this is the first block you make)
 node.selfSignOriginChain()

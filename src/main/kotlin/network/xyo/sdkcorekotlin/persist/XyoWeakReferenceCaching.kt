@@ -1,8 +1,5 @@
 package network.xyo.sdkcorekotlin.persist
 
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import java.util.*
 
 /**
@@ -13,33 +10,33 @@ import java.util.*
 class XyoWeakReferenceCaching (private val layerToAddCacheTo : XyoKeyValueStore) : XyoKeyValueStore {
     private val cache = WeakHashMap<Int, ByteArray>()
 
-    override fun write(key: ByteArray, value: ByteArray) : Deferred<Unit> = GlobalScope.async {
+    override suspend fun write(key: ByteArray, value: ByteArray) {
             cache[key.contentHashCode()] = value
-            layerToAddCacheTo.write(key, value).await()
+            layerToAddCacheTo.write(key, value)
     }
 
-    override fun read(key: ByteArray): Deferred<ByteArray?> = GlobalScope.async {
+    override suspend fun read(key: ByteArray): ByteArray? {
         val cachedValue = cache[key.contentHashCode()]
         if (cachedValue != null) {
-            return@async cachedValue
+            return cachedValue
         }
-        return@async layerToAddCacheTo.read(key).await()
+        return layerToAddCacheTo.read(key)
     }
 
-    override fun containsKey(key: ByteArray): Deferred<Boolean> = GlobalScope.async {
+    override suspend fun containsKey(key: ByteArray): Boolean {
         if (cache.containsKey(key.contentHashCode())) {
-            return@async true
+            return true
         }
 
-        return@async layerToAddCacheTo.containsKey(key).await()
+        return layerToAddCacheTo.containsKey(key)
     }
 
-    override fun delete(key: ByteArray): Deferred<Unit> = GlobalScope.async {
+    override suspend fun delete(key: ByteArray) {
         cache.remove(key.contentHashCode())
-        layerToAddCacheTo.delete(key).await()
+        layerToAddCacheTo.delete(key)
     }
 
-    override fun getAllKeys(): Deferred<Iterator<ByteArray>> = GlobalScope.async {
-        return@async layerToAddCacheTo.getAllKeys().await()
+    override suspend fun getAllKeys(): Iterator<ByteArray> {
+        return layerToAddCacheTo.getAllKeys()
     }
 }

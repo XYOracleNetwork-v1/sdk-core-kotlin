@@ -1,8 +1,5 @@
 package network.xyo.sdkcorekotlin.persist.repositories
 
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
 import network.xyo.sdkcorekotlin.hashing.XyoHash
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
@@ -10,6 +7,7 @@ import network.xyo.sdkcorekotlin.persist.XyoKeyValueStore
 import network.xyo.sdkcorekotlin.repositories.XyoOriginBlockRepository
 import network.xyo.sdkobjectmodelkotlin.structure.XyoIterableStructure
 import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
+import java.lang.NullPointerException
 
 
 /**
@@ -22,59 +20,59 @@ import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoKeyValueStore,
                                            protected val hashingObject: XyoHash.XyoHashProvider) : XyoOriginBlockRepository {
 
-    override fun removeOriginBlock(originBlockHash: XyoObjectStructure) = GlobalScope.async {
-        removeIndex(originBlockHash.bytesCopy).await()
-        storageProvider.delete(originBlockHash.bytesCopy).await()
+    override suspend fun removeOriginBlock(originBlockHash: XyoObjectStructure) {
+        removeIndex(originBlockHash.bytesCopy)
+        storageProvider.delete(originBlockHash.bytesCopy)
     }
 
-    override fun containsOriginBlock(originBlockHash: XyoObjectStructure) = GlobalScope.async {
-        return@async storageProvider.containsKey(originBlockHash.bytesCopy).await()
+    override suspend fun containsOriginBlock(originBlockHash: XyoObjectStructure) : Boolean {
+        return storageProvider.containsKey(originBlockHash.bytesCopy)
     }
 
-    override fun getAllOriginBlockHashes() : Deferred<Iterator<XyoObjectStructure>?> {
+    override suspend fun getAllOriginBlockHashes() : Iterator<XyoObjectStructure>? {
         return readIteratorFromKey(BLOCKS_INDEX_KEY)
     }
 
-    private fun readIteratorFromKey (key : ByteArray) : Deferred<Iterator<XyoObjectStructure>?> = GlobalScope.async {
-        val encodedIndex = storageProvider.read(key).await()
+    private suspend fun readIteratorFromKey (key : ByteArray) : Iterator<XyoObjectStructure>? {
+        val encodedIndex = storageProvider.read(key)
 
         if (encodedIndex != null) {
-            return@async XyoIterableStructure(encodedIndex, 0).iterator
+            return XyoIterableStructure(encodedIndex, 0).iterator
         }
-        return@async null
+        return null
     }
 
-    override fun addBoundWitness(originBlock: XyoBoundWitness) = GlobalScope.async {
+    override suspend fun addBoundWitness(originBlock: XyoBoundWitness) {
         val blockData = originBlock.bytesCopy
-        val blockHash = originBlock.getHash(hashingObject).await()
-        updateIndex(blockHash).await()
-        storageProvider.write(blockHash.bytesCopy, blockData).await()
+        val blockHash = originBlock.getHash(hashingObject)
+        updateIndex(blockHash)
+        storageProvider.write(blockHash.bytesCopy, blockData)
     }
 
-    override fun getOriginBlockByBlockHash(originBlockHash: ByteArray) = GlobalScope.async {
-        val packedOriginBlock = storageProvider.read(originBlockHash).await() ?: return@async null
-        return@async XyoBoundWitness.getInstance(packedOriginBlock)
+    override suspend fun getOriginBlockByBlockHash(originBlockHash: ByteArray): XyoBoundWitness {
+        storageProvider.read(originBlockHash)?.let {
+            return XyoBoundWitness.getInstance(it)
+        }
+        throw NullPointerException()
     }
 
-    private fun updateIndex (blockHash : XyoHash) = GlobalScope.async {
+    private suspend fun updateIndex (blockHash : XyoHash) {
         val newIndex =ArrayList<XyoObjectStructure>()
-        val currentIndex = storageProvider.read(BLOCKS_INDEX_KEY).await()
+        storageProvider.read(BLOCKS_INDEX_KEY)?.let { currentIndex ->
+            newIndex.add(blockHash)
 
-        newIndex.add(blockHash)
-
-        if (currentIndex != null) {
             for (item in XyoIterableStructure(currentIndex, 0).iterator) {
                 newIndex.add(item)
             }
-        }
 
-        val newIndexEncoded = XyoIterableStructure.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, newIndex.toTypedArray())
-        storageProvider.write(BLOCKS_INDEX_KEY, newIndexEncoded.bytesCopy)
+            val newIndexEncoded = XyoIterableStructure.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, newIndex.toTypedArray())
+            storageProvider.write(BLOCKS_INDEX_KEY, newIndexEncoded.bytesCopy)
+        }
     }
 
-    private fun removeIndex (blockHash: ByteArray) = GlobalScope.async {
+    private suspend fun removeIndex (blockHash: ByteArray) {
         val newIndex = ArrayList<XyoObjectStructure>()
-        val currentIndex = getAllOriginBlockHashes().await()
+        val currentIndex = getAllOriginBlockHashes()
 
         if (currentIndex != null) {
             for (hash in currentIndex) {
@@ -85,7 +83,7 @@ open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoKey
         }
 
         val newIndexEncoded = XyoIterableStructure.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, newIndex.toTypedArray())
-        storageProvider.write(BLOCKS_INDEX_KEY, newIndexEncoded.bytesCopy).await()
+        storageProvider.write(BLOCKS_INDEX_KEY, newIndexEncoded.bytesCopy)
     }
 
     companion object {

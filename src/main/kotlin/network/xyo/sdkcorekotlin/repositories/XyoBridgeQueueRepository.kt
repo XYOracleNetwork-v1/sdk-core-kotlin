@@ -1,6 +1,5 @@
 package network.xyo.sdkcorekotlin.repositories
 
-import kotlinx.coroutines.Deferred
 import network.xyo.sdkcorekotlin.node.XyoBridgeQueueItem
 import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 
@@ -14,5 +13,5 @@ interface XyoBridgeQueueRepository {
     fun removeQueueItems (items: Array<XyoObjectStructure>)
     fun getLowestWeight (n: Int): Array<XyoBridgeQueueItem>
     fun incrementWeights (hashes: Array<XyoObjectStructure>)
-    fun commit () : Deferred<Unit>
+    suspend fun commit ()
 }

@@ -1,10 +1,6 @@
 package network.xyo.sdkcorekotlin.hashing
 
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
-import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 import java.security.MessageDigest
 
 /**
@@ -22,14 +18,12 @@ abstract class XyoBasicHashBase(byteArray: ByteArray) : XyoHash(byteArray) {
 
         abstract val schema : XyoObjectSchema
 
-        override fun createHash (data: ByteArray) : Deferred<XyoHash> {
-            return GlobalScope.async {
+        override suspend fun createHash (data: ByteArray) : XyoHash {
             val hash = hash(data)
-            val item = XyoObjectStructure.newInstance(schema, hash)
+            val item = newInstance(schema, hash)
 
-                return@async object : XyoBasicHashBase(item.bytesCopy) {
-                    override val hash: ByteArray = hash
-                }
+            return object : XyoBasicHashBase(item.bytesCopy) {
+                override val hash: ByteArray = hash
             }
         }
 

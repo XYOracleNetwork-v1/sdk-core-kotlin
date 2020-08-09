@@ -1,17 +1,8 @@
 package network.xyo.sdkcorekotlin.node.interaction
 
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import network.xyo.sdkcorekotlin.XyoTestBase
-import network.xyo.sdkcorekotlin.network.XyoNetworkHandler
-import network.xyo.sdkcorekotlin.network.tcp.XyoTcpPipe
-import network.xyo.sdkcorekotlin.network.tcp.XyoTcpServer
-import network.xyo.sdkcorekotlin.node.testCatalogs.XyoBoundWitnessCatalog
-import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import org.junit.Test
-import java.net.Socket
 
 class XyoStandardInteractionTest : XyoTestBase() {
 

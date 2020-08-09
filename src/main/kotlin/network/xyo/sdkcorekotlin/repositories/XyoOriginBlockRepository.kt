@@ -1,6 +1,5 @@
 package network.xyo.sdkcorekotlin.repositories
 
-import kotlinx.coroutines.Deferred
 import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
 import network.xyo.sdkcorekotlin.persist.XyoStorageException
 import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
@@ -18,7 +17,7 @@ interface XyoOriginBlockRepository {
      * @throws XyoStorageException if there is an error deleting.
      */
     @Throws(XyoStorageException::class)
-    fun removeOriginBlock (originBlockHash : XyoObjectStructure) : Deferred<Unit>
+    suspend fun removeOriginBlock (originBlockHash : XyoObjectStructure)
 
     /**
      * Checks if an origin blocks exists in persist.
@@ -28,7 +27,7 @@ interface XyoOriginBlockRepository {
      * @throws XyoStorageException if there is an error reading.
      */
     @Throws(XyoStorageException::class)
-    fun containsOriginBlock (originBlockHash: XyoObjectStructure) : Deferred<Boolean>
+    suspend fun containsOriginBlock (originBlockHash: XyoObjectStructure) : Boolean
 
     /**
      * Gets all of the origin blocks in persist.
@@ -37,7 +36,7 @@ interface XyoOriginBlockRepository {
      * @throws XyoStorageException if there is an error reading.
      */
     @Throws(XyoStorageException::class)
-    fun getAllOriginBlockHashes () : Deferred<Iterator<XyoObjectStructure>?>
+    suspend fun getAllOriginBlockHashes () : Iterator<XyoObjectStructure>?
 
     /**
      * Adds a bound witness to the navigator and stores it. If the bound witness is not an
@@ -47,8 +46,8 @@ interface XyoOriginBlockRepository {
      * @throws XyoStorageException if there is an error writing.
      */
     @Throws(XyoStorageException::class)
-    fun addBoundWitness (originBlock : XyoBoundWitness) : Deferred<Unit>
+    suspend fun addBoundWitness (originBlock : XyoBoundWitness)
 
     @Throws(XyoStorageException::class)
-    fun getOriginBlockByBlockHash(originBlockHash: ByteArray): Deferred<XyoBoundWitness?>
+    suspend fun getOriginBlockByBlockHash(originBlockHash: ByteArray): XyoBoundWitness?
 }

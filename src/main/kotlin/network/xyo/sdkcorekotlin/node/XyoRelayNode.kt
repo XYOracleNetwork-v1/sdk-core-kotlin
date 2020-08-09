@@ -27,16 +27,16 @@ open class XyoRelayNode (blockRepository: XyoOriginBlockRepository,
         override fun onBoundWitnessEndSuccess(boundWitness: XyoBoundWitness) {
             runBlocking {
                 for (hash in originBlocksToBridge.getBlocksToRemove()) {
-                    blockRepository.removeOriginBlock(hash).await()
+                    blockRepository.removeOriginBlock(hash)
                 }
 
-                bridgeQueueRepository.commit().await()
+                bridgeQueueRepository.commit()
             }
         }
 
         override fun onBoundWitnessDiscovered(boundWitness: XyoBoundWitness) {
             runBlocking {
-                originBlocksToBridge.addBlock(boundWitness.getHash(hashingProvider).await())
+                originBlocksToBridge.addBlock(boundWitness.getHash(hashingProvider))
             }
         }
 

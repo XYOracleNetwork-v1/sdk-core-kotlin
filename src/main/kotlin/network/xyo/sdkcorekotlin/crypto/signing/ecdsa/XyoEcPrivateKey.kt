@@ -24,17 +24,12 @@ abstract class XyoEcPrivateKey : ECPrivateKey, XyoPrivateKey(byteArrayOf(), 0) {
         return "XyoEcPrivateKey"
     }
 
-    override var allowedOffset: Int = 0
-
-    override var item: ByteArray = byteArrayOf()
-        get() = XyoObjectStructure.newInstance(XyoSchemas.EC_PRIVATE_KEY, d.toByteArray()).bytesCopy
+    override fun getItem() = newInstance(XyoSchemas.EC_PRIVATE_KEY, d.toByteArray()).bytesCopy
 
     companion object {
 
         fun getInstance(byteArray: ByteArray, ecSpec: ECParameterSpec): XyoEcPrivateKey {
             return object : XyoEcPrivateKey() {
-                override var item: ByteArray = byteArray
-
                 override fun getParameters(): ECParameterSpec {
                     return ecSpec
                 }

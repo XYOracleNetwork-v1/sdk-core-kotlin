@@ -36,8 +36,6 @@ abstract class XyoEcSecp256K1 (privateKey: ECPrivateKey?) : XyoGeneralEc(private
                     override val y: BigInteger
                         get() = ecPublicKey.q.yCoord.toBigInteger()
 
-                    override var allowedOffset: Int = 0
-
                     override val ecSpec: ECParameterSpec = spec
                 },
                 XyoEcPrivateKey.getInstanceFromQ(ecPrivateKey.d, spec)

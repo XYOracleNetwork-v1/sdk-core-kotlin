@@ -2,7 +2,6 @@ package network.xyo.sdkobjectmodelkotlin.schema
 
 import network.xyo.sdkobjectmodelkotlin.exceptions.XyoSchemaException
 import org.json.JSONObject
-import java.math.BigInteger
 import kotlin.experimental.and
 import kotlin.experimental.or
 

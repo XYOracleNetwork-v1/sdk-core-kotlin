@@ -30,7 +30,7 @@ abstract class XyoSigner {
      * @return A deferred cryptographic signature of the data field, that was
      * created with the private key, in the form of a XyoObject
      */
-    abstract fun signData (byteArray: ByteArray) : Deferred<XyoObjectStructure>
+    abstract suspend fun signData (byteArray: ByteArray) : XyoObjectStructure
 
     /**
      * Gives access to a XyoSigner that can perform public key cryptographic functions.
@@ -120,15 +120,15 @@ abstract class XyoSigner {
         private val verifiers = HashMap<Byte, HashMap<Byte, XyoSignerProvider>>()
         private val signingCreators = HashMap<Byte, XyoSignerProvider>()
 
-        fun verify (publicKey: XyoObjectStructure, signature: XyoObjectStructure, data : ByteArray) : Deferred<Boolean?> = GlobalScope.async {
+        suspend fun verify (publicKey: XyoObjectStructure, signature: XyoObjectStructure, data : ByteArray) : Boolean? {
             val headerPublicKey = publicKey.schema.id
             val creator = verifiers[headerPublicKey]?.get(signature.schema.id)
 
             if (creator != null) {
-                return@async creator.verifySign(signature, data, publicKey).await()
+                return creator.verifySign(signature, data, publicKey).await()
             }
 
-            return@async null
+            return null
         }
     }
 }

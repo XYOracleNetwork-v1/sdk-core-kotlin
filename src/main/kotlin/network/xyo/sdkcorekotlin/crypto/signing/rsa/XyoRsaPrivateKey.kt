@@ -41,10 +41,7 @@ open class XyoRsaPrivateKey (private val mod : BigInteger, private val privateEx
         return privateExponent
     }
 
-    override var allowedOffset: Int = 0
-
-    override var item: ByteArray = byteArrayOf()
-        get() = XyoObjectStructure.newInstance(XyoSchemas.RSA_PRIVATE_KEY, encoded).bytesCopy
+    override fun getItem() = newInstance(XyoSchemas.RSA_PRIVATE_KEY, encoded).bytesCopy
 
     companion object : XyoInterpret {
 

@@ -25,12 +25,16 @@ open class XyoObjectStructure {
     /**
      * The primary data input for the XyoObjectStructure. This buffer will not be read before the allowedOffset.
      */
-    open var item : ByteArray
+    private var item : ByteArray
+
+    open fun getItem(): ByteArray {
+        return this.item
+    }
 
     /**
      * The starting offset of where to read. This buffer will not be read past this buffer.
      */
-    open var allowedOffset : Int
+    var allowedOffset : Int
 
     private var headerSize : Int = 2
 

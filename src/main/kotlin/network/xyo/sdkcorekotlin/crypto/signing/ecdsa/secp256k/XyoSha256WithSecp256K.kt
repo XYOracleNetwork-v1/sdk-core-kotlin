@@ -25,20 +25,18 @@ import java.security.Signature
  */
 class XyoSha256WithSecp256K (privateKey : ECPrivateKey?) : XyoEcSecp256K1(privateKey) {
 
-    override fun signData(byteArray: ByteArray): Deferred<XyoObjectStructure> {
-        return GlobalScope.async {
-            signatureInstance.initSign(keyPair.private)
-            signatureInstance.update(byteArray)
-            signatureInstance.sign()
+    override suspend fun signData(byteArray: ByteArray): XyoObjectStructure {
+        signatureInstance.initSign(keyPair.private)
+        signatureInstance.update(byteArray)
+        signatureInstance.sign()
 
-            val pam = ECPrivateKeyParameters((keyPair.private as XyoEcPrivateKey).d, ecDomainParameters)
+        val pam = ECPrivateKeyParameters((keyPair.private as XyoEcPrivateKey).d, ecDomainParameters)
 
-            val signer = ECDSASigner()
-            signer.init(true, pam)
-            val sig = signer.generateSignature(hashData(byteArray))
+        val signer = ECDSASigner()
+        signer.init(true, pam)
+        val sig = signer.generateSignature(hashData(byteArray))
 
-            return@async XyoEcdsaSignature(sig[0], sig[1])
-        }
+        return XyoEcdsaSignature(sig[0], sig[1])
     }
 
     companion object : XyoSigner.XyoSignerProvider() {
@@ -52,16 +50,14 @@ class XyoSha256WithSecp256K (privateKey : ECPrivateKey?) : XyoEcSecp256K1(privat
         }
 
         override fun newInstance(privateKey: ByteArray): XyoSigner {
-            return XyoSha256WithSecp256K(XyoEcPrivateKey.getInstance(privateKey, XyoEcSecp256K1.ecSpec))
+            return XyoSha256WithSecp256K(XyoEcPrivateKey.getInstance(privateKey, ecSpec))
         }
 
         override fun verifySign(signature: XyoObjectStructure, byteArray: ByteArray, publicKey: XyoObjectStructure): Deferred<Boolean> = GlobalScope.async {
             try {
                 val signer = ECDSASigner()
-                val uncompressedKey = object :XyoUncompressedEcPublicKey() {
+                val uncompressedKey = object :XyoUncompressedEcPublicKey(publicKey.bytesCopy) {
                     override val ecSpec: ECParameterSpec = XyoEcSecp256K1.ecSpec
-                    override var allowedOffset: Int = 0
-                    override var item: ByteArray = publicKey.bytesCopy
                 }
 
                 val ecDomainParameters = ECDomainParameters(ecCurve.curve, ecCurve.g, ecCurve.n)
