@@ -59,7 +59,7 @@ class XyoBoundWitnessInterpretTest : XyoTestBase() {
             val createdBoundWitness = XyoBoundWitness.getInstance(boundWitnessBytes)
             val hashProvider = XyoBasicHashBase.createHashType(XyoSchemas.SHA_256, "SHA-256")
 
-            val hash = createdBoundWitness.getHash(hashProvider).await().bytesCopy
+            val hash = createdBoundWitness.getHash(hashProvider).bytesCopy
             Assert.assertArrayEquals(boundWitnessHash, hash)
         }
     }

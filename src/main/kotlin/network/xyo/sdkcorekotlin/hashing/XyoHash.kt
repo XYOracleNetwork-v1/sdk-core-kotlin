@@ -20,6 +20,6 @@ abstract class XyoHash(byteArray: ByteArray, offset: Int = 0)  : XyoObjectStruct
         /**
          * Creates a hash given a ByteArray.
          */
-        abstract fun createHash (data: ByteArray) : Deferred<XyoHash>
+        abstract suspend fun createHash (data: ByteArray) : XyoHash
     }
 }

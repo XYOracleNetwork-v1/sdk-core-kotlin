@@ -22,19 +22,17 @@ abstract class XyoBasicHashBase(byteArray: ByteArray) : XyoHash(byteArray) {
 
         abstract val schema : XyoObjectSchema
 
-        override fun createHash (data: ByteArray) : Deferred<XyoHash> {
-            return GlobalScope.async {
-            val hash = hash(data)
-            val item = XyoObjectStructure.newInstance(schema, hash)
-
-                return@async object : XyoBasicHashBase(item.bytesCopy) {
-                    override val hash: ByteArray = hash
-                }
-            }
+        private fun generateHash(data: ByteArray): ByteArray {
+            return MessageDigest.getInstance(standardDigestKey).digest(data)
         }
 
-        private fun hash(data: ByteArray): ByteArray {
-            return MessageDigest.getInstance(standardDigestKey).digest(data)
+        override suspend fun createHash (data: ByteArray) : XyoHash {
+            val hash = generateHash(data)
+            val item = XyoObjectStructure.newInstance(schema, hash)
+
+            return object : XyoBasicHashBase(item.bytesCopy) {
+                override val hash: ByteArray = hash
+            }
         }
     }
 

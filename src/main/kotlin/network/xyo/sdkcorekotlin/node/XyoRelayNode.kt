@@ -36,7 +36,7 @@ open class XyoRelayNode (blockRepository: XyoOriginBlockRepository,
 
         override fun onBoundWitnessDiscovered(boundWitness: XyoBoundWitness) {
             runBlocking {
-                originBlocksToBridge.addBlock(boundWitness.getHash(hashingProvider).await())
+                originBlocksToBridge.addBlock(boundWitness.getHash(hashingProvider))
             }
         }
 

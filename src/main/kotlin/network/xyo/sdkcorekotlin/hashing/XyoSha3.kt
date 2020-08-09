@@ -15,12 +15,12 @@ object XyoSha3 : XyoBasicHashBase.XyoBasicHashBaseProvider() {
     override val standardDigestKey: String = "SHA_3"
     override val schema: XyoObjectSchema = XyoSchemas.SHA_3
 
-    override fun createHash(data: ByteArray): Deferred<XyoHash> = GlobalScope.async {
+    override suspend fun createHash(data: ByteArray): XyoHash {
         val digest = SHA3.DigestSHA3(256)
         digest.update(data)
         val hash = digest.digest()
 
-        return@async object : XyoBasicHashBase(XyoObjectStructure.newInstance(XyoSha3.schema, hash).bytesCopy) {
+        return object : XyoBasicHashBase(XyoObjectStructure.newInstance(XyoSha3.schema, hash).bytesCopy) {
             override val hash: ByteArray = hash
         }
     }

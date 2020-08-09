@@ -91,8 +91,8 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
                 arrayOf()
         )
         boundWitness.incomingData(null, true)
-        updateOriginState(boundWitness).await()
-        onBoundWitnessEndSuccess(boundWitness).await()
+        updateOriginState(boundWitness)
+        onBoundWitnessEndSuccess(boundWitness)
     }
 
     fun addBoundWitnessOption (key: String,  boundWitnessOption: XyoBoundWitnessOption) {
@@ -163,8 +163,8 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
         }
     }
 
-    private fun onBoundWitnessEndSuccess (boundWitness: XyoBoundWitness) = GlobalScope.async {
-        loadCreatedBoundWitness(boundWitness).await()
+    private suspend fun onBoundWitnessEndSuccess (boundWitness: XyoBoundWitness) {
+        loadCreatedBoundWitness(boundWitness)
 
         for ((_, listener) in listeners) {
             listener.onBoundWitnessEndSuccess(boundWitness)
@@ -179,8 +179,8 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
     }
 
 
-    private fun loadCreatedBoundWitness (boundWitness: XyoBoundWitness) : Deferred<Unit> = GlobalScope.async {
-        val hash = boundWitness.getHash(hashingProvider).await()
+    private suspend fun loadCreatedBoundWitness (boundWitness: XyoBoundWitness) {
+        val hash = boundWitness.getHash(hashingProvider)
 
         if (!blockRepository.containsOriginBlock(hash)) {
             val subBlocks = XyoOriginBoundWitnessUtil.getBridgedBlocks(boundWitness)
@@ -197,7 +197,7 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
             if (subBlocks != null) {
                 for (subBlock in subBlocks) {
                     XyoLog.logSpecial("Found Bridge Block", TAG)
-                    loadCreatedBoundWitness(XyoBoundWitness.getInstance(subBlock.bytesCopy)).await()
+                    loadCreatedBoundWitness(XyoBoundWitness.getInstance(subBlock.bytesCopy))
                 }
             }
         }
@@ -268,8 +268,8 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
 
         if (currentBoundWitnessSession?.completed == true && error == null) {
             XyoLog.logSpecial("Created Bound Witness", TAG)
-            updateOriginState(currentBoundWitnessSession!!).await()
-            onBoundWitnessEndSuccess(currentBoundWitnessSession!!).await()
+            updateOriginState(currentBoundWitnessSession!!)
+            onBoundWitnessEndSuccess(currentBoundWitnessSession!!)
             currentBoundWitnessSession = null
             return bw
         }
@@ -291,8 +291,8 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
         }
     }
 
-    private fun updateOriginState (boundWitness: XyoBoundWitness) = GlobalScope.async {
-        val hash = boundWitness.getHash(hashingProvider).await()
+    private suspend fun updateOriginState (boundWitness: XyoBoundWitness) {
+        val hash = boundWitness.getHash(hashingProvider)
         originState.newOriginBlock(hash)
         originState.repo.commit().await()
         XyoLog.logSpecial("Updating Origin State. Awaiting Index: ${ByteBuffer.wrap(originState.index.valueCopy).int}", TAG)

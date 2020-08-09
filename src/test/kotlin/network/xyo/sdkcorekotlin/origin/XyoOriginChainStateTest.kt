@@ -57,11 +57,11 @@ class XyoOriginChainStateTest : XyoTestBase() {
                 )
 
                 aliceBoundWitness.incomingData(null, true)
-                originChainState.newOriginBlock(aliceBoundWitness.getHash(hashCreator).await())
+                originChainState.newOriginBlock(aliceBoundWitness.getHash(hashCreator))
                 originBlocks.add(aliceBoundWitness)
 
                 originChainState.addSigner(XyoSha256WithSecp256K.newInstance())
-                lastHash = aliceBoundWitness.getHash(hashCreator).await()
+                lastHash = aliceBoundWitness.getHash(hashCreator)
 
                 if (i != 0) {
                     assertArrayEquals(lastHash?.bytesCopy, originChainState.previousHash!!.valueCopy)

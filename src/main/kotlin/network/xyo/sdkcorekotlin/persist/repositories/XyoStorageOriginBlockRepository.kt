@@ -46,7 +46,7 @@ open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoKey
 
     override suspend fun addBoundWitness(originBlock: XyoBoundWitness) {
         val blockData = originBlock.bytesCopy
-        val blockHash = originBlock.getHash(hashingObject).await()
+        val blockHash = originBlock.getHash(hashingObject)
         updateIndex(blockHash)
         storageProvider.write(blockHash.bytesCopy, blockData)
     }

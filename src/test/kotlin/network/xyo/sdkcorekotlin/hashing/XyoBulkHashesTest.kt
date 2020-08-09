@@ -60,7 +60,7 @@ class XyoBulkHashesTest : XyoTestBase() {
     }
 
     private suspend fun testHash (hashCreator : XyoHash.XyoHashProvider, expected : ByteArray) {
-        val hashResult = hashCreator.createHash(calibrationSeed).await()
+        val hashResult = hashCreator.createHash(calibrationSeed)
         assertArrayEquals(expected, hashResult.hash)
     }
 }

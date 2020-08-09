@@ -154,8 +154,8 @@ open class XyoBoundWitness(byteArray: ByteArray = startingBytes, offset: Int = 0
      * @param hashCreator A hash provider to create the hash with.
      * @return A deferred XyoHash
      */
-    fun getHash(hashCreator: XyoHash.XyoHashProvider) = GlobalScope.async {
-        return@async hashCreator.createHash(signingData).await()
+    suspend fun getHash(hashCreator: XyoHash.XyoHashProvider): XyoHash {
+        return hashCreator.createHash(signingData)
     }
 
     /**
