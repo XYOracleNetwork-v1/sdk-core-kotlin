@@ -56,9 +56,9 @@ class XyoZigZagBoundWitnessSession(private val handler : XyoNetworkHandler,
         val returnData = incomingData(transfer, cycles == 0 && didHaveData) ?: throw XyoBoundWitnessCreationException("Response is null!")
 
         if (cycles == 0 && !didHaveData) {
-            response = handler.sendChoicePacket(choice, returnData.bytesCopy).await() ?: throw XyoBoundWitnessCreationException("Response is null!")
+            response = handler.sendChoicePacket(choice, returnData.bytesCopy) ?: throw XyoBoundWitnessCreationException("Response is null!")
         } else {
-            response = handler.pipe.send(returnData.bytesCopy, cycles == 0).await()
+            response = handler.pipe.send(returnData.bytesCopy, cycles == 0)
             if (cycles == 0 && response == null) throw XyoBoundWitnessCreationException("Response is null!")
         }
 

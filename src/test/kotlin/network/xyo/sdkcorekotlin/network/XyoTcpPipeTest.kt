@@ -1,7 +1,6 @@
 package network.xyo.sdkcorekotlin.network
 
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import network.xyo.sdkcorekotlin.XyoTestBase
 import network.xyo.sdkcorekotlin.crypto.signing.ecdsa.secp256k.XyoSha256WithSecp256K
 import network.xyo.sdkcorekotlin.hashing.XyoBasicHashBase
@@ -61,20 +60,22 @@ class XyoTcpPipeTest : XyoTestBase( ){
 
 
                 while (true) {
-                    val socket = Socket("localhost", 7777)
-                    val pipe = XyoTcpPipe(socket, null)
-                    val handler = XyoNetworkHandler(pipe)
+                    withContext(Dispatchers.IO) {
+                        val socket = Socket("localhost", 7777)
+                        val pipe = XyoTcpPipe(socket, null)
+                        val handler = XyoNetworkHandler(pipe)
 
-                    val bw = node.boundWitness(handler, testProcedureCatalogue).await()
-                    println("BOUND WITNESS DONE: " + bw?.getHash(hasher)?.await()?.bytesCopy?.toHexString())
+                        val bw = node.boundWitness(handler, testProcedureCatalogue).await()
+                        println("BOUND WITNESS DONE: " + bw?.getHash(hasher)?.await()?.bytesCopy?.toHexString())
 
-                    val all = originQueueRepo.getAllOriginBlockHashes()!!
+                        val all = originQueueRepo.getAllOriginBlockHashes()!!
 
-                    while (all.hasNext()) {
-                        println("BLOCK IN INDEX: " + all.next().bytesCopy.toHexString())
+                        while (all.hasNext()) {
+                            println("BLOCK IN INDEX: " + all.next().bytesCopy.toHexString())
+                        }
+
+                        delay(1_000)
                     }
-
-                    delay(1_000)
                 }
             }
 

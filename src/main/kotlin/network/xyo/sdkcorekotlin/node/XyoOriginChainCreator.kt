@@ -217,7 +217,7 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
             if (handler.pipe.initiationData == null) {
                 // is client
 
-                val responseWithChoice = handler.sendCataloguePacket(procedureCatalogue.getEncodedCanDo()).await()
+                val responseWithChoice = handler.sendCataloguePacket(procedureCatalogue.getEncodedCanDo())
 
                 if (responseWithChoice == null) {
                     onBoundWitnessEndFailure(XyoBoundWitnessCreationException("Response is null"))
@@ -262,7 +262,7 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
         currentBoundWitnessSession = bw
 
         val error = currentBoundWitnessSession?.doBoundWitness(startingData)
-        handler.pipe.close().await()
+        handler.pipe.close()
 
         notifyOptions(options, currentBoundWitnessSession)
 

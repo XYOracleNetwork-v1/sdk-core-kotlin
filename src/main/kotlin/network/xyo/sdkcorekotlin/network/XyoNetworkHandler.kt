@@ -9,12 +9,12 @@ import java.nio.ByteBuffer
  */
 class XyoNetworkHandler (val pipe: XyoNetworkPipe) {
 
-    fun sendCataloguePacket(catalogue: ByteArray) : Deferred<ByteArray?> {
+    suspend fun sendCataloguePacket(catalogue: ByteArray) : ByteArray? {
         val buffer = getSizeEncodedCatalogue(catalogue)
         return pipe.send(buffer, true)
     }
 
-    fun sendChoicePacket(catalogue: ByteArray, response: ByteArray): Deferred<ByteArray?> {
+    suspend fun sendChoicePacket(catalogue: ByteArray, response: ByteArray): ByteArray? {
         val buffer = ByteBuffer.allocate(catalogue.size + response.size + 1)
                 .put(getSizeEncodedCatalogue(catalogue))
                 .put(response)
