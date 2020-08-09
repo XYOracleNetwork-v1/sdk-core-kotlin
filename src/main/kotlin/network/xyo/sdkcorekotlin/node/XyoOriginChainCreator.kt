@@ -75,8 +75,6 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
 
     /**
      * Self signs an origin block to the device's origin chain.
-     *
-     * @param flag The optional flag to use when self signing.
      */
     suspend fun selfSignOriginChain () {
         val boundWitness = XyoZigZagBoundWitness(

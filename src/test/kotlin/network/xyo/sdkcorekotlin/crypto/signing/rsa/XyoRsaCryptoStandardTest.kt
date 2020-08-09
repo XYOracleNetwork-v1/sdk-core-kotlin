@@ -26,6 +26,6 @@ class XyoRsaCryptoStandardTest : XyoTestBase() {
         Assert.assertEquals(rsa.publicKey.algorithm, "RSA")
         Assert.assertArrayEquals(assertedPublic, rsa.publicKey.bytesCopy)
         Assert.assertArrayEquals(assertedPrivate, rsa.privateKey.bytesCopy)
-        Assert.assertTrue(XyoRsaWithSha256.verifySign(sig, dataToSign, XyoRsaPublicKey.getInstance(assertedPublic)).await())
+        Assert.assertTrue(XyoRsaWithSha256.verifySign(sig, dataToSign, XyoRsaPublicKey.getInstance(assertedPublic)))
     }
 }

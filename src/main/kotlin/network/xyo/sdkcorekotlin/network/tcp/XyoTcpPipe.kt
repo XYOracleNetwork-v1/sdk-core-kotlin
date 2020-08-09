@@ -22,16 +22,18 @@ open class XyoTcpPipe(private val socket: Socket,
                       override var initiationData: XyoAdvertisePacket?) : XyoNetworkPipe {
 
     override suspend fun close(): Any? {
-        try {
-            socket.shutdownInput()
-            socket.shutdownOutput()
-            socket.close()
-            XyoLog.logDebug("Closing Socket", TAG)
-        } catch (exception: IOException) {
-            XyoLog.logDebug("Unknown IO While Closing Socket: $exception", TAG)
-            return null
-        }
-        return null
+        return GlobalScope.async(Dispatchers.IO) {
+            try {
+                socket.shutdownInput()
+                socket.shutdownOutput()
+                socket.close()
+                XyoLog.logDebug("Closing Socket", TAG)
+            } catch (exception: IOException) {
+                XyoLog.logDebug("Unknown IO While Closing Socket: $exception", TAG)
+                return@async null
+            }
+            return@async null
+        }.await()
     }
 
     override fun getNetworkHeuristics(): Array<XyoObjectStructure> {
@@ -39,15 +41,17 @@ open class XyoTcpPipe(private val socket: Socket,
     }
 
     override suspend fun send(data: ByteArray, waitForResponse: Boolean): ByteArray? {
-        try {
-            XyoLog.logDebug("Send Request", TAG)
-            return withTimeout(NO_RESPONSE_TIMEOUT.toLong()) { send(waitForResponse, data) }
+        return GlobalScope.async(Dispatchers.IO) {
+            return@async try {
+                XyoLog.logDebug("Send Request", TAG)
+                withTimeout(NO_RESPONSE_TIMEOUT.toLong()) { send(waitForResponse, data) }
 
-        } catch (exception: TimeoutCancellationException) {
-            XyoLog.logError("Timeout Network Error $exception", TAG, null)
-            socket.close()
-            return null
-        }
+            } catch (exception: TimeoutCancellationException) {
+                XyoLog.logError("Timeout Network Error $exception", TAG, null)
+                socket.close()
+                null
+            }
+        }.await()
     }
 
     fun waitForResponse (): ByteArray? {

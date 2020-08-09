@@ -12,7 +12,6 @@
 -   [Title](#sdk-core-kotlin)
 -   [Description](#description)
 -   [Long Description](#long-description)
--   [XYO Origin Block Protocol](#xyo-origin-block-protocol)
 -   [Getting Started](#getting-started)
 -   [Install](#install)
 -   [Building and Testing with Gradle](#building-and-testing-with-gradle)
@@ -21,7 +20,6 @@
 -   [Node Listener](#node-listener)
 -   [Testing](#testing)
 -   [Maintainers](#maintainers)
--   [Contributing](#contributing)
 -   [License](#license)
 -   [Credits](#credits)
 

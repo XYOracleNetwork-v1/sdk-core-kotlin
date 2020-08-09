@@ -136,10 +136,6 @@ abstract class XyoObjectSchema {
          * Creates a XyoObjectSchema from a given header. Note that all combinations of 2 bytes are valid, therefore
          * make sure that the header being passed to the function is the correct header. The header must be 2 bytes,
          * or a XyoSchemaException will be thrown.
-         *
-         * @param byteArray The header of the item to create a schema from.
-         * @return A XyoObjectSchema of the schema of the Header.
-         * @throws XyoSchemaException When the header size is not 2.
          */
         fun createFromHeader (header: ByteArray) : XyoObjectSchema {
             if (header.size != 2) {

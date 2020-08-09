@@ -1,8 +1,5 @@
 package network.xyo.sdkcorekotlin.crypto.signing
 
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 
 /**
@@ -59,9 +56,9 @@ abstract class XyoSigner {
          * @return If the signature is valid, the deferred Boolean will be true, if it is invalid the deferred
          * <Boolean> will be false.
          */
-        abstract fun verifySign (signature: XyoObjectStructure,
+        abstract suspend fun verifySign (signature: XyoObjectStructure,
                                  byteArray: ByteArray,
-                                 publicKey : XyoObjectStructure) : Deferred<Boolean>
+                                 publicKey : XyoObjectStructure) : Boolean
 
         /**
          * The key to identify the signer provider by so it can be added to a mapping.
@@ -125,7 +122,7 @@ abstract class XyoSigner {
             val creator = verifiers[headerPublicKey]?.get(signature.schema.id)
 
             if (creator != null) {
-                return creator.verifySign(signature, data, publicKey).await()
+                return creator.verifySign(signature, data, publicKey)
             }
 
             return null

@@ -206,10 +206,10 @@ open class XyoIterableStructure : XyoObjectStructure {
         override fun next(): XyoObjectStructure {
             val nextItem = readItemAtOffset(currentOffset)
 
-            if (globalSchema == null) {
-                currentOffset += nextItem.sizeBytes + 2
+            currentOffset += if (globalSchema == null) {
+                nextItem.sizeBytes + 2
             } else {
-                currentOffset += nextItem.sizeBytes
+                nextItem.sizeBytes
             }
 
             return nextItem

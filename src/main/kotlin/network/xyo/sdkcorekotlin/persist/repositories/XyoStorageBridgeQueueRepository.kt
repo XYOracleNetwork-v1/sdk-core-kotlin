@@ -1,15 +1,11 @@
 package network.xyo.sdkcorekotlin.persist.repositories
 
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.node.XyoBridgeQueueItem
 import network.xyo.sdkcorekotlin.persist.XyoKeyValueStore
 import network.xyo.sdkcorekotlin.repositories.XyoBridgeQueueRepository
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkobjectmodelkotlin.structure.XyoIterableStructure
 import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
-import java.lang.Math.min
 import java.nio.ByteBuffer
 
 class XyoStorageBridgeQueueRepository (private val store: XyoKeyValueStore) : XyoBridgeQueueRepository {
@@ -43,7 +39,7 @@ class XyoStorageBridgeQueueRepository (private val store: XyoKeyValueStore) : Xy
 
         val itemsToReturn = ArrayList<XyoBridgeQueueItem>()
 
-        for (i in 0..min(n - 1, queueCache.size - 1)) {
+        for (i in 0..(n - 1).coerceAtMost(queueCache.size - 1)) {
             itemsToReturn.add(queueCache[i])
         }
 

@@ -1,19 +1,8 @@
 package network.xyo.sdkcorekotlin.network
 
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
 import network.xyo.sdkcorekotlin.XyoTestBase
 import network.xyo.sdkcorekotlin.crypto.signing.ecdsa.secp256k.XyoSha256WithSecp256K
-import network.xyo.sdkcorekotlin.hashing.XyoBasicHashBase
-import network.xyo.sdkcorekotlin.network.tcp.XyoTcpPipe
-import network.xyo.sdkcorekotlin.node.XyoRelayNode
-import network.xyo.sdkcorekotlin.persist.XyoInMemoryStorageProvider
-import network.xyo.sdkcorekotlin.persist.repositories.XyoStorageBridgeQueueRepository
-import network.xyo.sdkcorekotlin.persist.repositories.XyoStorageOriginBlockRepository
-import network.xyo.sdkcorekotlin.persist.repositories.XyoStorageOriginStateRepository
-import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import org.junit.Test
-import java.net.Socket
 import kotlin.experimental.or
 
 class XyoTcpPipeTest : XyoTestBase( ){

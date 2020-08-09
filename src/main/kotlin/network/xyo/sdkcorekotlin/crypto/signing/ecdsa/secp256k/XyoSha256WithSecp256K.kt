@@ -1,8 +1,5 @@
 package network.xyo.sdkcorekotlin.crypto.signing.ecdsa.secp256k
 
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
 import network.xyo.sdkcorekotlin.crypto.signing.ecdsa.XyoEcPrivateKey
@@ -53,7 +50,7 @@ class XyoSha256WithSecp256K (privateKey : ECPrivateKey?) : XyoEcSecp256K1(privat
             return XyoSha256WithSecp256K(XyoEcPrivateKey.getInstance(privateKey, ecSpec))
         }
 
-        override fun verifySign(signature: XyoObjectStructure, byteArray: ByteArray, publicKey: XyoObjectStructure): Deferred<Boolean> = GlobalScope.async {
+        override suspend fun verifySign(signature: XyoObjectStructure, byteArray: ByteArray, publicKey: XyoObjectStructure): Boolean {
             try {
                 val signer = ECDSASigner()
                 val uncompressedKey = object :XyoUncompressedEcPublicKey(publicKey.bytesCopy) {
@@ -69,11 +66,11 @@ class XyoSha256WithSecp256K (privateKey : ECPrivateKey?) : XyoEcSecp256K1(privat
                 val r = ecSig.r
                 val s = ecSig.s
 
-                return@async signer.verifySignature(hashData(byteArray), r, s)
+                return signer.verifySignature(hashData(byteArray), r, s)
 
                 // if point is not on curve
             } catch (e : IllegalArgumentException) {
-                return@async false
+                return false
             }
         }
 
