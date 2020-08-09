@@ -84,13 +84,13 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
      *
      * @param flag The optional flag to use when self signing.
      */
-    fun selfSignOriginChain () : Deferred<Unit> = GlobalScope.async {
+    suspend fun selfSignOriginChain () {
         val boundWitness = XyoZigZagBoundWitness(
                 originState.signers,
                 makeSignedPayload().await().toTypedArray(),
                 arrayOf()
         )
-        boundWitness.incomingData(null, true).await()
+        boundWitness.incomingData(null, true)
         updateOriginState(boundWitness).await()
         onBoundWitnessEndSuccess(boundWitness).await()
     }
@@ -101,7 +101,7 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
 
     private class XyoOptionPayload (val unsignedOptions : Array<XyoObjectStructure>, val signedOptions : Array<XyoObjectStructure> )
 
-    private fun getBoundWitnessOptionPayloads (options: Array<XyoBoundWitnessOption>) : Deferred<XyoOptionPayload> = GlobalScope.async {
+    private suspend fun getBoundWitnessOptionPayloads (options: Array<XyoBoundWitnessOption>) : XyoOptionPayload {
         val signedPayloads =  ArrayList<XyoObjectStructure>()
         val unsignedPayloads = ArrayList<XyoObjectStructure>()
 
@@ -119,7 +119,7 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
             }
         }
 
-        return@async XyoOptionPayload(unsignedPayloads.toTypedArray(), signedPayloads.toTypedArray())
+        return XyoOptionPayload(unsignedPayloads.toTypedArray(), signedPayloads.toTypedArray())
     }
 
     private fun getBoundWitnessOptions (flags: ByteArray): Array<XyoBoundWitnessOption> {
@@ -246,7 +246,7 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
                                                 choice: ByteArray): XyoBoundWitness? {
 
         val options = getBoundWitnessOptions(choice)
-        val payloads = getBoundWitnessOptionPayloads(options).await()
+        val payloads = getBoundWitnessOptionPayloads(options)
         val signedPayload = makeSignedPayload().await()
         signedPayload.addAll(payloads.signedOptions)
         signedPayload.addAll(handler.pipe.getNetworkHeuristics())

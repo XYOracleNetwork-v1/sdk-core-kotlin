@@ -44,8 +44,9 @@ class XyoTcpPipeTest : XyoTestBase( ){
     @Test
     @kotlin.ExperimentalUnsignedTypes
     fun testTcpBoundWitness () {
+        val enabled = false
         // a node must be running on localhost:11000, for this test to pass
-        if (false) {
+        if (enabled) {
             runBlocking {
 
                 val storage = XyoInMemoryStorageProvider()
@@ -56,7 +57,7 @@ class XyoTcpPipeTest : XyoTestBase( ){
                 val node = XyoRelayNode(originQueueRepo, originStateRepo, bridgeQueueRepo, hasher)
                 val signer = XyoSha256WithSecp256K.newInstance()
                 node.originState.addSigner(signer)
-                node.selfSignOriginChain().await()
+                node.selfSignOriginChain()
 
 
                 while (true) {

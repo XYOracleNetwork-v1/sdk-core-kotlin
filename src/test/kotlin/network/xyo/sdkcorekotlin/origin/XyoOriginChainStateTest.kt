@@ -56,7 +56,7 @@ class XyoOriginChainStateTest : XyoTestBase() {
                         elementsInUnsignedPayload
                 )
 
-                aliceBoundWitness.incomingData(null, true).await()
+                aliceBoundWitness.incomingData(null, true)
                 originChainState.newOriginBlock(aliceBoundWitness.getHash(hashCreator).await())
                 originBlocks.add(aliceBoundWitness)
 

@@ -47,7 +47,7 @@ open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoKey
     override suspend fun addBoundWitness(originBlock: XyoBoundWitness) {
         val blockData = originBlock.bytesCopy
         val blockHash = originBlock.getHash(hashingObject).await()
-        updateIndex(blockHash).await()
+        updateIndex(blockHash)
         storageProvider.write(blockHash.bytesCopy, blockData).await()
     }
 
@@ -56,7 +56,7 @@ open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoKey
         return XyoBoundWitness.getInstance(packedOriginBlock)
     }
 
-    private fun updateIndex (blockHash : XyoHash) = GlobalScope.async {
+    private suspend fun updateIndex (blockHash : XyoHash) {
         val newIndex =ArrayList<XyoObjectStructure>()
         val currentIndex = storageProvider.read(BLOCKS_INDEX_KEY).await()
 

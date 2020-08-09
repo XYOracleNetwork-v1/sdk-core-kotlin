@@ -17,7 +17,7 @@ class XyoBoundWitnessVerifyTest : XyoTestBase() {
             val createdBoundWitness = XyoBoundWitness.getInstance(boundWitnessBytes)
             val verify = XyoBoundWitnessVerify(false)
 
-            Assert.assertTrue(verify.verify(createdBoundWitness).await() ?: false)
+            Assert.assertTrue(verify.verify(createdBoundWitness) ?: false)
         }
     }
 
@@ -28,7 +28,7 @@ class XyoBoundWitnessVerifyTest : XyoTestBase() {
             val createdBoundWitness = XyoBoundWitness.getInstance(boundWitnessBytes)
             val verify = XyoBoundWitnessVerify(true)
 
-            Assert.assertTrue(verify.verify(createdBoundWitness).await() ?: false)
+            Assert.assertTrue(verify.verify(createdBoundWitness) ?: false)
         }
     }
 
@@ -41,7 +41,7 @@ class XyoBoundWitnessVerifyTest : XyoTestBase() {
             val createdBoundWitness = XyoBoundWitness.getInstance(boundWitnessBytes)
             val verify = XyoBoundWitnessVerify(false)
 
-            Assert.assertFalse(verify.verify(createdBoundWitness).await() ?: true)
+            Assert.assertFalse(verify.verify(createdBoundWitness) ?: true)
         }
     }
 
@@ -53,7 +53,7 @@ class XyoBoundWitnessVerifyTest : XyoTestBase() {
             val createdBoundWitness = XyoBoundWitness.getInstance(boundWitnessBytes)
             val verify = XyoBoundWitnessVerify(false)
 
-            Assert.assertFalse(verify.verify(createdBoundWitness).await() ?: false)
+            Assert.assertFalse(verify.verify(createdBoundWitness) ?: false)
         }
     }
 }
