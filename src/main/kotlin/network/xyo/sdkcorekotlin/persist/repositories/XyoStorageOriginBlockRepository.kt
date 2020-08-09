@@ -24,11 +24,11 @@ open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoKey
 
     override suspend fun removeOriginBlock(originBlockHash: XyoObjectStructure) {
         removeIndex(originBlockHash.bytesCopy)
-        storageProvider.delete(originBlockHash.bytesCopy).await()
+        storageProvider.delete(originBlockHash.bytesCopy)
     }
 
     override suspend fun containsOriginBlock(originBlockHash: XyoObjectStructure): Boolean {
-        return storageProvider.containsKey(originBlockHash.bytesCopy).await()
+        return storageProvider.containsKey(originBlockHash.bytesCopy)
     }
 
     override suspend fun getAllOriginBlockHashes() : Iterator<XyoObjectStructure>? {
@@ -36,7 +36,7 @@ open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoKey
     }
 
     private suspend fun readIteratorFromKey (key : ByteArray) : Iterator<XyoObjectStructure>? {
-        val encodedIndex = storageProvider.read(key).await()
+        val encodedIndex = storageProvider.read(key)
 
         if (encodedIndex != null) {
             return XyoIterableStructure(encodedIndex, 0).iterator
@@ -48,17 +48,17 @@ open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoKey
         val blockData = originBlock.bytesCopy
         val blockHash = originBlock.getHash(hashingObject).await()
         updateIndex(blockHash)
-        storageProvider.write(blockHash.bytesCopy, blockData).await()
+        storageProvider.write(blockHash.bytesCopy, blockData)
     }
 
     override suspend fun getOriginBlockByBlockHash(originBlockHash: ByteArray): XyoBoundWitness? {
-        val packedOriginBlock = storageProvider.read(originBlockHash).await() ?: return null
+        val packedOriginBlock = storageProvider.read(originBlockHash) ?: return null
         return XyoBoundWitness.getInstance(packedOriginBlock)
     }
 
     private suspend fun updateIndex (blockHash : XyoHash) {
         val newIndex =ArrayList<XyoObjectStructure>()
-        val currentIndex = storageProvider.read(BLOCKS_INDEX_KEY).await()
+        val currentIndex = storageProvider.read(BLOCKS_INDEX_KEY)
 
         newIndex.add(blockHash)
 
@@ -85,7 +85,7 @@ open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoKey
         }
 
         val newIndexEncoded = XyoIterableStructure.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, newIndex.toTypedArray())
-        storageProvider.write(BLOCKS_INDEX_KEY, newIndexEncoded.bytesCopy).await()
+        storageProvider.write(BLOCKS_INDEX_KEY, newIndexEncoded.bytesCopy)
     }
 
     companion object {

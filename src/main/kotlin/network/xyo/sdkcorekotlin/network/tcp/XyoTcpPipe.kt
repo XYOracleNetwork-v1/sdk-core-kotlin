@@ -23,10 +23,12 @@ open class XyoTcpPipe(private val socket: Socket,
 
     override suspend fun close() : Boolean {
         try {
-            socket.shutdownInput()
-            socket.shutdownOutput()
-            socket.close()
-            XyoLog.logDebug("Closing Socket", TAG)
+            withContext(Dispatchers.IO) {
+                socket.shutdownInput()
+                socket.shutdownOutput()
+                socket.close()
+                XyoLog.logDebug("Closing Socket", TAG)
+            }
         } catch (exception: IOException) {
             XyoLog.logDebug("Unknown IO While Closing Socket: $exception", TAG)
             return false
@@ -49,7 +51,9 @@ open class XyoTcpPipe(private val socket: Socket,
 
         } catch (exception: TimeoutCancellationException) {
             XyoLog.logError("Timeout Network Error $exception", TAG, null)
-            socket.close()
+            withContext(Dispatchers.IO) {
+                socket.close()
+            }
             return null
         }
     }

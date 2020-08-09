@@ -30,7 +30,7 @@ open class XyoRelayNode (blockRepository: XyoOriginBlockRepository,
                     blockRepository.removeOriginBlock(hash)
                 }
 
-                bridgeQueueRepository.commit().await()
+                bridgeQueueRepository.commit()
             }
         }
 

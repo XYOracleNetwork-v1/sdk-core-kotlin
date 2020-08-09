@@ -60,18 +60,18 @@ class XyoStorageBridgeQueueRepository (private val store: XyoKeyValueStore) : Xy
         }
     }
 
-    override fun commit () : Deferred<Unit> = GlobalScope.async {
+    override suspend fun commit () {
         val encodedQueueItems: Array<XyoObjectStructure> = Array(queueCache.size) { i ->
             return@Array this@XyoStorageBridgeQueueRepository.queueCache[i].encode()
         }
 
         val encodedMaster = XyoIterableStructure.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, encodedQueueItems)
-        store.write(STORE_QUEUE_KEY, encodedMaster.bytesCopy).await()
+        store.write(STORE_QUEUE_KEY, encodedMaster.bytesCopy)
     }
 
     @Suppress("unused")
-    fun restore () : Deferred<Unit> = GlobalScope.async {
-        val encodedItems = store.read(STORE_QUEUE_KEY).await() ?: return@async
+    suspend fun restore () {
+        val encodedItems = store.read(STORE_QUEUE_KEY) ?: return
         val restoredQueueCache = ArrayList<XyoBridgeQueueItem>()
         val it = XyoIterableStructure(encodedItems, 0).iterator
 

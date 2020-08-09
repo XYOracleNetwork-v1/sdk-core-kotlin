@@ -71,30 +71,30 @@ class XyoStorageOriginStateRepository (private val store: XyoKeyValueStore) : Xy
         val originTime = lastBlockTimeCache
 
         if (index != null) {
-            store.write(ORIGIN_STATE_INDEX_KEY, index.bytesCopy).await()
+            store.write(ORIGIN_STATE_INDEX_KEY, index.bytesCopy)
         }
 
         if (previousHash != null) {
-            store.write(ORIGIN_HASH_INDEX_KEY, previousHash.bytesCopy).await()
+            store.write(ORIGIN_HASH_INDEX_KEY, previousHash.bytesCopy)
         }
 
         if (originTime != null) {
             val bytesLong = ByteBuffer.allocate(8).putLong(originTime).array()
             val encodedTime = XyoObjectStructure.newInstance(XyoSchemas.BLOB, bytesLong)
-            store.write(ORIGIN_LAST_TIME, encodedTime.bytesCopy).await()
+            store.write(ORIGIN_LAST_TIME, encodedTime.bytesCopy)
         }
 
 
         val encodedStatics = XyoIterableStructure.createUntypedIterableObject(XyoSchemas.ARRAY_UNTYPED, staticsCache.toTypedArray())
-        store.write(ORIGIN_STATICS_KEY, encodedStatics.bytesCopy).await()
+        store.write(ORIGIN_STATICS_KEY, encodedStatics.bytesCopy)
     }
 
     fun restore (signers: ArrayList<XyoSigner>) = GlobalScope.async {
         signersCache = signers
-        val encodedIndex = store.read(ORIGIN_STATE_INDEX_KEY).await()
-        val encodedHash = store.read(ORIGIN_HASH_INDEX_KEY).await()
-        val encodedStaticts = store.read(ORIGIN_STATICS_KEY).await()
-        val encodedLastTime = store.read(ORIGIN_LAST_TIME).await()
+        val encodedIndex = store.read(ORIGIN_STATE_INDEX_KEY)
+        val encodedHash = store.read(ORIGIN_HASH_INDEX_KEY)
+        val encodedStaticts = store.read(ORIGIN_STATICS_KEY)
+        val encodedLastTime = store.read(ORIGIN_LAST_TIME)
 
         if (encodedIndex != null) {
             indexCache = XyoObjectStructure.wrap(encodedIndex)

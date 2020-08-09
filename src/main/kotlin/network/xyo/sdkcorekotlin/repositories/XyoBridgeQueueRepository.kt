@@ -14,5 +14,5 @@ interface XyoBridgeQueueRepository {
     fun removeQueueItems (items: Array<XyoObjectStructure>)
     fun getLowestWeight (n: Int): Array<XyoBridgeQueueItem>
     fun incrementWeights (hashes: Array<XyoObjectStructure>)
-    fun commit () : Deferred<Unit>
+    suspend fun commit ()
 }
