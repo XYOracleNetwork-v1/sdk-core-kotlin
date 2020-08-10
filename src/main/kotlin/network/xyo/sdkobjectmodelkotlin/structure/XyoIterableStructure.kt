@@ -75,16 +75,16 @@ open class XyoIterableStructure : XyoObjectStructure {
         val sizeOfObject = readSizeOfObject(schemaOfItem.sizeIdentifier, startingOffset + 2)
 
         if (sizeOfObject == 0) {
-            throw XyoObjectIteratorException("Size can not be 0. Value: ${item.toHexString()}")
+            throw XyoObjectIteratorException("Size can not be 0. Value: ${bytes.toHexString()}")
         }
 
         checkIndex(startingOffset + sizeOfObject + 2)
 
         if (schemaOfItem.isIterable) {
-            return  XyoIterableStructure(this@XyoIterableStructure.item, startingOffset)
+            return  XyoIterableStructure(this@XyoIterableStructure.bytes, startingOffset)
         }
 
-        return  XyoObjectStructure(this@XyoIterableStructure.item, startingOffset)
+        return  XyoObjectStructure(this@XyoIterableStructure.bytes, startingOffset)
     }
 
 
@@ -99,14 +99,14 @@ open class XyoIterableStructure : XyoObjectStructure {
         val sizeOfObject = readSizeOfObject(schemaOfItem.sizeIdentifier, startingOffset)
 
         if (sizeOfObject == 0) {
-            throw XyoObjectIteratorException("Size can not be 0. Value: ${item.toHexString()}")
+            throw XyoObjectIteratorException("Size can not be 0. Value: ${bytes.toHexString()}")
         }
 
         val buffer = ByteBuffer.allocate(sizeOfObject + 2)
         checkIndex(startingOffset + sizeOfObject)
 
         buffer.put(schemaOfItem.header)
-        buffer.put(item.copyOfRange(startingOffset, startingOffset + sizeOfObject))
+        buffer.put(bytes.copyOfRange(startingOffset, startingOffset + sizeOfObject))
 
         if (schemaOfItem.isIterable) {
             return XyoIterableStructure(buffer.array(), 0)
@@ -136,7 +136,7 @@ open class XyoIterableStructure : XyoObjectStructure {
             i++
         }
 
-        throw XyoObjectIteratorException("Index out of range! Size $i, Index: $index. Value: ${item.toHexString()}")
+        throw XyoObjectIteratorException("Index out of range! Size $i, Index: $index. Value: ${bytes.toHexString()}")
     }
 
 
@@ -168,7 +168,7 @@ open class XyoIterableStructure : XyoObjectStructure {
      */
     private fun getNextHeader (offset : Int) : XyoObjectSchema {
         checkIndex(offset + 2)
-        return  XyoObjectSchema.createFromHeader(item.copyOfRange(offset, offset + 2))
+        return  XyoObjectSchema.createFromHeader(bytes.copyOfRange(offset, offset + 2))
     }
 
     /**
@@ -177,8 +177,8 @@ open class XyoIterableStructure : XyoObjectStructure {
      * @throws XyoObjectIteratorException If there is not enough space to read from.
      */
     private fun checkIndex (index: Int) {
-        if (index > item.size) {
-            throw XyoObjectIteratorException("Out of count. Value: ${item.toHexString()}, Offset: $index")
+        if (index > bytes.size) {
+            throw XyoObjectIteratorException("Out of count. Value: ${bytes.toHexString()}, Offset: $index")
         }
     }
 
@@ -228,7 +228,7 @@ open class XyoIterableStructure : XyoObjectStructure {
 
         if (!setHeader.isIterable) {
             throw XyoObjectIteratorException("Can not iterate on object that is not iterable. Header " +
-                    "${setHeader.header[allowedOffset]}, ${setHeader.header[allowedOffset + 1]}. Value: ${item.toHexString()}")
+                    "${setHeader.header[allowedOffset]}, ${setHeader.header[allowedOffset + 1]}. Value: ${bytes.toHexString()}")
         }
 
         if (setHeader.isTyped && totalSize != setHeader.sizeIdentifier) {
@@ -252,7 +252,7 @@ open class XyoIterableStructure : XyoObjectStructure {
                 rootJsonObject.put(JSONArray((XyoIterableStructure(subItem.bytesCopy, 0)).toString()))
             }
         } else {
-            rootJsonObject.put(item.toHexString())
+            rootJsonObject.put(bytes.toHexString())
         }
 
         return rootJsonObject.toString()

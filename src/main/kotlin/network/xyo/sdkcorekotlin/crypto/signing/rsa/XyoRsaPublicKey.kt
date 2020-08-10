@@ -36,7 +36,7 @@ class XyoRsaPublicKey(private val modulus : BigInteger) : RSAPublicKey, XyoPubli
 
     override var allowedOffset: Int = 0
 
-    override var item: ByteArray = byteArrayOf()
+    override var bytes: ByteArray = byteArrayOf()
         get() = XyoObjectStructure.newInstance(XyoSchemas.RSA_PUBLIC_KEY, encoded).bytesCopy
 
 

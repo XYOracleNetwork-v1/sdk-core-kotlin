@@ -11,7 +11,7 @@ import java.nio.ByteBuffer
  */
 open class XyoEcdsaSignature(val r : BigInteger, val s : BigInteger) : XyoObjectStructure(byteArrayOf(), 0) {
 
-    override var item: ByteArray = XyoObjectStructure.getObjectEncoded(XyoSchemas.EC_SIGNATURE, encode())
+    override var bytes: ByteArray = XyoObjectStructure.getObjectEncoded(XyoSchemas.EC_SIGNATURE, encode())
 
     override var allowedOffset: Int = 0
 
@@ -41,7 +41,7 @@ open class XyoEcdsaSignature(val r : BigInteger, val s : BigInteger) : XyoObject
         override fun getInstance(byteArray: ByteArray): XyoEcdsaSignature {
             val rAndS = getRAndS(XyoObjectStructure(byteArray, 0).valueCopy)
             return object : XyoEcdsaSignature(rAndS.r, rAndS.s) {
-                override var item: ByteArray = byteArray
+                override var bytes: ByteArray = byteArray
             }
         }
     }

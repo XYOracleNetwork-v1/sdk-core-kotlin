@@ -31,7 +31,7 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
      */
     private val dynamicLeader = ArrayList<XyoObjectStructure>()
 
-    override var item: ByteArray = byteArrayOf()
+    override var bytes: ByteArray = byteArrayOf()
         get() =  XyoIterableStructure.createUntypedIterableObject(XyoSchemas.BW, dynamicLeader.toTypedArray()).bytesCopy
 
     /**

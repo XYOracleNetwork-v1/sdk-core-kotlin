@@ -56,7 +56,7 @@ class XyoSha256WithSecp256K (privateKey : ECPrivateKey?) : XyoEcSecp256K1(privat
                 val uncompressedKey = object :XyoUncompressedEcPublicKey() {
                     override val ecSpec: ECParameterSpec = XyoEcSecp256K1.ecSpec
                     override var allowedOffset: Int = 0
-                    override var item: ByteArray = publicKey.bytesCopy
+                    override var bytes: ByteArray = publicKey.bytesCopy
                 }
 
                 val ecDomainParameters = ECDomainParameters(ecCurve.curve, ecCurve.g, ecCurve.n)

@@ -10,22 +10,16 @@ import java.nio.*
  */
 open class XyoObjectStructure {
 
-    constructor (item: ByteArray, allowedOffset: Int) {
-        this.item = item
-        this.allowedOffset = allowedOffset
+    constructor (bytes: ByteArray? = null, allowedOffset: Int? = null, headerSize: Int? = null) {
+        this.bytes = bytes ?: byteArrayOf()
+        this.allowedOffset = allowedOffset ?: 0
+        this.headerSize = headerSize ?: 2
     }
-
-    constructor (item: ByteArray, allowedOffset: Int, headerSize: Int) {
-        this.item = item
-        this.allowedOffset = allowedOffset
-        this.headerSize = headerSize
-    }
-
 
     /**
      * The primary data input for the XyoObjectStructure. This buffer will not be read before the allowedOffset.
      */
-    open var item : ByteArray
+    open var bytes : ByteArray
 
     /**
      * The starting offset of where to read. This buffer will not be read past this buffer.
@@ -39,7 +33,7 @@ open class XyoObjectStructure {
      */
     open val schema : XyoObjectSchema
         get() {
-            return XyoObjectSchema.createFromHeader(item.copyOfRange(allowedOffset, allowedOffset + headerSize))
+            return XyoObjectSchema.createFromHeader(bytes.copyOfRange(allowedOffset, allowedOffset + headerSize))
         }
 
     /**
@@ -57,7 +51,7 @@ open class XyoObjectStructure {
      */
     open val valueCopy : ByteArray
         get() {
-            return item.copyOfRange(
+            return bytes.copyOfRange(
                     headerSize + schema.sizeIdentifier + allowedOffset,
                     headerSize + allowedOffset + sizeBytes
             )
@@ -68,7 +62,7 @@ open class XyoObjectStructure {
      */
     open val bytesCopy : ByteArray
         get() {
-            return item.copyOfRange(allowedOffset, allowedOffset + sizeBytes + headerSize)
+            return bytes.copyOfRange(allowedOffset, allowedOffset + sizeBytes + headerSize)
         }
 
 
@@ -81,7 +75,7 @@ open class XyoObjectStructure {
      */
     protected fun readSizeOfObject (sizeToReadForSize : Int, offset: Int) : Int {
         val buffer = ByteBuffer.allocate(sizeToReadForSize)
-        buffer.put(item.copyOfRange(offset, offset + sizeToReadForSize))
+        buffer.put(bytes.copyOfRange(offset, offset + sizeToReadForSize))
 
 
         when (sizeToReadForSize) {
@@ -90,7 +84,7 @@ open class XyoObjectStructure {
             4 -> return buffer.getInt(0)
         }
 
-        throw XyoObjectException("Stub for long count. Value: ${item.toHexString()}")
+        throw XyoObjectException("Stub for long count. Value: ${bytes.toHexString()}")
     }
 
     override fun equals(other: Any?): Boolean {
