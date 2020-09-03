@@ -11,13 +11,11 @@ abstract class XyoBasicHashBase(byteArray: ByteArray) : XyoHash(byteArray) {
     /**
      * A base class for creating Standard Java hashes supported by MessageDigest.
      */
-    abstract class XyoBasicHashBaseProvider : XyoHashProvider() {
+    open class XyoBasicHashBaseProvider(val standardDigestKey: String, val schema : XyoObjectSchema) : XyoHashProvider() {
+
         /**
          * The MessageDigest instance key. e.g. "SHA-256"
          */
-        abstract val standardDigestKey : String
-
-        abstract val schema : XyoObjectSchema
 
         private fun generateHash(data: ByteArray): ByteArray {
             return MessageDigest.getInstance(standardDigestKey).digest(data)
@@ -35,10 +33,7 @@ abstract class XyoBasicHashBase(byteArray: ByteArray) : XyoHash(byteArray) {
 
     companion object {
         fun createHashType (schema: XyoObjectSchema, standardDigestKey: String) : XyoBasicHashBaseProvider {
-            return object : XyoBasicHashBaseProvider() {
-                override val schema: XyoObjectSchema = schema
-                override val standardDigestKey: String = standardDigestKey
-            }
+            return XyoBasicHashBaseProvider(standardDigestKey, schema)
         }
     }
 }

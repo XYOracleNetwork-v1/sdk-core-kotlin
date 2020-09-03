@@ -42,16 +42,22 @@ abstract class XyoObjectSchema {
     /**
      * A meta class to store information about the schema.
      */
-    abstract class XyoObjectSchemaMeta {
+    class XyoObjectSchemaMeta {
+
+        constructor(name: String? = null, desc: String? = null) {
+            this.name = name
+            this.desc = desc
+        }
+
         /**
          * The name of the schema.
          */
-        abstract val name : String?
+        val name : String?
 
         /**
          * The description of the schema.
          */
-        abstract val desc : String?
+        val desc : String?
     }
 
     /**
@@ -201,10 +207,7 @@ abstract class XyoObjectSchema {
          * @return The XyoObjectSchemaMeta of the object from JSON
          */        
         private fun getMetaFromJsonObject (jsonObject: JSONObject) : XyoObjectSchemaMeta {
-            return object : XyoObjectSchemaMeta() {
-                override val desc: String? = jsonObject["desc"] as String?
-                override val name: String? = jsonObject["name"] as String?
-            }
+            return XyoObjectSchemaMeta(jsonObject["name"] as String?, jsonObject["desc"] as String?)
         }        
     }
 }
