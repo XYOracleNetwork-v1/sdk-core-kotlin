@@ -7,7 +7,7 @@ import java.security.MessageDigest
 /**
  * A base class for fixed size hashes.
  */
-abstract class XyoBasicHashBase(byteArray: ByteArray) : XyoHash(byteArray) {
+open class XyoBasicHashBase(byteArray: ByteArray, hash: ByteArray) : XyoHash(hash, byteArray) {
     /**
      * A base class for creating Standard Java hashes supported by MessageDigest.
      */
@@ -25,9 +25,7 @@ abstract class XyoBasicHashBase(byteArray: ByteArray) : XyoHash(byteArray) {
             val hash = generateHash(data)
             val item = XyoObjectStructure.newInstance(schema, hash)
 
-            return object : XyoBasicHashBase(item.bytesCopy) {
-                override val hash: ByteArray = hash
-            }
+            return XyoBasicHashBase(item.bytesCopy, hash)
         }
     }
 

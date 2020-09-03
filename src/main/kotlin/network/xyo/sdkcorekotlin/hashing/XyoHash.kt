@@ -5,11 +5,16 @@ import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 /**
  * A base class for containing and encoding hashes.
  */
-abstract class XyoHash(byteArray: ByteArray, offset: Int = 0)  : XyoObjectStructure(byteArray, offset) {
+open class XyoHash : XyoObjectStructure {
+
+    constructor(hash: ByteArray, byteArray: ByteArray, offset: Int = 0) : super(byteArray, offset) {
+        this.hash = hash
+    }
+
     /**
      * The encoded hash.
      */
-    abstract val hash : ByteArray
+    val hash : ByteArray
 
     /**
      * A base class for creating hashes.

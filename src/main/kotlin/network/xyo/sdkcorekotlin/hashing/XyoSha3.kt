@@ -14,8 +14,6 @@ object XyoSha3 : XyoBasicHashBase.XyoBasicHashBaseProvider("SHA_3", XyoSchemas.S
         digest.update(data)
         val hash = digest.digest()
 
-        return object : XyoBasicHashBase(XyoObjectStructure.newInstance(XyoSha3.schema, hash).bytesCopy) {
-            override val hash: ByteArray = hash
-        }
+        return XyoBasicHashBase(XyoObjectStructure.newInstance(XyoSha3.schema, hash).bytesCopy, hash)
     }
 }
