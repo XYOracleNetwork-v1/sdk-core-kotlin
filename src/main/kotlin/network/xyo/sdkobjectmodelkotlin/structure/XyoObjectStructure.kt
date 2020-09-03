@@ -24,14 +24,14 @@ open class XyoObjectStructure {
     /**
      * The starting offset of where to read. This buffer will not be read past this buffer.
      */
-    open var allowedOffset : Int
+    var allowedOffset : Int = 0
 
     private var headerSize : Int = 2
 
     /**
      * The XyoObjectSchema of the XyoObjectStructure
      */
-    open val schema : XyoObjectSchema
+    val schema : XyoObjectSchema
         get() {
             return XyoObjectSchema.createFromHeader(bytes.copyOfRange(allowedOffset, allowedOffset + headerSize))
         }
@@ -41,7 +41,7 @@ open class XyoObjectStructure {
      *
      * NOTE: This does not include the first two header bytes.
      */
-    open val sizeBytes : Int
+    val sizeBytes : Int
         get() {
             return readSizeOfObject(schema.sizeIdentifier, allowedOffset + headerSize)
         }
@@ -49,7 +49,7 @@ open class XyoObjectStructure {
     /**
      * The value of the object. The value of the object is the object without the size, or the 2 byte header.
      */
-    open val valueCopy : ByteArray
+    val valueCopy : ByteArray
         get() {
             return bytes.copyOfRange(
                     headerSize + schema.sizeIdentifier + allowedOffset,
@@ -60,7 +60,7 @@ open class XyoObjectStructure {
     /**
      * All of the bytes for the object including the header and size.
      */
-    open val bytesCopy : ByteArray
+    val bytesCopy : ByteArray
         get() {
             return bytes.copyOfRange(allowedOffset, allowedOffset + sizeBytes + headerSize)
         }
@@ -134,6 +134,15 @@ open class XyoObjectStructure {
             buffer.put(XyoNumberEncoder.createSize(value.size, newSchema.sizeIdentifier))
             buffer.put(value)
             return buffer.array()
+        }
+
+        fun concatByteArrays(a1: ByteArray, a2: ByteArray?): ByteArray {
+            val result = ByteArray(a1.size + (a2?.size ?: 0))
+            a1.copyInto(result, 0)
+            a2?.let {
+                a2.copyInto(result, a1.size)
+            }
+            return result
         }
     }
 }

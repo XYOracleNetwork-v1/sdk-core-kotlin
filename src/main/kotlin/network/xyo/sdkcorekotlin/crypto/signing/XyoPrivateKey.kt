@@ -7,4 +7,4 @@ import java.security.PrivateKey
  * @param byteArray
  * @param offset
  */
-abstract class XyoPrivateKey(byteArray: ByteArray, offset: Int): PrivateKey, XyoObjectStructure(byteArray, offset)
+abstract class XyoPrivateKey(byteArray: ByteArray? = null, offset: Int? = null): PrivateKey, XyoObjectStructure(byteArray, offset)

@@ -11,14 +11,23 @@ import java.security.interfaces.RSAPrivateKey
 /**
  * An Xyo Encoded RSA Private key.
  */
-open class XyoRsaPrivateKey (private val mod : BigInteger, private val privateExponent : BigInteger) : XyoPrivateKey(byteArrayOf(), 0), RSAPrivateKey {
+open class XyoRsaPrivateKey : XyoPrivateKey, RSAPrivateKey {
+
+    private val mod : BigInteger
+    private val privateExp : BigInteger
+
+    constructor(mod : BigInteger, privateExponent : BigInteger): super(byteArrayOf(), 0) {
+        this.mod = mod
+        this.privateExp = privateExponent
+        this.bytes = XyoObjectStructure.newInstance(XyoSchemas.RSA_PRIVATE_KEY, encoded).bytesCopy
+    }
 
     override fun getAlgorithm(): String {
         return "RSA"
     }
 
     override fun getEncoded(): ByteArray {
-        val encodedPrivateExponent = getPrivateExponent().toByteArray()
+        val encodedPrivateExponent = privateExponent.toByteArray()
         val encodedModulus = modulus.toByteArray()
 
         val buffer = ByteBuffer.allocate(1 + encodedPrivateExponent.size + encodedModulus.size)
@@ -38,13 +47,8 @@ open class XyoRsaPrivateKey (private val mod : BigInteger, private val privateEx
     }
 
     override fun getPrivateExponent(): BigInteger {
-        return privateExponent
+        return privateExp
     }
-
-    override var allowedOffset: Int = 0
-
-    override var bytes: ByteArray = byteArrayOf()
-        get() = XyoObjectStructure.newInstance(XyoSchemas.RSA_PRIVATE_KEY, encoded).bytesCopy
 
     companion object : XyoInterpret {
 

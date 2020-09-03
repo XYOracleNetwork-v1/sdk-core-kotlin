@@ -13,8 +13,6 @@ open class XyoEcdsaSignature(val r : BigInteger, val s : BigInteger) : XyoObject
 
     override var bytes: ByteArray = XyoObjectStructure.getObjectEncoded(XyoSchemas.EC_SIGNATURE, encode())
 
-    override var allowedOffset: Int = 0
-
     private fun encode () : ByteArray {
         val encodedR = r.toByteArray()
         val encodedS = s.toByteArray()

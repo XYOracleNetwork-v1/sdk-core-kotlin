@@ -10,7 +10,22 @@ import java.math.BigInteger
 /**
  * A base class for EC private key generation.
  */
-abstract class XyoEcPrivateKey : ECPrivateKey, XyoPrivateKey(byteArrayOf(), 0) {
+class XyoEcPrivateKey : ECPrivateKey, XyoPrivateKey {
+
+    val ecSpec: ECParameterSpec
+    val q: BigInteger?
+
+    constructor(byteArray: ByteArray, ecSpec: ECParameterSpec) : super(byteArray) {
+        this.ecSpec = ecSpec
+        this.q = null
+        this.bytes = XyoObjectStructure.newInstance(XyoSchemas.EC_PRIVATE_KEY, d.toByteArray()).bytesCopy
+    }
+
+    constructor(q: BigInteger, ecSpec: ECParameterSpec) : super() {
+        this.ecSpec = ecSpec
+        this.q = q
+        this.bytes = XyoObjectStructure.newInstance(XyoSchemas.EC_PRIVATE_KEY, d.toByteArray()).bytesCopy
+    }
 
     override fun getAlgorithm(): String {
         return "ECDSA"
@@ -24,37 +39,22 @@ abstract class XyoEcPrivateKey : ECPrivateKey, XyoPrivateKey(byteArrayOf(), 0) {
         return "XyoEcPrivateKey"
     }
 
-    override var allowedOffset: Int = 0
+    override fun getParameters(): ECParameterSpec {
+        return this.ecSpec
+    }
 
-    override var bytes: ByteArray = byteArrayOf()
-        get() = XyoObjectStructure.newInstance(XyoSchemas.EC_PRIVATE_KEY, d.toByteArray()).bytesCopy
+    override fun getD(): BigInteger {
+        return q ?: BigInteger(valueCopy)
+    }
 
     companion object {
 
         fun getInstance(byteArray: ByteArray, ecSpec: ECParameterSpec): XyoEcPrivateKey {
-            return object : XyoEcPrivateKey() {
-                override var bytes: ByteArray = byteArray
-
-                override fun getParameters(): ECParameterSpec {
-                    return ecSpec
-                }
-
-                override fun getD(): BigInteger {
-                    return BigInteger(valueCopy)
-                }
-            }
+            return XyoEcPrivateKey(byteArray, ecSpec)
         }
 
         fun getInstanceFromQ (q : BigInteger, ecSpec: ECParameterSpec): XyoEcPrivateKey {
-            return object : XyoEcPrivateKey() {
-                override fun getD(): BigInteger {
-                    return q
-                }
-
-                override fun getParameters(): ECParameterSpec {
-                    return ecSpec
-                }
-            }
+            return XyoEcPrivateKey(q, ecSpec)
         }
     }
 }
