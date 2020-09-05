@@ -128,7 +128,7 @@ open class XyoBoundWitness(byteArray: ByteArray = startingBytes, offset: Int = 0
         val itemsInFetter = ArrayList<XyoObjectStructure>()
         itemsInFetter.add(publicKeys)
         itemsInFetter.addAll(payload)
-        return createUntypedIterableObject(XyoSchemas.FETTER, itemsInFetter.toTypedArray())
+        return XyoIterableStructure.createUntypedIterableObject(XyoSchemas.FETTER, itemsInFetter.toTypedArray())
     }
 
     /**
@@ -142,7 +142,7 @@ open class XyoBoundWitness(byteArray: ByteArray = startingBytes, offset: Int = 0
         val itemsInWitness = ArrayList<XyoObjectStructure>()
         itemsInWitness.add(signatures)
         itemsInWitness.addAll(payload)
-        return createUntypedIterableObject(XyoSchemas.WITNESS, itemsInWitness.toTypedArray())
+        return XyoIterableStructure.createUntypedIterableObject(XyoSchemas.WITNESS, itemsInWitness.toTypedArray())
     }
 
     /**
@@ -172,7 +172,7 @@ open class XyoBoundWitness(byteArray: ByteArray = startingBytes, offset: Int = 0
         * Gets bytes from an untyped bound witness
         */
 
-        val startingBytes = createUntypedIterableObject(XyoSchemas.BW, arrayOf()).bytesCopy
+        val startingBytes = XyoIterableStructure.createUntypedIterableObject(XyoSchemas.BW, arrayOf()).bytesCopy
 
         /**
          * Gets a new instance of the bound witness from bytes.

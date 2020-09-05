@@ -206,10 +206,10 @@ open class XyoIterableStructure : XyoObjectStructure {
         override fun next(): XyoObjectStructure {
             val nextItem = readItemAtOffset(currentOffset)
 
-            currentOffset += if (globalSchema == null) {
-                nextItem.sizeBytes + 2
+            if (globalSchema == null) {
+                currentOffset += nextItem.sizeBytes + 2
             } else {
-                nextItem.sizeBytes
+                currentOffset += nextItem.sizeBytes
             }
 
             return nextItem
@@ -275,7 +275,7 @@ open class XyoIterableStructure : XyoObjectStructure {
                     throw XyoObjectException("Can not convert types! ${value.schema.id}, ${type.id}")
                 }
 
-                newValues.add(newInstance(type, value.valueCopy))
+                newValues.add(XyoObjectStructure.newInstance(type, value.valueCopy))
             }
 
             return newValues.toTypedArray()
@@ -306,7 +306,7 @@ open class XyoIterableStructure : XyoObjectStructure {
                 buffer.put(item.bytesCopy)
             }
 
-            return XyoIterableStructure(newInstance(schema, buffer.array()).bytesCopy, 0)
+            return XyoIterableStructure(XyoObjectStructure.newInstance(schema, buffer.array()).bytesCopy, 0)
         }
 
         /**
@@ -341,7 +341,7 @@ open class XyoIterableStructure : XyoObjectStructure {
                 }
             }
 
-            return XyoIterableStructure(getObjectEncoded(schema, buffer.array()), 0)
+            return XyoIterableStructure(XyoObjectStructure.getObjectEncoded(schema, buffer.array()), 0)
         }
     }
 }

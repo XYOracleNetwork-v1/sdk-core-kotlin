@@ -7,14 +7,13 @@ import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 /**
  * The base class for RSA Signature
  */
-class XyoRsaSignature : XyoObjectStructure {
+abstract class XyoRsaSignature : XyoObjectStructure(byteArrayOf(), 0) {
 
-    constructor(bytes: ByteArray): super(bytes) {
-        this.bytes = newInstance(XyoSchemas.RSA_SIGNATURE, this@XyoRsaSignature.signature).bytesCopy
-    }
-
-    val signature : ByteArray
+    open val signature : ByteArray
         get() = valueCopy
+
+    override var bytes: ByteArray = byteArrayOf()
+        get() = XyoObjectStructure.newInstance(XyoSchemas.RSA_SIGNATURE, this@XyoRsaSignature.signature).bytesCopy
 
     /**
      * The base class for creating RSA Signatures.
@@ -22,7 +21,9 @@ class XyoRsaSignature : XyoObjectStructure {
     companion object : XyoInterpret {
 
         override fun getInstance(byteArray: ByteArray): XyoRsaSignature {
-            return XyoRsaSignature(byteArray)
+            return object : XyoRsaSignature() {
+                override var bytes: ByteArray = byteArray
+            }
         }
     }
 }

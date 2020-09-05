@@ -1,6 +1,8 @@
 package network.xyo.sdkobjectmodelkotlin
 
+import network.xyo.sdkobjectmodelkotlin.structure.XyoIterableStructure
 import java.lang.ref.WeakReference
+// import javax.xml.bind.DatatypeConverter
 
 /**
  * A simple caching file that uses weak references to cache any item.

@@ -11,19 +11,7 @@ import java.security.interfaces.RSAPublicKey
 /**
  * An Xyo Encoded RSA Public key.
  */
-class XyoRsaPublicKey : RSAPublicKey, XyoPublicKey {
-
-    constructor(modulus : BigInteger): super() {
-        this.providedModulus = modulus
-        this.bytes = newInstance(XyoSchemas.RSA_PUBLIC_KEY, encoded).bytesCopy
-    }
-
-    val providedModulus : BigInteger
-
-    override fun getModulus(): BigInteger {
-        return this.providedModulus
-    }
-
+class XyoRsaPublicKey(private val modulus : BigInteger) : RSAPublicKey, XyoPublicKey(byteArrayOf(), 0) {
     private val publicExponent : BigInteger = BigInteger(RSA_PUBLIC_EXPONENT)
 
     override fun getAlgorithm(): String {
@@ -31,16 +19,24 @@ class XyoRsaPublicKey : RSAPublicKey, XyoPublicKey {
     }
 
     override fun getEncoded(): ByteArray {
-        return this.modulus.toByteArray()
+        return getModulus().toByteArray()
     }
 
     override fun getFormat(): String {
         return "XyoRsaPublicKey"
     }
 
+    override fun getModulus(): BigInteger {
+        return modulus
+    }
+
     override fun getPublicExponent(): BigInteger {
         return publicExponent
     }
+
+    override var bytes: ByteArray = byteArrayOf()
+        get() = XyoObjectStructure.newInstance(XyoSchemas.RSA_PUBLIC_KEY, encoded).bytesCopy
+
 
     companion object : XyoInterpret {
         override fun getInstance(byteArray: ByteArray): XyoRsaPublicKey {

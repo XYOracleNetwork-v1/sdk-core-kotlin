@@ -6,6 +6,7 @@ import network.xyo.sdkcorekotlin.repositories.XyoBridgeQueueRepository
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkobjectmodelkotlin.structure.XyoIterableStructure
 import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
+import java.lang.Math.min
 import java.nio.ByteBuffer
 
 class XyoStorageBridgeQueueRepository (private val store: XyoKeyValueStore) : XyoBridgeQueueRepository {
@@ -39,7 +40,7 @@ class XyoStorageBridgeQueueRepository (private val store: XyoKeyValueStore) : Xy
 
         val itemsToReturn = ArrayList<XyoBridgeQueueItem>()
 
-        (0 until n.coerceAtMost(queueCache.size)).forEach { i ->
+        for (i in 0..min(n - 1, queueCache.size - 1)) {
             itemsToReturn.add(queueCache[i])
         }
 

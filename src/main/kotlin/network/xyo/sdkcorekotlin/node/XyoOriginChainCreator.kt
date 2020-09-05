@@ -19,15 +19,16 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.ArrayList
 import kotlin.experimental.and
+import kotlin.math.min
 
 /**
  * A base class for all things creating an managing an origin chain (e.g. Sentinel, Bridge).
  *
- * @param hashingProvider A place to store all origin blocks.
+ * @param storageProvider A place to store all origin blocks.
  * @property hashingProvider A hashing provider to use hashing utilities.
  */
 open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
-                                  stateRepository: XyoOriginChainStateRepository,
+                                  val stateRepository: XyoOriginChainStateRepository,
                                   private val hashingProvider : XyoHash.XyoHashProvider) {
 
     private val boundWitnessOptions = ConcurrentHashMap<String, XyoBoundWitnessOption>()
@@ -75,6 +76,11 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
         listeners.remove(key)
     }
 
+    /**
+     * Self signs an origin block to the device's origin chain.
+     *
+     * @param flag The optional flag to use when self signing.
+     */
     suspend fun selfSignOriginChain () {
         val boundWitness = XyoZigZagBoundWitness(
                 originState.signers,
@@ -117,8 +123,8 @@ open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
         val options = ArrayList<XyoBoundWitnessOption>()
 
         for ((_, option) in boundWitnessOptions) {
-            if (option.flag.size.coerceAtMost(flags.size) != 0) {
-                for (i in 0 until option.flag.size.coerceAtMost(flags.size)) {
+            if (min(option.flag.size, flags.size) != 0) {
+                for (i in 0..(min(option.flag.size, flags.size) - 1)) {
                     val otherCatSection = option.flag[option.flag.size - i - 1]
                     val thisCatSection = flags[flags.size - i - 1]
 

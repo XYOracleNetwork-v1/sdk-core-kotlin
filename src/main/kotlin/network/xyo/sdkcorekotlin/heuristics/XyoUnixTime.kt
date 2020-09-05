@@ -27,7 +27,7 @@ class XyoUnixTime (byteArray: ByteArray) : XyoObjectStructure(byteArray, 0) {
                 val time = System.currentTimeMillis()
                 val buffer = ByteBuffer.allocate(8).putLong(time)
 
-                return XyoUnixTime(getObjectEncoded(XyoSchemas.UNIX_TIME, buffer.array()))
+                return XyoUnixTime(XyoObjectStructure.getObjectEncoded(XyoSchemas.UNIX_TIME, buffer.array()))
             }
         }
 

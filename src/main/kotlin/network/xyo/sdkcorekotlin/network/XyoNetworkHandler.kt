@@ -10,7 +10,7 @@ class XyoNetworkHandler (val pipe: XyoNetworkPipe) {
 
     suspend fun sendCataloguePacket(catalogue: ByteArray) : ByteArray? {
         val buffer = getSizeEncodedCatalogue(catalogue)
-        return pipe.sendAsync(buffer, true)
+        return pipe.send(buffer, true)
     }
 
     suspend fun sendChoicePacket(catalogue: ByteArray, response: ByteArray): ByteArray? {
@@ -18,7 +18,7 @@ class XyoNetworkHandler (val pipe: XyoNetworkPipe) {
                 .put(getSizeEncodedCatalogue(catalogue))
                 .put(response)
                 .array()
-        return pipe.sendAsync(buffer, true)
+        return pipe.send(buffer, true)
     }
 
     private fun getSizeEncodedCatalogue (catalogue: ByteArray): ByteArray {

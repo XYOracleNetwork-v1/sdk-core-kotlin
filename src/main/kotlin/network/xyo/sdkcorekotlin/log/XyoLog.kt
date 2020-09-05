@@ -1,6 +1,8 @@
 package network.xyo.sdkcorekotlin.log
 
 import java.lang.Exception
+import java.text.SimpleDateFormat
+import java.util.*
 
 object XyoLog : XyoLogger {
     var logger : XyoLogger = XyoAsciiLogger

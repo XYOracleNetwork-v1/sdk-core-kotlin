@@ -16,7 +16,9 @@ class XyoRsaWithSha256 (privateKey: XyoRsaPrivateKey?) : XyoGeneralRsa (1024, pr
     override suspend fun signData(byteArray: ByteArray): XyoObjectStructure {
         signature.initSign(keyPair.private)
         signature.update(byteArray)
-        return XyoRsaSignature(this@XyoRsaWithSha256.signature.sign())
+        return object : XyoRsaSignature() {
+            override val signature: ByteArray = this@XyoRsaWithSha256.signature.sign()
+        }
     }
 
     companion object : XyoSigner.XyoSignerProvider() {

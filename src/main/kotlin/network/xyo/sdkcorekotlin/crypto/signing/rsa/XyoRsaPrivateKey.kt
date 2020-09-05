@@ -16,10 +16,10 @@ open class XyoRsaPrivateKey : XyoPrivateKey, RSAPrivateKey {
     private val mod : BigInteger
     private val privateExp : BigInteger
 
-    constructor(mod : BigInteger, privateExponent : BigInteger): super() {
+    constructor(mod : BigInteger, privateExponent : BigInteger): super(byteArrayOf(), 0) {
         this.mod = mod
         this.privateExp = privateExponent
-        this.bytes = newInstance(XyoSchemas.RSA_PRIVATE_KEY, encoded).bytesCopy
+        this.bytes = XyoObjectStructure.newInstance(XyoSchemas.RSA_PRIVATE_KEY, encoded).bytesCopy
     }
 
     override fun getAlgorithm(): String {
