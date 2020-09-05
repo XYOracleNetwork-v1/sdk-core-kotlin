@@ -19,14 +19,14 @@ open class XyoObjectStructure {
     /**
      * The primary data input for the XyoObjectStructure. This buffer will not be read before the allowedOffset.
      */
-    open var bytes : ByteArray
+    var bytes : ByteArray
 
     /**
      * The starting offset of where to read. This buffer will not be read past this buffer.
      */
-    var allowedOffset : Int = 0
+    var allowedOffset : Int
 
-    private var headerSize : Int = 2
+    private var headerSize : Int
 
     /**
      * The XyoObjectSchema of the XyoObjectStructure

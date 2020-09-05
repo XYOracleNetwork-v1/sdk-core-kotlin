@@ -29,15 +29,7 @@ abstract class XyoEcSecp256K1 (privateKey: ECPrivateKey?) : XyoGeneralEc(private
 
     override fun ecKeyPairToXyoKeyPair(ecPublicKey: ECPublicKey, ecPrivateKey : ECPrivateKey): KeyPair {
         return KeyPair(
-                object : XyoUncompressedEcPublicKey() {
-                    override val x: BigInteger
-                        get() = ecPublicKey.q.xCoord.toBigInteger()
-
-                    override val y: BigInteger
-                        get() = ecPublicKey.q.yCoord.toBigInteger()
-
-                    override val ecSpec: ECParameterSpec = spec
-                },
+                XyoUncompressedEcPublicKey(spec, ecPublicKey.q.xCoord.toBigInteger(), ecPublicKey.q.yCoord.toBigInteger()),
                 XyoEcPrivateKey.getInstanceFromQ(ecPrivateKey.d, spec)
         )
     }

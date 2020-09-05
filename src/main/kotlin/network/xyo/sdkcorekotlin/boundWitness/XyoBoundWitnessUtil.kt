@@ -68,7 +68,7 @@ object XyoBoundWitnessUtil {
         for (i in 0 until (boundWitness.numberOfParties ?: 0)) {
 
             val fetter = boundWitness.getFetterOfParty(i) ?: return null
-            if (XyoBoundWitnessUtil.checkPartyForPublicKey(fetter, publicKey)) {
+            if (checkPartyForPublicKey(fetter, publicKey)) {
                 return i
             }
 

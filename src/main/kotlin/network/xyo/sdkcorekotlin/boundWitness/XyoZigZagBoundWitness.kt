@@ -22,17 +22,28 @@ import kotlin.collections.ArrayList
  * @property signedPayload the signed payload to put in the bound witness fetter.
  * @property unsignedPayload the un-signed payload to put in the bound witness witness.
  */
-open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
-                                 private val signedPayload : Array<XyoObjectStructure>,
-                                 private val unsignedPayload: Array<XyoObjectStructure>) : XyoBoundWitness() {
+open class XyoZigZagBoundWitness : XyoBoundWitness {
+
+    private val signers : Array<XyoSigner>
+    private val signedPayload : Array<XyoObjectStructure>
+    private val unsignedPayload: Array<XyoObjectStructure>
+
+    constructor(signers : Array<XyoSigner>,
+                signedPayload : Array<XyoObjectStructure>,
+                unsignedPayload: Array<XyoObjectStructure>)
+            : super(createUntypedIterableObject(
+                XyoSchemas.BW,
+                ArrayList<XyoObjectStructure>().toTypedArray()).bytesCopy
+    ) {
+        this.signers = signers
+        this.signedPayload = signedPayload
+        this.unsignedPayload = unsignedPayload
+    }
 
     /**
      * A ledger to add and remove bound witness fetters and witness while constructing.
      */
     private val dynamicLeader = ArrayList<XyoObjectStructure>()
-
-    override var bytes: ByteArray = byteArrayOf()
-        get() =  XyoIterableStructure.createUntypedIterableObject(XyoSchemas.BW, dynamicLeader.toTypedArray()).bytesCopy
 
     /**
      * The state carried, if the party creating this bound witness has sent the fetter
@@ -140,12 +151,12 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
         }
 
         if (fetters.size == 0 && witnesses.size != 0) {
-            return XyoIterableStructure.createTypedIterableObject(XyoSchemas.WITNESS_SET, witnesses.toTypedArray())
+            return createTypedIterableObject(XyoSchemas.WITNESS_SET, witnesses.toTypedArray())
         } else if(numberOfFetters != 0 && numberOfWitnesses == 0) {
-            return XyoIterableStructure.createTypedIterableObject(XyoSchemas.FETTER_SET, fetters.toTypedArray())
+            return createTypedIterableObject(XyoSchemas.FETTER_SET, fetters.toTypedArray())
         }
 
-        return  XyoIterableStructure.createUntypedIterableObject(XyoSchemas.BW_FRAGMENT, itemsToTransfer)
+        return createUntypedIterableObject(XyoSchemas.BW_FRAGMENT, itemsToTransfer)
     }
 
     /**
@@ -175,7 +186,7 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
         for (signer in signers) {
             publicKeys.add(signer.publicKey)
         }
-        return XyoIterableStructure.createUntypedIterableObject(XyoSchemas.KEY_SET, publicKeys.toTypedArray())
+        return createUntypedIterableObject(XyoSchemas.KEY_SET, publicKeys.toTypedArray())
     }
 
     /**
@@ -185,7 +196,7 @@ open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
      * @return The newly created witness.
      */
     private suspend fun signBoundWitness (payload: Array<XyoObjectStructure>) : XyoObjectStructure {
-        return createWitness(payload, XyoIterableStructure.createUntypedIterableObject(XyoSchemas.SIGNATURE_SET, Array(signers.size) { i ->
+        return createWitness(payload, createUntypedIterableObject(XyoSchemas.SIGNATURE_SET, Array(signers.size) { i ->
             signCurrent(signers[i])
         }))
     }

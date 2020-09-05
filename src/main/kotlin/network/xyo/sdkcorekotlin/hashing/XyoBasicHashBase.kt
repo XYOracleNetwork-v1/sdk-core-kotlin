@@ -1,7 +1,6 @@
 package network.xyo.sdkcorekotlin.hashing
 
 import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
-import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 import java.security.MessageDigest
 
 /**
@@ -23,7 +22,7 @@ open class XyoBasicHashBase(byteArray: ByteArray, hash: ByteArray) : XyoHash(has
 
         override suspend fun createHash (data: ByteArray) : XyoHash {
             val hash = generateHash(data)
-            val item = XyoObjectStructure.newInstance(schema, hash)
+            val item = newInstance(schema, hash)
 
             return XyoBasicHashBase(item.bytesCopy, hash)
         }

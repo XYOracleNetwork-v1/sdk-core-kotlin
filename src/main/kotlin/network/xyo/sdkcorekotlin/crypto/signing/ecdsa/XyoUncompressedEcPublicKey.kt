@@ -1,9 +1,7 @@
 package network.xyo.sdkcorekotlin.crypto.signing.ecdsa
 
-import network.xyo.sdkcorekotlin.schemas.XyoInterpret
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.crypto.signing.XyoPublicKey
-import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 import org.bouncycastle.jce.interfaces.ECPublicKey
 import org.bouncycastle.jce.spec.ECParameterSpec
 import org.bouncycastle.math.ec.ECPoint
@@ -14,30 +12,39 @@ import java.nio.ByteBuffer
 /**
  * A base class for all uncompressed EC public keys.
  */
-abstract class XyoUncompressedEcPublicKey : ECPublicKey, XyoPublicKey(byteArrayOf(), 0) {
+class XyoUncompressedEcPublicKey : ECPublicKey, XyoPublicKey {
+
+    constructor(ecSpec: ECParameterSpec, bytes: ByteArray) :super(bytes) {
+        this.ecSpec = ecSpec
+        this.bytes = getObjectEncoded(XyoSchemas.EC_PUBLIC_KEY, encoded)
+        this.x = BigInteger(1, valueCopy.copyOfRange(0, 32))
+        this.y = BigInteger(1, valueCopy.copyOfRange(32, 64))
+    }
+
+    constructor(ecSpec: ECParameterSpec, x: BigInteger, y: BigInteger) :super() {
+        this.ecSpec = ecSpec
+        this.x = x
+        this.y = y
+    }
+
     /**
      * The Java ECParameterSpec to understand the public key (x and y).
      */
-    abstract val ecSpec : ECParameterSpec
+    val ecSpec : ECParameterSpec
 
     /**
      * The X point of the public key.
      */
-    open val x : BigInteger
-        get() = BigInteger(1, valueCopy.copyOfRange(0, 32))
+    val x : BigInteger
 
     /**
      * The Y point of the public key.
      */
-    open val y : BigInteger
-        get() = BigInteger(1, valueCopy.copyOfRange(32, 64))
+    val y : BigInteger
 
     override fun getAlgorithm(): String {
         return "EC"
     }
-
-    override var bytes: ByteArray = byteArrayOf()
-        get() = XyoObjectStructure.getObjectEncoded(XyoSchemas.EC_PUBLIC_KEY, encoded)
 
     override fun getEncoded(): ByteArray {
         val buffer = ByteBuffer.allocate(64)

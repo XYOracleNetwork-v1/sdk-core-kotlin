@@ -1,10 +1,8 @@
 package network.xyo.sdkobjectmodelkotlin
 
-import network.xyo.sdkobjectmodelkotlin.exceptions.XyoObjectIteratorException
 import network.xyo.sdkobjectmodelkotlin.structure.XyoIterableStructure
 import org.junit.Assert
 import org.junit.Test
-import java.math.BigInteger
 
 class XyoObjectIteratorTest  {
 

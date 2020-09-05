@@ -5,7 +5,6 @@ import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 import org.junit.Assert
 import org.junit.Test
-import java.math.BigInteger
 
 class XyoObjectSetCreatorTest {
     private val objectOneSchema = object : XyoObjectSchema() {

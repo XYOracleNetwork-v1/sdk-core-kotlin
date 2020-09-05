@@ -1,7 +1,6 @@
 package network.xyo.sdkcorekotlin.hashing
 
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
-import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 import org.bouncycastle.jcajce.provider.digest.SHA3
 

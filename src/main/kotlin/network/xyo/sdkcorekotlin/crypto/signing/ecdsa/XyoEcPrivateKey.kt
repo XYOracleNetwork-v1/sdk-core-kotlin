@@ -2,7 +2,6 @@ package network.xyo.sdkcorekotlin.crypto.signing.ecdsa
 
 import network.xyo.sdkcorekotlin.crypto.signing.XyoPrivateKey
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
-import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 import org.bouncycastle.jce.interfaces.ECPrivateKey
 import org.bouncycastle.jce.spec.ECParameterSpec
 import java.math.BigInteger
@@ -18,13 +17,13 @@ class XyoEcPrivateKey : ECPrivateKey, XyoPrivateKey {
     constructor(byteArray: ByteArray, ecSpec: ECParameterSpec) : super(byteArray) {
         this.ecSpec = ecSpec
         this.q = null
-        this.bytes = XyoObjectStructure.newInstance(XyoSchemas.EC_PRIVATE_KEY, d.toByteArray()).bytesCopy
+        this.bytes = newInstance(XyoSchemas.EC_PRIVATE_KEY, d.toByteArray()).bytesCopy
     }
 
     constructor(q: BigInteger, ecSpec: ECParameterSpec) : super() {
         this.ecSpec = ecSpec
         this.q = q
-        this.bytes = XyoObjectStructure.newInstance(XyoSchemas.EC_PRIVATE_KEY, d.toByteArray()).bytesCopy
+        this.bytes = newInstance(XyoSchemas.EC_PRIVATE_KEY, d.toByteArray()).bytesCopy
     }
 
     override fun getAlgorithm(): String {

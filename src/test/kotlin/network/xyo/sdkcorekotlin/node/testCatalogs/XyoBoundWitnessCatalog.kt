@@ -1,8 +1,9 @@
+@file:Suppress("UnusedImport")
+
 package network.xyo.sdkcorekotlin.node.testCatalogs
 
 import network.xyo.sdkcorekotlin.network.XyoProcedureCatalog
 import network.xyo.sdkcorekotlin.network.XyoProcedureCatalogFlags
-import kotlin.experimental.and
 
 object XyoBoundWitnessCatalog : XyoProcedureCatalog {
     override fun canDo(byteArray: ByteArray): Boolean {

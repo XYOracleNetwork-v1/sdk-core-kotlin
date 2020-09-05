@@ -47,16 +47,13 @@ class XyoSha256WithSecp256K (privateKey : ECPrivateKey?) : XyoEcSecp256K1(privat
         }
 
         override fun newInstance(privateKey: ByteArray): XyoSigner {
-            return XyoSha256WithSecp256K(XyoEcPrivateKey.getInstance(privateKey, XyoEcSecp256K1.ecSpec))
+            return XyoSha256WithSecp256K(XyoEcPrivateKey.getInstance(privateKey, ecSpec))
         }
 
         override suspend fun verifySign(signature: XyoObjectStructure, byteArray: ByteArray, publicKey: XyoObjectStructure): Boolean {
             try {
                 val signer = ECDSASigner()
-                val uncompressedKey = object :XyoUncompressedEcPublicKey() {
-                    override val ecSpec: ECParameterSpec = XyoEcSecp256K1.ecSpec
-                    override var bytes: ByteArray = publicKey.bytesCopy
-                }
+                val uncompressedKey = XyoUncompressedEcPublicKey(ecSpec, publicKey.bytesCopy)
 
                 val ecDomainParameters = ECDomainParameters(ecCurve.curve, ecCurve.g, ecCurve.n)
                 signer.init(false, ECPublicKeyParameters(ecCurve.curve.createPoint(uncompressedKey.x, uncompressedKey.y), ecDomainParameters))

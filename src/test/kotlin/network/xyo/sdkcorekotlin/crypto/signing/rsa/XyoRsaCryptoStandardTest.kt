@@ -2,8 +2,6 @@ package network.xyo.sdkcorekotlin.crypto.signing.rsa
 
 import kotlinx.coroutines.runBlocking
 import network.xyo.sdkcorekotlin.XyoTestBase
-import network.xyo.sdkcorekotlin.crypto.signing.rsa.XyoRsaPublicKey
-import network.xyo.sdkcorekotlin.crypto.signing.rsa.XyoRsaWithSha256
 import org.junit.Assert
 import org.junit.Test
 

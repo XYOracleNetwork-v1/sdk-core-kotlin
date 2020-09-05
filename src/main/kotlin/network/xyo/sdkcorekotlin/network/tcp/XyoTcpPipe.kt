@@ -40,12 +40,12 @@ open class XyoTcpPipe(private val socket: Socket,
         return arrayOf()
     }
 
-    override suspend fun send(data: ByteArray, waitForResponse: Boolean): ByteArray? {
+    override suspend fun sendAsync(data: ByteArray, waitForResponse: Boolean): ByteArray? {
         try {
             XyoLog.logDebug("Send Request", TAG)
             return withTimeout(NO_RESPONSE_TIMEOUT.toLong()) {
                 return@withTimeout GlobalScope.async(Dispatchers.IO) {
-                    return@async send(waitForResponse, data).await()
+                    return@async sendAsync(waitForResponse, data).await()
                 }.await()
             }
 
@@ -76,7 +76,7 @@ open class XyoTcpPipe(private val socket: Socket,
         return message
     }
 
-    private fun send(waitForResponse: Boolean, data: ByteArray) = GlobalScope.async(Dispatchers.IO) {
+    private fun sendAsync(waitForResponse: Boolean, data: ByteArray) = GlobalScope.async(Dispatchers.IO) {
         try {
             val buffer = ByteBuffer.allocate(4 + data.size)
             buffer.putInt(data.size + 4)

@@ -20,7 +20,7 @@ interface  XyoNetworkPipe {
      * @param data The data to send to the other peer.
      * @return A deferred response from the other peer.
      */
-    suspend fun send (data : ByteArray, waitForResponse : Boolean) : ByteArray?
+    suspend fun sendAsync (data : ByteArray, waitForResponse : Boolean) : ByteArray?
 
     /**
      * Closes the pipe.
