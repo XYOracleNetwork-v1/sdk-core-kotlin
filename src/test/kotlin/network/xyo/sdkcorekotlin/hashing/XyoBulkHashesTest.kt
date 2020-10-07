@@ -6,7 +6,7 @@ import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import org.junit.Assert.assertArrayEquals
 import org.junit.Test
 
-
+@ExperimentalStdlibApi
 class XyoBulkHashesTest : XyoTestBase() {
     private val calibrationSeed = byteArrayOf(0x01, 0x02, 0x03)
 

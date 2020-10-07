@@ -7,7 +7,8 @@ import network.xyo.sdkobjectmodelkotlin.structure.XyoIterableStructure
 import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 import org.junit.Assert
 import org.junit.Test
-
+@ExperimentalUnsignedTypes
+@ExperimentalStdlibApi
 class XyoBoundWitnessUtilTest : XyoTestBase() {
 
     @Test

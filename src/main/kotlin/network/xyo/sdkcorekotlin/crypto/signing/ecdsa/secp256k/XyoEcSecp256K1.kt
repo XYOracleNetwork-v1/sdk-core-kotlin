@@ -17,6 +17,7 @@ import java.security.KeyPair
 /**
  * A base class for all EC operations using the Secp256K curve.
  */
+@ExperimentalStdlibApi
 abstract class XyoEcSecp256K1 (privateKey: ECPrivateKey?) : XyoGeneralEc(privateKey) {
     override val spec: ECParameterSpec
         get() = ecSpec

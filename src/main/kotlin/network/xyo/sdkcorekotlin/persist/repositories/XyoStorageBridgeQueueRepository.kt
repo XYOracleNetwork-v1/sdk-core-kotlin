@@ -9,6 +9,7 @@ import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 import java.lang.Math.min
 import java.nio.ByteBuffer
 
+@ExperimentalStdlibApi
 class XyoStorageBridgeQueueRepository (private val store: XyoKeyValueStore) : XyoBridgeQueueRepository {
     private var queueCache = ArrayList<XyoBridgeQueueItem>()
 

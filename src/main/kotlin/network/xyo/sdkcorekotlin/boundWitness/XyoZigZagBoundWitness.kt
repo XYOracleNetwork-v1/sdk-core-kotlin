@@ -22,6 +22,7 @@ import kotlin.collections.ArrayList
  * @property signedPayload the signed payload to put in the bound witness fetter.
  * @property unsignedPayload the un-signed payload to put in the bound witness witness.
  */
+@ExperimentalStdlibApi
 open class XyoZigZagBoundWitness(private val signers : Array<XyoSigner>,
                                  private val signedPayload : Array<XyoObjectStructure>,
                                  private val unsignedPayload: Array<XyoObjectStructure>) : XyoBoundWitness() {

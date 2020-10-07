@@ -10,6 +10,7 @@ import java.math.BigInteger
 /**
  * A base class for EC private key generation.
  */
+@ExperimentalStdlibApi
 class XyoEcPrivateKey : ECPrivateKey, XyoPrivateKey {
 
     val ecSpec: ECParameterSpec

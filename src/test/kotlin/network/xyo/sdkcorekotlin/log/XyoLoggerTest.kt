@@ -3,7 +3,7 @@ package network.xyo.sdkcorekotlin.log
 import network.xyo.sdkcorekotlin.XyoTestBase
 import org.junit.Test
 import java.lang.Exception
-
+@ExperimentalStdlibApi
 class XyoLoggerTest : XyoTestBase() {
 
     private fun testLogInterface (logger : XyoLogger) {

@@ -9,6 +9,7 @@ import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
  * A helper object to preform PURE operations on bound witnesses, meaning irrelevant to origin related topics. For
  * Origin related items, please see XyoOriginBoundWitnessUtil.
  */
+@ExperimentalStdlibApi
 object XyoBoundWitnessUtil {
 
     /**

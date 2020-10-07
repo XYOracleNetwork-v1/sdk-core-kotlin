@@ -8,6 +8,7 @@ import java.nio.ByteBuffer
 /**
  * A simple unix time heuristic
  */
+@ExperimentalStdlibApi
 class XyoUnixTime (byteArray: ByteArray) : XyoObjectStructure(byteArray, 0) {
 
     /**

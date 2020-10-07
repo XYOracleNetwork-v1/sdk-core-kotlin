@@ -27,6 +27,7 @@ import kotlin.math.min
  * @param storageProvider A place to store all origin blocks.
  * @property hashingProvider A hashing provider to use hashing utilities.
  */
+@ExperimentalStdlibApi
 open class XyoOriginChainCreator (val blockRepository: XyoOriginBlockRepository,
                                   val stateRepository: XyoOriginChainStateRepository,
                                   private val hashingProvider : XyoHash.XyoHashProvider) {

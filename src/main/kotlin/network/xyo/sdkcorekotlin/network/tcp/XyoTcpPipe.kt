@@ -18,6 +18,7 @@ import java.nio.ByteBuffer
  * @property socket The current socket.
  * @param initiationData The data that was sent with the first request.
  */
+@ExperimentalStdlibApi
 open class XyoTcpPipe(private val socket: Socket,
                       override var initiationData: XyoAdvertisePacket?) : XyoNetworkPipe {
 

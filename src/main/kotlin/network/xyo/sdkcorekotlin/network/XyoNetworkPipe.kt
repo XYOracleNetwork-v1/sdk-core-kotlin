@@ -7,6 +7,7 @@ import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
  * This library comes with two implementations, a memory pipe used for testing and simulations, 
  * and a tcp device with for communicating with tcp/ip devices.
  */
+@ExperimentalStdlibApi
 interface  XyoNetworkPipe {
 
     /**

@@ -7,32 +7,31 @@ import org.junit.Assert
 import org.junit.Test
 import java.math.BigInteger
 
+@ExperimentalUnsignedTypes
+@ExperimentalStdlibApi
 class XyoObjectSetCreatorTest {
-    private val objectOneSchema = object : XyoObjectSchema() {
-        override val id: Byte = 0x44
-        override val isIterable: Boolean = false
-        override val isTyped: Boolean = false
-        override val meta: XyoObjectSchemaMeta? = null
-        override val sizeIdentifier: Int = 1
-    }
+    private val objectOneSchema = XyoObjectSchema(
+            0x44,
+            isIterable = false,
+            isTyped = false,
+            sizeIdentifier = XyoObjectSchema.Companion.SizeIdentifier.One,
+            meta = null)
 
-    private val objectTwoSchema = object : XyoObjectSchema() {
-        override val id: Byte = 0x42
-        override val isIterable: Boolean = false
-        override val isTyped: Boolean = false
-        override val meta: XyoObjectSchemaMeta? = null
-        override val sizeIdentifier: Int = 1
-    }
+    private val objectTwoSchema = XyoObjectSchema(
+            0x42,
+            isIterable = false,
+            isTyped = false,
+            sizeIdentifier = XyoObjectSchema.Companion.SizeIdentifier.One,
+            meta = null)
 
     @Test
     fun testCreateUntypedSet () {
-        val setSchema = object : XyoObjectSchema() {
-            override val id: Byte = 0x41
-            override val isIterable: Boolean = true
-            override val isTyped: Boolean = false
-            override val meta: XyoObjectSchemaMeta? = null
-            override val sizeIdentifier: Int = 1
-        }
+        val setSchema = XyoObjectSchema(
+            0x41,
+            isIterable = true,
+            isTyped = false,
+            sizeIdentifier = XyoObjectSchema.Companion.SizeIdentifier.One,
+            meta = null)
 
         val objectOne = XyoObjectStructure.newInstance(objectOneSchema, byteArrayOf(0x13))
         val objectTwo =  XyoObjectStructure.newInstance(objectTwoSchema, byteArrayOf(0x37))
@@ -44,13 +43,12 @@ class XyoObjectSetCreatorTest {
 
     @Test
     fun testCreateTypedSet () {
-        val setSchema = object : XyoObjectSchema() {
-            override val id: Byte = 0x41
-            override val isIterable: Boolean = true
-            override val isTyped: Boolean = true
-            override val meta: XyoObjectSchemaMeta? = null
-            override val sizeIdentifier: Int = 1
-        }
+        val setSchema = XyoObjectSchema(
+                0x41,
+                isIterable = true,
+                isTyped = true,
+                sizeIdentifier = XyoObjectSchema.Companion.SizeIdentifier.One,
+                meta = null)
 
         val objectOne = XyoObjectStructure.newInstance(objectOneSchema, byteArrayOf(0x13))
         val objectTwo =  XyoObjectStructure.newInstance(objectOneSchema, byteArrayOf(0x37))

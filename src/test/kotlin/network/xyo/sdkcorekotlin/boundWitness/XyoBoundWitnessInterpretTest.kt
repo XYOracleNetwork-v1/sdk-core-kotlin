@@ -6,7 +6,7 @@ import network.xyo.sdkcorekotlin.hashing.XyoBasicHashBase
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import org.junit.Assert
 import org.junit.Test
-
+@ExperimentalStdlibApi
 class XyoBoundWitnessInterpretTest : XyoTestBase() {
 
     @Test

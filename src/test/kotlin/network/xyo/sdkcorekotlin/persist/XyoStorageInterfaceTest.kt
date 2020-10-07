@@ -4,7 +4,7 @@ import kotlinx.coroutines.runBlocking
 import network.xyo.sdkcorekotlin.XyoTestBase
 import org.junit.Assert
 import org.junit.Test
-
+@ExperimentalStdlibApi
 class XyoStorageInterfaceTest : XyoTestBase() {
 
     private fun testStorageInterface (storageProviderInterface: XyoKeyValueStore) = runBlocking {

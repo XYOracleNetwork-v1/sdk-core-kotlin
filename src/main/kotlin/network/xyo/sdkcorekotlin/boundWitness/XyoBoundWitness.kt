@@ -12,6 +12,7 @@ import network.xyo.sdkobjectmodelkotlin.structure.XyoIterableStructure
  * A Bound Witness Object that is independent of origin state. This implements the cryptographic structure discussed
  * in the XYO Network Yellow Paper, and White Paper.
  */
+@ExperimentalStdlibApi
 open class XyoBoundWitness(byteArray: ByteArray = startingBytes, offset: Int = 0) : XyoIterableStructure(byteArray, offset) {
 
     /**

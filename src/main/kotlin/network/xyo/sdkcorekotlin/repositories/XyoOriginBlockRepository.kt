@@ -8,6 +8,7 @@ import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
  * An interface that removes an origin block from the navigator and from persist, 
  * each method throws an XyoStorageException in the case of an error in operation.
  */
+@ExperimentalStdlibApi
 interface XyoOriginBlockRepository {
     /**
      * Removes an origin block from the navigator and from persist

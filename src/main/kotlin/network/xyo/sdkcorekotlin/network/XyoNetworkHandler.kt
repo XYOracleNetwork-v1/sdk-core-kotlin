@@ -6,6 +6,7 @@ import java.nio.ByteBuffer
  * Helps send network protocol packets over a XyoNetworkPipe.
  * @property pipe the XYO pipe used for protocol packet sending
  */
+@ExperimentalStdlibApi
 class XyoNetworkHandler (val pipe: XyoNetworkPipe) {
 
     suspend fun sendCataloguePacket(catalogue: ByteArray) : ByteArray? {

@@ -5,15 +5,50 @@ import network.xyo.sdkobjectmodelkotlin.schema.XyoObjectSchema
 import network.xyo.sdkobjectmodelkotlin.toHexString
 import java.nio.*
 
+@ExperimentalUnsignedTypes
+enum class ObjectId(val value: UByte) {
+    RsaSignature(0x0a.toUByte())
+}
+
+@ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
+class XyoObjectHeader {
+
+    val bytes: UByteArray
+
+    constructor(bytes: UByteArray) {
+        this.bytes = bytes
+    }
+
+    constructor(id: UByte, flags: UByte) {
+        this.bytes = ubyteArrayOf(flags, id)
+    }
+
+    constructor(id: ObjectId, flags: XyoObjectFlags) {
+        this.bytes = ubyteArrayOf(flags.value, id.value)
+    }
+}
+
 /**
  * A base class for <i>XyoObjects</i>. This is used for obtaining the schema, value, and size of the item.
  */
+@ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
 open class XyoObjectStructure {
 
     constructor (bytes: ByteArray? = null, allowedOffset: Int? = null, headerSize: Int? = null) {
         this.bytes = bytes ?: byteArrayOf()
         this.allowedOffset = allowedOffset ?: 0
         this.headerSize = headerSize ?: 2
+    }
+
+    constructor (id: ObjectId, iterable: Boolean, typed: Boolean, data: ByteArray) {
+        val flags = XyoObjectFlags(data.size, iterable, typed)
+        this.bytes = ubyteArrayOf(flags.value, id.value).toByteArray() + data
+    }
+
+    constructor (header: ByteArray, data: ByteArray) {
+        this.bytes = header + data
     }
 
     /**
@@ -33,7 +68,7 @@ open class XyoObjectStructure {
      */
     val schema : XyoObjectSchema
         get() {
-            return XyoObjectSchema.createFromHeader(bytes.copyOfRange(allowedOffset, allowedOffset + headerSize))
+            return XyoObjectSchema(bytes.copyOfRange(allowedOffset, allowedOffset + headerSize))
         }
 
     /**
@@ -43,7 +78,7 @@ open class XyoObjectStructure {
      */
     val sizeBytes : Int
         get() {
-            return readSizeOfObject(schema.sizeIdentifier, allowedOffset + headerSize)
+            return readSizeOfObject(schema.sizeIdentifier.value.size, allowedOffset + headerSize)
         }
 
     /**
@@ -52,7 +87,7 @@ open class XyoObjectStructure {
     val valueCopy : ByteArray
         get() {
             return bytes.copyOfRange(
-                    headerSize + schema.sizeIdentifier + allowedOffset,
+                    headerSize + schema.sizeIdentifier.value.size + allowedOffset,
                     headerSize + allowedOffset + sizeBytes
             )
         }
@@ -129,9 +164,9 @@ open class XyoObjectStructure {
         fun getObjectEncoded (schema: XyoObjectSchema, value: ByteArray) : ByteArray {
             val newSchema = schema.toNewSize(XyoNumberEncoder.getSmartSize(value.size))
 
-            val buffer = ByteBuffer.allocate(value.size + newSchema.sizeIdentifier + 2)
+            val buffer = ByteBuffer.allocate(value.size + newSchema.sizeIdentifier.value.size + 2)
             buffer.put(newSchema.header)
-            buffer.put(XyoNumberEncoder.createSize(value.size, newSchema.sizeIdentifier))
+            buffer.put(XyoNumberEncoder.createSize(value.size, newSchema.sizeIdentifier.value.size))
             buffer.put(value)
             return buffer.array()
         }

@@ -15,7 +15,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.nio.ByteBuffer
 
-
+@ExperimentalStdlibApi
 class XyoOriginChainStateTest : XyoTestBase() {
     private val numberOfBlocks = 10
     private val hashCreator = XyoSha3

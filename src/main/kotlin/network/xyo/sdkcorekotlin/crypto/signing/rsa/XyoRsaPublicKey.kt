@@ -11,6 +11,7 @@ import java.security.interfaces.RSAPublicKey
 /**
  * An Xyo Encoded RSA Public key.
  */
+@ExperimentalStdlibApi
 class XyoRsaPublicKey(private val modulus : BigInteger) : RSAPublicKey, XyoPublicKey(byteArrayOf(), 0) {
     private val publicExponent : BigInteger = BigInteger(RSA_PUBLIC_EXPONENT)
 

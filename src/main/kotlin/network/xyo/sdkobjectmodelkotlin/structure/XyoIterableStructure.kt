@@ -10,6 +10,7 @@ import java.nio.ByteBuffer
 /**
  * An Iterator for iterating over sets.
  */
+@ExperimentalStdlibApi
 open class XyoIterableStructure : XyoObjectStructure {
 
     constructor (item: ByteArray, allowedOffset: Int) : super(item, allowedOffset)
@@ -71,8 +72,8 @@ open class XyoIterableStructure : XyoObjectStructure {
      */
     private fun readItemUntyped (startingOffset: Int) : XyoObjectStructure {
         val schemaOfItem = getNextHeader(startingOffset)
-        checkIndex(startingOffset + 2 + schemaOfItem.sizeIdentifier)
-        val sizeOfObject = readSizeOfObject(schemaOfItem.sizeIdentifier, startingOffset + 2)
+        checkIndex(startingOffset + 2 + schemaOfItem.sizeIdentifier.value.size)
+        val sizeOfObject = readSizeOfObject(schemaOfItem.sizeIdentifier.value.size, startingOffset + 2)
 
         if (sizeOfObject == 0) {
             throw XyoObjectIteratorException("Size can not be 0. Value: ${bytes.toHexString()}")
@@ -96,7 +97,7 @@ open class XyoIterableStructure : XyoObjectStructure {
      */
     private fun readItemTyped (startingOffset: Int) : XyoObjectStructure {
         val schemaOfItem =  globalSchema ?: throw XyoObjectIteratorException("Global schema is null!")
-        val sizeOfObject = readSizeOfObject(schemaOfItem.sizeIdentifier, startingOffset)
+        val sizeOfObject = readSizeOfObject(schemaOfItem.sizeIdentifier.value.size, startingOffset)
 
         if (sizeOfObject == 0) {
             throw XyoObjectIteratorException("Size can not be 0. Value: ${bytes.toHexString()}")
@@ -168,7 +169,7 @@ open class XyoIterableStructure : XyoObjectStructure {
      */
     private fun getNextHeader (offset : Int) : XyoObjectSchema {
         checkIndex(offset + 2)
-        return  XyoObjectSchema.createFromHeader(bytes.copyOfRange(offset, offset + 2))
+        return  XyoObjectSchema(bytes.copyOfRange(offset, offset + 2))
     }
 
     /**
@@ -224,19 +225,19 @@ open class XyoIterableStructure : XyoObjectStructure {
      */
     private fun readOwnHeader () : Int {
         val setHeader = getNextHeader(allowedOffset)
-        val totalSize = readSizeOfObject(setHeader.sizeIdentifier, allowedOffset + 2)
+        val totalSize = readSizeOfObject(setHeader.sizeIdentifier.value.size, allowedOffset + 2)
 
         if (!setHeader.isIterable) {
             throw XyoObjectIteratorException("Can not iterate on object that is not iterable. Header " +
                     "${setHeader.header[allowedOffset]}, ${setHeader.header[allowedOffset + 1]}. Value: ${bytes.toHexString()}")
         }
 
-        if (setHeader.isTyped && totalSize != setHeader.sizeIdentifier) {
-            globalSchema = getNextHeader(setHeader.sizeIdentifier + 2 + allowedOffset)
-            return 4 + setHeader.sizeIdentifier + allowedOffset
+        if (setHeader.isTyped && totalSize != setHeader.sizeIdentifier.value.size) {
+            globalSchema = getNextHeader(setHeader.sizeIdentifier.value.size + 2 + allowedOffset)
+            return 4 + setHeader.sizeIdentifier.value.size + allowedOffset
         }
 
-        return 2 + setHeader.sizeIdentifier + allowedOffset
+        return 2 + setHeader.sizeIdentifier.value.size + allowedOffset
     }
 
     /**

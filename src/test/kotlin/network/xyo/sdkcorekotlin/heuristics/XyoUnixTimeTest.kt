@@ -3,7 +3,7 @@ package network.xyo.sdkcorekotlin.heuristics
 import network.xyo.sdkcorekotlin.XyoTestBase
 import org.junit.Assert
 import org.junit.Test
-
+@ExperimentalStdlibApi
 class XyoUnixTimeTest : XyoTestBase() {
 
     @Test

@@ -13,6 +13,7 @@ import network.xyo.sdkcorekotlin.repositories.XyoOriginChainStateRepository
  * @param storageProvider A place to store all origin blocks.
  * @property hashingProvider A hashing provider to use hashing utilities.
  */
+@ExperimentalStdlibApi
 open class XyoRelayNode (blockRepository: XyoOriginBlockRepository,
                          stateRepository: XyoOriginChainStateRepository,
                          bridgeQueueRepository: XyoBridgeQueueRepository,

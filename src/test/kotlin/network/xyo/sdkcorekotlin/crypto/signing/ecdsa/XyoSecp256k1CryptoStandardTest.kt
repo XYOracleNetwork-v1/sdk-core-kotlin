@@ -8,7 +8,7 @@ import network.xyo.sdkcorekotlin.schemas.XyoSchemas.EC_PRIVATE_KEY
 import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 import org.junit.Assert
 import org.junit.Test
-
+@ExperimentalStdlibApi
 class XyoSecp256k1CryptoStandardTest : XyoTestBase() {
 
     @Test

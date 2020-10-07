@@ -20,6 +20,7 @@ import java.security.Signature
 /**
  * A Xyo Signer using EC with the Secp256K1 curve with SHA256.
  */
+@ExperimentalStdlibApi
 class XyoSha256WithSecp256K (privateKey : ECPrivateKey?) : XyoEcSecp256K1(privateKey) {
 
     override suspend fun signData(byteArray: ByteArray): XyoObjectStructure {

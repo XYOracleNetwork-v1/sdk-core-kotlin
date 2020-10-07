@@ -9,6 +9,7 @@ import java.nio.ByteBuffer
 /**
  * A base class for all EC signature operations.
  */
+@ExperimentalStdlibApi
 open class XyoEcdsaSignature(val r : BigInteger, val s : BigInteger, byteArray: ByteArray? = null) : XyoObjectStructure(byteArray) {
 
     override var bytes: ByteArray = XyoObjectStructure.getObjectEncoded(XyoSchemas.EC_SIGNATURE, encode())

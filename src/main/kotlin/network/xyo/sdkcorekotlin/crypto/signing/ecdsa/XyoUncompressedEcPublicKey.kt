@@ -14,6 +14,7 @@ import java.nio.ByteBuffer
 /**
  * A base class for all uncompressed EC public keys.
  */
+@ExperimentalStdlibApi
 abstract class XyoUncompressedEcPublicKey : ECPublicKey, XyoPublicKey(byteArrayOf(), 0) {
     /**
      * The Java ECParameterSpec to understand the public key (x and y).

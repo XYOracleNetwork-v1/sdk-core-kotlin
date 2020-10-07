@@ -8,6 +8,7 @@ import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
  * XyoCryptoSigner will create its keypair using this private key else it will create a random
  * keypair. This privateKey is obtained through a XyoSigner with getPrivate().
  */
+@ExperimentalStdlibApi
 abstract class XyoSigner {
     /**
      * The public key of the XyoSigner.

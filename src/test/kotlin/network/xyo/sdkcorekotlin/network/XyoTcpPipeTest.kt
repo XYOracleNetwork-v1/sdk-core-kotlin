@@ -14,7 +14,7 @@ import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import org.junit.Test
 import java.net.Socket
 import kotlin.experimental.or
-
+@ExperimentalStdlibApi
 class XyoTcpPipeTest : XyoTestBase( ){
 
     @Test

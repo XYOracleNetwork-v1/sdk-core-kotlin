@@ -2,7 +2,7 @@ package network.xyo.sdkcorekotlin.repositories
 
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
 import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
-
+@ExperimentalStdlibApi
 interface XyoOriginChainStateRepository {
     fun getIndex(): XyoObjectStructure?
     fun putIndex(index: XyoObjectStructure)

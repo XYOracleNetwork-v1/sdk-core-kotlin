@@ -10,6 +10,7 @@ import network.xyo.sdkobjectmodelkotlin.structure.XyoIterableStructure
  * @property allowUnknown If set to true, if an unknown signing type is valid. If false, an unknown signing type is not
  * valid.
  */
+@ExperimentalStdlibApi
 class XyoBoundWitnessVerify (private val allowUnknown : Boolean) {
 
     /**

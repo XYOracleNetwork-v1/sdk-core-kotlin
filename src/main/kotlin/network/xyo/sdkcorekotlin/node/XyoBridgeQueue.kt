@@ -6,6 +6,7 @@ import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 /**
  * A class to manage outgoing origin blocks for bridges and sentinels.
  */
+@ExperimentalStdlibApi
 open class XyoBridgeQueue (val repo: XyoBridgeQueueRepository) {
     /**
      * The maximum number of blocks to send at a given time.

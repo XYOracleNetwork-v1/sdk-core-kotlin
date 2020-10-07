@@ -10,6 +10,7 @@ import kotlin.concurrent.thread
  *
  * @property port the port number for the server
  */
+@ExperimentalStdlibApi
 class XyoTcpServer (val port: Int) {
     fun listen (callback: (pipe: XyoTcpPipe) -> (Unit)) = thread {
         val serverSocket = ServerSocket(port)

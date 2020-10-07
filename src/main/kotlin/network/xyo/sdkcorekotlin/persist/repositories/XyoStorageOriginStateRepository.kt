@@ -8,7 +8,7 @@ import network.xyo.sdkobjectmodelkotlin.structure.XyoIterableStructure
 import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 import java.nio.ByteBuffer
 
-
+@ExperimentalStdlibApi
 class XyoStorageOriginStateRepository (private val store: XyoKeyValueStore) : XyoOriginChainStateRepository {
     private var signersCache = ArrayList<XyoSigner>()
     private var staticsCache = ArrayList<XyoObjectStructure>()

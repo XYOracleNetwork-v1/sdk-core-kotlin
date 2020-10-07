@@ -12,6 +12,7 @@ import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
  * This object is a class for creating a bound witness with a pipe interface (send and receive), 
  * but does not handle network handshake
  */
+@ExperimentalStdlibApi
 class XyoZigZagBoundWitnessSession(private val handler : XyoNetworkHandler,
                                    signedPayload : Array<XyoObjectStructure>,
                                    unsignedPayload : Array<XyoObjectStructure>,

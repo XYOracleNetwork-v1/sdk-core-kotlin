@@ -16,6 +16,7 @@ import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
  * to persist.
  * @property hashingObject The hashing provider object to hash origin blocks when storing.
  */
+@ExperimentalStdlibApi
 open class XyoStorageOriginBlockRepository(protected val storageProvider: XyoKeyValueStore,
                                            protected val hashingObject: XyoHash.XyoHashProvider) : XyoOriginBlockRepository {
 

@@ -1,7 +1,7 @@
 package network.xyo.sdkcorekotlin.heuristics
 
 import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
-
+@ExperimentalStdlibApi
 interface XyoHeuristicGetter {
 
     /**

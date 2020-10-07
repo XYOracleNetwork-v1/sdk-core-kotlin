@@ -7,7 +7,7 @@ import network.xyo.sdkcorekotlin.persist.repositories.XyoStorageBridgeQueueRepos
 import network.xyo.sdkcorekotlin.persist.repositories.XyoStorageOriginBlockRepository
 import network.xyo.sdkcorekotlin.persist.repositories.XyoStorageOriginStateRepository
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
-
+@ExperimentalStdlibApi
 open class XyoTestBase {
     fun String.hexStringToByteArray() : ByteArray {
         val hexChars = "0123456789ABCDEF"

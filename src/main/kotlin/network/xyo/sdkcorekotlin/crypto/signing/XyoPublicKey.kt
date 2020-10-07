@@ -8,4 +8,5 @@ import java.security.PublicKey
  * @param byteArray
  * @param offset
  */
+@ExperimentalStdlibApi
 abstract class XyoPublicKey (byteArray: ByteArray = byteArrayOf(), offset: Int = 0) : PublicKey, XyoObjectStructure(byteArray, offset)

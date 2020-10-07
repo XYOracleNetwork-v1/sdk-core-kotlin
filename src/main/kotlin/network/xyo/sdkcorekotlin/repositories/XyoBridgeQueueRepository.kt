@@ -6,6 +6,7 @@ import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 /**
  * An interface for bridge queue storage.
  */
+@ExperimentalStdlibApi
 interface XyoBridgeQueueRepository {
     fun getQueue (): Array<XyoBridgeQueueItem>
     fun setQueue (queue:  Array<XyoBridgeQueueItem>)

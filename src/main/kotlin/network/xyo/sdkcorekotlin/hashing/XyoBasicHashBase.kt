@@ -7,11 +7,12 @@ import java.security.MessageDigest
 /**
  * A base class for fixed size hashes.
  */
+@ExperimentalStdlibApi
 open class XyoBasicHashBase(byteArray: ByteArray, hash: ByteArray) : XyoHash(hash, byteArray) {
     /**
      * A base class for creating Standard Java hashes supported by MessageDigest.
      */
-    open class XyoBasicHashBaseProvider(val standardDigestKey: String, val schema : XyoObjectSchema) : XyoHashProvider() {
+    open class XyoBasicHashBaseProvider constructor(val standardDigestKey: String, val schema : XyoObjectSchema) : XyoHashProvider() {
 
         /**
          * The MessageDigest instance key. e.g. "SHA-256"

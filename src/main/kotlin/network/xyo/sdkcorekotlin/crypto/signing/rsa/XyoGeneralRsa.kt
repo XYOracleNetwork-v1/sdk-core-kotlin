@@ -16,7 +16,7 @@ import java.security.spec.RSAPublicKeySpec
  *
  * @param keySize The size of the keypair to generate.
  */
-
+@ExperimentalStdlibApi
 abstract class XyoGeneralRsa(private val keySize : Int, privateKey: XyoRsaPrivateKey?) : XyoSigner() {
 
     /**

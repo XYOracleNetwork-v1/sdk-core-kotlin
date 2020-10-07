@@ -12,7 +12,7 @@ import network.xyo.sdkcorekotlin.node.testCatalogs.XyoBoundWitnessCatalog
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import org.junit.Test
 import java.net.Socket
-
+@ExperimentalStdlibApi
 class XyoStandardInteractionTest : XyoTestBase() {
 
     @Test

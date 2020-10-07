@@ -11,7 +11,7 @@ import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 import java.nio.ByteBuffer
 
 
-
+@ExperimentalStdlibApi
 open class XyoOriginChainStateManager (val repo: XyoOriginChainStateRepository) {
     private var waitingSigners = ArrayList<XyoSigner>()
     var nextPublicKey : XyoObjectStructure? = null

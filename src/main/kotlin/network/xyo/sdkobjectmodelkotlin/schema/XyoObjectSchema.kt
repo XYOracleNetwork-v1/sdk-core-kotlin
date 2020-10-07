@@ -2,7 +2,6 @@ package network.xyo.sdkobjectmodelkotlin.schema
 
 import network.xyo.sdkobjectmodelkotlin.exceptions.XyoSchemaException
 import org.json.JSONObject
-import java.math.BigInteger
 import kotlin.experimental.and
 import kotlin.experimental.or
 
@@ -11,33 +10,70 @@ import kotlin.experimental.or
  * as the first two bytes in an object (The encoding catalogue and the ID). You can create a XyoObjectSchema from a
  * structure's header (first 2 bytes), or from a JSON schema.
  */
-abstract class XyoObjectSchema {
+@ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
+class XyoObjectSchema {
+
+    constructor(header: ByteArray) {
+        if (header.size != 2) {
+            throw XyoSchemaException("Expected header count to be 2, saw: ${header.size}")
+        }
+        this.header = header
+        this.meta = null
+    }
+
+    constructor(encodingCatalog: Byte, id: Byte) {
+        this.header = byteArrayOf(encodingCatalog, id)
+        this.meta = null
+    }
+
+    constructor(id: Byte, isIterable: Boolean, isTyped: Boolean, sizeIdentifier: SizeIdentifier, meta: XyoObjectSchemaMeta? = null) {
+        val encodingCatalog: UByte = sizeIdentifier.value.id.rotateLeft(6).or(
+                if (isIterable) ITERABLE_MASK else 0.toUByte()).or(
+                if (isTyped) TYPED_MASK else 0.toUByte())
+        this.header = byteArrayOf(encodingCatalog.toByte(), id)
+        this.meta = meta
+    }
+
     /**
      * The ID id the the object
      */
-    abstract val id : Byte
+    val id: Byte
+        get() = header[1]
 
     /**
-     * The count of the count indicator. This value can be 1, 2, 4, 8, or null. If the value is null, this value will be
-     * chosen to optimize the count of the object. If the value is not 1, 2, 4, 8, or null, will throw a
-     * XyoSchemaException.
+     * The 2 most significant bits (big endian) that represent 1, 2, 4, or 8. This value is obtained from the
+     * sizeIdentifier. If the sizeIdentifier does not conform to these values, a XyoSchemaException will be
+     * thrown.
+     *
+     * @throws XyoSchemaException when the sizeIdentifier is not 1, 2, 4, 8, or null
      */
-    abstract val sizeIdentifier : Int
+
+    val sizeIdentifier: SizeIdentifier
+        get() {
+            val byte0 = header[0].toUByte()
+            val masked = byte0.and(SIZE_IDENTIFIER_MASK)
+            val shifted = masked.rotateRight(6)
+            return parseSizeIdentifier(shifted)
+        }
 
     /**
      * If the bytes in the object are iterable.
      */
-    abstract val isIterable : Boolean
+    val isIterable: Boolean
+        get() = header[0].toUByte().and(ITERABLE_MASK).toInt() != 0
 
     /**
      * If the bytes in the typed object are iterable and unique.
      */
-    abstract val isTyped : Boolean
+    val isTyped: Boolean
+        get() = header[0].toUByte().and(TYPED_MASK).toInt() != 0
 
     /**
      * A meta class to store information about the schema.
      */
-    abstract val meta : XyoObjectSchemaMeta?
+
+    val meta: XyoObjectSchemaMeta?
 
     /**
      * A meta class to store information about the schema.
@@ -61,71 +97,14 @@ abstract class XyoObjectSchema {
     }
 
     /**
-     * The 2 most significant bits (big endian) that represent 1, 2, 4, or 8. This value is obtained from the
-     * sizeIdentifier. If the sizeIdentifier does not conform to these values, a XyoSchemaException will be
-     * thrown.
-     *
-     * @throws XyoSchemaException when the sizeIdentifier is not 1, 2, 4, 8, or null
-     */
-    private val sizeIdentifierByte : Byte
-        get() {
-            when (sizeIdentifier) {
-                1 -> return (0x00)
-                2 -> return (0x40)
-                4 -> return (0x80.toByte())
-                8 -> return (0xC0.toByte())
-            }
-            throw XyoSchemaException("Invalid Size $sizeIdentifier")
-        }
-
-    /**
-     * The 3rd most significant bit that represents if the object is iterable. This value is obtained from
-     * isIterable.
-     */
-    private val iterableByte : Byte
-        get() {
-            if (isIterable) {
-                return 0x20
-            }
-
-            return 0x00
-        }
-
-    /**
-     * The 4th most significant bit that represents if the following object is typed.
-     */
-    private val typedByte : Byte
-        get() {
-            if (isTyped) {
-                return (0x10.toByte())
-            }
-
-            return 0x00.toByte()
-        }
-
-    /**
-     * Converts the current schema to a new schema with a different size
-     *
-     * @param newSize The new size of the schema to create
-     * @return XyoObjectSchema With the new size
-     */
-    fun toNewSize (newSize : Int) : XyoObjectSchema {
-        return object : XyoObjectSchema() {
-            override val id: Byte = this@XyoObjectSchema.id
-            override val isIterable: Boolean = this@XyoObjectSchema.isIterable
-            override val isTyped: Boolean = this@XyoObjectSchema.isTyped
-            override val meta: XyoObjectSchemaMeta? = this@XyoObjectSchema.meta
-            override val sizeIdentifier: Int = newSize
-        }
-    }
-
-    /**
      * The first byte of the object. This value contains the sizeIdentifierByte, the iterableByte, the typedByte, and
      * four reserved bits (4 least significant bits).
      */
     val encodingCatalogue : Byte
         get() {
-            return sizeIdentifierByte or iterableByte or typedByte
+            return sizeIdentifier.value.id.rotateLeft(6).or(
+                    if (isIterable) ITERABLE_MASK else 0.toUByte()).or(
+                    if (isTyped) TYPED_MASK else 0.toUByte()).toByte()
         }
 
     /**
@@ -133,72 +112,17 @@ abstract class XyoObjectSchema {
      * being the ID of the object.
      */
     val header : ByteArray
-        get() {
-            return byteArrayOf(encodingCatalogue, id)
-        }
 
+    fun toNewSize(newSize: Int): XyoObjectSchema {
+        return XyoObjectSchema(this.encodingCatalogue, this.id)
+    }
+
+    @ExperimentalUnsignedTypes
     companion object {
 
-        /**
-         * Creates a XyoObjectSchema from a given header. Note that all combinations of 2 bytes are valid, therefore
-         * make sure that the header being passed to the function is the correct header. The header must be 2 bytes,
-         * or a XyoSchemaException will be thrown.
-         *
-         * @param byteArray The header of the item to create a schema from.
-         * @return A XyoObjectSchema of the schema of the Header.
-         * @throws XyoSchemaException When the header size is not 2.
-         */
-        fun createFromHeader (header: ByteArray) : XyoObjectSchema {
-            if (header.size != 2) {
-                throw XyoSchemaException("Expected header count to be 2, saw: ${header.size}")
-            }
-
-            return object : XyoObjectSchema() {
-                override val id: Byte
-                    get() = header[1]
-
-                override val isIterable: Boolean
-                    get() = (header[0] and 0x20).toInt() != 0
-
-                override val isTyped: Boolean
-                    get() = (header[0] and 0x10).toInt() != 0
-
-                override val meta: XyoObjectSchemaMeta? = null
-
-                override val sizeIdentifier: Int
-                    get() = readSizeIdentifierFromEncodingCatalogue(header[0])
-            }
-        }
-
-        /**
-         * Checks the count identifier from the encodingCatalogue. The 2 most significant bits.
-         *
-         * @param encodingCatalogue The encodingCatalogue of the header. (The first byte)
-         * @return [1, 2, 4, or 8] depending on the encoding catalogue.
-         */
-        private fun readSizeIdentifierFromEncodingCatalogue (encodingCatalogue: Byte) : Int {
-
-            // masking the first two bits to get the result
-            // 0xC0 == 11000000
-
-            if (encodingCatalogue and 0xC0.toByte() == 0x00.toByte()) {
-                return 1
-            }
-
-            if (encodingCatalogue and 0xC0.toByte() == 0x40.toByte()) {
-                return 2
-            }
-
-            if (encodingCatalogue and 0xC0.toByte() == 0x80.toByte()) {
-                return 4
-            }
-
-            if (encodingCatalogue and 0xC0.toByte() == 0xC0.toByte()) {
-                return 8
-            }
-
-            throw XyoSchemaException("Invalid Size: ${encodingCatalogue.toString(2)}")
-        }
+        val SIZE_IDENTIFIER_MASK = (0xc0).toUByte()
+        val ITERABLE_MASK = (0x20).toUByte()
+        val TYPED_MASK = (0x10).toUByte()
         
         /**
          * Gets a schema meta object from a json object.
@@ -208,6 +132,34 @@ abstract class XyoObjectSchema {
          */        
         private fun getMetaFromJsonObject (jsonObject: JSONObject) : XyoObjectSchemaMeta {
             return XyoObjectSchemaMeta(jsonObject["name"] as String?, jsonObject["desc"] as String?)
-        }        
+        }
+
+        /**
+         * The count of the count indicator. This value can be 1, 2, 4, 8, or null. If the value is null, this value will be
+         * chosen to optimize the count of the object. If the value is not 1, 2, 4, 8, or null, will throw a
+         * XyoSchemaException.
+         */
+
+        class SizeIdentifierValue(
+            val id: UByte,
+            val size: Int
+        )
+
+        enum class SizeIdentifier(val value: SizeIdentifierValue) {
+            One(SizeIdentifierValue(0x00.toUByte(), 1)),
+            Two(SizeIdentifierValue(0x01.toUByte(), 2)),
+            Four(SizeIdentifierValue(0x02.toUByte(), 4)),
+            Eight(SizeIdentifierValue(0x03.toUByte(), 8))
+        }
+
+        fun parseSizeIdentifier(value: UByte): SizeIdentifier {
+            return when (value) {
+                SizeIdentifier.One.value.id -> SizeIdentifier.One
+                SizeIdentifier.Two.value.id -> SizeIdentifier.Two
+                SizeIdentifier.Four.value.id -> SizeIdentifier.Four
+                SizeIdentifier.Eight.value.id -> SizeIdentifier.Eight
+                else -> throw XyoSchemaException("Invalid Size: ${value.toString(2)}")
+            }
+        }
     }
 }

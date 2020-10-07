@@ -5,7 +5,7 @@ import network.xyo.sdkcorekotlin.XyoTestBase
 import network.xyo.sdkcorekotlin.crypto.signing.ecdsa.secp256k.XyoSha256WithSecp256K
 import org.junit.Assert
 import org.junit.Test
-
+@ExperimentalStdlibApi
 class XyoBoundWitnessVerifyTest : XyoTestBase() {
 
     @Test

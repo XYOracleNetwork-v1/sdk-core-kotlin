@@ -9,6 +9,7 @@ import java.security.Signature
 /**
  * The base class for RSA Signature with SHA256
  */
+@ExperimentalStdlibApi
 class XyoRsaWithSha256 (privateKey: XyoRsaPrivateKey?) : XyoGeneralRsa (1024, privateKey) {
     override val signature: Signature
         get() = signatureInstance
@@ -16,9 +17,7 @@ class XyoRsaWithSha256 (privateKey: XyoRsaPrivateKey?) : XyoGeneralRsa (1024, pr
     override suspend fun signData(byteArray: ByteArray): XyoObjectStructure {
         signature.initSign(keyPair.private)
         signature.update(byteArray)
-        return object : XyoRsaSignature() {
-            override val signature: ByteArray = this@XyoRsaWithSha256.signature.sign()
-        }
+        return XyoRsaSignature(this@XyoRsaWithSha256.signature.sign())
     }
 
     companion object : XyoSigner.XyoSignerProvider() {

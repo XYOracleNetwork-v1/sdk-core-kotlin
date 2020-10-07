@@ -15,6 +15,7 @@ import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
  * compatible keys.
  * @property bridgeQueue The queue to talk to when the XyoProcedureCatalogFlags.GIVE_ORIGIN_CHAIN flag is set.
  */
+@ExperimentalStdlibApi
 open class XyoBridgingOption (private val originBlocks: XyoOriginBlockRepository,
                               private val bridgeQueue: XyoBridgeQueue): XyoBoundWitnessOption {
 

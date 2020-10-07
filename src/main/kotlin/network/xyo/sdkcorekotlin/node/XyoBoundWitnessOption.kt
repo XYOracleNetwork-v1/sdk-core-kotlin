@@ -6,6 +6,7 @@ import network.xyo.sdkcorekotlin.boundWitness.XyoBoundWitness
  * A base class for bound witness options. For example a sentinel would have an option for
  * bridging.
  */
+@ExperimentalStdlibApi
 interface XyoBoundWitnessOption {
     /**
      * The flag of the option.

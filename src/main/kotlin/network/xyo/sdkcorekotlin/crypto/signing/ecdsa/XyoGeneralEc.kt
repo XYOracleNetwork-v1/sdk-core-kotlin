@@ -15,7 +15,7 @@ import java.security.KeyPairGenerator
  * A base class for all general EC public keys.
  * @param privateKey the EC private key to pair with the public key
  */
-
+@ExperimentalStdlibApi
 abstract class XyoGeneralEc (privateKey: ECPrivateKey?) : XyoSigner() {
 
     val keyPair: KeyPair = if (privateKey != null) {
