@@ -1,7 +1,5 @@
 package network.xyo.sdkcorekotlin.boundWitness
 
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.log.XyoLog
 import network.xyo.sdkcorekotlin.XyoException
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
@@ -30,10 +28,10 @@ class XyoZigZagBoundWitnessSession(private val handler : XyoNetworkHandler,
     suspend fun doBoundWitness(transfer: XyoIterableStructure?) : Exception? {
         try {
             if (!completed) {
-                val response = sendAndReceive(transfer != null, transfer).await()
+                val response = sendAndReceive(transfer != null, transfer)
 
                 if (cycles == 0 && transfer != null && response != null) {
-                    incomingData(response, false).await()
+                    incomingData(response, false)
                 } else {
                     cycles++
                     return doBoundWitness(response)
@@ -51,18 +49,18 @@ class XyoZigZagBoundWitnessSession(private val handler : XyoNetworkHandler,
         return null
     }
 
-    private fun sendAndReceive (didHaveData : Boolean, transfer : XyoIterableStructure?) = GlobalScope.async {
+    private suspend fun sendAndReceive (didHaveData : Boolean, transfer : XyoIterableStructure?) : XyoIterableStructure? {
         val response : ByteArray?
-        val returnData = incomingData(transfer, cycles == 0 && didHaveData).await() ?: throw XyoBoundWitnessCreationException("Response is null!")
+        val returnData = incomingData(transfer, cycles == 0 && didHaveData) ?: throw XyoBoundWitnessCreationException("Response is null!")
 
         if (cycles == 0 && !didHaveData) {
-            response = handler.sendChoicePacket(choice, returnData.bytesCopy).await() ?: throw XyoBoundWitnessCreationException("Response is null!")
+            response = handler.sendChoicePacket(choice, returnData.bytesCopy) ?: throw XyoBoundWitnessCreationException("Response is null!")
         } else {
-            response = handler.pipe.send(returnData.bytesCopy, cycles == 0).await()
+            response = handler.pipe.send(returnData.bytesCopy, cycles == 0)
             if (cycles == 0 && response == null) throw XyoBoundWitnessCreationException("Response is null!")
         }
 
-        return@async if (response == null) {
+        return if (response == null) {
                 null
             } else {
                 XyoIterableStructure(response, 0)

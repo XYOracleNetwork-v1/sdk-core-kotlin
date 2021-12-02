@@ -1,8 +1,5 @@
 package network.xyo.sdkcorekotlin.crypto.signing.rsa
 
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
@@ -16,13 +13,11 @@ class XyoRsaWithSha256 (privateKey: XyoRsaPrivateKey?) : XyoGeneralRsa (1024, pr
     override val signature: Signature
         get() = signatureInstance
 
-    override fun signData(byteArray: ByteArray): Deferred<XyoObjectStructure> {
-        return GlobalScope.async {
-            signature.initSign(keyPair.private)
-            signature.update(byteArray)
-            return@async object : XyoRsaSignature() {
-                override val signature: ByteArray = this@XyoRsaWithSha256.signature.sign()
-            }
+    override suspend fun signData(byteArray: ByteArray): XyoObjectStructure {
+        signature.initSign(keyPair.private)
+        signature.update(byteArray)
+        return object : XyoRsaSignature() {
+            override val signature: ByteArray = this@XyoRsaWithSha256.signature.sign()
         }
     }
 
@@ -42,12 +37,10 @@ class XyoRsaWithSha256 (privateKey: XyoRsaPrivateKey?) : XyoGeneralRsa (1024, pr
 
         override val supportedSignatures: Array<Byte> = arrayOf(XyoSchemas.RSA_SIGNATURE.id)
 
-        override fun verifySign(signature: XyoObjectStructure, byteArray: ByteArray, publicKey: XyoObjectStructure): Deferred<Boolean> {
-            return GlobalScope.async {
-                signatureInstance.initVerify(XyoRsaPublicKey.getInstance(publicKey.bytesCopy))
-                signatureInstance.update(byteArray)
-                return@async signatureInstance.verify(signature.valueCopy)
-            }
+        override suspend fun verifySign(signature: XyoObjectStructure, byteArray: ByteArray, publicKey: XyoObjectStructure): Boolean {
+            signatureInstance.initVerify(XyoRsaPublicKey.getInstance(publicKey.bytesCopy))
+            signatureInstance.update(byteArray)
+            return signatureInstance.verify(signature.valueCopy)
         }
     }
 }

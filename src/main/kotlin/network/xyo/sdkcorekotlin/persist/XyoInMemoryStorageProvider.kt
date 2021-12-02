@@ -1,7 +1,5 @@
 package network.xyo.sdkcorekotlin.persist
 
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -11,27 +9,27 @@ class XyoInMemoryStorageProvider : XyoKeyValueStore {
     private val keys = ArrayList<ByteArray>()
     private val storageHashMap = ConcurrentHashMap<Int, ByteArray>()
 
-    override fun containsKey(key: ByteArray) = GlobalScope.async {
-        return@async storageHashMap.containsKey(key.contentHashCode())
+    override suspend fun containsKey(key: ByteArray): Boolean {
+        return storageHashMap.containsKey(key.contentHashCode())
     }
 
-    override fun delete(key: ByteArray) = GlobalScope.async {
+    override suspend fun delete(key: ByteArray) {
         storageHashMap.remove(key.contentHashCode())
         keys.remove(key)
-        return@async
+        return
     }
 
-    override fun getAllKeys() = GlobalScope.async {
-        return@async keys.iterator()
+    override suspend fun getAllKeys(): Iterator<ByteArray> {
+        return keys.iterator()
     }
 
-    override fun read(key: ByteArray) = GlobalScope.async {
-        return@async storageHashMap[key.contentHashCode()]
+    override suspend fun read(key: ByteArray): ByteArray? {
+        return storageHashMap[key.contentHashCode()]
     }
 
-    override fun write(key: ByteArray, value: ByteArray) = GlobalScope.async {
+    override suspend fun write(key: ByteArray, value: ByteArray) {
         keys.add(key)
         storageHashMap[key.contentHashCode()] = value
-        return@async
+        return
     }
 }

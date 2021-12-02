@@ -11,22 +11,22 @@ class XyoStorageInterfaceTest : XyoTestBase() {
         val keyOfItemOne = byteArrayOf(0x00)
         val valueOfItemTwo = byteArrayOf(0x13, 37)
 
-        storageProviderInterface.write(keyOfItemOne, valueOfItemTwo).await()
+        storageProviderInterface.write(keyOfItemOne, valueOfItemTwo)
 
-        val readWhatWrote = storageProviderInterface.read(keyOfItemOne).await()
+        val readWhatWrote = storageProviderInterface.read(keyOfItemOne)
         Assert.assertArrayEquals(valueOfItemTwo, readWhatWrote)
-        Assert.assertTrue(storageProviderInterface.containsKey(keyOfItemOne).await())
+        Assert.assertTrue(storageProviderInterface.containsKey(keyOfItemOne))
 
-        val allKeys = storageProviderInterface.getAllKeys().await()
+        val allKeys = storageProviderInterface.getAllKeys()
 
         for (item in allKeys) {
             Assert.assertArrayEquals(keyOfItemOne, item)
         }
 
-        storageProviderInterface.delete(keyOfItemOne).await()
-        val readWhatWroteIfDeleted = storageProviderInterface.read(keyOfItemOne).await()
+        storageProviderInterface.delete(keyOfItemOne)
+        val readWhatWroteIfDeleted = storageProviderInterface.read(keyOfItemOne)
         Assert.assertArrayEquals(null, readWhatWroteIfDeleted)
-        Assert.assertFalse(storageProviderInterface.containsKey(keyOfItemOne).await())
+        Assert.assertFalse(storageProviderInterface.containsKey(keyOfItemOne))
     }
 
     @Test

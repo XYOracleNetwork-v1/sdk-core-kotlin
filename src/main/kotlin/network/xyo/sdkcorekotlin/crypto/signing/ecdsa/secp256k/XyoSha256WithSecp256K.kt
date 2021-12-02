@@ -1,8 +1,5 @@
 package network.xyo.sdkcorekotlin.crypto.signing.ecdsa.secp256k
 
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
 import network.xyo.sdkcorekotlin.crypto.signing.ecdsa.XyoEcPrivateKey
@@ -25,20 +22,18 @@ import java.security.Signature
  */
 class XyoSha256WithSecp256K (privateKey : ECPrivateKey?) : XyoEcSecp256K1(privateKey) {
 
-    override fun signData(byteArray: ByteArray): Deferred<XyoObjectStructure> {
-        return GlobalScope.async {
-            signatureInstance.initSign(keyPair.private)
-            signatureInstance.update(byteArray)
-            signatureInstance.sign()
+    override suspend fun signData(byteArray: ByteArray): XyoObjectStructure {
+        signatureInstance.initSign(keyPair.private)
+        signatureInstance.update(byteArray)
+        signatureInstance.sign()
 
-            val pam = ECPrivateKeyParameters((keyPair.private as XyoEcPrivateKey).d, ecDomainParameters)
+        val pam = ECPrivateKeyParameters((keyPair.private as XyoEcPrivateKey).d, ecDomainParameters)
 
-            val signer = ECDSASigner()
-            signer.init(true, pam)
-            val sig = signer.generateSignature(hashData(byteArray))
+        val signer = ECDSASigner()
+        signer.init(true, pam)
+        val sig = signer.generateSignature(hashData(byteArray))
 
-            return@async XyoEcdsaSignature(sig[0], sig[1])
-        }
+        return XyoEcdsaSignature(sig[0], sig[1])
     }
 
     companion object : XyoSigner.XyoSignerProvider() {
@@ -55,7 +50,7 @@ class XyoSha256WithSecp256K (privateKey : ECPrivateKey?) : XyoEcSecp256K1(privat
             return XyoSha256WithSecp256K(XyoEcPrivateKey.getInstance(privateKey, XyoEcSecp256K1.ecSpec))
         }
 
-        override fun verifySign(signature: XyoObjectStructure, byteArray: ByteArray, publicKey: XyoObjectStructure): Deferred<Boolean> = GlobalScope.async {
+        override suspend fun verifySign(signature: XyoObjectStructure, byteArray: ByteArray, publicKey: XyoObjectStructure): Boolean {
             try {
                 val signer = ECDSASigner()
                 val uncompressedKey = object :XyoUncompressedEcPublicKey() {
@@ -73,11 +68,11 @@ class XyoSha256WithSecp256K (privateKey : ECPrivateKey?) : XyoEcSecp256K1(privat
                 val r = ecSig.r
                 val s = ecSig.s
 
-                return@async signer.verifySignature(hashData(byteArray), r, s)
+                return signer.verifySignature(hashData(byteArray), r, s)
 
                 // if point is not on curve
             } catch (e : IllegalArgumentException) {
-                return@async false
+                return false
             }
         }
 

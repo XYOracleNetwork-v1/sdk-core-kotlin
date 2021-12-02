@@ -1,6 +1,5 @@
 package network.xyo.sdkcorekotlin.network
 
-import kotlinx.coroutines.Deferred
 import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 
 /**
@@ -21,12 +20,12 @@ interface  XyoNetworkPipe {
      * @param data The data to send to the other peer.
      * @return A deferred response from the other peer.
      */
-    fun send (data : ByteArray, waitForResponse : Boolean) : Deferred<ByteArray?>
+    suspend fun send (data : ByteArray, waitForResponse : Boolean) : ByteArray?
 
     /**
      * Closes the pipe.
      */
-    fun close() : Deferred<Any?>
+    suspend fun close() : Boolean
 
     fun getNetworkHeuristics (): Array<XyoObjectStructure>
 }

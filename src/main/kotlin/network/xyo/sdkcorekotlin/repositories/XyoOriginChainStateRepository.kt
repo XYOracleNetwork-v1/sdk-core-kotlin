@@ -1,6 +1,5 @@
 package network.xyo.sdkcorekotlin.repositories
 
-import kotlinx.coroutines.Deferred
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
 import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 
@@ -16,5 +15,5 @@ interface XyoOriginChainStateRepository {
     fun setStaticHeuristics (statics: Array<XyoObjectStructure>)
     fun onBoundWitness ()
     fun getLastBoundWitnessTime () : Long?
-    fun commit(): Deferred<Unit>
+    suspend fun commit()
 }

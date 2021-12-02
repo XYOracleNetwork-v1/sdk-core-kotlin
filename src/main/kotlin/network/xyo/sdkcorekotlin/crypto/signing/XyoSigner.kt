@@ -1,8 +1,5 @@
 package network.xyo.sdkcorekotlin.crypto.signing
 
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import network.xyo.sdkobjectmodelkotlin.structure.XyoObjectStructure
 
 /**
@@ -30,7 +27,7 @@ abstract class XyoSigner {
      * @return A deferred cryptographic signature of the data field, that was
      * created with the private key, in the form of a XyoObject
      */
-    abstract fun signData (byteArray: ByteArray) : Deferred<XyoObjectStructure>
+    abstract suspend fun signData (byteArray: ByteArray) : XyoObjectStructure
 
     /**
      * Gives access to a XyoSigner that can perform public key cryptographic functions.
@@ -59,9 +56,9 @@ abstract class XyoSigner {
          * @return If the signature is valid, the deferred Boolean will be true, if it is invalid the deferred
          * <Boolean> will be false.
          */
-        abstract fun verifySign (signature: XyoObjectStructure,
+        abstract suspend fun verifySign (signature: XyoObjectStructure,
                                  byteArray: ByteArray,
-                                 publicKey : XyoObjectStructure) : Deferred<Boolean>
+                                 publicKey : XyoObjectStructure) : Boolean
 
         /**
          * The key to identify the signer provider by so it can be added to a mapping.
@@ -120,15 +117,15 @@ abstract class XyoSigner {
         private val verifiers = HashMap<Byte, HashMap<Byte, XyoSignerProvider>>()
         private val signingCreators = HashMap<Byte, XyoSignerProvider>()
 
-        fun verify (publicKey: XyoObjectStructure, signature: XyoObjectStructure, data : ByteArray) : Deferred<Boolean?> = GlobalScope.async {
+        suspend fun verify (publicKey: XyoObjectStructure, signature: XyoObjectStructure, data : ByteArray) : Boolean? {
             val headerPublicKey = publicKey.schema.id
             val creator = verifiers[headerPublicKey]?.get(signature.schema.id)
 
             if (creator != null) {
-                return@async creator.verifySign(signature, data, publicKey).await()
+                return creator.verifySign(signature, data, publicKey)
             }
 
-            return@async null
+            return null
         }
     }
 }

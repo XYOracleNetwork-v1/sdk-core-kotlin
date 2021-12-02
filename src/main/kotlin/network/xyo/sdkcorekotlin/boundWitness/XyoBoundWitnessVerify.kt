@@ -1,8 +1,5 @@
 package network.xyo.sdkcorekotlin.boundWitness
 
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import network.xyo.sdkcorekotlin.crypto.signing.XyoSigner
 import network.xyo.sdkcorekotlin.schemas.XyoSchemas
 import network.xyo.sdkobjectmodelkotlin.structure.XyoIterableStructure
@@ -22,12 +19,12 @@ class XyoBoundWitnessVerify (private val allowUnknown : Boolean) {
      * @return If the bound witness was successful and null if does not have the capability to
      * verify (cant find verify method)
      */
-    fun verify (boundWitness: XyoBoundWitness) : Deferred<Boolean?> = GlobalScope.async {
+    suspend fun verify (boundWitness: XyoBoundWitness) : Boolean? {
         if (!boundWitness.completed) {
-            return@async false
+            return false
         }
 
-        return@async checkAllSignatures(boundWitness.signingData, boundWitness).await()
+        return checkAllSignatures(boundWitness.signingData, boundWitness)
     }
 
     /**
@@ -37,20 +34,20 @@ class XyoBoundWitnessVerify (private val allowUnknown : Boolean) {
      * @param boundWitness The bound witness containing the signatures to check.
      * @return Will return the validity if the bound witness in terms of signatures.
      */
-    private fun checkAllSignatures(signingData: ByteArray, boundWitness: XyoBoundWitness) : Deferred<Boolean> = GlobalScope.async {
+    private suspend fun checkAllSignatures(signingData: ByteArray, boundWitness: XyoBoundWitness) : Boolean {
         for (partyNum in 0 until (boundWitness.numberOfParties ?: 0) ) {
             val keySet = boundWitness.getFetterOfParty(partyNum)?.get(XyoSchemas.KEY_SET.id)?.getOrNull(0) as? XyoIterableStructure
             val sigSet = boundWitness.getWitnessOfParty(partyNum)?.get(XyoSchemas.SIGNATURE_SET.id)?.getOrNull(0) as? XyoIterableStructure
 
             if (!(keySet is XyoIterableStructure
                             && sigSet is XyoIterableStructure
-                            && checkSinglePartySignatures(keySet, sigSet, signingData).await())) {
+                            && checkSinglePartySignatures(keySet, sigSet, signingData))) {
 
-                return@async false
+                return false
             }
         }
 
-        return@async true
+        return true
     }
 
     /**
@@ -61,18 +58,18 @@ class XyoBoundWitnessVerify (private val allowUnknown : Boolean) {
      * @param signingData The data signed in the bound witness.
      * @return The validity of the signatures
      */
-    private fun checkSinglePartySignatures (keys: XyoIterableStructure, signatures : XyoIterableStructure, signingData : ByteArray) : Deferred<Boolean> = GlobalScope.async {
+    private suspend fun checkSinglePartySignatures (keys: XyoIterableStructure, signatures : XyoIterableStructure, signingData : ByteArray) : Boolean {
         for (keyNum in 0 until keys.count) {
             val key = keys[keyNum]
             val signature = signatures[keyNum]
 
-            val verify = XyoSigner.verify(key, signature, signingData).await()
+            val verify = XyoSigner.verify(key, signature, signingData)
             
             if ((verify == null && !allowUnknown) || verify == false) {
-                return@async false
+                return false
             }
         }
 
-        return@async true
+        return true
     }
 }

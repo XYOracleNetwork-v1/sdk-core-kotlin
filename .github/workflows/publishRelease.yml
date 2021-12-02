@@ -22,12 +22,7 @@ jobs:
       - name: print version
         run: |
           echo "##[set-output name=version;]$(gradle -q printVersion)"
-        id: release_version        
-      - name: bintray upload
-        env: 
-          BINTRAY_USER: ${{ secrets.BINTRAY_USER }}
-          BINTRAY_KEY: ${{ secrets.BINTRAY_KEY }}
-        run: ./gradlew assemble bintrayUpload
+        id: release_version
       - name: get commit message
         run: |
           echo ::set-env name=commitmsg::$(git log --format=%B -n 1 ${{ github.event.after }})

@@ -61,26 +61,4 @@ class XyoObjectIteratorTest  {
 
         Assert.assertEquals(2, iterator.count)
     }
-
-    @Test
-    fun testWrongTypes () {
-        try {
-            val iterator = XyoIterableStructure(byteArrayOf(0x20, 0x41, 0x07, 0x00, 0x44, 0x02, 0x13, 0x02, 0x37), 0).iterator
-
-            for (item in iterator) { }
-
-            throw Exception("Expected XyoObjectIteratorException to be thrown!")
-        } catch (e : XyoObjectIteratorException) { }
-    }
-
-    @Test
-    fun testCheckHeaderSize () {
-        try {
-            val iterator = XyoIterableStructure(BigInteger("601800526017004D201A49000B460000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000040B030001030307", 16).toByteArray().copyOfRange(1, 84), 0).iterator
-
-            for (item in iterator) { }
-
-            throw Exception("Expected XyoObjectIteratorException to be thrown!")
-        } catch (e : XyoObjectIteratorException) { }
-    }
 }
