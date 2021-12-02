@@ -41,12 +41,11 @@ open class XyoTcpPipe(private val socket: Socket,
     }
 
     override suspend fun send(data: ByteArray, waitForResponse: Boolean): ByteArray? {
+        var result: ByteArray? = null
         try {
             XyoLog.logDebug("Send Request", TAG)
-            return withTimeout(NO_RESPONSE_TIMEOUT.toLong()) {
-                return@withTimeout GlobalScope.async(Dispatchers.IO) {
-                    return@async send(waitForResponse, data).await()
-                }.await()
+            withTimeout(NO_RESPONSE_TIMEOUT.toLong()) {
+                result = send(waitForResponse, data)
             }
 
         } catch (exception: TimeoutCancellationException) {
@@ -54,8 +53,8 @@ open class XyoTcpPipe(private val socket: Socket,
             withContext(Dispatchers.IO) {
                 socket.close()
             }
-            return null
         }
+        return result
     }
 
     fun waitForResponse (): ByteArray? {
@@ -76,26 +75,32 @@ open class XyoTcpPipe(private val socket: Socket,
         return message
     }
 
-    private fun send(waitForResponse: Boolean, data: ByteArray) = GlobalScope.async(Dispatchers.IO) {
+    private suspend fun send(waitForResponse: Boolean, data: ByteArray): ByteArray? {
         try {
-            val buffer = ByteBuffer.allocate(4 + data.size)
-            buffer.putInt(data.size + 4)
-            buffer.put(data)
+            var result: ByteArray? = null
+            withContext(Dispatchers.IO) {
+                val buffer = ByteBuffer.allocate(4 + data.size)
+                buffer.putInt(data.size + 4)
+                buffer.put(data)
 
-            XyoLog.logDebug("Sending Through TCP ${buffer.array().size}: ${buffer.array().toHexString()}", TAG)
+                XyoLog.logDebug(
+                    "Sending Through TCP ${buffer.array().size}: ${
+                        buffer.array().toHexString()
+                    }", TAG
+                )
 
-            val outStream = DataOutputStream(socket.getOutputStream())
-            outStream.write(buffer.array())
+                val outStream = DataOutputStream(socket.getOutputStream())
+                outStream.write(buffer.array())
 
-            if (waitForResponse) {
-                return@async waitForResponse()
+                if (waitForResponse) {
+                    result = waitForResponse()
+                }
             }
-
-            return@async null
+            return result
 
         } catch (exception: IOException) {
             XyoLog.logDebug("Unknown Network Error $exception", TAG)
-            return@async null
+            return null
         }
     }
 
