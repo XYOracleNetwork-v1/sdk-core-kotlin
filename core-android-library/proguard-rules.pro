@@ -30,6 +30,6 @@
 -keepattributes *Annotation*
 -keepattributes EnclosingMethod
 
--keep public class network.xyo.ble.** { *; }
+-keep public class network.xyo.core.** { *; }
 
 -verbose
