@@ -1,0 +1,3 @@
+include ':core-android-library'
+
+rootProject.name='sdk-core-kotlin'

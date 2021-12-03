@@ -1,5 +1,6 @@
 package network.xyo.sdkcorekotlin.persist.repositories
 
+import android.annotation.SuppressLint
 import network.xyo.sdkcorekotlin.node.XyoBridgeQueueItem
 import network.xyo.sdkcorekotlin.persist.XyoKeyValueStore
 import network.xyo.sdkcorekotlin.repositories.XyoBridgeQueueRepository
@@ -25,6 +26,7 @@ class XyoStorageBridgeQueueRepository (private val store: XyoKeyValueStore) : Xy
         queueCache.add(insertIndex, item)
     }
 
+    @SuppressLint("NewApi")
     override fun removeQueueItems (items: Array<XyoObjectStructure>) {
         for (item in items) {
             queueCache.removeIf { cachedItem ->
